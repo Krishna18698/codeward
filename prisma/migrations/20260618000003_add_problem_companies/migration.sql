@@ -1,0 +1,1 @@
+ALTER TABLE "Problem" ADD COLUMN IF NOT EXISTS "companies" TEXT[] NOT NULL DEFAULT '{}';
