@@ -1,40 +1,37 @@
-# PrepArc — FAANG Interview Prep Platform
+# Codeward — AI-Powered Interview Prep Platform
 
-A full-stack interview preparation platform built for serious engineers. Covers DSA problem tracking, AI mentor chat, code execution with auto-grading, and RAG-powered knowledge retrieval.
+A full-stack interview prep platform: curated DSA sheets with pattern tracking, system design practice, and a RAG-powered AI mentor that adapts to your experience level and target company.
 
 ---
 
 ## Features
 
 ### DSA Sheets
-- **Preset sheets**: Blind 75, Striver's SDE Sheet, NeetCode 150, Top 300 FAANG Picks
-- **Custom sheets**: Create your own, search and add problems from any preset sheet
-- **Problem Bank**: Browse and filter the full Top 300 problem set by difficulty, pattern, or "must do"
-- **Progress tracking**: Per-sheet progress bar, done/solving/todo counts
-- **Pattern grouping**: Problems grouped by algorithmic pattern with collapsible sections
-- **Infinite scroll**: Lazy-loads problems as you scroll
-
-### Problem Workspace
-- **Full problem statement** with description and test case examples
-- **Monaco code editor** with syntax highlighting for Python, JavaScript, TypeScript, Java, C++, Go
-- **Code execution** via Judge0 — run against real test cases
-- **Auto-tracked status**: advances automatically, no manual clicking
-  - `To Do` → `Solving` when you first edit the code
-  - `Solving` → `Solved` when all test cases pass
-- **AI Mentor chat**: context-aware assistant that knows which problem you're on
-- **LLM-as-judge eval**: evaluates your solution for correctness, time complexity, and approach
-- **Notes**: per-problem notes that persist across sessions
+- **Preset sheets**: Blind 75, Striver's SDE Sheet, NeetCode 150, and a Top 300 FAANG problem bank
+- **Custom sheets**: create your own and pull problems from any preset via search
+- **Problem Bank**: browse the Top 300 by pattern, difficulty, company, or "must do"
+- **Pattern grouping**: problems grouped by algorithmic pattern (ordered by interview importance), collapsible, each with a one-line description
+- **Progress tracking**: per-sheet progress bar with solved / to-do counts
+- **Filters & flags**: difficulty and company filters, a "to revise" flag, and per-problem notes that persist
+- **Direct links**: LeetCode and GeeksforGeeks links on each problem
 
 ### AI Mentor
-- RAG-powered chat mentor backed by a curated knowledge base (DSA patterns, system design)
-- Semantic search with Voyage AI embeddings stored in pgvector
-- Responses grounded in retrieved context, not hallucinated
-- Rate-limited per user via Upstash Redis
+- **RAG-powered chat** grounded in a curated knowledge base (DSA patterns, system design) — answers from retrieved context, not hallucination
+- **Semantic retrieval** via Voyage AI embeddings stored in pgvector
+- **Persistent conversations** with saved history
+- **Sheet generation**: builds a personalized 15–25 problem study sheet from your goals and target company, and can add problems straight into your sheets
+- **Answer evaluation**: reviews your approach and reasoning
+- Available both as a **full page** and a **floating panel** across the dashboard
+- Rate-limited per user (Upstash Redis); AI markdown is sanitized before rendering
 
-### Auth
-- Google OAuth (one-click sign in)
-- Email/password credentials
+### System Design
+- **Curated questions** organized by difficulty (Easy / Medium / Hard) and experience level (Junior / Mid / Senior), with "must do" flags and one-line summaries
+- **Challenge Spinner**: generates a randomized design prompt — *problem × scale × traffic spike × special constraint* — with a copyable prompt to practice against
+
+### Auth & Onboarding
+- Google OAuth (one-click) and email/password (bcrypt, 12 rounds)
 - Onboarding flow capturing experience level and target company
+- Profile page with selectable avatar
 
 ---
 
@@ -42,17 +39,16 @@ A full-stack interview preparation platform built for serious engineers. Covers 
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16 (App Router, Server Components) |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| Auth | NextAuth.js v4 |
+| Framework | Next.js 16 (App Router, Server Components, Turbopack, React Compiler) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 (Inter + JetBrains Mono) |
+| Auth | NextAuth.js v4 (JWT sessions) |
 | Database | Neon PostgreSQL (serverless) |
-| ORM | Prisma 6 with `PrismaNeon` adapter |
+| ORM | Prisma 7 |
 | Vector search | pgvector + Voyage AI embeddings |
-| LLM | Groq (llama-3.3-70b) |
-| Code execution | Judge0 CE |
+| LLM | Groq (`llama-3.3-70b-versatile`) |
 | Rate limiting | Upstash Redis |
-| Editor | Monaco Editor (`@monaco-editor/react`) |
+| Hardening | Security headers, `rehype-sanitize` on AI output |
 
 ---
 
@@ -63,8 +59,7 @@ A full-stack interview preparation platform built for serious engineers. Covers 
 - A [Google Cloud](https://console.cloud.google.com) OAuth 2.0 client
 - A [Groq](https://console.groq.com) API key (free tier available)
 - A [Voyage AI](https://dash.voyageai.com) API key (for RAG embeddings)
-- Optional: [Upstash Redis](https://console.upstash.com) (rate limiting — silently skipped if not set)
-- Optional: [RapidAPI Judge0 key](https://rapidapi.com/judge0-official/api/judge0-ce) (falls back to the public endpoint without it)
+- Optional: [Upstash Redis](https://console.upstash.com) — rate limiting is silently skipped if not set
 
 ---
 
@@ -74,7 +69,7 @@ A full-stack interview preparation platform built for serious engineers. Covers 
 
 ```bash
 git clone <repo-url>
-cd interview-prep-center
+cd codeward
 npm install
 ```
 
@@ -84,47 +79,26 @@ npm install
 cp .env.example .env.local
 ```
 
-Edit `.env.local`:
+Then fill in `.env.local`:
 
-```env
-# Neon PostgreSQL — must have pgvector enabled
-DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
-
-# NextAuth
-NEXTAUTH_SECRET="run: openssl rand -base64 32"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Google OAuth
-# Authorized redirect URI: http://localhost:3000/api/auth/callback/google
-GOOGLE_CLIENT_ID="....apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="GOCSPX-..."
-
-# Groq (LLM for mentor chat + evals)
-GROQ_API_KEY="gsk_..."
-
-# Voyage AI (embeddings for RAG)
-VOYAGE_API_KEY="pa-..."
-
-# Upstash Redis (optional — rate limiting)
-UPSTASH_REDIS_REST_URL="https://..."
-UPSTASH_REDIS_REST_TOKEN="..."
-
-# Ingest secret (protects /api/mentor/ingest, pick any strong string)
-INGEST_SECRET="your-secret-here"
-
-# Judge0 via RapidAPI (optional — uses public endpoint without it)
-# JUDGE0_API_KEY="your-rapidapi-key"
-```
+| Variable | Required | Notes |
+|----------|----------|-------|
+| `DATABASE_URL` | ✅ | Neon pooled connection string (pgvector enabled) |
+| `NEXTAUTH_URL` | ✅ | Base URL, no trailing slash (e.g. `http://localhost:3000`) |
+| `NEXTAUTH_SECRET` | ✅ | `openssl rand -base64 32` |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | ✅ | Redirect URI: `<NEXTAUTH_URL>/api/auth/callback/google` |
+| `GROQ_API_KEY` | ✅ | LLM for mentor chat, evals, sheet generation |
+| `VOYAGE_API_KEY` | ✅ | Embeddings for RAG semantic search |
+| `INGEST_SECRET` | ✅ | Protects `/api/mentor/ingest` — any strong random string |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Optional | Rate limiting (skipped in dev if unset) |
 
 ### 3. Enable pgvector on Neon
 
-In the Neon console SQL Editor:
+In the Neon SQL Editor:
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS "vector";
 ```
-
-Or: **Neon Dashboard → Extensions → Add → vector**.
 
 ### 4. Run database migrations
 
@@ -132,17 +106,17 @@ Or: **Neon Dashboard → Extensions → Add → vector**.
 npx prisma migrate deploy
 ```
 
-> Use `migrate deploy` (not `migrate dev`). Neon's serverless Postgres doesn't support the shadow database that `migrate dev` requires.
+> Use `migrate deploy` (not `migrate dev`). Neon's serverless Postgres doesn't support the shadow database that `migrate dev` requires with the `vector` column type.
 
-### 5. Seed the database
+### 5. Seed the preset sheets
 
-Populates all four preset sheets: Blind 75 (75 problems), Striver's SDE Sheet (191), NeetCode 150 (150), Top 300 FAANG Picks (300).
+Populates Blind 75, Striver's SDE Sheet, NeetCode 150, and the Top 300 FAANG bank.
 
 ```bash
-npx prisma db seed
+npm run seed
 ```
 
-### 6. Start the development server
+### 6. Start the dev server
 
 ```bash
 npm run dev
@@ -152,35 +126,12 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### 7. Ingest the RAG knowledge base (one-time)
 
-After the app is running, trigger the knowledge base ingest. This embeds DSA patterns and system design content into pgvector:
+With the app running, embed the DSA/system-design knowledge base into pgvector:
 
 ```bash
 curl -X POST http://localhost:3000/api/mentor/ingest \
   -H "Content-Type: application/json" \
-  -d '{"secret": "your-secret-here"}'
-```
-
----
-
-## Database Schema
-
-```
-User
- ├── Sheet[] (custom sheets, userId set)
- │    └── Problem[]
- │         ├── TestCase[]
- │         ├── UserProblemStatus[]
- │         └── UserNote[]
- ├── UserProblemStatus[]
- ├── UserNote[]
- └── ChatMessage[]
-
-Sheet (preset — isPreset: true, userId: null)
- └── Problem[]
-      └── TestCase[]
-
-KnowledgeChunk    # RAG — embedded with pgvector
-SystemDesignQuestion
+  -d '{"secret": "<your INGEST_SECRET>"}'
 ```
 
 ---
@@ -190,59 +141,54 @@ SystemDesignQuestion
 ```
 src/
 ├── app/
-│   ├── (auth)/              # Login, register, onboarding
+│   ├── (auth)/                  # Login, register
 │   ├── api/
-│   │   ├── auth/            # NextAuth handlers
-│   │   ├── code/run/        # Judge0 code execution
+│   │   ├── auth/                # NextAuth handlers + registration
 │   │   ├── dsa/
-│   │   │   ├── bank/        # Top 300 problem bank
-│   │   │   ├── problems/    # Sheet problems (paginated) + cross-sheet search
-│   │   │   ├── sheets/      # Custom sheet CRUD + add-problem
-│   │   │   └── status/      # Problem status upsert
-│   │   └── mentor/          # RAG chat, LLM-judge eval, ingest
+│   │   │   ├── bank/            # Top 300 problem bank
+│   │   │   ├── bank-patterns/   # Pattern groups for the bank
+│   │   │   ├── problems/        # Sheet problems + cross-sheet search
+│   │   │   ├── sheets/          # Custom sheet CRUD + add-problem
+│   │   │   ├── sheet-companies/ # Distinct companies per sheet
+│   │   │   ├── status/          # Problem status upsert
+│   │   │   └── revise/          # "To revise" toggle
+│   │   ├── mentor/              # RAG chat, conversations, eval,
+│   │   │                        #   generate-sheet, add-to-sheet, ingest
+│   │   ├── notes/               # Per-problem notes
+│   │   └── user/profile/        # Profile + onboarding
 │   └── dashboard/
-│       ├── dsa/             # DSA sheets page
-│       └── problem/[id]/    # Problem workspace
+│       ├── page.tsx             # Dashboard home
+│       ├── dsa/                 # DSA sheets + Problem Bank
+│       ├── mentor/              # Full-page AI mentor
+│       ├── system-design/       # System design questions + [id] detail
+│       └── profile/             # Profile page
 ├── components/
-│   ├── dashboard/
-│   │   ├── DSAPageClient    # Sheet tabs (client — handles create/delete)
-│   │   ├── SheetContent     # Stats bar + problem list (client-fetched on tab switch)
-│   │   ├── ProblemList      # Grouped problems with infinite scroll + status toggle
-│   │   ├── ProblemBank      # Top 300 browsable grid with filters
-│   │   ├── ProblemPicker    # Debounced search + select (used in modals)
-│   │   ├── CreateSheetModal # New sheet + pre-load problems in one flow
-│   │   ├── AddProblemsModal # Add problems to an existing custom sheet
-│   │   ├── MentorChat       # RAG AI mentor panel
-│   │   └── EvalPanel        # LLM-as-judge evaluation panel
-│   └── problem/
-│       ├── ProblemWorkspace # Full IDE-style problem page layout
-│       ├── CodeEditor       # Monaco editor, language switching, localStorage save
-│       ├── TestCasePanel    # Judge0 test runner with pass/fail results
-│       └── NotesPanel       # Per-problem persistent notes
+│   ├── dashboard/               # Sheet UI, mentor chat, modals, sidebar
+│   ├── system-design/           # Challenge Spinner, etc.
+│   └── ui/                      # Shared icons/primitives
 ├── lib/
-│   ├── prisma.ts
-│   └── cn.ts
+│   ├── prisma.ts                # Prisma client
+│   ├── rag.ts                   # Retrieval + embeddings
+│   ├── ratelimit.ts             # Upstash limiters
+│   ├── knowledge/               # RAG knowledge base source
+│   └── ...
 prisma/
 ├── schema.prisma
-├── seed.ts
-├── blind75.ts               # 75 problems
-├── strivers.ts              # 191 problems
-├── neetcode150.ts           # 150 problems
-└── top300.ts                # 300 problems
+├── seed.ts                      # Seeds all preset sheets
+├── problem-content.ts           # Problem descriptions
+└── top300.ts                    # Top 300 FAANG bank
 ```
 
 ---
 
-## Architecture Notes
+## Security
 
-**Why `prisma migrate deploy` instead of `migrate dev`?**
-`migrate dev` spins up a shadow database to detect drift. Neon serverless doesn't support the shadow DB approach with pgvector — the `vector(1024)` column type fails before the extension can be installed. `migrate deploy` applies migrations directly, skipping shadow DB entirely.
-
-**Why is problem data fetched client-side in `SheetContent`?**
-Next.js 16 client-side navigation caches RSC payloads on the client router. When only query params change (e.g. `?sheet=xyz`), the cached payload can be served stale even with `force-dynamic`. Moving the fetch to a `useSearchParams`-driven client component with its own `useEffect` makes tab switching instant and reliable with zero cache concerns.
-
-**Why is status auto-tracked instead of user-controlled?**
-Manual toggling creates friction and is inaccurate — users forget to update it. Auto-advancing from TODO → Solving on first code edit, and Solving → Solved when all tests pass, mirrors the real problem-solving workflow and keeps progress data trustworthy.
+- Every data API route authenticates via `getServerSession` before any DB access
+- `/api/mentor/ingest` is **fail-secure** — returns 503 if `INGEST_SECRET` is unset, 401 on mismatch
+- AI-generated markdown is sanitized with `rehype-sanitize` (XSS protection)
+- Rate limiting on mentor chat, sheet generation, evaluation, and sign-up
+- Security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, etc.) set in `next.config.ts`
+- Passwords hashed with bcrypt (12 rounds); sheet queries scoped to preset or owning user
 
 ---
 
@@ -250,12 +196,13 @@ Manual toggling creates friction and is inaccurate — users forget to update it
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start dev server (Turbopack) |
+| `npm run dev` | Start the dev server |
 | `npm run build` | Production build |
+| `npm run start` | Serve the production build |
 | `npm run lint` | ESLint |
+| `npm run seed` | Seed preset sheets |
 | `npx prisma migrate deploy` | Apply pending DB migrations |
-| `npx prisma db seed` | Seed preset sheets |
-| `npx prisma generate` | Regenerate Prisma client after schema changes |
+| `npx prisma generate` | Regenerate the Prisma client |
 | `npx tsc --noEmit` | TypeScript type check |
 
 ---
