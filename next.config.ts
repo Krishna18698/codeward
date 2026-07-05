@@ -13,7 +13,6 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
-  allowedDevOrigins: ["192.168.0.6", "dodge-subarctic-snap.ngrok-free.dev"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
