@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
 import type { ProblemPattern, Difficulty } from "@prisma/client";
 import { GFG_URL_MAP } from "@/lib/gfg-url-map";
+import { chatLimiter } from "@/lib/ratelimit";
 
 const VALID_PATTERNS: ProblemPattern[] = [
   "ARRAYS","STRINGS","LINKED_LIST","TREES","GRAPHS","DYNAMIC_PROGRAMMING",
@@ -27,6 +28,12 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Rate limit — this endpoint makes a paid Groq call
+  if (chatLimiter) {
+    const { success } = await chatLimiter.limit(user.id);
+    if (!success) return NextResponse.json({ error: "Too many requests — slow down a bit." }, { status: 429 });
+  }
 
   const { message, sheetId } = await req.json() as { message?: string; sheetId?: string };
   if (!message || !sheetId) return NextResponse.json({ error: "Missing message or sheetId" }, { status: 400 });
