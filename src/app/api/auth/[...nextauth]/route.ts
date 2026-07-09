@@ -2,11 +2,32 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import type { Adapter, AdapterAccount } from "next-auth/adapters";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+/**
+ * Google is used purely to authenticate — we never call Google APIs on a
+ * user's behalf. Persisting OAuth credentials would store secrets we can
+ * never use, so strip them before the adapter writes the Account row.
+ * The adapter is still needed: it creates the User row for Google sign-ups.
+ */
+function adapterWithoutOAuthTokens(): Adapter {
+  const base = PrismaAdapter(prisma);
+  return {
+    ...base,
+    linkAccount: async (account: AdapterAccount) => {
+      const safe = { ...account };
+      delete safe.access_token;
+      delete safe.refresh_token;
+      delete safe.id_token;
+      await base.linkAccount!(safe);
+    },
+  };
+}
+
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  adapter: adapterWithoutOAuthTokens(),
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
