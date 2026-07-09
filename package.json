@@ -23,7 +23,7 @@
     "clsx": "^2.1.1",
     "groq-sdk": "^1.2.1",
     "lucide-react": "^1.18.0",
-    "next": "16.0.5",
+    "next": "16.2.10",
     "next-auth": "^4.24.13",
     "prisma": "^7.0.1",
     "react": "19.2.0",
@@ -48,9 +48,12 @@
     "baseline-browser-mapping": "^2.10.38",
     "dotenv": "^17.4.1",
     "eslint": "^9",
-    "eslint-config-next": "16.0.5",
+    "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"
+  },
+  "overrides": {
+    "preact": "^10.29.7"
   }
 }
