@@ -1,11 +1,13 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, lazy, Suspense } from "react";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import rehypeSanitize from "rehype-sanitize";
 import { Sparkles, Send, ArrowRight, Square, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
+
+// Lazy so the markdown pipeline stays out of the shared dashboard bundle;
+// plain text renders as the fallback for the frame it takes to load.
+const MarkdownMessage = lazy(() => import("./MarkdownMessage"));
 
 export type Message =
   | { role: "user" | "assistant"; content: string; type?: "text" }
@@ -363,25 +365,9 @@ export default function MentorChat({
               </div>
             ) : (
               <div className="max-w-[92%] text-[13px] md:text-sm text-slate-300 space-y-0.5">
-                <ReactMarkdown
-                  rehypePlugins={[rehypeSanitize]}
-                  components={{
-                    p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-                    strong: ({ children }) => <strong className="text-white font-semibold">{children}</strong>,
-                    em: ({ children }) => <em className="text-slate-400 italic">{children}</em>,
-                    h1: ({ children }) => <p className="text-white font-bold text-sm mt-3 mb-1">{children}</p>,
-                    h2: ({ children }) => <p className="text-white font-bold text-sm mt-3 mb-1">{children}</p>,
-                    h3: ({ children }) => <p className="text-slate-200 font-semibold text-[13px] mt-2.5 mb-1">{children}</p>,
-                    ul: ({ children }) => <ul className="list-disc ml-4 space-y-0.5 my-1.5">{children}</ul>,
-                    ol: ({ children }) => <ol className="list-decimal ml-4 space-y-0.5 my-1.5">{children}</ol>,
-                    li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                    code: ({ children }) => <code className="bg-slate-800 border border-slate-700/60 rounded px-1.5 py-0.5 text-[11px] text-sky-300 font-mono">{children}</code>,
-                    pre: ({ children }) => <pre className="bg-slate-900 border border-slate-800 rounded-xl p-3 my-2 overflow-x-auto text-[11px] font-mono text-slate-300">{children}</pre>,
-                    blockquote: ({ children }) => <blockquote className="border-l-2 border-sky-500/40 pl-3 my-2 text-slate-400 italic">{children}</blockquote>,
-                  }}
-                >
-                  {msg.content}
-                </ReactMarkdown>
+                <Suspense fallback={<div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>}>
+                  <MarkdownMessage content={msg.content} />
+                </Suspense>
                 {streaming && i === messages.length - 1 && (
                   <span className="inline-block w-0.5 h-[1em] bg-sky-400 animate-pulse rounded-sm ml-0.5 align-text-bottom" />
                 )}
