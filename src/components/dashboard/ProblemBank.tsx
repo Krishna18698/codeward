@@ -302,7 +302,7 @@ export default function ProblemBank({ userSheets }: Props) {
                                     const domain = COMPANY_DOMAINS[c];
                                     return domain ? (
                                       // eslint-disable-next-line @next/next/no-img-element
-                                      <img key={c} src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={15} height={15} className="rounded-sm opacity-75 hover:opacity-100 transition-opacity" />
+                                      <img key={c} loading="lazy" decoding="async" src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={15} height={15} className="rounded-sm opacity-75 hover:opacity-100 transition-opacity" />
                                     ) : null;
                                   })}
                                 </div>
@@ -337,7 +337,7 @@ export default function ProblemBank({ userSheets }: Props) {
                                   const domain = COMPANY_DOMAINS[c];
                                   return domain ? (
                                     // eslint-disable-next-line @next/next/no-img-element
-                                    <img key={c} src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={16} height={16} className="rounded-sm opacity-80 hover:opacity-100 transition-opacity" />
+                                    <img key={c} loading="lazy" decoding="async" src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={16} height={16} className="rounded-sm opacity-80 hover:opacity-100 transition-opacity" />
                                   ) : null;
                                 })}
                               </div>

@@ -48,7 +48,7 @@ export default async function DSAPage({ searchParams }: Props) {
         prisma.problem.findMany({
           where: { sheetId: defaultSheetId },
           select: {
-            id: true, title: true, description: true, difficulty: true,
+            id: true, title: true, difficulty: true,
             pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true,
             order: true, companies: true,
             statuses: { where: { userId }, select: { status: true, toRevise: true } },
