@@ -362,6 +362,7 @@ export default function ProblemList({
           <div key={pattern} className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
             <button
               onClick={() => setCollapsed((prev) => ({ ...prev, [pattern]: prev[pattern] === false }))}
+              aria-expanded={!isCollapsed}
               className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/40 transition-colors"
             >
               <div className="flex-1 min-w-0 text-left">

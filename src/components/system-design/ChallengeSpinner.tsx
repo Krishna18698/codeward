@@ -208,7 +208,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Clock size={10} className="text-slate-500" />
                 <p className="text-[10px] uppercase tracking-widest text-slate-500 flex-1">Your prompt</p>
-                <button onClick={copyPrompt} title="Copy" className="text-slate-500 hover:text-slate-300 transition-colors">
+                <button onClick={copyPrompt} title="Copy" aria-label="Copy challenge prompt" className="text-slate-500 hover:text-slate-300 transition-colors">
                   {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
                 </button>
               </div>
@@ -320,6 +320,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
               <button
                 onClick={copyPrompt}
                 title="Copy prompt"
+                aria-label="Copy challenge prompt"
                 className="text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}

@@ -67,7 +67,7 @@ export default async function SystemDesignPage({ searchParams }: Props) {
                   ...(tab.value ? { level: tab.value } : {}),
                   ...(expFilter ? { exp: expFilter } : {}),
                 }).toString()}`}
-                className={`rounded-lg px-3 py-1.5 text-xs transition ${
+                className={`rounded-xl px-3 py-1.5 text-xs transition ${
                   diffFilter === tab.value
                     ? "bg-sky-500/15 text-sky-400 border border-sky-500/30"
                     : "border border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200"
@@ -85,7 +85,7 @@ export default async function SystemDesignPage({ searchParams }: Props) {
                   ...(diffFilter ? { level: diffFilter } : {}),
                   ...(tab.value ? { exp: tab.value } : {}),
                 }).toString()}`}
-                className={`rounded-lg px-3 py-1.5 text-xs transition ${
+                className={`rounded-xl px-3 py-1.5 text-xs transition ${
                   expFilter === tab.value
                     ? "bg-violet-500/15 text-violet-400 border border-violet-500/30"
                     : "border border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200"

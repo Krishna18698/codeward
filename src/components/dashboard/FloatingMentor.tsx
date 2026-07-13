@@ -38,6 +38,7 @@ export default function FloatingMentor() {
             <button
               onClick={() => setMinimised((v) => !v)}
               title={minimised ? "Expand" : "Minimise"}
+              aria-label={minimised ? "Expand AI Mentor" : "Minimise AI Mentor"}
               className="ml-2 text-slate-500 hover:text-slate-300 transition-colors"
             >
               <Minus size={14} />
@@ -45,6 +46,7 @@ export default function FloatingMentor() {
             <button
               onClick={() => { setOpen(false); setMinimised(false); }}
               title="Close"
+              aria-label="Close AI Mentor"
               className="text-slate-500 hover:text-slate-300 transition-colors"
             >
               <X size={14} />
@@ -67,6 +69,8 @@ export default function FloatingMentor() {
       <button
         onClick={() => { setOpen((v) => !v); setMinimised(false); }}
         title={open ? "Close AI Mentor" : "Open AI Mentor"}
+        aria-label={open ? "Close AI Mentor" : "Open AI Mentor"}
+        aria-expanded={open}
         className={cn(
           "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200",
           "shadow-[0_4px_24px_rgba(14,165,233,0.35)] border",

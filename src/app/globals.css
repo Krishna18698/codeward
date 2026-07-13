@@ -144,11 +144,28 @@ body {
   outline-offset: 2px;
 }
 
+/* Inputs get a subtle accent ring on keyboard focus instead of the default
+   outline — matches the Input.tsx focus:ring-2 ring-sky-500/20 pattern so
+   raw inputs/selects (search, filters, modals) are consistent for free. */
 input:focus,
-input:focus-visible,
 textarea:focus,
+select:focus {
+  outline: none;
+}
+
+input:focus-visible,
 textarea:focus-visible,
-select:focus,
 select:focus-visible {
-  outline: none !important;
+  outline: none;
+  border-color: rgba(14, 165, 233, 0.5);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+
+/* ─── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

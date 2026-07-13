@@ -254,6 +254,7 @@ export default function ProblemBank({ userSheets }: Props) {
                 {/* Pattern header */}
                 <button
                   onClick={() => togglePattern(bp.pattern)}
+                  aria-expanded={isExpanded}
                   className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/40 transition-colors"
                 >
                   <div className="flex-1 min-w-0 text-left">

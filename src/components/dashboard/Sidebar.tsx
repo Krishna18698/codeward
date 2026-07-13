@@ -92,12 +92,15 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
         <button
           onClick={toggleCollapsed}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={!collapsed}
           className="hidden md:flex h-6 w-6 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-colors"
         >
           {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
         <button
           onClick={onMobileClose}
+          aria-label="Close menu"
           className="md:hidden flex h-6 w-6 items-center justify-center rounded-lg text-slate-500 hover:text-slate-300"
         >
           <X size={14} />
