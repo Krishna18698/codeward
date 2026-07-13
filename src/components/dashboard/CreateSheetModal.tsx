@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import ProblemPicker, { type PickerProblem } from "./ProblemPicker";
 
 type Props = { onClose: () => void };
@@ -39,16 +40,24 @@ export default function CreateSheetModal({ onClose }: Props) {
       const { sheet } = await res.json() as { sheet: { id: string } };
 
       // 2. Add selected problems in parallel
+      let failedAdds = 0;
       if (selected.length > 0) {
-        await Promise.all(
+        const results = await Promise.all(
           selected.map((p) =>
             fetch(`/api/dsa/sheets/${sheet.id}/add-problem`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ problemId: p.id }),
-            })
+            }).catch(() => null)
           )
         );
+        failedAdds = results.filter((r) => !r || !r.ok).length;
+      }
+
+      if (failedAdds > 0) {
+        toast.warning(`Sheet created, but ${failedAdds} problem${failedAdds > 1 ? "s" : ""} couldn't be added.`);
+      } else {
+        toast.success(`Sheet "${name.trim()}" created`);
       }
 
       router.push(`/dashboard/dsa?sheet=${sheet.id}`);

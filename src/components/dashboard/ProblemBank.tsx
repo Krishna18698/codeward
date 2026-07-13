@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Check, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
@@ -156,7 +157,15 @@ export default function ProblemBank({ userSheets }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problemId }),
       });
-      if (res.ok) setAdded((prev) => ({ ...prev, [problemId]: sheetId }));
+      if (res.ok || res.status === 409) {
+        setAdded((prev) => ({ ...prev, [problemId]: sheetId }));
+        const sheetName = userSheets.find((s) => s.id === sheetId)?.name;
+        toast.success(sheetName ? `Added to ${sheetName}` : "Added to sheet");
+      } else {
+        toast.error("Couldn't add the problem — try again.");
+      }
+    } catch {
+      toast.error("Couldn't add the problem — try again.");
     } finally {
       setAdding(null);
     }

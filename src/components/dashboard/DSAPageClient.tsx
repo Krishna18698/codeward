@@ -2,6 +2,7 @@
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import CreateSheetModal from "./CreateSheetModal";
 
 type Sheet = { id: string; name: string; isPreset: boolean; problemCount: number };
@@ -26,12 +27,19 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
   const handleDelete = async (id: string) => {
     setDeleting(true);
     try {
-      await fetch(`/api/dsa/sheets/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/dsa/sheets/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        toast.error("Couldn't delete the sheet — try again.");
+        return; // keep the dialog open
+      }
+      toast.success("Sheet deleted");
       setConfirmDeleteId(null);
       if (id === activeSheetId) {
         router.push("/dashboard/dsa");
       }
       router.refresh();
+    } catch {
+      toast.error("Couldn't delete the sheet — try again.");
     } finally {
       setDeleting(false);
     }
@@ -62,7 +70,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                   isActive
                     ? "bg-sky-500/15 text-sky-400 border-sky-500/30 shadow-[0_0_12px_rgba(14,165,233,0.15)]"
                     : "border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200 hover:bg-slate-800/40"
-                } ${isCustom ? "pr-7" : ""} ${isPending && !isLoading ? "opacity-60" : ""}`}
+                } ${isCustom ? "pr-8" : ""} ${isPending && !isLoading ? "opacity-60" : ""}`}
               >
                 {s.name}
                 <span className="ml-2 text-[11px] opacity-50 inline-flex items-center">
@@ -72,12 +80,14 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                 </span>
               </button>
 
-              {/* Delete button — custom sheets only */}
+              {/* Delete button — custom sheets only. Always visible on touch
+                  devices; hover-revealed on desktop. */}
               {isCustom && (
                 <button
                   onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(s.id); }}
                   title="Delete sheet"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 flex items-center justify-center rounded text-slate-700 hover:text-red-400 opacity-0 group-hover:opacity-100 transition"
+                  aria-label={`Delete sheet ${s.name}`}
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition"
                 >
                   ×
                 </button>

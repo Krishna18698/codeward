@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import ProblemPicker, { type PickerProblem } from "./ProblemPicker";
 
 type Props = {
@@ -37,6 +38,7 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
       );
       const failed = results.filter((r) => !r.ok && r.status !== 409).length;
       if (failed > 0) throw new Error(`${failed} problem(s) failed to add`);
+      toast.success(`Added ${selected.length} problem${selected.length > 1 ? "s" : ""} to ${sheetName}`);
       router.refresh();
       onClose();
     } catch (e) {

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { ChevronRight, Check, Circle, StickyNote, X, RotateCcw, Search } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
@@ -246,11 +247,19 @@ export default function ProblemList({
     const next: ProblemStatus = current === "DONE" ? "TODO" : "DONE";
     setStatuses((prev) => ({ ...prev, [problemId]: next }));
     onStatusChange?.(current, next);
-    await fetch("/api/dsa/status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ problemId, status: next, userId }),
-    });
+    try {
+      const res = await fetch("/api/dsa/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problemId, status: next, userId }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      // Revert the optimistic update so the UI never lies about saved state
+      setStatuses((prev) => ({ ...prev, [problemId]: current }));
+      onStatusChange?.(next, current);
+      toast.error("Couldn't save — status reverted.");
+    }
   };
 
   const toggleNote = (problemId: string) => {
@@ -258,13 +267,20 @@ export default function ProblemList({
   };
 
   const toggleRevise = async (problemId: string) => {
-    const next = !revising[problemId];
+    const current = revising[problemId] ?? false;
+    const next = !current;
     setRevising((prev) => ({ ...prev, [problemId]: next }));
-    await fetch("/api/dsa/revise", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ problemId, toRevise: next, userId }),
-    });
+    try {
+      const res = await fetch("/api/dsa/revise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problemId, toRevise: next, userId }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      setRevising((prev) => ({ ...prev, [problemId]: current }));
+      toast.error("Couldn't save — revise flag reverted.");
+    }
   };
 
 
