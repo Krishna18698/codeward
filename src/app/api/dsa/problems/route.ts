@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
   const sheetId    = searchParams.get("sheetId");
@@ -30,7 +28,7 @@ export async function GET(req: Request) {
       select: {
         id: true, title: true, description: true, difficulty: true,
         pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true, order: true, companies: true,
-        statuses: { where: { userId: user.id }, select: { status: true, toRevise: true } },
+        statuses: { where: { userId: userId }, select: { status: true, toRevise: true } },
       },
       orderBy: [{ mustDo: "desc" }, { order: "asc" }],
       skip,
@@ -40,7 +38,7 @@ export async function GET(req: Request) {
     // Full-sheet statuses only on first page (for progress bar)
     skip === 0
       ? prisma.userProblemStatus.findMany({
-          where: { userId: user.id, problem: { sheetId } },
+          where: { userId: userId, problem: { sheetId } },
           select: { status: true },
         })
       : Promise.resolve(null),

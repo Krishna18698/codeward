@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -41,13 +41,16 @@ function Ring({ pct, size = 56, stroke = 4, color = "#0ea5e9" }: { pct: number; 
 }
 
 export default async function DashboardPage() {
-  const session = await getServerSession();
-  if (!session?.user?.email) redirect("/login");
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/login");
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, image: true, targetCompany: true, experienceLevel: true },
+  });
   if (!user) redirect("/login");
 
-  const { sheets, statuses, sdTotal } = await getDashboardData(user.id);
+  const { sheets, statuses, sdTotal } = await getDashboardData(userId);
 
   const doneCount    = statuses.filter((s) => s.status === "DONE").length;
   const totalTracked = sheets.filter((s) => s.isPreset).reduce((sum, s) => sum + s._count.problems, 0);

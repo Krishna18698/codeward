@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -12,17 +12,14 @@ import SheetContent from "@/components/dashboard/SheetContent";
 type Props = { searchParams: Promise<{ sheet?: string; view?: string }> };
 
 export default async function DSAPage({ searchParams }: Props) {
-  const session = await getServerSession();
-  if (!session?.user?.email) redirect("/login");
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) redirect("/login");
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/login");
 
   const { sheet: sheetId, view } = await searchParams;
   const showBank = view === "bank";
 
   const sheets = await prisma.sheet.findMany({
-    where: { OR: [{ isPreset: true }, { userId: user.id }] },
+    where: { OR: [{ isPreset: true }, { userId: userId }] },
     include: { _count: { select: { problems: true } } },
     orderBy: [{ isPreset: "desc" }, { createdAt: "asc" }],
   });
@@ -54,16 +51,16 @@ export default async function DSAPage({ searchParams }: Props) {
             id: true, title: true, description: true, difficulty: true,
             pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true,
             order: true, companies: true,
-            statuses: { where: { userId: user.id }, select: { status: true, toRevise: true } },
+            statuses: { where: { userId: userId }, select: { status: true, toRevise: true } },
           },
           orderBy: [{ mustDo: "desc" }, { order: "asc" }],
         }),
         prisma.userProblemStatus.findMany({
-          where: { userId: user.id, problem: { sheetId: defaultSheetId } },
+          where: { userId: userId, problem: { sheetId: defaultSheetId } },
           select: { status: true },
         }),
         prisma.userNote.findMany({
-          where: { userId: user.id, problem: { sheetId: defaultSheetId }, problemId: { not: null } },
+          where: { userId: userId, problem: { sheetId: defaultSheetId }, problemId: { not: null } },
           select: { problemId: true, content: true },
         }),
       ])
@@ -155,7 +152,7 @@ export default async function DSAPage({ searchParams }: Props) {
                 key={defaultSheetId}
                 sheets={clientSheets}
                 defaultSheetId={defaultSheetId}
-                userId={user.id}
+                userId={userId}
                 initialData={initialSheetData}
                 initialNotes={initialNotesMap}
               />

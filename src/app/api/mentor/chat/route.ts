@@ -1,22 +1,20 @@
 export const runtime = "nodejs";
 
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { retrieveContext } from "@/lib/rag";
 import Groq from "groq-sdk";
 import { chatLimiter } from "@/lib/ratelimit";
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return new Response("Unauthorized", { status: 401 });
 
   if (chatLimiter) {
-    const { success } = await chatLimiter.limit(user.id);
+    const { success } = await chatLimiter.limit(userId);
     if (!success) return new Response("Too many requests — slow down a bit.", { status: 429 });
   }
 
@@ -30,7 +28,7 @@ export async function POST(req: Request) {
   }
 
   await prisma.chatMessage.create({
-    data: { userId: user.id, role: "USER", content: message, context },
+    data: { userId: userId, role: "USER", content: message, context },
   });
 
   // ── System prompt ──────────────────────────────────────────────────────
@@ -76,7 +74,7 @@ Help them think through the design — ask clarifying questions first, then guid
 
   // ── Chat history ───────────────────────────────────────────────────────
   const history = await prisma.chatMessage.findMany({
-    where: { userId: user.id, context },
+    where: { userId: userId, context },
     orderBy: { createdAt: "desc" },
     take: 12,
     select: { role: true, content: true },
@@ -98,7 +96,7 @@ Help them think through the design — ask clarifying questions first, then guid
   if (!apiKey) {
     const fallback = "The AI mentor isn't available right now. Please check back later.";
     await prisma.chatMessage.create({
-      data: { userId: user.id, role: "ASSISTANT", content: fallback, context },
+      data: { userId: userId, role: "ASSISTANT", content: fallback, context },
     });
     return new Response(fallback);
   }
@@ -133,7 +131,7 @@ Help them think through the design — ask clarifying questions first, then guid
       } finally {
         if (assistantContent) {
           await prisma.chatMessage.create({
-            data: { userId: user.id, role: "ASSISTANT", content: assistantContent, context },
+            data: { userId: userId, role: "ASSISTANT", content: assistantContent, context },
           });
         }
         controller.close();

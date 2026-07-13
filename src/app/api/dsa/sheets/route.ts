@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { name } = await req.json() as { name?: string };
   if (!name || typeof name !== "string" || !name.trim()) {
@@ -15,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   const sheet = await prisma.sheet.create({
-    data: { name: name.trim(), source: "CUSTOM", isPreset: false, userId: user.id },
+    data: { name: name.trim(), source: "CUSTOM", isPreset: false, userId: userId },
   });
 
   return NextResponse.json({ sheet });

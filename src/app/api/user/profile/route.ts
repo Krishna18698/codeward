@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function PATCH(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const data = await req.json() as {
     name?: string;
@@ -21,7 +18,7 @@ export async function PATCH(req: Request) {
     data.image !== undefined && /^avatar:[a-z0-9_-]{1,50}$/.test(data.image);
 
   const updated = await prisma.user.update({
-    where: { id: user.id },
+    where: { id: userId },
     data: {
       ...(data.name !== undefined && { name: data.name }),
       ...(data.experienceLevel !== undefined && { experienceLevel: data.experienceLevel }),
@@ -36,11 +33,11 @@ export async function PATCH(req: Request) {
 }
 
 export async function GET() {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
+    where: { id: userId },
     select: { id: true, name: true, email: true, image: true, experienceLevel: true, targetCompany: true, onboarded: true },
   });
 

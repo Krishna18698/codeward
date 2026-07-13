@@ -1,7 +1,7 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
 import type { ProblemPattern, Difficulty } from "@prisma/client";
@@ -24,14 +24,12 @@ const VALID_PATTERNS: ProblemPattern[] = [
 const VALID_DIFFICULTIES: Difficulty[] = ["EASY","MEDIUM","HARD"];
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   if (sheetLimiter) {
-    const { success } = await sheetLimiter.limit(user.id);
+    const { success } = await sheetLimiter.limit(userId);
     if (!success) return NextResponse.json({ error: "Sheet generation limit reached. Try again in an hour." }, { status: 429 });
   }
 
@@ -115,7 +113,7 @@ Always use the create_sheet tool to output the sheet. Do not just describe it â€
 
   // Persist to DB
   const sheet = await prisma.sheet.create({
-    data: { name: args.sheetName, source: "CUSTOM", isPreset: false, userId: user.id },
+    data: { name: args.sheetName, source: "CUSTOM", isPreset: false, userId: userId },
   });
 
   const created = await Promise.all(

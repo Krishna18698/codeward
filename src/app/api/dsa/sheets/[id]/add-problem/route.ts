@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id: sheetId } = await params;
   const { problemId } = await req.json() as { problemId?: string };
@@ -16,7 +14,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   // Verify the target sheet belongs to this user
   const targetSheet = await prisma.sheet.findFirst({
-    where: { id: sheetId, userId: user.id, source: "CUSTOM" },
+    where: { id: sheetId, userId: userId, source: "CUSTOM" },
   });
   if (!targetSheet) return NextResponse.json({ error: "Sheet not found" }, { status: 404 });
 

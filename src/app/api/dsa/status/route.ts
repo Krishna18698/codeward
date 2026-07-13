@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { ProblemStatus } from "@prisma/client";
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { problemId, status } = await req.json() as { problemId?: string; status?: string };
 
@@ -24,8 +22,8 @@ export async function POST(req: Request) {
 
   const validStatus = status as ProblemStatus;
   await prisma.userProblemStatus.upsert({
-    where: { userId_problemId: { userId: user.id, problemId } },
-    create: { userId: user.id, problemId, status: validStatus },
+    where: { userId_problemId: { userId: userId, problemId } },
+    create: { userId: userId, problemId, status: validStatus },
     update: { status: validStatus },
   });
 

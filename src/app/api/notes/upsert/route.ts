@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) {
+  const userId = await getSessionUserId();
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { problemId, sdQuestionId, content } = await req.json() as {
     problemId?: string;
@@ -25,8 +23,8 @@ export async function POST(req: Request) {
   }
 
   const where = problemId
-    ? { userId: user.id, problemId }
-    : { userId: user.id, sdQuestionId: sdQuestionId! };
+    ? { userId: userId, problemId }
+    : { userId: userId, sdQuestionId: sdQuestionId! };
 
   const existing = await prisma.userNote.findFirst({ where, select: { id: true } });
 
@@ -34,7 +32,7 @@ export async function POST(req: Request) {
     await prisma.userNote.update({ where: { id: existing.id }, data: { content } });
   } else {
     await prisma.userNote.create({
-      data: { userId: user.id, content, ...(problemId ? { problemId } : { sdQuestionId }) },
+      data: { userId: userId, content, ...(problemId ? { problemId } : { sdQuestionId }) },
     });
   }
 

@@ -1,7 +1,7 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
 import { chatLimiter } from "@/lib/ratelimit";
@@ -48,14 +48,12 @@ function scoreToGrade(score: number): EvalResult["grade"] {
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   if (chatLimiter) {
-    const { success } = await chatLimiter.limit(user.id);
+    const { success } = await chatLimiter.limit(userId);
     if (!success) return NextResponse.json({ error: "Too many requests — slow down a bit." }, { status: 429 });
   }
 

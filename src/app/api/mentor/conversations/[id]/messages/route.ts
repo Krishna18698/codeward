@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 type IncomingMessage = {
@@ -13,16 +13,14 @@ type IncomingMessage = {
 };
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
 
   const conv = await prisma.mentorConversation.findFirst({
-    where: { id, userId: user.id },
+    where: { id, userId: userId },
   });
   if (!conv) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
@@ -34,7 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   // Save all messages
   await prisma.chatMessage.createMany({
     data: messages.map((m) => ({
-      userId: user.id,
+      userId: userId,
       conversationId: id,
       role: m.role,
       content: m.content,

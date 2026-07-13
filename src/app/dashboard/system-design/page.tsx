@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
@@ -7,11 +7,8 @@ import ChallengeSpinner from "@/components/system-design/ChallengeSpinner";
 type Props = { searchParams: Promise<{ level?: string; exp?: string }> };
 
 export default async function SystemDesignPage({ searchParams }: Props) {
-  const session = await getServerSession();
-  if (!session?.user?.email) redirect("/login");
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) redirect("/login");
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/login");
 
   const { level, exp } = await searchParams;
   const diffFilter = (level as "EASY" | "MEDIUM" | "HARD" | undefined) ?? undefined;

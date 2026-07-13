@@ -1,7 +1,7 @@
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
 import type { ProblemPattern, Difficulty } from "@prisma/client";
@@ -23,15 +23,13 @@ function gfgFor(leetcodeUrl: string | undefined): string | null {
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await getSessionUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // Rate limit — this endpoint makes a paid Groq call
   if (chatLimiter) {
-    const { success } = await chatLimiter.limit(user.id);
+    const { success } = await chatLimiter.limit(userId);
     if (!success) return NextResponse.json({ error: "Too many requests — slow down a bit." }, { status: 429 });
   }
 
@@ -40,7 +38,7 @@ export async function POST(req: Request) {
 
   // Verify the sheet belongs to this user
   const sheet = await prisma.sheet.findFirst({
-    where: { id: sheetId, userId: user.id },
+    where: { id: sheetId, userId: userId },
     include: { problems: { select: { title: true }, orderBy: { order: "asc" } } },
   });
   if (!sheet) return NextResponse.json({ error: "Sheet not found" }, { status: 404 });

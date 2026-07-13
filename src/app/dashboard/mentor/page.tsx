@@ -1,19 +1,16 @@
 export const dynamic = "force-dynamic";
 
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import MentorPageClient from "@/components/dashboard/MentorPageClient";
 
 export default async function MentorPage() {
-  const session = await getServerSession();
-  if (!session?.user?.email) redirect("/login");
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-  if (!user) redirect("/login");
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/login");
 
   const conversations = await prisma.mentorConversation.findMany({
-    where: { userId: user.id },
+    where: { userId: userId },
     orderBy: { updatedAt: "desc" },
     take: 50,
     include: {

@@ -1,4 +1,4 @@
-import { getServerSession } from "next-auth";
+import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { User, Target, Sparkles } from "lucide-react";
@@ -6,11 +6,11 @@ import { prisma } from "@/lib/prisma";
 import ProfileForm from "@/components/dashboard/ProfileForm";
 
 export default async function ProfilePage() {
-  const session = await getServerSession();
-  if (!session?.user?.email) redirect("/login");
+  const userId = await getSessionUserId();
+  if (!userId) redirect("/login");
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
+    where: { id: userId },
     select: {
       id: true, name: true, email: true, image: true,
       experienceLevel: true, targetCompany: true,
