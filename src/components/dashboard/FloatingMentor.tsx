@@ -19,13 +19,13 @@ export default function FloatingMentor() {
     : "dashboard";
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-3">
 
       {/* Expanded panel */}
       {open && (
         <div
           className={cn(
-            "w-[360px] rounded-2xl border border-slate-700/60 bg-surface shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden",
+            "w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-slate-700/60 bg-surface shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden",
             "animate-scale-in origin-bottom-right",
             minimised ? "h-auto" : "h-[520px]",
           )}

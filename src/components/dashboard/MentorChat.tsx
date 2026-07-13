@@ -95,9 +95,26 @@ export default function MentorChat({
     setStreaming(false);
   }, [conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Auto-grow the input textarea with its content (capped by max-h-24)
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    const ta = inputRef.current;
+    if (!ta) return;
+    ta.style.height = "auto";
+    ta.style.height = `${Math.min(ta.scrollHeight, 96)}px`;
+  }, [input]);
+
+  // Pin-to-bottom: only auto-scroll while the user is already near the bottom,
+  // so scrolling up to re-read during streaming doesn't get yanked back down.
+  const pinnedRef = useRef(true);
+  const handleMessagesScroll = () => {
+    const el = messagesRef.current;
+    if (el) pinnedRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+  };
+
   useEffect(() => {
     const el = messagesRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el && pinnedRef.current) el.scrollTop = el.scrollHeight;
   }, [messages, thinking]);
 
   const stop = () => {
@@ -325,7 +342,7 @@ export default function MentorChat({
         </div>
       )}
 
-      <div ref={messagesRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3 text-sm">
+      <div ref={messagesRef} onScroll={handleMessagesScroll} className="flex-1 overflow-y-auto px-4 py-4 space-y-3 text-sm">
         {messages.map((msg, i) => (
           <div key={i} className={cn("flex gap-2 animate-msg-pop", msg.role === "user" ? "justify-end" : "justify-start")}>
             {msg.role === "assistant" && (
@@ -385,13 +402,20 @@ export default function MentorChat({
       </div>
 
       <div className="border-t border-slate-800 px-3 py-3 md:p-3 shrink-0 bg-canvas md:bg-transparent">
-        <div className="flex gap-2 rounded-2xl border border-slate-700 bg-slate-800/80 px-4 py-3 focus-within:border-sky-500/50 transition-colors">
-          <input
+        <div className="flex items-end gap-2 rounded-2xl border border-slate-700 bg-slate-800/80 px-4 py-3 focus-within:border-sky-500/50 transition-colors">
+          <textarea
+            ref={inputRef}
             value={input}
+            rows={1}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                send();
+              }
+            }}
             placeholder="Ask me anything…"
-            className="flex-1 bg-transparent text-[13px] md:text-sm text-slate-200 placeholder-slate-600 outline-none"
+            className="flex-1 bg-transparent text-[13px] md:text-sm text-slate-200 placeholder-slate-500 outline-none resize-none max-h-24 leading-relaxed"
             disabled={loading}
           />
           {(streaming || thinking) ? (
@@ -399,6 +423,7 @@ export default function MentorChat({
               onClick={stop}
               className="text-red-400 hover:text-red-300 transition-colors p-1 -mr-1"
               title="Stop"
+              aria-label="Stop generating"
             >
               <Square size={15} fill="currentColor" />
             </button>
@@ -406,6 +431,7 @@ export default function MentorChat({
             <button
               onClick={send}
               disabled={loading || !input.trim()}
+              aria-label="Send message"
               className="text-sky-400 hover:text-sky-300 disabled:text-slate-700 transition-colors p-1 -mr-1"
             >
               <Send size={16} />
