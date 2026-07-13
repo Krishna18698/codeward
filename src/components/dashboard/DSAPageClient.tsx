@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import CreateSheetModal from "./CreateSheetModal";
 
 type Sheet = { id: string; name: string; isPreset: boolean; problemCount: number };
@@ -18,6 +19,8 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
   const [showCreate, setShowCreate]           = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting]               = useState(false);
+  const [pendingSheetId, setPendingSheetId]   = useState<string | null>(null);
+  const [isPending, startTransition]          = useTransition();
   const router = useRouter();
 
   const handleDelete = async (id: string) => {
@@ -35,8 +38,11 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
   };
 
   const navigate = (sheetId: string) => {
-    router.push(`/dashboard/dsa?sheet=${sheetId}`);
-    router.refresh();
+    setPendingSheetId(sheetId);
+    startTransition(() => {
+      router.push(`/dashboard/dsa?sheet=${sheetId}`);
+      router.refresh();
+    });
   };
 
   return (
@@ -44,8 +50,9 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
       {/* Sheet tabs row */}
       <div className="flex gap-2 flex-wrap items-center">
         {sheets.map((s) => {
-          const isActive = s.id === activeSheetId;
-          const isCustom = !s.isPreset;
+          const isActive  = s.id === activeSheetId;
+          const isCustom  = !s.isPreset;
+          const isLoading = isPending && pendingSheetId === s.id;
 
           return (
             <div key={s.id} className="relative flex items-center group">
@@ -55,10 +62,14 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                   isActive
                     ? "bg-sky-500/15 text-sky-400 border-sky-500/30 shadow-[0_0_12px_rgba(14,165,233,0.15)]"
                     : "border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200 hover:bg-slate-800/40"
-                } ${isCustom ? "pr-7" : ""}`}
+                } ${isCustom ? "pr-7" : ""} ${isPending && !isLoading ? "opacity-60" : ""}`}
               >
                 {s.name}
-                <span className="ml-2 text-[11px] opacity-50">{s.problemCount}</span>
+                <span className="ml-2 text-[11px] opacity-50 inline-flex items-center">
+                  {isLoading
+                    ? <Loader2 size={11} className="animate-spin text-sky-400" />
+                    : s.problemCount}
+                </span>
               </button>
 
               {/* Delete button — custom sheets only */}

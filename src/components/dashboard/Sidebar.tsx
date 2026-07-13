@@ -1,14 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard, Code2, Network, Sparkles, LogOut,
-  ChevronLeft, ChevronRight, X,
+  ChevronLeft, ChevronRight, X, Loader2,
+  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import UserAvatar from "@/components/ui/UserAvatar";
+
+/** Swaps the nav icon for a same-size spinner while the route loads — instant
+ *  click feedback with zero layout shift. Must live inside the <Link>. */
+function NavIcon({ icon: Icon }: { icon: LucideIcon }) {
+  const { pending } = useLinkStatus();
+  return pending
+    ? <Loader2 size={16} className="shrink-0 animate-spin text-sky-400" />
+    : <Icon size={16} className="shrink-0" />;
+}
 
 const nav = [
   { label: "Home",          href: "/dashboard",               icon: LayoutDashboard },
@@ -104,6 +114,8 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
               href={href}
               onClick={onMobileClose}
               title={collapsed ? label : undefined}
+              aria-label={collapsed ? label : undefined}
+              aria-current={active ? "page" : undefined}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition-all duration-150",
                 collapsed && "justify-center px-2",
@@ -112,7 +124,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
                   : "text-slate-400 hover:bg-slate-800/70 hover:text-slate-200 border-l-2 border-transparent",
               )}
             >
-              <Icon size={16} className="shrink-0" />
+              <NavIcon icon={Icon} />
               {!collapsed && <span className="truncate">{label}</span>}
             </Link>
           );
