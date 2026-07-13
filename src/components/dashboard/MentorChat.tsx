@@ -316,7 +316,7 @@ export default function MentorChat({
   };
 
   return (
-    <div className={cn("flex h-full flex-col bg-[#07090c] md:bg-slate-900/50 overflow-hidden", className)}>
+    <div className={cn("flex h-full flex-col bg-canvas md:bg-slate-900/50 overflow-hidden", className)}>
       {!hideHeader && (
         <div className="flex items-center gap-2 border-b border-slate-800 px-4 py-3 shrink-0">
           <Sparkles size={14} className="text-sky-400 shrink-0" />
@@ -384,7 +384,7 @@ export default function MentorChat({
         )}
       </div>
 
-      <div className="border-t border-slate-800 px-3 py-3 md:p-3 shrink-0 bg-[#07090c] md:bg-transparent">
+      <div className="border-t border-slate-800 px-3 py-3 md:p-3 shrink-0 bg-canvas md:bg-transparent">
         <div className="flex gap-2 rounded-2xl border border-slate-700 bg-slate-800/80 px-4 py-3 focus-within:border-sky-500/50 transition-colors">
           <input
             value={input}
@@ -412,7 +412,7 @@ export default function MentorChat({
             </button>
           )}
         </div>
-        <p className="mt-1.5 text-[10px] text-slate-700 text-center hidden md:block">
+        <p className="mt-1.5 text-[10px] text-slate-500 text-center hidden md:block">
           Say &quot;create a sheet for Meta&quot; to generate a personalized plan
         </p>
       </div>

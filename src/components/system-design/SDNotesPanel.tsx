@@ -34,7 +34,7 @@ export default function SDNotesPanel({ questionId, userId, initialContent }: Pro
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-4 py-1.5 border-b border-slate-800/60 shrink-0">
-        <span className="text-[11px] text-slate-600">Design notes, diagrams in text, trade-offs</span>
+        <span className="text-[11px] text-slate-500">Design notes, diagrams in text, trade-offs</span>
         <span className={`text-[11px] transition ${
           saveState === "saving" ? "text-sky-400" :
           saveState === "saved"  ? "text-emerald-400" : "text-slate-700"

@@ -112,7 +112,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
       {/* Divider */}
       <div className="flex items-center gap-3 my-6">
         <div className="h-px flex-1 bg-slate-800/80" />
-        <span className="text-[11px] uppercase tracking-widest text-slate-700">or continue with email</span>
+        <span className="text-[11px] uppercase tracking-widest text-slate-500">or continue with email</span>
         <div className="h-px flex-1 bg-slate-800/80" />
       </div>
 
@@ -159,7 +159,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
         </Button>
       </form>
 
-      <p className="mt-6 text-xs text-slate-600 text-center">
+      <p className="mt-6 text-xs text-slate-500 text-center">
         {isLogin ? (
           <>
             Don&apos;t have an account?{" "}

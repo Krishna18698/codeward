@@ -95,7 +95,7 @@ function StatusIcon({ status }: { status: ProblemStatus }) {
     return <Check size={12} strokeWidth={2.5} className="text-emerald-400" />;
   if (status === "SOLVING")
     return <Circle size={12} strokeWidth={2.5} className="text-sky-400" fill="rgba(14,165,233,0.3)" />;
-  return <Circle size={12} strokeWidth={1.5} className="text-slate-600" />;
+  return <Circle size={12} strokeWidth={1.5} className="text-slate-500" />;
 }
 
 function InlineNote({
@@ -136,16 +136,16 @@ function InlineNote({
 
   return (
     <div className="px-4 pb-3 bg-slate-900/80">
-      <div className="rounded-lg border border-slate-700/60 bg-[#07090c] overflow-hidden">
+      <div className="rounded-lg border border-slate-700/60 bg-canvas overflow-hidden">
         <div className="flex items-center justify-between px-3 py-1.5 border-b border-slate-800/60">
           <span className="text-[11px] text-slate-500 flex items-center gap-1.5">
             <StickyNote size={11} />
             Notes
           </span>
           <div className="flex items-center gap-3">
-            {saveState === "saving" && <span className="text-[10px] text-slate-600">saving…</span>}
+            {saveState === "saving" && <span className="text-[10px] text-slate-500">saving…</span>}
             {saveState === "saved"  && <span className="text-[10px] text-emerald-500">saved ✓</span>}
-            <button onClick={onClose} className="text-slate-600 hover:text-slate-400 transition-colors">
+            <button onClick={onClose} className="text-slate-500 hover:text-slate-400 transition-colors">
               <X size={13} />
             </button>
           </div>
@@ -154,7 +154,7 @@ function InlineNote({
           value={content}
           onChange={handleChange}
           placeholder="Add your notes, key insights, approach…"
-          className="w-full bg-transparent text-slate-300 text-xs px-3 py-2.5 resize-none focus:outline-none placeholder:text-slate-700"
+          className="w-full bg-transparent text-slate-300 text-xs px-3 py-2.5 resize-none focus:outline-none placeholder:text-slate-500"
           rows={4}
           autoFocus
         />
@@ -298,12 +298,12 @@ export default function ProblemList({
     <div className="space-y-3">
       {/* Search */}
       <div className="relative">
-        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
+        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search problems…"
-          className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-slate-700 transition-colors"
+          className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm text-slate-300 placeholder:text-slate-500 focus:outline-none focus:border-slate-700 transition-colors"
         />
       </div>
 
@@ -369,10 +369,10 @@ export default function ProblemList({
                   <span className="text-xs text-slate-300 capitalize font-medium">
                     {pattern.replace(/_/g, " ").toLowerCase()}
                   </span>
-                  <span className="text-[10px] text-slate-600">{groupDone}/{problems.length}</span>
+                  <span className="text-[10px] text-slate-500">{groupDone}/{problems.length}</span>
                 </div>
                 {PATTERN_DESCRIPTIONS[pattern] && (
-                  <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
                     {PATTERN_DESCRIPTIONS[pattern]}
                   </p>
                 )}
@@ -387,7 +387,7 @@ export default function ProblemList({
                 <ChevronRight
                   size={14}
                   className={cn(
-                    "text-slate-600 transition-transform duration-200",
+                    "text-slate-500 transition-transform duration-200",
                     !isCollapsed && "rotate-90",
                   )}
                 />
@@ -456,10 +456,10 @@ export default function ProblemList({
                                     <GFGIcon size={20} />
                                   </a>
                                 )}
-                                <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-violet-400 hover:text-violet-300" : "text-slate-600 hover:text-slate-400")}>
+                                <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-violet-400 hover:text-violet-300" : "text-slate-500 hover:text-slate-400")}>
                                   <RotateCcw size={15} />
                                 </button>
-                                <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-slate-600 hover:text-slate-400")}>
+                                <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-slate-500 hover:text-slate-400")}>
                                   <StickyNote size={15} />
                                 </button>
                               </div>
@@ -510,10 +510,10 @@ export default function ProblemList({
                                   <GFGIcon size={20} />
                                 </a>
                               )}
-                              <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-violet-400 hover:text-violet-300" : "text-slate-600 hover:text-slate-400")}>
+                              <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-violet-400 hover:text-violet-300" : "text-slate-500 hover:text-slate-400")}>
                                 <RotateCcw size={15} />
                               </button>
-                              <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-slate-600 hover:text-slate-400")}>
+                              <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-slate-500 hover:text-slate-400")}>
                                 <StickyNote size={15} />
                               </button>
                             </div>

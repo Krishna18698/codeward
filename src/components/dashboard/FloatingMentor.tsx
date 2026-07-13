@@ -25,7 +25,7 @@ export default function FloatingMentor() {
       {open && (
         <div
           className={cn(
-            "w-[360px] rounded-2xl border border-slate-700/60 bg-[#0d1117] shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden",
+            "w-[360px] rounded-2xl border border-slate-700/60 bg-surface shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden",
             "animate-scale-in origin-bottom-right",
             minimised ? "h-auto" : "h-[520px]",
           )}

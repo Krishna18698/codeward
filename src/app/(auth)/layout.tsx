@@ -10,7 +10,7 @@ const features = [
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen flex bg-[#07090c] text-slate-100">
+    <div className="min-h-screen flex bg-canvas text-slate-100">
 
       {/* ── Left panel ── */}
       <div className="relative hidden lg:flex lg:w-[52%] flex-col justify-between p-12 overflow-hidden">
@@ -83,7 +83,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         {/* Footer quote */}
         <div className="relative">
-          <p className="text-[11px] text-slate-600 italic">
+          <p className="text-[11px] text-slate-500 italic">
             &ldquo;The best time to start is now. The second best time was yesterday.&rdquo;
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* ── Right panel (form) ── */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-[#07090c]">
+      <div className="flex-1 flex items-center justify-center p-6 bg-canvas">
         <div className="w-full max-w-md">
           {children}
         </div>

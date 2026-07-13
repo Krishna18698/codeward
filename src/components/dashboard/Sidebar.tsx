@@ -50,7 +50,7 @@ function UserChip({ collapsed }: { collapsed: boolean }) {
       {!collapsed && (
         <div className="min-w-0">
           <p className="text-xs font-medium text-slate-300 truncate">{user.name ?? "Profile"}</p>
-          <p className="text-[10px] text-slate-600 truncate">{user.email}</p>
+          <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
         </div>
       )}
     </Link>
@@ -92,7 +92,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
         <button
           onClick={toggleCollapsed}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="hidden md:flex h-6 w-6 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-800 hover:text-slate-300 transition-colors"
+          className="hidden md:flex h-6 w-6 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-colors"
         >
           {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>

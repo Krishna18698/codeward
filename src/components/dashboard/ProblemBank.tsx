@@ -184,7 +184,7 @@ export default function ProblemBank({ userSheets }: Props) {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search problems…"
-            className="w-full pl-8 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500/50"
+            className="w-full pl-8 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500/50"
           />
         </div>
 
@@ -222,7 +222,7 @@ export default function ProblemBank({ userSheets }: Props) {
         </button>
 
         {!patternsLoading && (
-          <span className="text-xs text-slate-600 ml-auto">{totalProblems} problems</span>
+          <span className="text-xs text-slate-500 ml-auto">{totalProblems} problems</span>
         )}
       </div>
 
@@ -261,17 +261,17 @@ export default function ProblemBank({ userSheets }: Props) {
                       <span className="text-xs font-medium text-slate-300 capitalize">
                         {patternLabel(bp.pattern)}
                       </span>
-                      <span className="text-[10px] text-slate-600">{bp.total}</span>
+                      <span className="text-[10px] text-slate-500">{bp.total}</span>
                     </div>
                     {PATTERN_DESCRIPTIONS[bp.pattern] && (
-                      <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">
+                      <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
                         {PATTERN_DESCRIPTIONS[bp.pattern]}
                       </p>
                     )}
                   </div>
                   <ChevronRight
                     size={14}
-                    className={cn("text-slate-600 transition-transform duration-200", isExpanded && "rotate-90")}
+                    className={cn("text-slate-500 transition-transform duration-200", isExpanded && "rotate-90")}
                   />
                 </button>
 
@@ -287,7 +287,7 @@ export default function ProblemBank({ userSheets }: Props) {
                         </div>
                       ))
                     ) : probs.length === 0 ? (
-                      <div className="px-4 py-4 text-center text-xs text-slate-600">No problems found.</div>
+                      <div className="px-4 py-4 text-center text-xs text-slate-500">No problems found.</div>
                     ) : (
                       probs.map((p) => (
                         <div key={p.id} className="flex items-start gap-3 px-4 py-2.5 hover:bg-slate-800/30 transition-colors">
@@ -406,7 +406,7 @@ export default function ProblemBank({ userSheets }: Props) {
                                   <Plus size={10} /> Add
                                 </button>
                                 {dropdownOpen === p.id && (
-                                  <div className="absolute right-0 top-7 z-20 w-44 rounded-xl border border-slate-700 bg-[#0d1117] shadow-xl py-1">
+                                  <div className="absolute right-0 top-7 z-20 w-44 rounded-xl border border-slate-700 bg-surface shadow-xl py-1">
                                     {userSheets.map((s) => (
                                       <button
                                         key={s.id}

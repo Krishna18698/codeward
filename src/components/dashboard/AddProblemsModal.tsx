@@ -52,7 +52,7 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-700/80 bg-[#0d1117]/95 shadow-2xl backdrop-blur-xl flex flex-col max-h-[82vh]">
+      <div className="relative w-full max-w-lg rounded-2xl border border-slate-700/80 bg-surface/95 shadow-2xl backdrop-blur-xl flex flex-col max-h-[82vh]">
 
         {/* Header */}
         <div className="px-5 pt-5 pb-4 border-b border-slate-800 shrink-0">
@@ -77,7 +77,7 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
         <div className="px-5 py-4 border-t border-slate-800 shrink-0">
           {error && <p className="text-xs text-red-400 mb-3">{error}</p>}
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-600 flex-1">
+            <span className="text-xs text-slate-500 flex-1">
               {selected.length > 0
                 ? `${selected.length} problem${selected.length > 1 ? "s" : ""} selected`
                 : "Nothing selected yet"}

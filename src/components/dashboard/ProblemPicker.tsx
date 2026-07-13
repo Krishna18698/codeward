@@ -111,7 +111,7 @@ export default function ProblemPicker({ excludeSheetId, selected, onToggle }: Pr
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search problems…"
-            className="w-full pl-7 pr-3 py-2.5 bg-slate-900/80 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500/50 transition"
+            className="w-full pl-7 pr-3 py-2.5 bg-slate-900/80 border border-slate-700 rounded-xl text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500/50 transition"
           />
         </div>
         <select
@@ -133,11 +133,11 @@ export default function ProblemPicker({ excludeSheetId, selected, onToggle }: Pr
             <SkeletonRow /><SkeletonRow /><SkeletonRow /><SkeletonRow /><SkeletonRow />
           </>
         ) : !q && comp === "ALL" ? (
-          <div className="py-6 text-center text-xs text-slate-600">
+          <div className="py-6 text-center text-xs text-slate-500">
             Search by name or filter by company…
           </div>
         ) : results.length === 0 && hasSearched ? (
-          <div className="py-6 text-center text-xs text-slate-600">No problems match.</div>
+          <div className="py-6 text-center text-xs text-slate-500">No problems match.</div>
         ) : (
           results.map((p) => {
             const isSelected = selectedIds.has(p.id);
@@ -151,7 +151,7 @@ export default function ProblemPicker({ excludeSheetId, selected, onToggle }: Pr
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-slate-200 truncate">{p.title}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <p className="text-[11px] text-slate-600">{p.sheetName}</p>
+                    <p className="text-[11px] text-slate-500">{p.sheetName}</p>
                     <span className={`text-[10px] border rounded-full px-1.5 py-0.5 ${DIFF_COLOR[p.difficulty]}`}>
                       {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
                     </span>
@@ -162,7 +162,7 @@ export default function ProblemPicker({ excludeSheetId, selected, onToggle }: Pr
                   disabled={isSelected}
                   className={`shrink-0 flex items-center gap-1 text-xs border rounded-xl px-3 py-1.5 transition ${
                     isSelected
-                      ? "text-slate-600 border-slate-700 cursor-not-allowed"
+                      ? "text-slate-500 border-slate-700 cursor-not-allowed"
                       : "text-sky-400 border-sky-500/30 hover:border-sky-500/60 hover:text-sky-300"
                   }`}
                 >

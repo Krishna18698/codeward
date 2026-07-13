@@ -32,7 +32,7 @@ export default function SDWorkspace({ question, initialNote, userId }: Props) {
   return (
     <div className="flex h-[calc(100vh-0px)] overflow-hidden -m-8">
       {/* ── Left panel ── */}
-      <div className="w-[420px] shrink-0 flex flex-col border-r border-slate-800 bg-[#07090c] overflow-hidden">
+      <div className="w-[420px] shrink-0 flex flex-col border-r border-slate-800 bg-canvas overflow-hidden">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-800 text-xs text-slate-500 shrink-0">
           <Link href="/dashboard/system-design" className="hover:text-slate-300 transition">
@@ -51,7 +51,7 @@ export default function SDWorkspace({ question, initialNote, userId }: Props) {
             <span className={`text-[11px] border rounded-full px-2 py-0.5 font-medium ${diffBg[question.difficulty]} ${diffColor[question.difficulty]}`}>
               {question.difficulty.charAt(0) + question.difficulty.slice(1).toLowerCase()}
             </span>
-            <span className="text-[11px] text-slate-600">
+            <span className="text-[11px] text-slate-500">
               {expLabel[question.experienceLevel]}
             </span>
             {question.mustDo && (
@@ -144,15 +144,15 @@ export default function SDWorkspace({ question, initialNote, userId }: Props) {
       {/* ── Right: AI Mentor ── */}
       <div className={`flex-1 flex flex-col overflow-hidden ${showMentor ? "" : "hidden xl:flex"}`}>
         {/* Mentor header bar */}
-        <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-[#07090c] shrink-0">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-canvas shrink-0">
           <div className="flex items-center gap-2">
             <span className="text-sky-400 text-sm">✦</span>
             <span className="text-sm font-medium text-white">AI Mentor</span>
-            <span className="text-xs text-slate-600">— ask me to walk through this design</span>
+            <span className="text-xs text-slate-500">— ask me to walk through this design</span>
           </div>
           <button
             onClick={() => setShowMentor((v) => !v)}
-            className="text-slate-600 hover:text-slate-400 text-xs xl:hidden"
+            className="text-slate-500 hover:text-slate-400 text-xs xl:hidden"
           >
             ✕
           </button>

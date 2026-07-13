@@ -145,7 +145,7 @@ export default async function DSAPage({ searchParams }: Props) {
             {tabSheets.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-slate-800 px-5 py-16 text-center">
                 <p className="text-slate-400 text-sm font-medium mb-1">No sheets yet</p>
-                <p className="text-slate-600 text-xs">Create a sheet above to get started.</p>
+                <p className="text-slate-500 text-xs">Create a sheet above to get started.</p>
               </div>
             ) : (
               <SheetContent

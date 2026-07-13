@@ -73,7 +73,7 @@ export default function CreateSheetModal({ onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-700 bg-[#0d1117] shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-lg rounded-2xl border border-slate-700 bg-surface shadow-2xl flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="px-6 pt-5 pb-4 border-b border-slate-800 shrink-0">
           <h2 className="text-base font-semibold text-white mb-0.5">Create New Sheet</h2>
@@ -92,7 +92,7 @@ export default function CreateSheetModal({ onClose }: Props) {
               onChange={(e) => { setName(e.target.value); setError(""); }}
               onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
               placeholder="e.g. Google Prep, Amazon Grind…"
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-sky-500/60 transition"
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-sky-500/60 transition"
             />
             {error && <p className="text-xs text-red-400 mt-1.5">{error}</p>}
           </div>
@@ -101,7 +101,7 @@ export default function CreateSheetModal({ onClose }: Props) {
           <div>
             <label className="text-xs text-slate-400 font-medium mb-1.5 block">
               Add problems{" "}
-              <span className="text-slate-600 font-normal">(optional — search across all sheets)</span>
+              <span className="text-slate-500 font-normal">(optional — search across all sheets)</span>
             </label>
             <ProblemPicker selected={selected} onToggle={toggleProblem} />
           </div>
@@ -109,7 +109,7 @@ export default function CreateSheetModal({ onClose }: Props) {
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-800 flex items-center justify-between shrink-0">
-          <span className="text-xs text-slate-600">
+          <span className="text-xs text-slate-500">
             {selected.length > 0 ? `${selected.length} problem${selected.length > 1 ? "s" : ""} selected` : ""}
           </span>
           <div className="flex gap-2">

@@ -81,7 +81,7 @@ function Hero() {
         </Link>
       </div>
 
-      <p className="animate-fade-up mt-5 text-xs text-slate-600" style={{ animationDelay: "300ms" }}>
+      <p className="animate-fade-up mt-5 text-xs text-slate-500" style={{ animationDelay: "300ms" }}>
         No credit card required
       </p>
     </section>
@@ -218,7 +218,7 @@ function Footer() {
           <Sparkles size={14} className="text-sky-400" />
           Code<span className="text-sky-400">ward</span>
         </span>
-        <div className="flex items-center gap-6 text-xs text-slate-600">
+        <div className="flex items-center gap-6 text-xs text-slate-500">
           <span>Built to get you hired</span>
           <Link href="/login" className="hover:text-slate-400 transition-colors">Log in</Link>
           <Link href="/register" className="hover:text-slate-400 transition-colors">Sign up</Link>

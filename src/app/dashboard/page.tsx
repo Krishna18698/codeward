@@ -121,7 +121,7 @@ export default async function DashboardPage() {
                   <span className="text-sm font-bold text-white">{overallPct}%</span>
                 </div>
               </div>
-              <span className="text-[10px] text-slate-600">overall</span>
+              <span className="text-[10px] text-slate-500">overall</span>
             </div>
           </div>
 
@@ -177,7 +177,7 @@ export default async function DashboardPage() {
               </div>
               <p className={`text-3xl font-bold ${stat.color} mb-0.5`}>{stat.value}</p>
               <p className="text-xs font-medium text-slate-300">{stat.label}</p>
-              <p className="text-[11px] text-slate-600 mt-0.5">{stat.sub}</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">{stat.sub}</p>
             </div>
           ))}
         </div>
@@ -253,7 +253,7 @@ export default async function DashboardPage() {
                       <p className="text-sm font-semibold text-white group-hover:text-sky-300 transition-colors">
                         {sheet.name}
                       </p>
-                      <p className="text-[11px] text-slate-600 mt-0.5">
+                      <p className="text-[11px] text-slate-500 mt-0.5">
                         {sheet.isPreset ? "Preset" : "Custom"} · {total} problems
                       </p>
                     </div>
@@ -272,7 +272,7 @@ export default async function DashboardPage() {
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-600">{done}/{total} solved</span>
+                    <span className="text-xs text-slate-500">{done}/{total} solved</span>
                     <ArrowRight size={12} className="text-slate-700 group-hover:text-sky-400 group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </Link>
@@ -304,7 +304,7 @@ export default async function DashboardPage() {
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="text-xs text-slate-500 w-10 text-right">{done}/{total}</span>
-                      <span className={`text-[10px] font-medium w-8 text-right ${pct === 100 ? "text-emerald-400" : "text-slate-600"}`}>
+                      <span className={`text-[10px] font-medium w-8 text-right ${pct === 100 ? "text-emerald-400" : "text-slate-500"}`}>
                         {pct}%
                       </span>
                     </div>
@@ -317,7 +317,7 @@ export default async function DashboardPage() {
           <div className="rounded-2xl border border-dashed border-slate-800 px-5 py-12 text-center">
             <Code2 size={24} className="text-slate-700 mx-auto mb-3" />
             <p className="text-slate-500 text-sm font-medium">No progress yet</p>
-            <p className="text-slate-600 text-xs mt-1">Start solving problems to see your pattern breakdown here.</p>
+            <p className="text-slate-500 text-xs mt-1">Start solving problems to see your pattern breakdown here.</p>
             <Link href="/dashboard/dsa" className="inline-flex items-center gap-1 mt-4 text-xs text-sky-400 hover:text-sky-300 transition-colors font-medium">
               Go to DSA Sheets <ArrowRight size={11} />
             </Link>

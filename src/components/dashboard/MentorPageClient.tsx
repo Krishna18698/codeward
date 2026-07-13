@@ -127,7 +127,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
   const groups = groupByDate(conversations);
 
   const sidebar = (
-    <div className="flex flex-col h-full border-r border-slate-800/60 bg-[#07090c] md:bg-transparent">
+    <div className="flex flex-col h-full border-r border-slate-800/60 bg-canvas md:bg-transparent">
       {/* Sidebar header */}
       <div className="px-4 pt-5 pb-3 shrink-0">
         <div className="flex items-center gap-2 mb-4">
@@ -148,13 +148,13 @@ export default function MentorPageClient({ initialConversations }: Props) {
         {groups.length === 0 ? (
           <div className="px-2 py-8 text-center">
             <MessageSquare size={24} className="text-slate-700 mx-auto mb-2" />
-            <p className="text-xs text-slate-600">No conversations yet</p>
-            <p className="text-xs text-slate-700 mt-1">Click &ldquo;New chat&rdquo; to start</p>
+            <p className="text-xs text-slate-500">No conversations yet</p>
+            <p className="text-xs text-slate-500 mt-1">Click &ldquo;New chat&rdquo; to start</p>
           </div>
         ) : (
           groups.map((group) => (
             <div key={group.label}>
-              <p className="px-2 mb-1 text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
+              <p className="px-2 mb-1 text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                 {group.label}
               </p>
               {group.items.map((conv) => (
@@ -171,7 +171,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate leading-snug">{conv.title}</p>
                       {conv.lastMessage && (
-                        <p className="text-[11px] text-slate-600 truncate mt-0.5">{conv.lastMessage}</p>
+                        <p className="text-[11px] text-slate-500 truncate mt-0.5">{conv.lastMessage}</p>
                       )}
                     </div>
                   </button>
@@ -196,7 +196,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
   const chatPanel = (
     <div className="flex flex-col h-full min-w-0">
       {/* Chat header — always visible */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-800/60 shrink-0 bg-[#07090c]/80 backdrop-blur-sm">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-800/60 shrink-0 bg-canvas/80 backdrop-blur-sm">
         {/* Mobile back button */}
         <button
           onClick={() => setShowList(true)}

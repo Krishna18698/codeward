@@ -154,7 +154,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             className={cn(
               "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all shrink-0",
               spinning
-                ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+                ? "bg-slate-800 text-slate-500 cursor-not-allowed"
                 : "bg-violet-500/15 border border-violet-500/40 text-violet-300 hover:bg-violet-500/25",
             )}
           >
@@ -189,7 +189,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2">
               <AlertTriangle size={11} className="text-amber-400 mt-0.5 shrink-0" />
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-slate-600 mb-0.5">Traffic spike</p>
+                <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">Traffic spike</p>
                 <p className="text-xs text-slate-300">{challenge.spike}</p>
               </div>
             </div>
@@ -198,7 +198,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             <div className="flex items-start gap-2 rounded-lg border border-sky-500/20 bg-sky-500/5 px-3 py-2">
               <Globe size={11} className="text-sky-400 mt-0.5 shrink-0" />
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-slate-600 mb-0.5">Special constraint</p>
+                <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">Special constraint</p>
                 <p className="text-xs text-slate-300">{challenge.constraint}</p>
               </div>
             </div>
@@ -206,9 +206,9 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             {/* Prompt */}
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2.5">
               <div className="flex items-center gap-1.5 mb-1.5">
-                <Clock size={10} className="text-slate-600" />
-                <p className="text-[10px] uppercase tracking-widest text-slate-600 flex-1">Your prompt</p>
-                <button onClick={copyPrompt} title="Copy" className="text-slate-600 hover:text-slate-300 transition-colors">
+                <Clock size={10} className="text-slate-500" />
+                <p className="text-[10px] uppercase tracking-widest text-slate-500 flex-1">Your prompt</p>
+                <button onClick={copyPrompt} title="Copy" className="text-slate-500 hover:text-slate-300 transition-colors">
                   {copied ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
                 </button>
               </div>
@@ -236,7 +236,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
           </div>
           <div>
             <p className="text-sm font-semibold text-white">Challenge Spinner</p>
-            <p className="text-[10px] text-slate-600">Scale · spike · constraints — all random</p>
+            <p className="text-[10px] text-slate-500">Scale · spike · constraints — all random</p>
           </div>
         </div>
         <button
@@ -245,7 +245,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
           className={cn(
             "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-150 whitespace-nowrap shrink-0",
             spinning
-              ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+              ? "bg-slate-800 text-slate-500 cursor-not-allowed"
               : "bg-violet-500/15 border border-violet-500/40 text-violet-300 hover:bg-violet-500/25 hover:border-violet-500/60",
           )}
         >
@@ -261,7 +261,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             <Zap size={22} className="text-violet-400" />
           </div>
           <p className="text-sm font-medium text-slate-300">Ready for a random challenge?</p>
-          <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto">
+          <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
             Hit Spin to get a problem, scale, traffic spike, and a special constraint — all randomised.
           </p>
         </div>
@@ -287,7 +287,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
       {challenge && revealed && (
         <div className={cn("px-5 py-5 space-y-4 animate-fade-up")}>
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-slate-600 mb-1.5">Problem</p>
+            <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1.5">Problem</p>
             <p className="text-xl font-bold text-white">Design a {challenge.problem}</p>
           </div>
 
@@ -300,7 +300,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
           <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3">
             <AlertTriangle size={13} className="text-amber-400 mt-0.5 shrink-0" />
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-slate-600 mb-0.5">Traffic spike</p>
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">Traffic spike</p>
               <p className="text-sm text-slate-300">{challenge.spike}</p>
             </div>
           </div>
@@ -308,19 +308,19 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
           <div className="flex items-start gap-3 rounded-xl border border-sky-500/20 bg-sky-500/5 px-4 py-3">
             <Globe size={13} className="text-sky-400 mt-0.5 shrink-0" />
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-slate-600 mb-0.5">Special constraint</p>
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-0.5">Special constraint</p>
               <p className="text-sm text-slate-300">{challenge.constraint}</p>
             </div>
           </div>
 
           <div className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
             <div className="flex items-center gap-1.5 mb-2">
-              <Clock size={11} className="text-slate-600" />
-              <p className="text-[10px] uppercase tracking-widest text-slate-600 flex-1">Your prompt</p>
+              <Clock size={11} className="text-slate-500" />
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 flex-1">Your prompt</p>
               <button
                 onClick={copyPrompt}
                 title="Copy prompt"
-                className="text-slate-600 hover:text-slate-300 transition-colors"
+                className="text-slate-500 hover:text-slate-300 transition-colors"
               >
                 {copied ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
               </button>

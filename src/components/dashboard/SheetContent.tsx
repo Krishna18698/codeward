@@ -165,12 +165,12 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
             <div className="flex items-center gap-1.5">
               <CheckCircle2 size={13} className="text-emerald-400" />
               <span className="text-sm font-semibold text-white">{doneCount}</span>
-              <span className="text-xs text-slate-600">solved</span>
+              <span className="text-xs text-slate-500">solved</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Circle size={13} className="text-slate-600" />
+              <Circle size={13} className="text-slate-500" />
               <span className="text-sm font-semibold text-white">{total - doneCount}</span>
-              <span className="text-xs text-slate-600">to do</span>
+              <span className="text-xs text-slate-500">to do</span>
             </div>
           </div>
         </div>
@@ -191,7 +191,7 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
       ) : activeSheet ? (
         <div className="rounded-2xl border border-dashed border-slate-800 px-5 py-16 text-center">
           <p className="text-slate-400 text-sm">This sheet has no problems yet.</p>
-          <p className="text-slate-600 text-xs mt-1">
+          <p className="text-slate-500 text-xs mt-1">
             Use <span className="text-sky-400">＋ Add Problems</span> in the filters, or browse the{" "}
             <Link href="/dashboard/dsa?view=bank" className="text-sky-400 hover:underline">
               Problem Bank

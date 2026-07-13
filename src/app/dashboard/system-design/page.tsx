@@ -118,7 +118,7 @@ export default async function SystemDesignPage({ searchParams }: Props) {
                   <span className={`text-[10px] rounded-full border px-2 py-0.5 ${difficultyBg[q.difficulty]}`}>
                     {q.difficulty.charAt(0) + q.difficulty.slice(1).toLowerCase()}
                   </span>
-                  <span className="text-[10px] text-slate-600 capitalize whitespace-nowrap">
+                  <span className="text-[10px] text-slate-500 capitalize whitespace-nowrap">
                     {q.experienceLevel.toLowerCase()}
                   </span>
                 </div>
@@ -128,7 +128,7 @@ export default async function SystemDesignPage({ searchParams }: Props) {
         ) : (
           <div className="rounded-xl border border-slate-800 bg-slate-900/40 px-5 py-16 text-center">
             <p className="text-slate-400 text-sm font-medium">No questions yet</p>
-            <p className="text-slate-600 text-xs mt-1">
+            <p className="text-slate-500 text-xs mt-1">
               System design questions will appear here once seeded.
             </p>
           </div>
