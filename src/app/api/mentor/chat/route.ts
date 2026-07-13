@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   }
 
   await prisma.chatMessage.create({
-    data: { userId: userId, role: "USER", content: message, context },
+    data: { userId, role: "USER", content: message, context },
   });
 
   // ── System prompt ──────────────────────────────────────────────────────
@@ -74,7 +74,7 @@ Help them think through the design — ask clarifying questions first, then guid
 
   // ── Chat history ───────────────────────────────────────────────────────
   const history = await prisma.chatMessage.findMany({
-    where: { userId: userId, context },
+    where: { userId, context },
     orderBy: { createdAt: "desc" },
     take: 12,
     select: { role: true, content: true },
@@ -96,7 +96,7 @@ Help them think through the design — ask clarifying questions first, then guid
   if (!apiKey) {
     const fallback = "The AI mentor isn't available right now. Please check back later.";
     await prisma.chatMessage.create({
-      data: { userId: userId, role: "ASSISTANT", content: fallback, context },
+      data: { userId, role: "ASSISTANT", content: fallback, context },
     });
     return new Response(fallback);
   }
@@ -131,7 +131,7 @@ Help them think through the design — ask clarifying questions first, then guid
       } finally {
         if (assistantContent) {
           await prisma.chatMessage.create({
-            data: { userId: userId, role: "ASSISTANT", content: assistantContent, context },
+            data: { userId, role: "ASSISTANT", content: assistantContent, context },
           });
         }
         controller.close();

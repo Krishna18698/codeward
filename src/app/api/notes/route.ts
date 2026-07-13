@@ -15,7 +15,7 @@ export async function GET(req: Request) {
 
   const notes = await prisma.userNote.findMany({
     where: {
-      userId: userId,
+      userId,
       problem: { sheetId },
       problemId: { not: null },
     },

@@ -22,8 +22,8 @@ export async function POST(req: Request) {
 
   const validStatus = status as ProblemStatus;
   await prisma.userProblemStatus.upsert({
-    where: { userId_problemId: { userId: userId, problemId } },
-    create: { userId: userId, problemId, status: validStatus },
+    where: { userId_problemId: { userId, problemId } },
+    create: { userId, problemId, status: validStatus },
     update: { status: validStatus },
   });
 

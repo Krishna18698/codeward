@@ -113,7 +113,7 @@ Always use the create_sheet tool to output the sheet. Do not just describe it â€
 
   // Persist to DB
   const sheet = await prisma.sheet.create({
-    data: { name: args.sheetName, source: "CUSTOM", isPreset: false, userId: userId },
+    data: { name: args.sheetName, source: "CUSTOM", isPreset: false, userId },
   });
 
   const created = await Promise.all(

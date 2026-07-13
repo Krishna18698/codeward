@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
   // Verify the sheet belongs to this user
   const sheet = await prisma.sheet.findFirst({
-    where: { id: sheetId, userId: userId },
+    where: { id: sheetId, userId },
     include: { problems: { select: { title: true }, orderBy: { order: "asc" } } },
   });
   if (!sheet) return NextResponse.json({ error: "Sheet not found" }, { status: 404 });

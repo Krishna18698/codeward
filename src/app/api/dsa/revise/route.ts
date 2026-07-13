@@ -16,8 +16,8 @@ export async function POST(req: Request) {
   }
 
   await prisma.userProblemStatus.upsert({
-    where: { userId_problemId: { userId: userId, problemId } },
-    create: { userId: userId, problemId, toRevise: toRevise ?? true },
+    where: { userId_problemId: { userId, problemId } },
+    create: { userId, problemId, toRevise: toRevise ?? true },
     update: { toRevise: toRevise ?? true },
   });
 

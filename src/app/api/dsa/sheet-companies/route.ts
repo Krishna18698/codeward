@@ -18,7 +18,7 @@ export async function GET(req: Request) {
       ? { sheet: { isPreset: true }, NOT: { companies: { isEmpty: true } } }
       : {
           sheetId: sheetId!,
-          sheet: { OR: [{ isPreset: true }, { userId: userId }] },
+          sheet: { OR: [{ isPreset: true }, { userId }] },
           NOT: { companies: { isEmpty: true } },
         },
     select: { companies: true },

@@ -20,7 +20,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const { id } = await params;
 
   const conv = await prisma.mentorConversation.findFirst({
-    where: { id, userId: userId },
+    where: { id, userId },
   });
   if (!conv) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
@@ -32,7 +32,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   // Save all messages
   await prisma.chatMessage.createMany({
     data: messages.map((m) => ({
-      userId: userId,
+      userId,
       conversationId: id,
       role: m.role,
       content: m.content,

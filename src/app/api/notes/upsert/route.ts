@@ -23,8 +23,8 @@ export async function POST(req: Request) {
   }
 
   const where = problemId
-    ? { userId: userId, problemId }
-    : { userId: userId, sdQuestionId: sdQuestionId! };
+    ? { userId, problemId }
+    : { userId, sdQuestionId: sdQuestionId! };
 
   const existing = await prisma.userNote.findFirst({ where, select: { id: true } });
 
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     await prisma.userNote.update({ where: { id: existing.id }, data: { content } });
   } else {
     await prisma.userNote.create({
-      data: { userId: userId, content, ...(problemId ? { problemId } : { sdQuestionId }) },
+      data: { userId, content, ...(problemId ? { problemId } : { sdQuestionId }) },
     });
   }
 

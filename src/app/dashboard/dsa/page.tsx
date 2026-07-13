@@ -19,7 +19,7 @@ export default async function DSAPage({ searchParams }: Props) {
   const showBank = view === "bank";
 
   const sheets = await prisma.sheet.findMany({
-    where: { OR: [{ isPreset: true }, { userId: userId }] },
+    where: { OR: [{ isPreset: true }, { userId }] },
     include: { _count: { select: { problems: true } } },
     orderBy: [{ isPreset: "desc" }, { createdAt: "asc" }],
   });
@@ -51,16 +51,16 @@ export default async function DSAPage({ searchParams }: Props) {
             id: true, title: true, description: true, difficulty: true,
             pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true,
             order: true, companies: true,
-            statuses: { where: { userId: userId }, select: { status: true, toRevise: true } },
+            statuses: { where: { userId }, select: { status: true, toRevise: true } },
           },
           orderBy: [{ mustDo: "desc" }, { order: "asc" }],
         }),
         prisma.userProblemStatus.findMany({
-          where: { userId: userId, problem: { sheetId: defaultSheetId } },
+          where: { userId, problem: { sheetId: defaultSheetId } },
           select: { status: true },
         }),
         prisma.userNote.findMany({
-          where: { userId: userId, problem: { sheetId: defaultSheetId }, problemId: { not: null } },
+          where: { userId, problem: { sheetId: defaultSheetId }, problemId: { not: null } },
           select: { problemId: true, content: true },
         }),
       ])

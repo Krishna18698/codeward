@@ -14,7 +14,7 @@ export default async function SDQuestionPage({ params }: Props) {
   const [question, note] = await Promise.all([
     prisma.systemDesignQuestion.findUnique({ where: { id } }),
     prisma.userNote.findFirst({
-      where: { userId: userId, sdQuestionId: id },
+      where: { userId, sdQuestionId: id },
       select: { content: true },
     }),
   ]);

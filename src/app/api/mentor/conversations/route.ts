@@ -8,7 +8,7 @@ export async function GET() {
 
 
   const conversations = await prisma.mentorConversation.findMany({
-    where: { userId: userId },
+    where: { userId },
     orderBy: { updatedAt: "desc" },
     take: 50,
     include: {
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   const { title } = await req.json().catch(() => ({})) as { title?: string };
 
   const conversation = await prisma.mentorConversation.create({
-    data: { userId: userId, title: title ?? "New conversation" },
+    data: { userId, title: title ?? "New conversation" },
   });
 
   return NextResponse.json({ id: conversation.id, title: conversation.title });

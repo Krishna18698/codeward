@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   const sheet = await prisma.sheet.create({
-    data: { name: name.trim(), source: "CUSTOM", isPreset: false, userId: userId },
+    data: { name: name.trim(), source: "CUSTOM", isPreset: false, userId },
   });
 
   return NextResponse.json({ sheet });

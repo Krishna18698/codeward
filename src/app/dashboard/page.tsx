@@ -44,13 +44,14 @@ export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { name: true, image: true, targetCompany: true, experienceLevel: true },
-  });
+  const [user, { sheets, statuses, sdTotal }] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true, image: true, targetCompany: true, experienceLevel: true },
+    }),
+    getDashboardData(userId),
+  ]);
   if (!user) redirect("/login");
-
-  const { sheets, statuses, sdTotal } = await getDashboardData(userId);
 
   const doneCount    = statuses.filter((s) => s.status === "DONE").length;
   const totalTracked = sheets.filter((s) => s.isPreset).reduce((sum, s) => sum + s._count.problems, 0);

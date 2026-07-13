@@ -14,7 +14,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   // Verify the target sheet belongs to this user
   const targetSheet = await prisma.sheet.findFirst({
-    where: { id: sheetId, userId: userId, source: "CUSTOM" },
+    where: { id: sheetId, userId, source: "CUSTOM" },
   });
   if (!targetSheet) return NextResponse.json({ error: "Sheet not found" }, { status: 404 });
 

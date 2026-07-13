@@ -28,7 +28,7 @@ export async function GET(req: Request) {
       select: {
         id: true, title: true, description: true, difficulty: true,
         pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true, order: true, companies: true,
-        statuses: { where: { userId: userId }, select: { status: true, toRevise: true } },
+        statuses: { where: { userId }, select: { status: true, toRevise: true } },
       },
       orderBy: [{ mustDo: "desc" }, { order: "asc" }],
       skip,
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     // Full-sheet statuses only on first page (for progress bar)
     skip === 0
       ? prisma.userProblemStatus.findMany({
-          where: { userId: userId, problem: { sheetId } },
+          where: { userId, problem: { sheetId } },
           select: { status: true },
         })
       : Promise.resolve(null),

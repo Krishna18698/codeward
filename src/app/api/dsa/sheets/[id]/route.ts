@@ -10,7 +10,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   const { id } = await params;
 
   const sheet = await prisma.sheet.findFirst({
-    where: { id, userId: userId, isPreset: false },
+    where: { id, userId, isPreset: false },
   });
 
   if (!sheet) return NextResponse.json({ error: "Sheet not found" }, { status: 404 });

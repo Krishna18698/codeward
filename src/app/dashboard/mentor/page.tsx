@@ -10,7 +10,7 @@ export default async function MentorPage() {
   if (!userId) redirect("/login");
 
   const conversations = await prisma.mentorConversation.findMany({
-    where: { userId: userId },
+    where: { userId },
     orderBy: { updatedAt: "desc" },
     take: 50,
     include: {
