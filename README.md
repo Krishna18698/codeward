@@ -22,7 +22,9 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - **Sheet generation**: builds a personalized 15–25 problem study sheet from your goals and target company, and can add problems straight into your sheets
 - **Answer evaluation**: reviews your approach and reasoning
 - Available both as a **full page** and a **floating panel** across the dashboard
-- Rate-limited per user (Upstash Redis); AI markdown is sanitized before rendering
+- Auto-growing input (Shift+Enter for a newline), scroll stays pinned to the bottom while streaming unless you've scrolled up to re-read
+- Markdown rendering is lazy-loaded and sanitized (`rehype-sanitize`) before display
+- Rate-limited per user (Upstash Redis) on chat, eval, sheet generation, and add-to-sheet
 
 ### System Design
 - **Curated questions** organized by difficulty (Easy / Medium / Hard) and experience level (Junior / Mid / Senior), with "must do" flags and one-line summaries
@@ -33,21 +35,30 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - Onboarding flow capturing experience level and target company
 - Profile page with selectable avatar
 
+### Polish
+- Instant navigation feedback (spinner swap on sidebar links and sheet tabs) with zero layout shift — no route-level skeletons
+- Toasts confirm every mutation (sheet create/delete, add problems, status/revise toggles); optimistic UI reverts and reports failures instead of silently diverging
+- Accessible by default: keyboard-visible focus rings, `aria-current`/`aria-expanded`/`aria-label` on interactive controls, `prefers-reduced-motion` respected
+- WCAG AA-compliant secondary text contrast
+- Installable as a PWA (favicon set + manifest)
+
 ---
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16 (App Router, Server Components, Turbopack, React Compiler) |
+| Framework | Next.js 16.2 (App Router, Server Components, Turbopack, React Compiler) |
 | Language | TypeScript 5 |
 | Styling | Tailwind CSS v4 (Inter + JetBrains Mono) |
 | Auth | NextAuth.js v4 (JWT sessions) |
-| Database | Neon PostgreSQL (serverless) |
+| Database | Neon PostgreSQL (serverless, `ap-southeast-1`) |
 | ORM | Prisma 7 |
 | Vector search | pgvector + Voyage AI embeddings |
 | LLM | Groq (`llama-3.3-70b-versatile`) |
 | Rate limiting | Upstash Redis |
+| Analytics | Vercel Analytics |
+| Hosting | Vercel (functions pinned to `sin1` to co-locate with the database) |
 | Hardening | Security headers, `rehype-sanitize` on AI output |
 
 ---
@@ -167,11 +178,14 @@ src/
 │   ├── system-design/           # Challenge Spinner, etc.
 │   └── ui/                      # Shared icons/primitives
 ├── lib/
+│   ├── auth.ts                  # NextAuth config + getSessionUserId()
 │   ├── prisma.ts                # Prisma client
 │   ├── rag.ts                   # Retrieval + embeddings
 │   ├── ratelimit.ts             # Upstash limiters
 │   ├── knowledge/               # RAG knowledge base source
 │   └── ...
+├── types/
+│   └── next-auth.d.ts           # Types session.user.id
 prisma/
 ├── schema.prisma
 ├── seed.ts                      # Seeds all preset sheets
@@ -183,12 +197,24 @@ prisma/
 
 ## Security
 
-- Every data API route authenticates via `getServerSession` before any DB access
+- Every data API route authenticates via `getSessionUserId()` (`src/lib/auth.ts`) before any DB access — a single call backed by the JWT, no per-request user lookup
 - `/api/mentor/ingest` is **fail-secure** — returns 503 if `INGEST_SECRET` is unset, 401 on mismatch
+- Google OAuth tokens are never persisted — the app only uses Google to authenticate, so `access_token`/`refresh_token`/`id_token` are stripped before the `Account` row is written
 - AI-generated markdown is sanitized with `rehype-sanitize` (XSS protection)
-- Rate limiting on mentor chat, sheet generation, evaluation, and sign-up
+- Rate limiting (Upstash) on mentor chat, eval, sheet generation, add-to-sheet, and sign-up
 - Security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, etc.) set in `next.config.ts`
 - Passwords hashed with bcrypt (12 rounds); sheet queries scoped to preset or owning user
+
+---
+
+## Deployment
+
+Deployed on Vercel. A few things that matter if you fork this:
+
+- **Function region**: `vercel.json` pins functions to `sin1` (Singapore) to co-locate with the Neon database in `ap-southeast-1` — cross-region round trips otherwise dominate page load time. If you move the database, update this to match.
+- **Environment variables**: set the full list from [Setup](#2-configure-environment-variables) in the Vercel project settings for both **Production** and **Preview**, including the Upstash pair — without it, rate limiting silently no-ops in production too.
+- **`NEXTAUTH_URL`**: must exactly match the deployed domain (no trailing slash), and that domain must be added to the Google OAuth client's **Authorized JavaScript origins** and **Authorized redirect URIs** (`<domain>/api/auth/callback/google`). Preview deployments get a per-commit URL, so Google sign-in won't work there unless you assign the preview branch a stable domain and register it too.
+- **Build**: `prisma generate` runs automatically via the `build` script and `postinstall` — no manual step needed on a fresh Vercel install.
 
 ---
 
