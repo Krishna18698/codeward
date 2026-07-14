@@ -137,7 +137,12 @@ export default function ProfileForm({ user }: { user: User }) {
         </div>
       </div>
 
-      <Button onClick={save} loading={saving} size="md">
+      <Button
+        onClick={save}
+        loading={saving}
+        size="md"
+        className="bg-none bg-sky-500 hover:bg-sky-400 hover:brightness-100"
+      >
         {saved ? "Saved ✓" : "Save changes"}
       </Button>
     </div>
