@@ -107,7 +107,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
 
       {/* Heading */}
       <div className="mb-8">
-        <h2 className="text-3xl font-extrabold text-white tracking-tight">{title}</h2>
+        <h2 className="text-3xl font-semibold tracking-heading text-white">{title}</h2>
         {subtitle && <p className="text-sm text-neutral-500 mt-1.5">{subtitle}</p>}
       </div>
 
@@ -120,7 +120,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
           "w-full inline-flex items-center justify-center gap-3",
           "rounded-2xl border border-neutral-700/80 bg-neutral-900 hover:bg-neutral-800",
           "text-neutral-100 text-sm font-medium px-5 py-3.5 transition-all duration-150",
-          "hover:border-neutral-600 hover:shadow-[0_0_20px_rgba(52, 211, 153,0.08)]",
+          "hover:border-neutral-600",
           "disabled:opacity-60 disabled:cursor-not-allowed",
         )}
       >

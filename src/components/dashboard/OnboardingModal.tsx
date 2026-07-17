@@ -44,7 +44,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
 
         {step === 0 && (
           <div className="animate-fade-in">
-            <h2 className="text-xl font-bold text-white mb-1">Welcome to Codeward 👋</h2>
+            <h2 className="text-xl font-semibold tracking-heading text-white mb-1">Welcome to Codeward 👋</h2>
             <p className="text-neutral-400 text-sm mb-6">Quick setup — takes 20 seconds. Helps the AI mentor tailor your prep.</p>
             <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">Your experience level</p>
             <div className="space-y-2">
@@ -73,7 +73,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
             <button
               onClick={() => setStep(1)}
               disabled={!exp}
-              className="mt-5 w-full rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-white text-sm font-semibold py-3 transition-all duration-150"
+              className="mt-5 w-full rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-black text-sm font-semibold py-3 transition-all duration-150"
             >
               Continue →
             </button>
@@ -82,7 +82,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
 
         {step === 1 && (
           <div className="animate-fade-in">
-            <h2 className="text-xl font-bold text-white mb-1">Target company</h2>
+            <h2 className="text-xl font-semibold tracking-heading text-white mb-1">Target company</h2>
             <p className="text-neutral-400 text-sm mb-6">The AI mentor will bias your study plan toward this company&apos;s interview style.</p>
             <div className="grid grid-cols-2 gap-2 mb-4">
               {COMPANIES.map((c) => {
@@ -116,7 +116,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
               <button
                 onClick={finish}
                 disabled={!company || saving}
-                className="flex-1 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-white text-sm font-semibold py-2.5 transition-all duration-150"
+                className="flex-1 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-black text-sm font-semibold py-2.5 transition-all duration-150"
               >
                 {saving ? "Saving…" : "Let's go →"}
               </button>

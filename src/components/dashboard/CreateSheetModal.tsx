@@ -122,7 +122,7 @@ export default function CreateSheetModal({ onClose }: Props) {
             <button
               onClick={handleCreate}
               disabled={loading || !name.trim()}
-              className="px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition"
+              className="px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-lg transition"
             >
               {loading
                 ? selected.length > 0 ? "Creating & adding…" : "Creating…"

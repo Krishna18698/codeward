@@ -91,7 +91,7 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
             <button
               onClick={handleAdd}
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition"
+              className="px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-xl transition"
             >
               {loading
                 ? "Adding…"

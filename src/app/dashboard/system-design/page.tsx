@@ -46,7 +46,7 @@ export default async function SystemDesignPage({ searchParams }: Props) {
     <div className="flex gap-8 h-full">
       <div className="flex-1 min-w-0 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">System Design</h1>
+          <h1 className="text-2xl font-semibold tracking-heading text-white">System Design</h1>
           <p className="text-neutral-500 text-sm mt-1">
             Practice system design from fundamentals to senior-level architecture.
           </p>

@@ -34,7 +34,7 @@ export default function FloatingMentor() {
           <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-800 bg-neutral-900/60 shrink-0">
             <Sparkles size={13} className="text-emerald-400" />
             <span className="text-sm font-medium text-white flex-1">AI Mentor</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
             <button
               onClick={() => setMinimised((v) => !v)}
               title={minimised ? "Expand" : "Minimise"}
@@ -73,10 +73,10 @@ export default function FloatingMentor() {
         aria-expanded={open}
         className={cn(
           "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200",
-          "shadow-[0_4px_24px_rgba(52, 211, 153,0.35)] border",
+          "border",
           open
             ? "bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-neutral-200"
-            : "bg-emerald-500 border-emerald-400/50 text-white hover:bg-emerald-400",
+            : "bg-emerald-500 border-emerald-400/50 text-black hover:bg-emerald-400",
         )}
       >
         {open

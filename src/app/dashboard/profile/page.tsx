@@ -25,11 +25,7 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-2xl space-y-6 animate-fade-up">
       {/* Hero card */}
-      <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-linear-to-br from-neutral-900 to-neutral-900/80 p-8">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(ellipse 60% 80% at 80% 50%, rgba(52, 211, 153,0.06) 0%, transparent 70%)" }}
-        />
+      <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-white/3 p-8">
         <div className="flex items-center gap-6">
           {/* Avatar */}
           <div className="relative shrink-0">
@@ -43,16 +39,16 @@ export default async function ProfilePage() {
                 className="rounded-2xl border-2 border-neutral-700 object-cover"
               />
             ) : (
-              <div className="w-20 h-20 rounded-2xl border-2 border-neutral-700 bg-linear-to-br from-emerald-500/30 to-rose-500/30 flex items-center justify-center text-2xl font-bold text-white">
+              <div className="w-20 h-20 rounded-2xl border-2 border-neutral-700 bg-neutral-800 flex items-center justify-center text-2xl font-bold text-white">
                 {initials}
               </div>
             )}
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-400 border-2 border-neutral-900 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-400 border-2 border-neutral-900" />
           </div>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold text-white truncate">{user.name ?? "No name set"}</h1>
+            <h1 className="text-xl font-semibold tracking-heading text-white truncate">{user.name ?? "No name set"}</h1>
             <p className="text-sm text-neutral-500 truncate">{user.email}</p>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               {user.experienceLevel && (

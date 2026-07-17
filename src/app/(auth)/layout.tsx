@@ -26,16 +26,6 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               backgroundSize: "48px 48px",
             }}
           />
-          {/* Radial glow — top right */}
-          <div
-            className="absolute -top-32 -right-32 w-[600px] h-[600px] rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(52, 211, 153,0.12) 0%, transparent 70%)" }}
-          />
-          {/* Radial glow — bottom left */}
-          <div
-            className="absolute -bottom-48 -left-24 w-[500px] h-[500px] rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(99,102,241,0.10) 0%, transparent 70%)" }}
-          />
         </div>
 
         {/* Brand */}
@@ -51,14 +41,12 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         {/* Headline */}
         <div className="relative space-y-6 -mt-8">
           <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-400/80">
+            <p className="font-mono text-[13px] uppercase tracking-[0.2em] text-emerald-400/80">
               Your product company prep co-pilot
             </p>
-            <h1 className="text-4xl font-extrabold leading-[1.15] text-white">
+            <h1 className="text-4xl font-semibold tracking-heading leading-[1.15] text-white">
               Ace every<br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 via-rose-400 to-rose-400">
-                technical interview.
-              </span>
+              <span className="text-emerald-400">technical interview.</span>
             </h1>
             <p className="text-neutral-400 text-sm leading-relaxed max-w-sm">
               A focused prep platform built for engineers targeting top-tier roles. Track, practice, and grow — all in one place.

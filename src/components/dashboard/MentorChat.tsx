@@ -338,7 +338,7 @@ export default function MentorChat({
         <div className="flex items-center gap-2 border-b border-neutral-800 px-4 py-3 shrink-0">
           <Sparkles size={14} className="text-emerald-400 shrink-0" />
           <span className="text-sm font-medium text-white">AI Mentor</span>
-          <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+          <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400" />
         </div>
       )}
 

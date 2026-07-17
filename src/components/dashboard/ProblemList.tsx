@@ -94,7 +94,7 @@ function StatusIcon({ status }: { status: ProblemStatus }) {
   if (status === "DONE")
     return <Check size={12} strokeWidth={2.5} className="text-emerald-400" />;
   if (status === "SOLVING")
-    return <Circle size={12} strokeWidth={2.5} className="text-emerald-400" fill="rgba(52, 211, 153,0.3)" />;
+    return <Circle size={12} strokeWidth={2.5} className="text-amber-400" fill="rgba(251, 191, 36, 0.3)" />;
   return <Circle size={12} strokeWidth={1.5} className="text-neutral-500" />;
 }
 
@@ -415,7 +415,7 @@ export default function ProblemList({
                           className={cn(
                             "shrink-0 self-center w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-150",
                             status === "DONE"    && "border-emerald-500/60 bg-emerald-500/10",
-                            status === "SOLVING" && "border-emerald-500/60 bg-emerald-500/10",
+                            status === "SOLVING" && "border-amber-500/60 bg-amber-500/10",
                             status === "TODO"    && "border-neutral-700 hover:border-neutral-500",
                           )}
                         >

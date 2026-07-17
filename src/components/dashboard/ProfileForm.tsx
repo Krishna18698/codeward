@@ -86,7 +86,7 @@ export default function ProfileForm({ user }: { user: User }) {
                 )}
               >
                 <div className={cn(
-                  `w-12 h-12 rounded-full bg-linear-to-br ${av.bg} flex items-center justify-center text-2xl`,
+                  `w-12 h-12 rounded-full ${av.bg} flex items-center justify-center text-2xl`,
                 )}>
                   {av.emoji}
                 </div>
@@ -137,12 +137,7 @@ export default function ProfileForm({ user }: { user: User }) {
         </div>
       </div>
 
-      <Button
-        onClick={save}
-        loading={saving}
-        size="md"
-        className="bg-none bg-emerald-500 hover:bg-emerald-400 hover:brightness-100"
-      >
+      <Button onClick={save} loading={saving} size="md">
         {saved ? "Saved ✓" : "Save changes"}
       </Button>
     </div>

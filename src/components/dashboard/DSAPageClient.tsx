@@ -68,7 +68,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                 onClick={() => navigate(s.id)}
                 className={`rounded-xl px-3.5 py-1.5 text-sm transition-all duration-150 border whitespace-nowrap ${
                   isActive
-                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 shadow-[0_0_12px_rgba(52, 211, 153,0.15)]"
+                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
                     : "border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200 hover:bg-neutral-800/40"
                 } ${isCustom ? "pr-8" : ""} ${isPending && !isLoading ? "opacity-60" : ""}`}
               >

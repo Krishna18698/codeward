@@ -78,11 +78,7 @@ export default async function DashboardPage() {
     <div className="max-w-3xl space-y-6 animate-fade-up">
 
         {/* ── Hero banner ── */}
-        <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-linear-to-br from-neutral-900 via-neutral-900/95 to-emerald-950/40 p-6">
-          {/* Background accent */}
-          <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2"
-               style={{ background: "radial-gradient(ellipse 80% 80% at 100% 50%, rgba(52, 211, 153,0.08) 0%, transparent 70%)" }} />
-
+        <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-white/3 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {/* Avatar */}
@@ -96,14 +92,14 @@ export default async function DashboardPage() {
                   className="rounded-full border-2 border-emerald-500/30 shrink-0"
                 />
               ) : (
-                <div className="w-13 h-13 rounded-full border-2 border-emerald-500/30 bg-linear-to-br from-emerald-500/20 to-rose-500/20 flex items-center justify-center text-white font-bold text-lg shrink-0">
+                <div className="w-13 h-13 rounded-full border-2 border-emerald-500/30 bg-neutral-800 flex items-center justify-center text-white font-bold text-lg shrink-0">
                   {firstName[0]}
                 </div>
               )}
 
               <div>
                 <p className="text-xs text-neutral-500 mb-0.5">{greeting}</p>
-                <h1 className="text-xl font-bold text-white">{firstName} 👋</h1>
+                <h1 className="text-xl font-semibold tracking-heading text-white">{firstName} 👋</h1>
                 {user.targetCompany && (
                   <p className="text-xs text-neutral-500 mt-0.5">
                     Targeting <span className="text-emerald-400 font-medium">{user.targetCompany}</span>
