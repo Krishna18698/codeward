@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  // Dev-only: allow tunnel/LAN origins to load /_next/* assets when testing
+  // on other devices. Ignored entirely in production builds.
+  allowedDevOrigins: ["192.168.0.6", "dodge-subarctic-snap.ngrok-free.dev"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
