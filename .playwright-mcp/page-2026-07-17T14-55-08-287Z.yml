@@ -1,0 +1,206 @@
+- generic [active] [ref=f5e1]:
+  - banner [ref=f5e2]:
+    - generic [ref=f5e3]:
+      - link "Senior Loop home" [ref=f5e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f5e8]: senior loop
+      - navigation [ref=f5e9]:
+        - link "Code Review" [ref=f5e10] [cursor=pointer]:
+          - /url: /prs
+        - link "Bug Hunt" [ref=f5e11] [cursor=pointer]:
+          - /url: /bugs
+        - link "Build It" [ref=f5e12] [cursor=pointer]:
+          - /url: /lld
+        - link "Deep Dives" [ref=f5e13] [cursor=pointer]:
+          - /url: /study
+        - link "Pricing" [ref=f5e14] [cursor=pointer]:
+          - /url: /pricing
+        - link "Sign in" [ref=f5e15] [cursor=pointer]:
+          - /url: /sign-in
+  - main [ref=f5e16]:
+    - generic [ref=f5e17]:
+      - generic [ref=f5e19]:
+        - generic [ref=f5e20]: Deep Dives
+        - heading "The topics every senior loop covers. 13" [level=1] [ref=f5e21]
+        - paragraph [ref=f5e22]: Long-form deep dives — not blog posts. Each one covers the failure modes, tradeoffs, and interview traps that surface-level guides skip.
+        - generic [ref=f5e23]:
+          - generic [ref=f5e24]:
+            - generic [ref=f5e25]: "13"
+            - generic [ref=f5e26]: topics
+          - generic [ref=f5e27]:
+            - generic [ref=f5e28]: "3"
+            - generic [ref=f5e29]: free
+          - generic [ref=f5e30]:
+            - generic [ref=f5e31]: ~39
+            - generic [ref=f5e32]: min avg
+          - generic [ref=f5e33]: long-form
+      - link "Start here · free Idempotency & Exactly-Once Effects in Payments free Networks lose responses. Clients retry. Without protection, that retry charges the card twice. Learn the protocol every payments engineer must know cold. Payments Distributed Systems · ~35 min Read →" [ref=f5e36] [cursor=pointer]:
+        - /url: /study/idempotency-exactly-once
+        - generic [ref=f5e37]: Start here · free
+        - generic [ref=f5e40]:
+          - generic [ref=f5e41]:
+            - generic [ref=f5e42]:
+              - heading "Idempotency & Exactly-Once Effects in Payments" [level=2] [ref=f5e43]
+              - generic [ref=f5e44]: free
+            - paragraph [ref=f5e45]: Networks lose responses. Clients retry. Without protection, that retry charges the card twice. Learn the protocol every payments engineer must know cold.
+            - generic [ref=f5e46]:
+              - generic [ref=f5e47]: Payments
+              - generic [ref=f5e49]: Distributed Systems
+              - generic [ref=f5e51]: ·
+              - generic [ref=f5e52]: ~35 min
+          - generic [ref=f5e53]: Read →
+      - generic [ref=f5e55]:
+        - link "Saga, Outbox & CDC for Payments free Payments Microservices When one local transaction cannot cover a multi-service payment flow, a saga coordinates committed steps, reliable events, compensation, and forward recovery. ~40 min Read →" [ref=f5e56] [cursor=pointer]:
+          - /url: /study/saga-outbox-cdc
+          - generic [ref=f5e58]:
+            - generic [ref=f5e59]:
+              - heading "Saga, Outbox & CDC for Payments" [level=2] [ref=f5e60]
+              - generic [ref=f5e61]: free
+            - generic [ref=f5e62]:
+              - generic [ref=f5e63]: Payments
+              - generic [ref=f5e66]: Microservices
+            - paragraph [ref=f5e69]: When one local transaction cannot cover a multi-service payment flow, a saga coordinates committed steps, reliable events, compensation, and forward recovery.
+          - generic [ref=f5e70]:
+            - generic [ref=f5e71]: ~40 min
+            - generic [ref=f5e72]: Read →
+        - 'link "Kafka Internals & Production Operations free Streaming Distributed Systems Almost every durability and ordering guarantee Kafka makes reduces to one primitive: a partition is a log, replicated to a few brokers, with one leader. This note builds from that up through production failure modes. ~45 min Read →" [ref=f5e73] [cursor=pointer]':
+          - /url: /study/kafka-deep-dive
+          - generic [ref=f5e75]:
+            - generic [ref=f5e76]:
+              - heading "Kafka Internals & Production Operations" [level=2] [ref=f5e77]
+              - generic [ref=f5e78]: free
+            - generic [ref=f5e79]:
+              - generic [ref=f5e80]: Streaming
+              - generic [ref=f5e83]: Distributed Systems
+            - paragraph [ref=f5e86]: "Almost every durability and ordering guarantee Kafka makes reduces to one primitive: a partition is a log, replicated to a few brokers, with one leader. This note builds from that up through production failure modes."
+          - generic [ref=f5e87]:
+            - generic [ref=f5e88]: ~45 min
+            - generic [ref=f5e89]: Read →
+        - 'link "Caching at Scale: Redis, Invalidation & Failure Modes pro Caching Infrastructure A cache is a bet — keep a hot slice of data close and fast, accept some staleness. The hard part is everything that goes wrong at scale: cold start, cache stampede, hot keys, eviction under pressure. ~45 min 🔒" [ref=f5e90] [cursor=pointer]':
+          - /url: /study/distributed-cache-redis
+          - generic [ref=f5e92]:
+            - generic [ref=f5e93]:
+              - 'heading "Caching at Scale: Redis, Invalidation & Failure Modes" [level=2] [ref=f5e94]'
+              - generic [ref=f5e95]: pro
+            - generic [ref=f5e96]:
+              - generic [ref=f5e97]: Caching
+              - generic [ref=f5e100]: Infrastructure
+            - paragraph [ref=f5e103]: "A cache is a bet — keep a hot slice of data close and fast, accept some staleness. The hard part is everything that goes wrong at scale: cold start, cache stampede, hot keys, eviction under pressure."
+          - generic [ref=f5e104]:
+            - generic [ref=f5e105]: ~45 min
+            - generic [ref=f5e106]: 🔒
+        - 'link "Distributed Rate Limiter pro Distributed Systems Infrastructure Every API gateway must answer one question within its latency budget: has this caller used up its quota? Counting accurately across nodes, through clock skew and traffic spikes, is the real problem. ~40 min 🔒" [ref=f5e107] [cursor=pointer]':
+          - /url: /study/distributed-rate-limiter
+          - generic [ref=f5e109]:
+            - generic [ref=f5e110]:
+              - heading "Distributed Rate Limiter" [level=2] [ref=f5e111]
+              - generic [ref=f5e112]: pro
+            - generic [ref=f5e113]:
+              - generic [ref=f5e114]: Distributed Systems
+              - generic [ref=f5e117]: Infrastructure
+            - paragraph [ref=f5e120]: "Every API gateway must answer one question within its latency budget: has this caller used up its quota? Counting accurately across nodes, through clock skew and traffic spikes, is the real problem."
+          - generic [ref=f5e121]:
+            - generic [ref=f5e122]: ~40 min
+            - generic [ref=f5e123]: 🔒
+        - link "Consistent Hashing & Sharding pro Distributed Systems Sharding When data outgrows one machine it must split across many. Naive modulo hashing reshuffles almost everything when a node is added or removed. Consistent hashing moves only the keys that must move. ~45 min 🔒" [ref=f5e124] [cursor=pointer]:
+          - /url: /study/consistent-hashing-sharding
+          - generic [ref=f5e126]:
+            - generic [ref=f5e127]:
+              - heading "Consistent Hashing & Sharding" [level=2] [ref=f5e128]
+              - generic [ref=f5e129]: pro
+            - generic [ref=f5e130]:
+              - generic [ref=f5e131]: Distributed Systems
+              - generic [ref=f5e134]: Sharding
+            - paragraph [ref=f5e137]: When data outgrows one machine it must split across many. Naive modulo hashing reshuffles almost everything when a node is added or removed. Consistent hashing moves only the keys that must move.
+          - generic [ref=f5e138]:
+            - generic [ref=f5e139]: ~45 min
+            - generic [ref=f5e140]: 🔒
+        - link "Distributed Locking pro Distributed Systems 'Only one worker may run this at a time' sounds trivial until the worker is one of many processes on different machines. Single-active-worker and leader election appear in every payments and fraud system. ~40 min 🔒" [ref=f5e141] [cursor=pointer]:
+          - /url: /study/distributed-lock
+          - generic [ref=f5e143]:
+            - generic [ref=f5e144]:
+              - heading "Distributed Locking" [level=2] [ref=f5e145]
+              - generic [ref=f5e146]: pro
+            - generic [ref=f5e147]: Distributed Systems
+            - paragraph [ref=f5e151]: "'Only one worker may run this at a time' sounds trivial until the worker is one of many processes on different machines. Single-active-worker and leader election appear in every payments and fraud system."
+          - generic [ref=f5e152]:
+            - generic [ref=f5e153]: ~40 min
+            - generic [ref=f5e154]: 🔒
+        - 'link "Two-Phase Commit Protocol pro Distributed Systems Atomic commits across distributed participants: the protocol, its failure modes, the blocking flaw every interviewer probes, and when 2PC is the right answer versus when to use a saga instead. ~25 min 🔒" [ref=f5e155] [cursor=pointer]':
+          - /url: /study/two-phase-commit
+          - generic [ref=f5e157]:
+            - generic [ref=f5e158]:
+              - heading "Two-Phase Commit Protocol" [level=2] [ref=f5e159]
+              - generic [ref=f5e160]: pro
+            - generic [ref=f5e161]: Distributed Systems
+            - paragraph [ref=f5e165]: "Atomic commits across distributed participants: the protocol, its failure modes, the blocking flaw every interviewer probes, and when 2PC is the right answer versus when to use a saga instead."
+          - generic [ref=f5e166]:
+            - generic [ref=f5e167]: ~25 min
+            - generic [ref=f5e168]: 🔒
+        - 'link "Raft: Leader Election, Replication & Commit Safety pro Consensus Distributed Systems A replicated system needs one ordered history despite crashes and delayed messages. Raft explains how terms, majority elections, log replication, and commit rules create that safety — then follows the operational edge cases. ~45 min 🔒" [ref=f5e169] [cursor=pointer]':
+          - /url: /study/leader-election-raft
+          - generic [ref=f5e171]:
+            - generic [ref=f5e172]:
+              - 'heading "Raft: Leader Election, Replication & Commit Safety" [level=2] [ref=f5e173]'
+              - generic [ref=f5e174]: pro
+            - generic [ref=f5e175]:
+              - generic [ref=f5e176]: Consensus
+              - generic [ref=f5e179]: Distributed Systems
+            - paragraph [ref=f5e182]: A replicated system needs one ordered history despite crashes and delayed messages. Raft explains how terms, majority elections, log replication, and commit rules create that safety — then follows the operational edge cases.
+          - generic [ref=f5e183]:
+            - generic [ref=f5e184]: ~45 min
+            - generic [ref=f5e185]: 🔒
+        - 'link "Chat Systems at Scale pro Realtime Distributed Systems A chat system looks trivial until you see the hard parts: millions of persistent connections, presence that is always slightly wrong, ordering that must hold per-conversation across multiple devices, and reconnect storms. ~45 min 🔒" [ref=f5e186] [cursor=pointer]':
+          - /url: /study/chat-at-scale
+          - generic [ref=f5e188]:
+            - generic [ref=f5e189]:
+              - heading "Chat Systems at Scale" [level=2] [ref=f5e190]
+              - generic [ref=f5e191]: pro
+            - generic [ref=f5e192]:
+              - generic [ref=f5e193]: Realtime
+              - generic [ref=f5e196]: Distributed Systems
+            - paragraph [ref=f5e199]: "A chat system looks trivial until you see the hard parts: millions of persistent connections, presence that is always slightly wrong, ordering that must hold per-conversation across multiple devices, and reconnect storms."
+          - generic [ref=f5e200]:
+            - generic [ref=f5e201]: ~45 min
+            - generic [ref=f5e202]: 🔒
+        - 'link "Push Notifications at Scale pro Infrastructure Design a large-scale notification pipeline: fan-out architecture, queueing, provider delivery, token lifecycle, cancellation, and the failure modes an interviewer is likely to probe. ~30 min 🔒" [ref=f5e203] [cursor=pointer]':
+          - /url: /study/push-notifications-scale
+          - generic [ref=f5e205]:
+            - generic [ref=f5e206]:
+              - heading "Push Notifications at Scale" [level=2] [ref=f5e207]
+              - generic [ref=f5e208]: pro
+            - generic [ref=f5e209]: Infrastructure
+            - paragraph [ref=f5e213]: "Design a large-scale notification pipeline: fan-out architecture, queueing, provider delivery, token lifecycle, cancellation, and the failure modes an interviewer is likely to probe."
+          - generic [ref=f5e214]:
+            - generic [ref=f5e215]: ~30 min
+            - generic [ref=f5e216]: 🔒
+        - link "Matching Engine & Order Book pro Fintech Distributed Systems The core of every exchange — FX, crypto, equities. Orders pour in; the engine maintains a price-time priority book and matches each incoming order against the best opposite side. ~40 min 🔒" [ref=f5e217] [cursor=pointer]:
+          - /url: /study/matching-engine-order-book
+          - generic [ref=f5e219]:
+            - generic [ref=f5e220]:
+              - heading "Matching Engine & Order Book" [level=2] [ref=f5e221]
+              - generic [ref=f5e222]: pro
+            - generic [ref=f5e223]:
+              - generic [ref=f5e224]: Fintech
+              - generic [ref=f5e227]: Distributed Systems
+            - paragraph [ref=f5e230]: The core of every exchange — FX, crypto, equities. Orders pour in; the engine maintains a price-time priority book and matches each incoming order against the best opposite side.
+          - generic [ref=f5e231]:
+            - generic [ref=f5e232]: ~40 min
+            - generic [ref=f5e233]: 🔒
+        - 'link "URL Shortener at Scale pro Distributed Systems Caching The ''design bit.ly'' question. The baseline is table stakes; the substance lies in the follow-ups: hot keys, cache invalidation, OLTP/OLAP separation, and CAP trade-offs under write pressure. ~35 min 🔒" [ref=f5e234] [cursor=pointer]':
+          - /url: /study/url-shortener-scale
+          - generic [ref=f5e236]:
+            - generic [ref=f5e237]:
+              - heading "URL Shortener at Scale" [level=2] [ref=f5e238]
+              - generic [ref=f5e239]: pro
+            - generic [ref=f5e240]:
+              - generic [ref=f5e241]: Distributed Systems
+              - generic [ref=f5e244]: Caching
+            - paragraph [ref=f5e247]: "The 'design bit.ly' question. The baseline is table stakes; the substance lies in the follow-ups: hot keys, cache invalidation, OLTP/OLAP separation, and CAP trade-offs under write pressure."
+          - generic [ref=f5e248]:
+            - generic [ref=f5e249]: ~35 min
+            - generic [ref=f5e250]: 🔒
+      - generic [ref=f5e251]:
+        - generic [ref=f5e252]: Up next
+        - generic [ref=f5e253]: Webhook reliability · Event sourcing · Circuit breakers
+  - alert [ref=f5e254]

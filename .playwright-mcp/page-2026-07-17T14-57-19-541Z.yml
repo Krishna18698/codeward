@@ -1,0 +1,49 @@
+- generic [active] [ref=f6e1]:
+  - banner [ref=f6e2]:
+    - generic [ref=f6e3]:
+      - link "Senior Loop home" [ref=f6e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f6e8]: senior loop
+      - navigation [ref=f6e9]:
+        - link "Code Review" [ref=f6e10] [cursor=pointer]:
+          - /url: /prs
+        - link "Bug Hunt" [ref=f6e11] [cursor=pointer]:
+          - /url: /bugs
+        - link "Build It" [ref=f6e12] [cursor=pointer]:
+          - /url: /lld
+        - link "Deep Dives" [ref=f6e13] [cursor=pointer]:
+          - /url: /study
+        - link "Pricing" [ref=f6e14] [cursor=pointer]:
+          - /url: /pricing
+        - link "Sign in" [ref=f6e15] [cursor=pointer]:
+          - /url: /sign-in
+  - main [ref=f6e16]:
+    - generic [ref=f6e17]:
+      - heading "3 free reviews. 3 deep dives. No card." [level=1] [ref=f6e18]
+      - paragraph [ref=f6e19]: Sign in to start — takes 10 seconds.
+      - button "Continue with Google" [ref=f6e21]
+      - paragraph [ref=f6e28]: Email is used for sign-in and account support. No newsletter or advertising use.
+      - list [ref=f6e29]:
+        - listitem [ref=f6e30]:
+          - generic [ref=f6e31]: ✓
+          - generic [ref=f6e32]: 3 free code reviews + 3 free Bug Hunt exercises — no card required
+        - listitem [ref=f6e33]:
+          - generic [ref=f6e34]: ✓
+          - generic [ref=f6e35]: 3 system design deep dives — free to read
+        - listitem [ref=f6e36]:
+          - generic [ref=f6e37]: ✓
+          - generic [ref=f6e38]: AI-graded against a hand-authored senior-engineer rubric
+        - listitem [ref=f6e39]:
+          - generic [ref=f6e40]: ✓
+          - generic [ref=f6e41]: Exercises show their available languages; most support Go, Kotlin, Python, Java, and C#
+      - generic [ref=f6e42]:
+        - paragraph [ref=f6e43]:
+          - link "← Back to home" [ref=f6e44] [cursor=pointer]:
+            - /url: /
+        - paragraph [ref=f6e45]:
+          - link "Privacy" [ref=f6e46] [cursor=pointer]:
+            - /url: /privacy
+          - text: ·
+          - link "Terms" [ref=f6e47] [cursor=pointer]:
+            - /url: /terms
+  - alert [ref=f6e48]

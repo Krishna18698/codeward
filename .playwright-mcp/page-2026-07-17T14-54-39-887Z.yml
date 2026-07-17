@@ -1,0 +1,598 @@
+- generic [active] [ref=f4e1]:
+  - main [ref=f4e2]:
+    - generic [ref=f4e4]:
+      - link "Senior Loop home" [ref=f4e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f4e9]: senior loop
+      - navigation [ref=f4e10]:
+        - link "Code Review" [ref=f4e11] [cursor=pointer]:
+          - /url: /prs
+        - link "Bug Hunt" [ref=f4e12] [cursor=pointer]:
+          - /url: /bugs
+        - link "Build It" [ref=f4e13] [cursor=pointer]:
+          - /url: /lld
+        - link "Deep Dives" [ref=f4e14] [cursor=pointer]:
+          - /url: /study
+        - link "Pricing" [ref=f4e15] [cursor=pointer]:
+          - /url: /pricing
+        - link "Sign in" [ref=f4e16] [cursor=pointer]:
+          - /url: /sign-in
+    - generic [ref=f4e17]:
+      - generic [ref=f4e18]: Code Review · Bug Hunt · Build It · Deep Dives
+      - heading "Senior Loop trains code review. _" [level=1] [ref=f4e21]:
+        - generic [ref=f4e22]: Senior Loop trains
+        - generic [ref=f4e23]:
+          - generic [ref=f4e24]: code review.
+          - generic [ref=f4e25]: _
+      - paragraph [ref=f4e26]: Review code, diagnose production bugs, build low-level designs, and study the tradeoffs that senior backend interviews test.
+      - generic [ref=f4e27]:
+        - link "Try a free review →" [ref=f4e28] [cursor=pointer]:
+          - /url: /prs
+        - link "From ₹1,499/mo. See pricing →" [ref=f4e29] [cursor=pointer]:
+          - /url: /pricing
+      - paragraph [ref=f4e30]: 3 code reviews · 3 Deep Dives · first Build It free — no card
+    - generic [ref=f4e34]:
+      - generic [ref=f4e35]: seniorloop.dev/review/idempotency-middleware
+      - generic [ref=f4e42]:
+        - generic [ref=f4e43]:
+          - generic [ref=f4e44]: senior loop
+          - generic [ref=f4e49]: Practice
+          - generic [ref=f4e50]:
+            - generic [ref=f4e51]: Code Review
+            - generic [ref=f4e52]: "12"
+          - generic [ref=f4e53]:
+            - generic [ref=f4e54]: Bug Hunt
+            - generic [ref=f4e55]: "10"
+          - generic [ref=f4e56]:
+            - generic [ref=f4e57]: Build It
+            - generic [ref=f4e58]: "5"
+          - generic [ref=f4e59]:
+            - generic [ref=f4e60]: Deep Dives
+            - generic [ref=f4e61]: "13"
+          - generic [ref=f4e63]:
+            - generic [ref=f4e64]: Your progress
+            - generic [ref=f4e66]: 42% · 12 of 28 done
+          - generic [ref=f4e68]:
+            - generic [ref=f4e69]: A
+            - generic [ref=f4e70]: candidate@example.com
+        - generic [ref=f4e71]:
+          - generic [ref=f4e72]:
+            - generic [ref=f4e73]: idempotency.go
+            - generic [ref=f4e74]: middleware_test.go
+            - generic [ref=f4e75]:
+              - generic [ref=f4e76]: 2 missed
+              - generic [ref=f4e77]: 3 caught
+          - generic [ref=f4e78]:
+            - generic [ref=f4e79]: "23"
+            - generic [ref=f4e81]: "24"
+            - generic [ref=f4e83]: "25"
+            - generic [ref=f4e85]: "26"
+            - generic [ref=f4e87]: "27"
+            - generic [ref=f4e89]: "28"
+            - generic [ref=f4e91]: "29"
+            - generic [ref=f4e93]: "30"
+            - generic [ref=f4e95]: ···
+            - generic [ref=f4e97]: "45"
+            - generic [ref=f4e99]: "46"
+            - generic [ref=f4e101]: "47"
+            - generic [ref=f4e103]: "48"
+        - generic [ref=f4e105]:
+          - generic [ref=f4e106]:
+            - generic [ref=f4e107]: "0"
+            - generic [ref=f4e110]:
+              - generic [ref=f4e111]: Strong
+              - generic [ref=f4e112]: Senior rubric · /100
+          - generic [ref=f4e113]: Issues
+          - generic [ref=f4e114]:
+            - generic [ref=f4e115]:
+              - generic [ref=f4e116]:
+                - generic [ref=f4e117]: S5
+                - generic [ref=f4e118]: missed
+              - paragraph [ref=f4e119]: "Race window: cache check isn't atomic with PSP call."
+            - generic [ref=f4e120]:
+              - generic [ref=f4e121]:
+                - generic [ref=f4e122]: S4
+                - generic [ref=f4e123]: missed
+              - paragraph [ref=f4e124]: In-memory store loses idempotency on restart.
+            - generic [ref=f4e125]:
+              - generic [ref=f4e126]:
+                - generic [ref=f4e127]: S4
+                - generic [ref=f4e128]: caught
+              - paragraph [ref=f4e129]: Float for money — precision drift on refunds.
+    - generic [ref=f4e133]:
+      - generic [ref=f4e134]: Practice topics common in senior backend loops at
+      - generic [ref=f4e136]:
+        - generic [ref=f4e137]: Amazon
+        - generic [ref=f4e140]: Microsoft
+        - generic [ref=f4e143]: Google
+        - generic [ref=f4e146]: Uber
+        - generic [ref=f4e149]: Cred
+        - generic [ref=f4e152]: Agoda
+        - generic [ref=f4e155]: Atlassian
+        - generic [ref=f4e158]: Stripe
+        - generic [ref=f4e161]: Razorpay
+        - generic [ref=f4e164]: Airbnb
+        - generic [ref=f4e167]: Amazon
+        - generic [ref=f4e170]: Microsoft
+        - generic [ref=f4e173]: Google
+        - generic [ref=f4e176]: Uber
+        - generic [ref=f4e179]: Cred
+        - generic [ref=f4e182]: Agoda
+        - generic [ref=f4e185]: Atlassian
+        - generic [ref=f4e188]: Stripe
+        - generic [ref=f4e191]: Razorpay
+        - generic [ref=f4e194]: Airbnb
+    - generic [ref=f4e198]:
+      - generic [ref=f4e199]: The platform
+      - heading "Four rounds. One loop." [level=2] [ref=f4e200]
+      - paragraph [ref=f4e201]: The complete practice system for the real hiring loop — not just the phone screen.
+    - generic [ref=f4e204]:
+      - generic [ref=f4e205]:
+        - generic [ref=f4e206]:
+          - generic [ref=f4e207]:
+            - generic [ref=f4e208]: "00"
+            - generic [ref=f4e209]: —
+            - generic [ref=f4e210]: Code Review
+          - heading "Review realistic production PRs" [level=2] [ref=f4e211]
+          - paragraph [ref=f4e212]: Realistic PRs with planted bugs across payments, distributed systems, API design, security, and performance. Hand-authored, AI-graded against a senior-engineer rubric.
+          - link "Start reviewing free →" [ref=f4e213] [cursor=pointer]:
+            - /url: /prs
+        - generic [ref=f4e214]:
+          - generic [ref=f4e215]: PR · idempotency-middleware
+          - generic [ref=f4e221]:
+            - generic [ref=f4e222]:
+              - generic [ref=f4e223]:
+                - generic [ref=f4e224]: idempotency.go
+                - generic [ref=f4e225]: 2 missed
+                - generic [ref=f4e226]: · 3 caught
+              - generic [ref=f4e227]:
+                - generic [ref=f4e228]:
+                  - generic [ref=f4e229]: "23"
+                  - generic [ref=f4e230]: "func (m *Middleware) Handle(...) {"
+                - generic [ref=f4e231]:
+                  - generic [ref=f4e232]: "24"
+                  - generic [ref=f4e233]: key := r.Header.Get("Idempotency-Key")
+                - generic [ref=f4e234]:
+                  - generic [ref=f4e235]: "25"
+                  - generic [ref=f4e236]: "if cached, ok := m.store[key]; ok {"
+                - generic [ref=f4e237]:
+                  - generic [ref=f4e238]: "26"
+                  - generic [ref=f4e239]: writeCached(w, cached)
+                - generic [ref=f4e240]:
+                  - generic [ref=f4e241]: "27"
+                  - generic [ref=f4e242]: return
+                - generic [ref=f4e243]:
+                  - generic [ref=f4e244]: "28"
+                  - generic [ref=f4e245]: "}"
+                - generic [ref=f4e246]:
+                  - generic [ref=f4e247]: "29"
+                  - generic [ref=f4e248]: result := psp.Charge(...)
+                - generic [ref=f4e249]:
+                  - generic [ref=f4e250]: "30"
+                  - generic [ref=f4e251]: m.store[key] = result
+                - generic [ref=f4e252]:
+                  - generic [ref=f4e253]: "31"
+                  - generic [ref=f4e254]: writeCached(w, result)
+                - generic [ref=f4e255]:
+                  - generic [ref=f4e256]: "32"
+                  - generic [ref=f4e257]: "}"
+                - generic [ref=f4e258]: ···
+                - generic [ref=f4e260]:
+                  - generic [ref=f4e261]: "45"
+                  - generic [ref=f4e262]: "func (m *Middleware) lock() {"
+                - generic [ref=f4e263]:
+                  - generic [ref=f4e264]: "46"
+                  - generic [ref=f4e265]: m.mu.Lock()
+                - generic [ref=f4e266]:
+                  - generic [ref=f4e267]: "47"
+                  - generic [ref=f4e268]: defer m.mu.Unlock()
+            - generic [ref=f4e269]:
+              - generic [ref=f4e270]:
+                - generic [ref=f4e271]: "0"
+                - generic [ref=f4e273]:
+                  - generic [ref=f4e274]: Strong
+                  - generic [ref=f4e275]: Senior rubric
+                  - generic [ref=f4e276]: score / 100
+              - generic [ref=f4e277]:
+                - generic [ref=f4e278]: All
+                - generic [ref=f4e279]: Missed (2)
+                - generic [ref=f4e280]: Caught (3)
+              - generic [ref=f4e281]:
+                - generic [ref=f4e282]:
+                  - generic [ref=f4e283]:
+                    - generic [ref=f4e284]: S5
+                    - generic [ref=f4e285]: correctness
+                  - paragraph [ref=f4e286]: "Race window: cache check isn't atomic with PSP call."
+                - generic [ref=f4e287]:
+                  - generic [ref=f4e288]:
+                    - generic [ref=f4e289]: S4
+                    - generic [ref=f4e290]: correctness
+                  - paragraph [ref=f4e291]: In-memory store loses idempotency state on restart.
+                - generic [ref=f4e292]:
+                  - generic [ref=f4e293]:
+                    - generic [ref=f4e294]: S4
+                    - generic [ref=f4e295]: correctness
+                  - paragraph [ref=f4e296]: Float for money — precision drift on refunds.
+                - generic [ref=f4e297]:
+                  - generic [ref=f4e298]:
+                    - generic [ref=f4e299]: S3
+                    - generic [ref=f4e300]: observability
+                  - paragraph [ref=f4e301]: Missing trace ID on retry path.
+      - paragraph [ref=f4e302]: ChatGPT reviews code you provide. Senior Loop gives you realistic problems with known issues, then grades what you found against a consistent rubric.
+    - generic [ref=f4e306]:
+      - generic [ref=f4e307]:
+        - generic [ref=f4e308]: bug workspace · payment-service/tests
+        - generic [ref=f4e314]:
+          - generic [ref=f4e315]:
+            - generic [ref=f4e316]:
+              - generic [ref=f4e317]: payment_test.go
+              - generic [ref=f4e318]: 2 failures
+              - generic [ref=f4e319]: · 1 passing
+            - generic [ref=f4e320]:
+              - generic [ref=f4e321]: === RUN TestChargeIdempotency
+              - generic [ref=f4e322]: "--- FAIL: duplicate charge on retry (2.31s)"
+              - generic [ref=f4e323]: "want: 1 charge created"
+              - generic [ref=f4e324]: "got: 2 charges (txn-4821, txn-4822)"
+              - generic [ref=f4e326]: === RUN TestConcurrentRequests
+              - generic [ref=f4e327]: "--- FAIL: race condition detected (1.84s)"
+              - generic [ref=f4e328]: concurrent writes to m.store[key]
+              - generic [ref=f4e329]: "DATA RACE: write at 0x00c000118040"
+              - generic [ref=f4e331]: === RUN TestBasicCharge
+              - generic [ref=f4e332]: "--- PASS: charge succeeds (0.12s)"
+              - generic [ref=f4e334]: FAIL payment-service/tests 4.27s
+          - generic [ref=f4e335]:
+            - generic [ref=f4e336]:
+              - generic [ref=f4e337]: ROOT CAUSE
+              - generic [ref=f4e338]:
+                - generic [ref=f4e339]: S5
+                - generic [ref=f4e340]: correctness
+              - paragraph [ref=f4e341]: Store mutation is not atomic — no check-before-insert. Concurrent requests bypass the idempotency guard.
+            - generic [ref=f4e342]:
+              - generic [ref=f4e343]: HYPOTHESES RULED OUT
+              - generic [ref=f4e344]:
+                - generic [ref=f4e345]:
+                  - generic [ref=f4e346]: ✗
+                  - text: PSP deduplicated on its end
+                - generic [ref=f4e347]:
+                  - generic [ref=f4e348]: ✗
+                  - text: Network retry stripped the key
+                - generic [ref=f4e349]:
+                  - generic [ref=f4e350]: ✓
+                  - text: Race in m.store write (confirmed)
+            - generic [ref=f4e351]:
+              - generic [ref=f4e352]: CANONICAL FIX
+              - generic [ref=f4e353]: m.mu.Lock()defer m.mu.Unlock()// check store inside lock
+      - generic [ref=f4e354]:
+        - generic [ref=f4e355]:
+          - generic [ref=f4e356]: "00"
+          - generic [ref=f4e357]: —
+          - generic [ref=f4e358]: Bug Hunt
+        - heading "Debug failures using code, tests, and logs" [level=2] [ref=f4e359]
+        - paragraph [ref=f4e360]: Broken codebases, failing tests, real log excerpts. Identify the root cause, fix it, compare against the canonical solution. Available in Go, Kotlin, Python, Java and C#.
+        - link "Try 3 free →" [ref=f4e361] [cursor=pointer]:
+          - /url: /bugs
+    - generic [ref=f4e365]:
+      - generic [ref=f4e366]:
+        - generic [ref=f4e367]:
+          - generic [ref=f4e368]: "00"
+          - generic [ref=f4e369]: —
+          - generic [ref=f4e370]: Build It · Low-level design
+        - heading "Design systems under escalating constraints" [level=2] [ref=f4e371]
+        - paragraph [ref=f4e372]: Build It is low-level design with escalating constraints. Prove correctness with a conservation invariant — not just a passing eye-test.
+        - link "First problem free →" [ref=f4e373] [cursor=pointer]:
+          - /url: /lld
+      - generic [ref=f4e374]:
+        - generic [ref=f4e375]: lld workspace · rate-limiter · Go
+        - generic [ref=f4e381]:
+          - generic [ref=f4e382]:
+            - generic [ref=f4e383]:
+              - generic [ref=f4e384]: Rate Limiter
+              - generic [ref=f4e385]:
+                - generic [ref=f4e386]: Stage 3 / 4
+                - generic [ref=f4e387]: Senior filter
+            - generic [ref=f4e388]:
+              - paragraph [ref=f4e389]: Design a distributed sliding window rate limiter. Enforce 100 requests per minute per user ID across a horizontally-scaled backend.
+              - generic [ref=f4e390]: Constraints
+              - generic [ref=f4e391]:
+                - generic [ref=f4e392]:
+                  - generic [ref=f4e393]: →
+                  - text: Redis backend, Lua for atomicity
+                - generic [ref=f4e394]:
+                  - generic [ref=f4e395]: →
+                  - text: At-least-once delivery guarantee
+                - generic [ref=f4e396]:
+                  - generic [ref=f4e397]: →
+                  - text: Sub-5ms overhead per request
+                - generic [ref=f4e398]:
+                  - generic [ref=f4e399]: →
+                  - text: "Prove conservation: allowed + rejected = total requests"
+          - generic [ref=f4e400]:
+            - generic [ref=f4e401]: Stage progress
+            - generic [ref=f4e402]:
+              - generic [ref=f4e403]:
+                - generic [ref=f4e404]: Stage 1 · Fixed window
+                - generic [ref=f4e405]: ✓ passed
+              - generic [ref=f4e406]:
+                - generic [ref=f4e407]: Stage 2 · Sliding window
+                - generic [ref=f4e408]: ✓ passed
+              - generic [ref=f4e409]:
+                - generic [ref=f4e410]: Stage 3 · Distributed
+                - generic [ref=f4e411]: in progress
+              - generic [ref=f4e412]:
+                - generic [ref=f4e413]: Stage 4 · Multi-region
+                - generic [ref=f4e414]: locked
+            - generic [ref=f4e415]:
+              - generic [ref=f4e416]: Conservation invariant
+              - generic [ref=f4e417]:
+                - generic [ref=f4e418]: "allowed: 9,845"
+                - generic [ref=f4e419]: "rejected: 153"
+                - generic [ref=f4e420]: "total: 9,998 ≠ 10,000"
+                - generic [ref=f4e421]: ✗ invariant violated — 2 lost
+    - generic [ref=f4e424]:
+      - generic [ref=f4e425]:
+        - generic [ref=f4e426]:
+          - generic [ref=f4e427]:
+            - generic [ref=f4e428]: "00"
+            - generic [ref=f4e429]: —
+            - generic [ref=f4e430]: Deep Dives
+            - generic [ref=f4e431]: 3 free
+          - heading "Learn the trade-offs behind distributed systems" [level=2] [ref=f4e432]
+          - paragraph [ref=f4e433]: Topics commonly tested in senior backend and system-design interviews, including Kafka, idempotency, Raft, distributed locks, rate limiting, and consistent hashing. 3 free, 13 total.
+        - link "Read 3 free · 13 total →" [ref=f4e434] [cursor=pointer]:
+          - /url: /study
+      - generic [ref=f4e435]:
+        - generic [ref=f4e436]: deep dives · idempotency
+        - generic [ref=f4e442]:
+          - generic [ref=f4e443]:
+            - generic [ref=f4e444]: 13 Topics
+            - generic [ref=f4e445] [cursor=pointer]:
+              - generic [ref=f4e446]: Idempotency
+              - generic [ref=f4e447]: reading
+            - generic [ref=f4e448] [cursor=pointer]:
+              - generic [ref=f4e449]: Saga · Outbox · CDC
+              - generic [ref=f4e450]: ✓
+            - generic [ref=f4e451] [cursor=pointer]:
+              - generic [ref=f4e452]: Kafka internals
+              - generic [ref=f4e453]: —
+            - generic [ref=f4e454] [cursor=pointer]:
+              - generic [ref=f4e455]: Distributed cache
+              - generic [ref=f4e456]: —
+            - generic [ref=f4e457] [cursor=pointer]:
+              - generic [ref=f4e458]: Rate limiting
+              - generic [ref=f4e459]: —
+            - generic [ref=f4e460] [cursor=pointer]:
+              - generic [ref=f4e461]: Consistent hashing
+              - generic [ref=f4e462]: —
+            - generic [ref=f4e463] [cursor=pointer]:
+              - generic [ref=f4e464]: Distributed locks
+              - generic [ref=f4e465]: —
+            - generic [ref=f4e466] [cursor=pointer]:
+              - generic [ref=f4e467]: Two-phase commit
+              - generic [ref=f4e468]: —
+            - generic [ref=f4e469] [cursor=pointer]:
+              - generic [ref=f4e470]: Raft & leader election
+              - generic [ref=f4e471]: —
+            - generic [ref=f4e472] [cursor=pointer]:
+              - generic [ref=f4e473]: Chat at scale
+              - generic [ref=f4e474]: —
+            - generic [ref=f4e475] [cursor=pointer]:
+              - generic [ref=f4e476]: Push notifications
+              - generic [ref=f4e477]: —
+            - generic [ref=f4e478] [cursor=pointer]:
+              - generic [ref=f4e479]: Matching engine
+              - generic [ref=f4e480]: —
+            - generic [ref=f4e481] [cursor=pointer]:
+              - generic [ref=f4e482]: URL shortener
+              - generic [ref=f4e483]: —
+          - generic [ref=f4e484]:
+            - generic [ref=f4e485]: Deep Dive 01
+            - heading "Idempotency" [level=3] [ref=f4e486]
+            - paragraph [ref=f4e487]: The most common correctness failure in distributed payment systems is the duplicate charge. It happens when a client retries a failed request that actually succeeded — the PSP charged, but the response was lost in transit.
+            - paragraph [ref=f4e488]: "The fix is an idempotency key: a client-generated UUID attached to each request."
+            - generic [ref=f4e489]:
+              - generic [ref=f4e490]: "// In prod: use Redis Lua for atomicity."
+              - generic [ref=f4e491]: "ifcached, ok := store.Get(key); ok {"
+              - generic [ref=f4e492]: return cached // idempotent response
+              - generic [ref=f4e493]: "}"
+              - generic [ref=f4e494]: result := psp.Charge(amount)
+              - generic [ref=f4e495]: store.Set(key, result)
+    - generic [ref=f4e498]:
+      - generic [ref=f4e499]:
+        - paragraph [ref=f4e500]: Engineers who made it
+        - heading "What engineers say." [level=2] [ref=f4e501]
+        - paragraph [ref=f4e502]: Real feedback from engineers who used Senior Loop to land senior roles.
+      - generic [ref=f4e505]:
+        - generic [ref=f4e506]:
+          - paragraph [ref=f4e507]: "\"Caught 4/5 severity issues on my first review. The rubric pushed me to reason like a staff engineer, not just spot bugs.\""
+          - generic [ref=f4e508]:
+            - generic [ref=f4e509]: SG
+            - generic [ref=f4e510]:
+              - generic [ref=f4e511]: Sajal Gupta
+              - generic [ref=f4e512]: Staff Software Engineer
+              - generic [ref=f4e513]: → ServiceNow
+            - link "Sajal Gupta on LinkedIn" [ref=f4e514] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/salroid/
+        - generic [ref=f4e517]:
+          - paragraph [ref=f4e518]: "\"The Bug Hunt exercises are unlike anything else out there. Real test failures, real logs. I stopped pattern-matching and started actually debugging.\""
+          - generic [ref=f4e519]:
+            - generic [ref=f4e520]: DG
+            - generic [ref=f4e521]:
+              - generic [ref=f4e522]: Divyansh Goel
+              - generic [ref=f4e523]: Scientist
+              - generic [ref=f4e524]: → Amazon
+            - link "Divyansh Goel on LinkedIn" [ref=f4e525] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/divyanshgoel/
+        - generic [ref=f4e528]:
+          - paragraph [ref=f4e529]: "\"The loop prep here mirrored the real senior bar — the rubric flagged exactly the gaps I needed to close. Cleared it on the next loop.\""
+          - generic [ref=f4e530]:
+            - generic [ref=f4e531]: AM
+            - generic [ref=f4e532]:
+              - generic [ref=f4e533]: Aayush Mittal
+              - generic [ref=f4e534]: Senior Software Engineer
+              - generic [ref=f4e535]: → Agoda
+            - link "Aayush Mittal on LinkedIn" [ref=f4e536] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/aayush-mittal-370770b6/
+        - generic [ref=f4e539]:
+          - paragraph [ref=f4e540]: "\"The Deep Dives go deeper than any blog post I've read. Idempotency, exactly-once delivery — explained at the depth a senior interview actually probes.\""
+          - generic [ref=f4e541]:
+            - generic [ref=f4e542]: PG
+            - generic [ref=f4e543]:
+              - generic [ref=f4e544]: Pulkit Gupta
+              - generic [ref=f4e545]: Senior Software Engineer
+              - generic [ref=f4e546]: → Microsoft
+            - link "Pulkit Gupta on LinkedIn" [ref=f4e547] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/pulkitent/
+        - generic [ref=f4e550]:
+          - paragraph [ref=f4e551]: "\"Caught 4/5 severity issues on my first review. The rubric pushed me to reason like a staff engineer, not just spot bugs.\""
+          - generic [ref=f4e552]:
+            - generic [ref=f4e553]: SG
+            - generic [ref=f4e554]:
+              - generic [ref=f4e555]: Sajal Gupta
+              - generic [ref=f4e556]: Staff Software Engineer
+              - generic [ref=f4e557]: → ServiceNow
+            - link "Sajal Gupta on LinkedIn" [ref=f4e558] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/salroid/
+        - generic [ref=f4e561]:
+          - paragraph [ref=f4e562]: "\"The Bug Hunt exercises are unlike anything else out there. Real test failures, real logs. I stopped pattern-matching and started actually debugging.\""
+          - generic [ref=f4e563]:
+            - generic [ref=f4e564]: DG
+            - generic [ref=f4e565]:
+              - generic [ref=f4e566]: Divyansh Goel
+              - generic [ref=f4e567]: Scientist
+              - generic [ref=f4e568]: → Amazon
+            - link "Divyansh Goel on LinkedIn" [ref=f4e569] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/divyanshgoel/
+        - generic [ref=f4e572]:
+          - paragraph [ref=f4e573]: "\"The loop prep here mirrored the real senior bar — the rubric flagged exactly the gaps I needed to close. Cleared it on the next loop.\""
+          - generic [ref=f4e574]:
+            - generic [ref=f4e575]: AM
+            - generic [ref=f4e576]:
+              - generic [ref=f4e577]: Aayush Mittal
+              - generic [ref=f4e578]: Senior Software Engineer
+              - generic [ref=f4e579]: → Agoda
+            - link "Aayush Mittal on LinkedIn" [ref=f4e580] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/aayush-mittal-370770b6/
+        - generic [ref=f4e583]:
+          - paragraph [ref=f4e584]: "\"The Deep Dives go deeper than any blog post I've read. Idempotency, exactly-once delivery — explained at the depth a senior interview actually probes.\""
+          - generic [ref=f4e585]:
+            - generic [ref=f4e586]: PG
+            - generic [ref=f4e587]:
+              - generic [ref=f4e588]: Pulkit Gupta
+              - generic [ref=f4e589]: Senior Software Engineer
+              - generic [ref=f4e590]: → Microsoft
+            - link "Pulkit Gupta on LinkedIn" [ref=f4e591] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/pulkitent/
+    - generic [ref=f4e596]:
+      - generic [ref=f4e597]:
+        - generic [ref=f4e598]: Pricing
+        - heading "Start free—no card required. Upgrade to Pro for the complete catalog." [level=2] [ref=f4e599]
+        - paragraph [ref=f4e600]: Pro is a one-time 30- or 90-day purchase. It never auto-renews.
+      - generic [ref=f4e601]:
+        - generic [ref=f4e602]:
+          - generic [ref=f4e603]: Free
+          - generic [ref=f4e604]: ₹0
+          - generic [ref=f4e606]: Forever
+          - list [ref=f4e607]:
+            - listitem [ref=f4e608]:
+              - generic [ref=f4e609]: ✓
+              - generic [ref=f4e610]: 3 code reviews — AI-graded against rubric
+            - listitem [ref=f4e611]:
+              - generic [ref=f4e612]: ✓
+              - generic [ref=f4e613]: 3 Deep Dives
+            - listitem [ref=f4e614]:
+              - generic [ref=f4e615]: ✓
+              - generic [ref=f4e616]: First Build It problem
+            - listitem [ref=f4e617]:
+              - generic [ref=f4e618]: ✓
+              - generic [ref=f4e619]: 3 bug hunt exercises
+          - link "Start free →" [ref=f4e620] [cursor=pointer]:
+            - /url: /prs
+        - generic [ref=f4e621]:
+          - generic [ref=f4e622]: Recommended
+          - generic [ref=f4e623]: Pro
+          - generic [ref=f4e624]:
+            - generic [ref=f4e625]: ₹1,499
+            - generic [ref=f4e626]: /mo
+          - generic [ref=f4e627]: Billed monthly
+          - list [ref=f4e628]:
+            - listitem [ref=f4e629]:
+              - generic [ref=f4e630]: ✓
+              - generic [ref=f4e631]: All 15 code reviews
+            - listitem [ref=f4e632]:
+              - generic [ref=f4e633]: ✓
+              - generic [ref=f4e634]: All 13 Deep Dives
+            - listitem [ref=f4e635]:
+              - generic [ref=f4e636]: ✓
+              - generic [ref=f4e637]: All Bug Hunt exercises
+            - listitem [ref=f4e638]:
+              - generic [ref=f4e639]: ✓
+              - generic [ref=f4e640]: Full Build It access
+            - listitem [ref=f4e641]:
+              - generic [ref=f4e642]: ✓
+              - generic [ref=f4e643]: Unlimited grading attempts
+          - link "Subscribe →" [ref=f4e644] [cursor=pointer]:
+            - /url: /pricing
+    - generic [ref=f4e646]:
+      - heading "Stop memorizing patterns. Train the real loop." [level=2] [ref=f4e647]: Stop memorizing patterns.Train the real loop.
+      - paragraph [ref=f4e648]: 3 code reviews, 3 bug exercises, 3 Deep Dives, first Build It — no card required.
+      - link "Try a free review →" [ref=f4e649] [cursor=pointer]:
+        - /url: /prs
+    - generic [ref=f4e651]:
+      - heading "Questions worth answering honestly" [level=2] [ref=f4e652]
+      - group [ref=f4e654]:
+        - generic "What does the free tier include? +" [ref=f4e655] [cursor=pointer]:
+          - generic [ref=f4e656]: What does the free tier include?
+          - generic [ref=f4e657]: +
+      - group [ref=f4e659]:
+        - generic "What is Build It? +" [ref=f4e660] [cursor=pointer]:
+          - generic [ref=f4e661]: What is Build It?
+          - generic [ref=f4e662]: +
+      - group [ref=f4e664]:
+        - generic "Is the backend-heavy content still useful if my loop isn't payments? +" [ref=f4e665] [cursor=pointer]:
+          - generic [ref=f4e666]: Is the backend-heavy content still useful if my loop isn't payments?
+          - generic [ref=f4e667]: +
+      - group [ref=f4e669]:
+        - generic "How do I know the AI grading is accurate? +" [ref=f4e670] [cursor=pointer]:
+          - generic [ref=f4e671]: How do I know the AI grading is accurate?
+          - generic [ref=f4e672]: +
+      - group [ref=f4e674]:
+        - generic "Is ₹1,499/month worth it? +" [ref=f4e675] [cursor=pointer]:
+          - generic [ref=f4e676]: Is ₹1,499/month worth it?
+          - generic [ref=f4e677]: +
+      - generic [ref=f4e678]:
+        - text: Still scrolling?
+        - link "Try 3 Deep Dives free — no card needed →" [ref=f4e679] [cursor=pointer]:
+          - /url: /study
+    - generic [ref=f4e680]:
+      - generic [ref=f4e681]:
+        - link "Senior Loop home" [ref=f4e683] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f4e687]: senior loop
+        - paragraph [ref=f4e688]: Production-shaped practice for senior backend interviews.
+        - paragraph [ref=f4e689]: © 2026 Senior Loop · hello@seniorloop.dev
+      - generic [ref=f4e690]:
+        - generic [ref=f4e691]:
+          - generic [ref=f4e692]: Product
+          - link "Code Reviews" [ref=f4e693] [cursor=pointer]:
+            - /url: /prs
+          - link "Bug Hunt" [ref=f4e694] [cursor=pointer]:
+            - /url: /bugs
+          - link "Build It" [ref=f4e695] [cursor=pointer]:
+            - /url: /lld
+          - link "Deep Dives" [ref=f4e696] [cursor=pointer]:
+            - /url: /study
+        - generic [ref=f4e697]:
+          - generic [ref=f4e698]: Company
+          - link "Pricing" [ref=f4e699] [cursor=pointer]:
+            - /url: /pricing
+          - link "About" [ref=f4e700] [cursor=pointer]:
+            - /url: /about
+          - link "Contact" [ref=f4e701] [cursor=pointer]:
+            - /url: /contact
+          - link "Privacy" [ref=f4e702] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f4e703] [cursor=pointer]:
+            - /url: /terms
+          - link "Refunds" [ref=f4e704] [cursor=pointer]:
+            - /url: /refund-policy
+  - alert [ref=f4e705]
