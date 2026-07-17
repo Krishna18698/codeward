@@ -18,11 +18,14 @@ export default async function DSAPage({ searchParams }: Props) {
   const { sheet: sheetId, view } = await searchParams;
   const showBank = view === "bank";
 
-  const sheets = await prisma.sheet.findMany({
-    where: { OR: [{ isPreset: true }, { userId }] },
-    include: { _count: { select: { problems: true } } },
-    orderBy: [{ isPreset: "desc" }, { createdAt: "asc" }],
-  });
+  const [sheets, doneTotal] = await Promise.all([
+    prisma.sheet.findMany({
+      where: { OR: [{ isPreset: true }, { userId }] },
+      include: { _count: { select: { problems: true } } },
+      orderBy: [{ isPreset: "desc" }, { createdAt: "asc" }],
+    }),
+    prisma.userProblemStatus.count({ where: { userId, status: "DONE" } }),
+  ]);
 
   // Custom sheets for the "add to sheet" dropdown in ProblemBank
   const userSheets = sheets
@@ -41,6 +44,11 @@ export default async function DSAPage({ searchParams }: Props) {
   }));
 
   const defaultSheetId = sheetId ?? tabSheets[0]?.id;
+
+  // "Start here" card — only for users who haven't solved anything yet.
+  // Self-dismisses on the first solve; silently absent if the sheet is renamed.
+  const blind75 = tabSheets.find((s) => /blind\s*75/i.test(s.name));
+  const showStartHere = !showBank && doneTotal === 0 && !!blind75;
 
   // Pre-fetch initial sheet data server-side to avoid client-side loading skeleton
   const [initialProblems, initialAllStatuses, initialNotesList] = defaultSheetId && !showBank
@@ -120,6 +128,25 @@ export default async function DSAPage({ searchParams }: Props) {
           <ProblemBank userSheets={userSheets} />
         ) : (
           <>
+            {/* Start here — first-time users with zero solves */}
+            {showStartHere && blind75 && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-emerald-500/25 bg-emerald-500/6 p-5">
+                <div>
+                  <p className="font-mono text-[13px] text-emerald-400 mb-1">Start here</p>
+                  <p className="text-sm font-semibold text-white">New? Begin with Blind 75.</p>
+                  <p className="text-xs text-neutral-400 mt-0.5">
+                    75 problems covering every pattern that matters. Finish these before touching anything else.
+                  </p>
+                </div>
+                <Link
+                  href={`/dashboard/dsa?sheet=${blind75.id}`}
+                  className="shrink-0 self-start sm:self-center rounded-lg bg-emerald-500 text-black text-xs font-semibold px-3.5 py-2 hover:bg-emerald-400 transition-colors"
+                >
+                  Open Blind 75 →
+                </Link>
+              </div>
+            )}
+
             {/* Sheet tabs — handles delete + new sheet + add problems button */}
             <Suspense fallback={
               <div className="flex gap-2 flex-wrap items-center">
