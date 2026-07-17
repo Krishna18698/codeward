@@ -52,14 +52,14 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg rounded-2xl border border-slate-700/80 bg-surface/95 shadow-2xl backdrop-blur-xl flex flex-col max-h-[82vh]">
+      <div className="relative w-full max-w-lg rounded-2xl border border-neutral-700/80 bg-surface/95 shadow-2xl backdrop-blur-xl flex flex-col max-h-[82vh]">
 
         {/* Header */}
-        <div className="px-5 pt-5 pb-4 border-b border-slate-800 shrink-0">
+        <div className="px-5 pt-5 pb-4 border-b border-neutral-800 shrink-0">
           <h2 className="text-base font-semibold text-white">Add Problems</h2>
-          <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+          <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">
             Adding to{" "}
-            <span className="text-slate-300 font-medium">{sheetName}</span>
+            <span className="text-neutral-300 font-medium">{sheetName}</span>
             {" "}— search by name or filter by company.
           </p>
         </div>
@@ -74,24 +74,24 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-4 border-t border-slate-800 shrink-0">
+        <div className="px-5 py-4 border-t border-neutral-800 shrink-0">
           {error && <p className="text-xs text-red-400 mb-3">{error}</p>}
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500 flex-1">
+            <span className="text-xs text-neutral-500 flex-1">
               {selected.length > 0
                 ? `${selected.length} problem${selected.length > 1 ? "s" : ""} selected`
                 : "Nothing selected yet"}
             </span>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm text-slate-400 hover:text-white rounded-xl border border-slate-700 hover:border-slate-600 transition"
+              className="px-4 py-2 text-sm text-neutral-400 hover:text-white rounded-xl border border-neutral-700 hover:border-neutral-600 transition"
             >
               Cancel
             </button>
             <button
               onClick={handleAdd}
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium bg-sky-500 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition"
+              className="px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition"
             >
               {loading
                 ? "Adding…"

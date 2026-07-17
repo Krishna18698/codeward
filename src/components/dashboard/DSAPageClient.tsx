@@ -68,14 +68,14 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                 onClick={() => navigate(s.id)}
                 className={`rounded-xl px-3.5 py-1.5 text-sm transition-all duration-150 border whitespace-nowrap ${
                   isActive
-                    ? "bg-sky-500/15 text-sky-400 border-sky-500/30 shadow-[0_0_12px_rgba(14,165,233,0.15)]"
-                    : "border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200 hover:bg-slate-800/40"
+                    ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 shadow-[0_0_12px_rgba(52, 211, 153,0.15)]"
+                    : "border-neutral-800 text-neutral-400 hover:border-neutral-700 hover:text-neutral-200 hover:bg-neutral-800/40"
                 } ${isCustom ? "pr-8" : ""} ${isPending && !isLoading ? "opacity-60" : ""}`}
               >
                 {s.name}
                 <span className="ml-2 text-[11px] opacity-50 inline-flex items-center">
                   {isLoading
-                    ? <Loader2 size={11} className="animate-spin text-sky-400" />
+                    ? <Loader2 size={11} className="animate-spin text-emerald-400" />
                     : s.problemCount}
                 </span>
               </button>
@@ -87,7 +87,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                   onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(s.id); }}
                   title="Delete sheet"
                   aria-label={`Delete sheet ${s.name}`}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-lg text-neutral-500 hover:text-red-400 hover:bg-red-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition"
                 >
                   ×
                 </button>
@@ -99,7 +99,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
         {/* New Sheet */}
         <button
           onClick={() => setShowCreate(true)}
-          className="rounded-xl border border-dashed border-sky-500/25 px-3.5 py-1.5 text-sm text-sky-500/60 hover:text-sky-400 hover:border-sky-500/50 transition-colors"
+          className="rounded-xl border border-dashed border-emerald-500/25 px-3.5 py-1.5 text-sm text-emerald-500/60 hover:text-emerald-400 hover:border-emerald-500/50 transition-colors"
         >
           + New sheet
         </button>
@@ -110,12 +110,12 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
         const sheet = sheets.find((s) => s.id === confirmDeleteId);
         return (
           <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
-            <span className="text-slate-300 flex-1">
+            <span className="text-neutral-300 flex-1">
               Delete <span className="font-medium text-white">{sheet?.name}</span>? This removes all problems inside it.
             </span>
             <button
               onClick={() => setConfirmDeleteId(null)}
-              className="text-slate-500 hover:text-slate-300 text-xs border border-slate-700 rounded-lg px-3 py-1.5 transition"
+              className="text-neutral-500 hover:text-neutral-300 text-xs border border-neutral-700 rounded-lg px-3 py-1.5 transition"
             >
               Cancel
             </button>

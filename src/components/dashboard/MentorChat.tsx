@@ -57,7 +57,7 @@ function ThinkingDots() {
       {[0, 150, 300].map((delay) => (
         <span
           key={delay}
-          className="w-1.5 h-1.5 rounded-full bg-sky-400/70 animate-bounce"
+          className="w-1.5 h-1.5 rounded-full bg-emerald-400/70 animate-bounce"
           style={{ animationDelay: `${delay}ms`, animationDuration: "900ms" }}
         />
       ))}
@@ -333,10 +333,10 @@ export default function MentorChat({
   };
 
   return (
-    <div className={cn("flex h-full flex-col bg-canvas md:bg-slate-900/50 overflow-hidden", className)}>
+    <div className={cn("flex h-full flex-col bg-canvas md:bg-neutral-900/50 overflow-hidden", className)}>
       {!hideHeader && (
-        <div className="flex items-center gap-2 border-b border-slate-800 px-4 py-3 shrink-0">
-          <Sparkles size={14} className="text-sky-400 shrink-0" />
+        <div className="flex items-center gap-2 border-b border-neutral-800 px-4 py-3 shrink-0">
+          <Sparkles size={14} className="text-emerald-400 shrink-0" />
           <span className="text-sm font-medium text-white">AI Mentor</span>
           <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
         </div>
@@ -346,19 +346,19 @@ export default function MentorChat({
         {messages.map((msg, i) => (
           <div key={i} className={cn("flex gap-2 animate-msg-pop", msg.role === "user" ? "justify-end" : "justify-start")}>
             {msg.role === "assistant" && (
-              <Sparkles size={12} className="mt-1 shrink-0 text-sky-400" />
+              <Sparkles size={12} className="mt-1 shrink-0 text-emerald-400" />
             )}
 
             {msg.type === "sheet" ? (
-              <div className="max-w-[92%] rounded-xl border border-sky-500/30 bg-sky-500/8 p-3 space-y-1.5 animate-scale-in">
-                <p className="text-[10px] text-sky-400 font-medium uppercase tracking-wide">Sheet created</p>
+              <div className="max-w-[92%] rounded-xl border border-emerald-500/30 bg-emerald-500/8 p-3 space-y-1.5 animate-scale-in">
+                <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wide">Sheet created</p>
                 <p className="text-sm font-semibold text-white">{msg.sheetName}</p>
-                <p className="text-xs text-slate-400 leading-relaxed">{msg.rationale}</p>
-                <p className="text-xs text-slate-500">{msg.problemCount} problems</p>
+                <p className="text-xs text-neutral-400 leading-relaxed">{msg.rationale}</p>
+                <p className="text-xs text-neutral-500">{msg.problemCount} problems</p>
                 <Link
                   href={`/dashboard/dsa?sheet=${msg.sheetId}`}
                   onClick={() => onSheetOpen?.()}
-                  className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-sky-400 hover:text-sky-300 transition-colors"
+                  className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
                 >
                   Open sheet <ArrowRight size={11} />
                 </Link>
@@ -367,7 +367,7 @@ export default function MentorChat({
               <div className="max-w-[92%] rounded-xl border border-emerald-500/30 bg-emerald-500/8 p-3 space-y-1.5 animate-scale-in">
                 <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wide">Problems added</p>
                 <p className="text-sm font-semibold text-white">{msg.sheetName}</p>
-                <p className="text-xs text-slate-500">+{msg.addedCount} new problems · {msg.totalCount} total</p>
+                <p className="text-xs text-neutral-500">+{msg.addedCount} new problems · {msg.totalCount} total</p>
                 <Link
                   href={`/dashboard/dsa?sheet=${msg.sheetId}`}
                   onClick={() => onSheetOpen?.()}
@@ -377,16 +377,16 @@ export default function MentorChat({
                 </Link>
               </div>
             ) : msg.role === "user" ? (
-              <div className="max-w-[88%] rounded-2xl px-3.5 py-2.5 leading-relaxed whitespace-pre-wrap text-[13px] md:text-sm bg-sky-500/15 text-slate-200 border border-sky-500/20">
+              <div className="max-w-[88%] rounded-2xl px-3.5 py-2.5 leading-relaxed whitespace-pre-wrap text-[13px] md:text-sm bg-emerald-500/15 text-neutral-200 border border-emerald-500/20">
                 {msg.content}
               </div>
             ) : (
-              <div className="max-w-[92%] text-[13px] md:text-sm text-slate-300 space-y-0.5">
+              <div className="max-w-[92%] text-[13px] md:text-sm text-neutral-300 space-y-0.5">
                 <Suspense fallback={<div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>}>
                   <MarkdownMessage content={msg.content} />
                 </Suspense>
                 {streaming && i === messages.length - 1 && (
-                  <span className="inline-block w-0.5 h-[1em] bg-sky-400 animate-pulse rounded-sm ml-0.5 align-text-bottom" />
+                  <span className="inline-block w-0.5 h-[1em] bg-emerald-400 animate-pulse rounded-sm ml-0.5 align-text-bottom" />
                 )}
               </div>
             )}
@@ -395,14 +395,14 @@ export default function MentorChat({
 
         {thinking && (
           <div className="flex gap-2 justify-start animate-msg-pop">
-            <Sparkles size={12} className="mt-2 shrink-0 text-sky-400" />
+            <Sparkles size={12} className="mt-2 shrink-0 text-emerald-400" />
             <ThinkingDots />
           </div>
         )}
       </div>
 
-      <div className="border-t border-slate-800 px-3 py-3 md:p-3 shrink-0 bg-canvas md:bg-transparent">
-        <div className="flex items-end gap-2 rounded-2xl border border-slate-700 bg-slate-800/80 px-4 py-3 focus-within:border-sky-500/50 transition-colors">
+      <div className="border-t border-neutral-800 px-3 py-3 md:p-3 shrink-0 bg-canvas md:bg-transparent">
+        <div className="flex items-end gap-2 rounded-2xl border border-neutral-700 bg-neutral-800/80 px-4 py-3 focus-within:border-emerald-500/50 transition-colors">
           <textarea
             ref={inputRef}
             value={input}
@@ -415,7 +415,7 @@ export default function MentorChat({
               }
             }}
             placeholder="Ask me anything…"
-            className="flex-1 bg-transparent text-[13px] md:text-sm text-slate-200 placeholder-slate-500 outline-none resize-none max-h-24 leading-relaxed"
+            className="flex-1 bg-transparent text-[13px] md:text-sm text-neutral-200 placeholder-neutral-500 outline-none resize-none max-h-24 leading-relaxed"
             disabled={loading}
           />
           {(streaming || thinking) ? (
@@ -432,13 +432,13 @@ export default function MentorChat({
               onClick={send}
               disabled={loading || !input.trim()}
               aria-label="Send message"
-              className="text-sky-400 hover:text-sky-300 disabled:text-slate-700 transition-colors p-1 -mr-1"
+              className="text-emerald-400 hover:text-emerald-300 disabled:text-neutral-700 transition-colors p-1 -mr-1"
             >
               <Send size={16} />
             </button>
           )}
         </div>
-        <p className="mt-1.5 text-[10px] text-slate-500 text-center hidden md:block">
+        <p className="mt-1.5 text-[10px] text-neutral-500 text-center hidden md:block">
           Say &quot;create a sheet for Meta&quot; to generate a personalized plan
         </p>
       </div>

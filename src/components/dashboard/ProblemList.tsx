@@ -94,8 +94,8 @@ function StatusIcon({ status }: { status: ProblemStatus }) {
   if (status === "DONE")
     return <Check size={12} strokeWidth={2.5} className="text-emerald-400" />;
   if (status === "SOLVING")
-    return <Circle size={12} strokeWidth={2.5} className="text-sky-400" fill="rgba(14,165,233,0.3)" />;
-  return <Circle size={12} strokeWidth={1.5} className="text-slate-500" />;
+    return <Circle size={12} strokeWidth={2.5} className="text-emerald-400" fill="rgba(52, 211, 153,0.3)" />;
+  return <Circle size={12} strokeWidth={1.5} className="text-neutral-500" />;
 }
 
 function InlineNote({
@@ -135,17 +135,17 @@ function InlineNote({
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   return (
-    <div className="px-4 pb-3 bg-slate-900/80">
-      <div className="rounded-lg border border-slate-700/60 bg-canvas overflow-hidden">
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-slate-800/60">
-          <span className="text-[11px] text-slate-500 flex items-center gap-1.5">
+    <div className="px-4 pb-3 bg-neutral-900/80">
+      <div className="rounded-lg border border-neutral-700/60 bg-canvas overflow-hidden">
+        <div className="flex items-center justify-between px-3 py-1.5 border-b border-neutral-800/60">
+          <span className="text-[11px] text-neutral-500 flex items-center gap-1.5">
             <StickyNote size={11} />
             Notes
           </span>
           <div className="flex items-center gap-3">
-            {saveState === "saving" && <span className="text-[10px] text-slate-500">saving…</span>}
+            {saveState === "saving" && <span className="text-[10px] text-neutral-500">saving…</span>}
             {saveState === "saved"  && <span className="text-[10px] text-emerald-500">saved ✓</span>}
-            <button onClick={onClose} className="text-slate-500 hover:text-slate-400 transition-colors">
+            <button onClick={onClose} className="text-neutral-500 hover:text-neutral-400 transition-colors">
               <X size={13} />
             </button>
           </div>
@@ -154,7 +154,7 @@ function InlineNote({
           value={content}
           onChange={handleChange}
           placeholder="Add your notes, key insights, approach…"
-          className="w-full bg-transparent text-slate-300 text-xs px-3 py-2.5 resize-none focus:outline-none placeholder:text-slate-500"
+          className="w-full bg-transparent text-neutral-300 text-xs px-3 py-2.5 resize-none focus:outline-none placeholder:text-neutral-500"
           rows={4}
           autoFocus
         />
@@ -298,12 +298,12 @@ export default function ProblemList({
     <div className="space-y-3">
       {/* Search */}
       <div className="relative">
-        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search problems…"
-          className="w-full bg-slate-900/60 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm text-slate-300 placeholder:text-slate-500 focus:outline-none focus:border-slate-700 transition-colors"
+          className="w-full bg-neutral-900/60 border border-neutral-800 rounded-xl pl-8 pr-3 py-2 text-sm text-neutral-300 placeholder:text-neutral-500 focus:outline-none focus:border-neutral-700 transition-colors"
         />
       </div>
 
@@ -312,7 +312,7 @@ export default function ProblemList({
         <select
           value={diffFilter}
           onChange={(e) => setDiffFilter(e.target.value)}
-          className="bg-slate-900/60 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700 transition-colors"
+          className="bg-neutral-900/60 border border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-neutral-700 transition-colors"
         >
           <option value="ALL">All difficulties</option>
           <option value="EASY">Easy</option>
@@ -323,7 +323,7 @@ export default function ProblemList({
           <select
             value={compFilter}
             onChange={(e) => setCompFilter(e.target.value)}
-            className="bg-slate-900/60 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700 transition-colors"
+            className="bg-neutral-900/60 border border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-neutral-700 transition-colors"
           >
             <option value="ALL">All companies</option>
             {availableCompanies.map((c) => (
@@ -334,7 +334,7 @@ export default function ProblemList({
         {(diffFilter !== "ALL" || compFilter !== "ALL") && (
           <button
             onClick={() => { setDiffFilter("ALL"); setCompFilter("ALL"); }}
-            className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 border border-slate-800 rounded-xl px-2.5 py-1.5 transition-colors"
+            className="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-300 border border-neutral-800 rounded-xl px-2.5 py-1.5 transition-colors"
           >
             <X size={10} /> Clear
           </button>
@@ -342,7 +342,7 @@ export default function ProblemList({
         {onAddProblems && (
           <button
             onClick={onAddProblems}
-            className="ml-auto flex items-center gap-1.5 rounded-xl border border-sky-500/25 bg-sky-500/5 px-3 py-1.5 text-xs text-sky-400/80 hover:text-sky-300 hover:border-sky-500/50 hover:bg-sky-500/10 transition-all"
+            className="ml-auto flex items-center gap-1.5 rounded-xl border border-emerald-500/25 bg-emerald-500/5 px-3 py-1.5 text-xs text-emerald-400/80 hover:text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all"
           >
             <span className="text-sm leading-none">＋</span> Add Problems
           </button>
@@ -350,7 +350,7 @@ export default function ProblemList({
       </div>
 
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pattern Distribution</h3>
+        <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Pattern Distribution</h3>
       </div>
 
       {patterns.map((pattern) => {
@@ -359,36 +359,36 @@ export default function ProblemList({
         const isCollapsed = collapsed[pattern] !== false;
 
         return (
-          <div key={pattern} className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden">
+          <div key={pattern} className="rounded-xl border border-neutral-800 bg-neutral-900/50 overflow-hidden">
             <button
               onClick={() => setCollapsed((prev) => ({ ...prev, [pattern]: prev[pattern] === false }))}
               aria-expanded={!isCollapsed}
-              className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/40 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 hover:bg-neutral-800/40 transition-colors"
             >
               <div className="flex-1 min-w-0 text-left">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-300 capitalize font-medium">
+                  <span className="text-xs text-neutral-300 capitalize font-medium">
                     {pattern.replace(/_/g, " ").toLowerCase()}
                   </span>
-                  <span className="text-[10px] text-slate-500">{groupDone}/{problems.length}</span>
+                  <span className="text-[10px] text-neutral-500">{groupDone}/{problems.length}</span>
                 </div>
                 {PATTERN_DESCRIPTIONS[pattern] && (
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                  <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
                     {PATTERN_DESCRIPTIONS[pattern]}
                   </p>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-20 h-1 rounded-full bg-slate-800 overflow-hidden">
+                <div className="w-20 h-1 rounded-full bg-neutral-800 overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-sky-500 transition-all duration-500"
+                    className="h-full rounded-full bg-emerald-500 transition-all duration-500"
                     style={{ width: `${Math.round((groupDone / problems.length) * 100)}%` }}
                   />
                 </div>
                 <ChevronRight
                   size={14}
                   className={cn(
-                    "text-slate-500 transition-transform duration-200",
+                    "text-neutral-500 transition-transform duration-200",
                     !isCollapsed && "rotate-90",
                   )}
                 />
@@ -396,7 +396,7 @@ export default function ProblemList({
             </button>
 
             {!isCollapsed && (
-              <div className="divide-y divide-slate-800/60">
+              <div className="divide-y divide-neutral-800/60">
                 {problems.map((p, idx) => {
                   const status = statuses[p.id] ?? "TODO";
                   const noteOpen = openNoteId === p.id;
@@ -407,7 +407,7 @@ export default function ProblemList({
                   return (
                     <div key={p.id} className="animate-fade-in" style={{ animationDelay: animDelay }}>
                       {/* Problem row */}
-                      <div className="flex items-start gap-3 px-4 py-2.5 hover:bg-slate-800/30 transition-colors">
+                      <div className="flex items-start gap-3 px-4 py-2.5 hover:bg-neutral-800/30 transition-colors">
                         {/* Status circle — self-center so it stays centered across both lines */}
                         <button
                           onClick={() => toggleDone(p.id)}
@@ -415,8 +415,8 @@ export default function ProblemList({
                           className={cn(
                             "shrink-0 self-center w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-150",
                             status === "DONE"    && "border-emerald-500/60 bg-emerald-500/10",
-                            status === "SOLVING" && "border-sky-500/60 bg-sky-500/10",
-                            status === "TODO"    && "border-slate-700 hover:border-slate-500",
+                            status === "SOLVING" && "border-emerald-500/60 bg-emerald-500/10",
+                            status === "TODO"    && "border-neutral-700 hover:border-neutral-500",
                           )}
                         >
                           <StatusIcon status={status} />
@@ -428,7 +428,7 @@ export default function ProblemList({
                           {/* ── Mobile: 2-line ── */}
                           <div className="md:hidden space-y-1">
                             <div className="flex items-start justify-between gap-2">
-                              <span className="text-sm text-slate-300 leading-snug">{p.title}</span>
+                              <span className="text-sm text-neutral-300 leading-snug">{p.title}</span>
                               {p.mustDo && (
                                 <span className="shrink-0 text-[10px] text-amber-400/80 border border-amber-500/20 rounded px-1 py-0.5 mt-0.5">must do</span>
                               )}
@@ -457,10 +457,10 @@ export default function ProblemList({
                                     <GFGIcon size={20} />
                                   </a>
                                 )}
-                                <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-violet-400 hover:text-violet-300" : "text-slate-500 hover:text-slate-400")}>
+                                <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-neutral-500 hover:text-neutral-400")}>
                                   <RotateCcw size={15} />
                                 </button>
-                                <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-slate-500 hover:text-slate-400")}>
+                                <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-neutral-500 hover:text-neutral-400")}>
                                   <StickyNote size={15} />
                                 </button>
                               </div>
@@ -472,7 +472,7 @@ export default function ProblemList({
                             className="hidden md:grid items-center gap-x-4"
                             style={{ gridTemplateColumns: "minmax(0,2fr) minmax(0,100px) 72px 72px minmax(0,1fr)" }}
                           >
-                            <span className="text-sm text-slate-300 leading-snug min-w-0 truncate">{p.title}</span>
+                            <span className="text-sm text-neutral-300 leading-snug min-w-0 truncate">{p.title}</span>
 
                             {/* Companies */}
                             <div className="flex items-center justify-center gap-1.5">
@@ -511,10 +511,10 @@ export default function ProblemList({
                                   <GFGIcon size={20} />
                                 </a>
                               )}
-                              <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-violet-400 hover:text-violet-300" : "text-slate-500 hover:text-slate-400")}>
+                              <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-neutral-500 hover:text-neutral-400")}>
                                 <RotateCcw size={15} />
                               </button>
-                              <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-slate-500 hover:text-slate-400")}>
+                              <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-neutral-500 hover:text-neutral-400")}>
                                 <StickyNote size={15} />
                               </button>
                             </div>

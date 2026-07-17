@@ -49,7 +49,7 @@ export default function UserAvatar({ image, name, size = 32, className, textSize
     <div
       style={style}
       className={cn(
-        `bg-linear-to-br from-sky-500/40 to-indigo-500/40 ${rounded} flex items-center justify-center shrink-0`,
+        `bg-linear-to-br from-emerald-500/40 to-rose-500/40 ${rounded} flex items-center justify-center shrink-0`,
         className,
       )}
     >

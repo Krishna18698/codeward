@@ -70,7 +70,7 @@ export default function ProfileForm({ user }: { user: User }) {
 
       {showAvatarPicker && (
         <div>
-          <label className="block text-xs font-medium text-slate-400 mb-2">Profile avatar</label>
+          <label className="block text-xs font-medium text-neutral-400 mb-2">Profile avatar</label>
           <div className="flex gap-3">
             {AVATARS.map((av) => (
               <button
@@ -81,8 +81,8 @@ export default function ProfileForm({ user }: { user: User }) {
                 className={cn(
                   "flex flex-col items-center gap-1.5 rounded-2xl border p-3 transition-all duration-150",
                   avatar === av.key
-                    ? "border-sky-500/60 bg-sky-500/10 ring-1 ring-sky-500/30"
-                    : "border-slate-800 hover:border-slate-600 bg-slate-900/40",
+                    ? "border-emerald-500/60 bg-emerald-500/10 ring-1 ring-emerald-500/30"
+                    : "border-neutral-800 hover:border-neutral-600 bg-neutral-900/40",
                 )}
               >
                 <div className={cn(
@@ -90,7 +90,7 @@ export default function ProfileForm({ user }: { user: User }) {
                 )}>
                   {av.emoji}
                 </div>
-                <span className="text-[10px] text-slate-500">{av.label}</span>
+                <span className="text-[10px] text-neutral-500">{av.label}</span>
               </button>
             ))}
           </div>
@@ -98,7 +98,7 @@ export default function ProfileForm({ user }: { user: User }) {
       )}
 
       <div>
-        <label className="block text-xs font-medium text-slate-400 mb-1.5">Experience level</label>
+        <label className="block text-xs font-medium text-neutral-400 mb-1.5">Experience level</label>
         <div className="flex gap-2">
           {EXP_LEVELS.map((l) => (
             <button
@@ -107,8 +107,8 @@ export default function ProfileForm({ user }: { user: User }) {
               className={cn(
                 "flex-1 rounded-xl border px-3 py-2 text-xs transition-all duration-150",
                 exp === l.value
-                  ? "border-sky-500/60 bg-sky-500/10 text-sky-300"
-                  : "border-slate-800 text-slate-500 hover:border-slate-600 hover:text-slate-300",
+                  ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-300"
+                  : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300",
               )}
             >
               {l.label}
@@ -118,7 +118,7 @@ export default function ProfileForm({ user }: { user: User }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-slate-400 mb-1.5">Target company</label>
+        <label className="block text-xs font-medium text-neutral-400 mb-1.5">Target company</label>
         <div className="grid grid-cols-4 gap-2">
           {COMPANIES.map((c) => (
             <button
@@ -127,8 +127,8 @@ export default function ProfileForm({ user }: { user: User }) {
               className={cn(
                 "rounded-xl border px-2 py-2 text-xs transition-all duration-150",
                 company === c
-                  ? "border-sky-500/60 bg-sky-500/10 text-sky-300"
-                  : "border-slate-800 text-slate-500 hover:border-slate-600 hover:text-slate-300",
+                  ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-300"
+                  : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300",
               )}
             >
               {c}
@@ -141,7 +141,7 @@ export default function ProfileForm({ user }: { user: User }) {
         onClick={save}
         loading={saving}
         size="md"
-        className="bg-none bg-sky-500 hover:bg-sky-400 hover:brightness-100"
+        className="bg-none bg-emerald-500 hover:bg-emerald-400 hover:brightness-100"
       >
         {saved ? "Saved ✓" : "Save changes"}
       </Button>

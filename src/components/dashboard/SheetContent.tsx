@@ -35,15 +35,15 @@ type Props = {
 
 function StatsSkeleton() {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/50 px-5 py-3.5 space-y-2 animate-pulse">
+    <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 px-5 py-3.5 space-y-2 animate-pulse">
       <div className="flex items-center justify-between gap-3">
-        <div className="h-4 w-36 rounded bg-slate-700/60" />
-        <div className="h-3 w-12 rounded bg-slate-800" />
+        <div className="h-4 w-36 rounded bg-neutral-700/60" />
+        <div className="h-3 w-12 rounded bg-neutral-800" />
       </div>
-      <div className="h-1.5 rounded-full bg-slate-800 w-full" />
+      <div className="h-1.5 rounded-full bg-neutral-800 w-full" />
       <div className="flex items-center gap-4 pt-0.5">
-        <div className="h-3 w-20 rounded bg-slate-800" />
-        <div className="h-3 w-20 rounded bg-slate-800" />
+        <div className="h-3 w-20 rounded bg-neutral-800" />
+        <div className="h-3 w-20 rounded bg-neutral-800" />
       </div>
     </div>
   );
@@ -53,20 +53,20 @@ function ProblemsSkeleton() {
   return (
     <div className="space-y-3">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden animate-pulse">
+        <div key={i} className="rounded-xl border border-neutral-800 bg-neutral-900/50 overflow-hidden animate-pulse">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
-              <div className="h-3 w-20 rounded bg-slate-700/60" />
-              <div className="h-2.5 w-8 rounded bg-slate-800" />
+              <div className="h-3 w-20 rounded bg-neutral-700/60" />
+              <div className="h-2.5 w-8 rounded bg-neutral-800" />
             </div>
-            <div className="h-2 w-20 rounded-full bg-slate-800" />
+            <div className="h-2 w-20 rounded-full bg-neutral-800" />
           </div>
-          <div className="border-t border-slate-800/60 divide-y divide-slate-800/60">
+          <div className="border-t border-neutral-800/60 divide-y divide-neutral-800/60">
             {[1, 2, 3, 4].map((j) => (
               <div key={j} className="flex items-center gap-3 px-4 py-2.5">
-                <div className="w-6 h-6 rounded-full bg-slate-800 shrink-0" />
-                <div className="flex-1 h-3 rounded bg-slate-700/60" />
-                <div className="w-10 h-3 rounded bg-slate-800 shrink-0" />
+                <div className="w-6 h-6 rounded-full bg-neutral-800 shrink-0" />
+                <div className="flex-1 h-3 rounded bg-neutral-700/60" />
+                <div className="w-10 h-3 rounded bg-neutral-800 shrink-0" />
               </div>
             ))}
           </div>
@@ -148,15 +148,15 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
       {loading ? (
         <StatsSkeleton />
       ) : activeSheet ? (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/50 px-5 py-3.5 space-y-2">
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 px-5 py-3.5 space-y-2">
           {/* Progress row */}
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-semibold text-white truncate">{activeSheet.name}</span>
-            <span className="text-xs text-slate-500 shrink-0">{pct}% done</span>
+            <span className="text-xs text-neutral-500 shrink-0">{pct}% done</span>
           </div>
-          <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+          <div className="h-1.5 rounded-full bg-neutral-800 overflow-hidden">
             <div
-              className="h-full rounded-full bg-sky-500 transition-all duration-700"
+              className="h-full rounded-full bg-emerald-500 transition-all duration-700"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -165,12 +165,12 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
             <div className="flex items-center gap-1.5">
               <CheckCircle2 size={13} className="text-emerald-400" />
               <span className="text-sm font-semibold text-white">{doneCount}</span>
-              <span className="text-xs text-slate-500">solved</span>
+              <span className="text-xs text-neutral-500">solved</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Circle size={13} className="text-slate-500" />
+              <Circle size={13} className="text-neutral-500" />
               <span className="text-sm font-semibold text-white">{total - doneCount}</span>
-              <span className="text-xs text-slate-500">to do</span>
+              <span className="text-xs text-neutral-500">to do</span>
             </div>
           </div>
         </div>
@@ -189,11 +189,11 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
           onAddProblems={activeSheet && !activeSheet.isPreset ? () => setShowAddProblems(true) : undefined}
         />
       ) : activeSheet ? (
-        <div className="rounded-2xl border border-dashed border-slate-800 px-5 py-16 text-center">
-          <p className="text-slate-400 text-sm">This sheet has no problems yet.</p>
-          <p className="text-slate-500 text-xs mt-1">
-            Use <span className="text-sky-400">＋ Add Problems</span> in the filters, or browse the{" "}
-            <Link href="/dashboard/dsa?view=bank" className="text-sky-400 hover:underline">
+        <div className="rounded-2xl border border-dashed border-neutral-800 px-5 py-16 text-center">
+          <p className="text-neutral-400 text-sm">This sheet has no problems yet.</p>
+          <p className="text-neutral-500 text-xs mt-1">
+            Use <span className="text-emerald-400">＋ Add Problems</span> in the filters, or browse the{" "}
+            <Link href="/dashboard/dsa?view=bank" className="text-emerald-400 hover:underline">
               Problem Bank
             </Link>.
           </p>

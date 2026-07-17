@@ -16,7 +16,7 @@ import UserAvatar from "@/components/ui/UserAvatar";
 function NavIcon({ icon: Icon }: { icon: LucideIcon }) {
   const { pending } = useLinkStatus();
   return pending
-    ? <Loader2 size={16} className="shrink-0 animate-spin text-sky-400" />
+    ? <Loader2 size={16} className="shrink-0 animate-spin text-emerald-400" />
     : <Icon size={16} className="shrink-0" />;
 }
 
@@ -41,16 +41,16 @@ function UserChip({ collapsed }: { collapsed: boolean }) {
     <Link
       href="/dashboard/profile"
       className={cn(
-        "flex items-center gap-2.5 rounded-xl border border-slate-800/60 bg-slate-900/40 p-2 mx-2 mb-2",
-        "hover:border-slate-700 hover:bg-slate-800/60 transition-colors duration-150",
+        "flex items-center gap-2.5 rounded-xl border border-neutral-800/60 bg-neutral-900/40 p-2 mx-2 mb-2",
+        "hover:border-neutral-700 hover:bg-neutral-800/60 transition-colors duration-150",
         collapsed && "justify-center px-2",
       )}
     >
       <UserAvatar image={user.image} name={user.name} size={28} />
       {!collapsed && (
         <div className="min-w-0">
-          <p className="text-xs font-medium text-slate-300 truncate">{user.name ?? "Profile"}</p>
-          <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
+          <p className="text-xs font-medium text-neutral-300 truncate">{user.name ?? "Profile"}</p>
+          <p className="text-[10px] text-neutral-500 truncate">{user.email}</p>
         </div>
       )}
     </Link>
@@ -85,8 +85,8 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
       )}>
         {!collapsed && (
           <span className="flex items-center gap-1.5 text-sm font-bold tracking-tight text-white">
-            <Sparkles size={13} className="text-sky-400" />
-            Code<span className="text-sky-400">ward</span>
+            <Sparkles size={13} className="text-emerald-400" />
+            Code<span className="text-emerald-400">ward</span>
           </span>
         )}
         <button
@@ -94,14 +94,14 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!collapsed}
-          className="hidden md:flex h-6 w-6 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-colors"
+          className="hidden md:flex h-6 w-6 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-800 hover:text-neutral-300 transition-colors"
         >
           {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
         <button
           onClick={onMobileClose}
           aria-label="Close menu"
-          className="md:hidden flex h-6 w-6 items-center justify-center rounded-lg text-slate-500 hover:text-slate-300"
+          className="md:hidden flex h-6 w-6 items-center justify-center rounded-lg text-neutral-500 hover:text-neutral-300"
         >
           <X size={14} />
         </button>
@@ -123,8 +123,8 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
                 "flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm transition-all duration-150",
                 collapsed && "justify-center px-2",
                 active
-                  ? "border-l-2 border-sky-400 bg-sky-500/10 text-sky-400 pl-[9px]"
-                  : "text-slate-400 hover:bg-slate-800/70 hover:text-slate-200 border-l-2 border-transparent",
+                  ? "border-l-2 border-emerald-400 bg-emerald-500/10 text-emerald-400 pl-[9px]"
+                  : "text-neutral-400 hover:bg-neutral-800/70 hover:text-neutral-200 border-l-2 border-transparent",
               )}
             >
               <NavIcon icon={Icon} />
@@ -135,15 +135,15 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
       </nav>
 
       {/* Bottom: user chip + sign out */}
-      <div className="pt-2 border-t border-slate-800/60 space-y-1">
+      <div className="pt-2 border-t border-neutral-800/60 space-y-1">
         <UserChip collapsed={collapsed} />
         <div className="px-2">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             title={collapsed ? "Sign out" : undefined}
             className={cn(
-              "flex w-full items-center gap-3 rounded-lg px-2.5 py-3.5 text-xs text-slate-500",
-              "hover:bg-slate-800/70 hover:text-slate-300 transition-colors duration-150",
+              "flex w-full items-center gap-3 rounded-lg px-2.5 py-3.5 text-xs text-neutral-500",
+              "hover:bg-neutral-800/70 hover:text-neutral-300 transition-colors duration-150",
               collapsed && "justify-center px-2",
             )}
           >
@@ -159,7 +159,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
     <>
       <aside
         className={cn(
-          "hidden md:flex flex-col h-screen border-r border-slate-800/60 bg-canvas shrink-0",
+          "hidden md:flex flex-col h-screen border-r border-neutral-800/60 bg-canvas shrink-0",
           "transition-[width] duration-200 ease-out overflow-hidden",
           collapsed ? "w-14" : "w-56",
         )}
@@ -170,7 +170,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
       {mobileOpen && (
         <>
           <div className="fixed inset-0 z-40 bg-black/60 md:hidden" onClick={onMobileClose} />
-          <aside className="fixed inset-y-0 left-0 z-50 w-56 flex flex-col border-r border-slate-800/60 bg-canvas md:hidden animate-slide-right">
+          <aside className="fixed inset-y-0 left-0 z-50 w-56 flex flex-col border-r border-neutral-800/60 bg-canvas md:hidden animate-slide-right">
             {sidebarContent}
           </aside>
         </>

@@ -30,21 +30,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (status === "unauthenticated") redirect("/login");
 
   return (
-    <div className="flex h-dvh bg-canvas text-slate-100 overflow-hidden">
+    <div className="flex h-dvh bg-canvas text-neutral-100 overflow-hidden">
       <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         {/* Mobile top bar */}
-        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-slate-800/60 bg-canvas shrink-0">
+        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-neutral-800/60 bg-canvas shrink-0">
           <button
             onClick={() => setMobileOpen(true)}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="text-neutral-400 hover:text-white transition-colors"
             aria-label="Open menu"
           >
             <Menu size={20} />
           </button>
           <span className="text-sm font-bold text-white">
-            Code<span className="text-sky-400">ward</span>
+            Code<span className="text-emerald-400">ward</span>
           </span>
           {/* Spacer keeps the logo centered now that the icon is removed */}
           <span className="w-5" aria-hidden />

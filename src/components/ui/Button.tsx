@@ -14,9 +14,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary:   "bg-linear-to-r from-sky-500 via-indigo-500 to-violet-500 hover:brightness-110 text-white shadow-[0_0_20px_rgba(14,165,233,0.35)]",
-  secondary: "border border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white hover:bg-slate-800/60",
-  ghost:     "text-slate-400 hover:text-white hover:bg-slate-800/60",
+  primary:   "bg-linear-to-r from-emerald-500 via-rose-500 to-rose-500 hover:brightness-110 text-white shadow-[0_0_20px_rgba(52, 211, 153,0.35)]",
+  secondary: "border border-neutral-700 text-neutral-300 hover:border-neutral-500 hover:text-white hover:bg-neutral-800/60",
+  ghost:     "text-neutral-400 hover:text-white hover:bg-neutral-800/60",
   danger:    "bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20",
 };
 

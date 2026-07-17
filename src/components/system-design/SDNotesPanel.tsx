@@ -33,11 +33,11 @@ export default function SDNotesPanel({ questionId, userId, initialContent }: Pro
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 py-1.5 border-b border-slate-800/60 shrink-0">
-        <span className="text-[11px] text-slate-500">Design notes, diagrams in text, trade-offs</span>
+      <div className="flex items-center justify-between px-4 py-1.5 border-b border-neutral-800/60 shrink-0">
+        <span className="text-[11px] text-neutral-500">Design notes, diagrams in text, trade-offs</span>
         <span className={`text-[11px] transition ${
-          saveState === "saving" ? "text-sky-400" :
-          saveState === "saved"  ? "text-emerald-400" : "text-slate-700"
+          saveState === "saving" ? "text-emerald-400" :
+          saveState === "saved"  ? "text-emerald-400" : "text-neutral-700"
         }`}>
           {saveState === "saving" ? "Saving…" : saveState === "saved" ? "Saved" : "Auto-save"}
         </span>
@@ -46,7 +46,7 @@ export default function SDNotesPanel({ questionId, userId, initialContent }: Pro
         value={content}
         onChange={handleChange}
         placeholder={"# Design Notes\n\n## Requirements\n\n## High-level design\n\n## Deep dives\n\n## Trade-offs"}
-        className="flex-1 w-full resize-none bg-transparent px-4 py-3 text-sm text-slate-300 placeholder-slate-800 outline-none font-mono leading-relaxed"
+        className="flex-1 w-full resize-none bg-transparent px-4 py-3 text-sm text-neutral-300 placeholder-neutral-800 outline-none font-mono leading-relaxed"
         spellCheck={false}
       />
     </div>

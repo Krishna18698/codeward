@@ -17,13 +17,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label htmlFor={inputId} className="text-xs font-medium text-slate-400">
+          <label htmlFor={inputId} className="text-xs font-medium text-neutral-400">
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">
               {icon}
             </span>
           )}
@@ -31,9 +31,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              "w-full rounded-xl border bg-slate-900/60 text-sm text-slate-200 placeholder-slate-500",
+              "w-full rounded-xl border bg-neutral-900/60 text-sm text-neutral-200 placeholder-neutral-500",
               "px-3 py-2.5 outline-none transition-all duration-150",
-              "border-slate-700/60 focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20",
+              "border-neutral-700/60 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20",
               icon && "pl-9",
               rightElement && "pr-10",
               error && "border-red-500/60 focus:border-red-500/60 focus:ring-red-500/20",
@@ -48,7 +48,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && <p className="text-xs text-red-400">{error}</p>}
-        {!error && hint && <p className="text-xs text-slate-500">{hint}</p>}
+        {!error && hint && <p className="text-xs text-neutral-500">{hint}</p>}
       </div>
     );
   }
