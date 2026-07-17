@@ -1,10 +1,19 @@
 import Link from "next/link";
 import { Sparkles, Code2, Network, CheckCircle2 } from "lucide-react";
 
+/* ─── Section marker ────────────────────────────────────────────────────── */
+function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
+  return (
+    <p className={`font-mono text-[13px] text-neutral-500 mb-4 ${center ? "text-center" : ""}`}>
+      <span className="text-emerald-400">{n}</span> — {label}
+    </p>
+  );
+}
+
 /* ─── Navbar ──────────────────────────────────────────────────────────── */
 function Navbar() {
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 border-b border-neutral-800/60 bg-canvas/80 backdrop-blur-xl">
+    <nav className="fixed top-0 inset-x-0 z-50 border-b border-neutral-800 bg-black/85 backdrop-blur-[20px]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <span className="flex items-center gap-1.5 text-lg font-bold tracking-tight text-white">
           <Sparkles size={16} className="text-emerald-400" />
@@ -16,7 +25,7 @@ function Navbar() {
           </Link>
           <Link
             href="/register"
-            className="rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-medium px-4 py-2 transition-all shadow-[0_0_16px_rgba(52, 211, 153,0.35)]"
+            className="rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-medium px-4 py-2 transition-colors"
           >
             Get started
           </Link>
@@ -29,29 +38,18 @@ function Navbar() {
 /* ─── Hero ─────────────────────────────────────────────────────────────── */
 function Hero() {
   return (
-    <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6 overflow-hidden">
-      {/* CSS radial gradients — lighter than blur blobs */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 70% 50% at 50% -10%, rgba(52, 211, 153,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 60%, rgba(139,92,246,0.08) 0%, transparent 60%)",
-        }}
-      />
-
-      <span className="animate-fade-in mb-4 inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1 text-xs font-medium text-emerald-400 uppercase tracking-widest">
-        <Sparkles size={11} />
+    <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
+      <p className="animate-fade-in mb-5 flex items-center gap-1.5 font-mono text-[13px] text-neutral-500">
+        <Sparkles size={11} className="text-emerald-400" />
         AI-powered interview prep
-      </span>
+      </p>
 
       <h1
-        className="animate-fade-up max-w-3xl text-5xl font-bold leading-tight tracking-tight text-white sm:text-6xl"
+        className="animate-fade-up max-w-3xl text-5xl font-semibold tracking-heading leading-tight text-white sm:text-6xl"
         style={{ animationDelay: "80ms" }}
       >
         Crack your{" "}
-        <span className="bg-linear-to-r from-emerald-400 via-rose-400 to-rose-400 bg-clip-text text-transparent">
-          dream offer
-        </span>
+        <span className="text-emerald-400">dream offer</span>
         <br />with a mentor that knows you
       </h1>
 
@@ -69,19 +67,19 @@ function Hero() {
       >
         <Link
           href="/register"
-          className="rounded-xl bg-linear-to-r from-emerald-500 via-rose-500 to-rose-500 px-7 py-3.5 text-sm font-semibold text-white shadow-[0_0_28px_rgba(56,189,248,0.4)] hover:brightness-110 transition-all"
+          className="rounded-xl bg-emerald-500 px-7 py-3.5 text-sm font-semibold text-black hover:bg-emerald-400 transition-colors"
         >
           Start for free
         </Link>
         <Link
           href="/login"
-          className="rounded-xl border border-neutral-700 px-7 py-3.5 text-sm font-medium text-neutral-300 hover:border-neutral-500 hover:text-white transition-colors"
+          className="rounded-xl border border-neutral-800 px-7 py-3.5 text-sm font-medium text-neutral-300 hover:border-neutral-600 hover:text-white transition-colors"
         >
           Sign in
         </Link>
       </div>
 
-      <p className="animate-fade-up mt-5 text-xs text-neutral-500" style={{ animationDelay: "300ms" }}>
+      <p className="animate-fade-up mt-5 font-mono text-xs text-neutral-500" style={{ animationDelay: "300ms" }}>
         No credit card required
       </p>
     </section>
@@ -92,8 +90,6 @@ function Hero() {
 const features = [
   {
     icon: Code2,
-    iconColor: "text-emerald-400",
-    iconBg: "bg-emerald-500/10",
     title: "DSA Tracker",
     description:
       "Work through Blind 75, Striver's sheet, or let the AI mentor build you a personalized pattern-focused sheet based on your target company and timeline.",
@@ -101,8 +97,6 @@ const features = [
   },
   {
     icon: Sparkles,
-    iconColor: "text-rose-400",
-    iconBg: "bg-rose-500/10",
     title: "AI Mentor",
     description:
       "A RAG-powered assistant that actually understands your prep context — answers questions, explains patterns, reviews your approach, and helps you plan your sheet.",
@@ -110,8 +104,6 @@ const features = [
   },
   {
     icon: Network,
-    iconColor: "text-rose-400",
-    iconBg: "bg-rose-500/10",
     title: "System Design",
     description:
       "Curated system design questions organized by level (Easy / Medium / Hard) with must-do flags based on your experience. From URL shorteners to distributed databases.",
@@ -123,7 +115,8 @@ function Features() {
   return (
     <section className="py-20 px-6">
       <div className="mx-auto max-w-6xl">
-        <h2 className="text-center text-3xl font-bold text-white mb-3">
+        <SectionMarker n="01" label="Practice modes" center />
+        <h2 className="text-center text-3xl font-semibold tracking-heading text-white mb-3">
           Everything you need to prep smarter
         </h2>
         <p className="text-center text-neutral-500 mb-12 max-w-xl mx-auto">
@@ -134,15 +127,15 @@ function Features() {
           {features.map((f, i) => (
             <div
               key={f.title}
-              className="animate-fade-up rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6 hover:border-emerald-500/30 hover:bg-neutral-900/80 transition-all duration-200"
+              className="animate-fade-up rounded-2xl border border-neutral-800 bg-white/3 p-6 hover:border-neutral-700 hover:bg-white/5 transition-all duration-200"
               style={{ animationDelay: `${i * 80}ms` }}
             >
-              <div className={`mb-4 inline-flex rounded-xl p-2.5 ${f.iconBg}`}>
-                <f.icon size={20} className={f.iconColor} />
+              <div className="mb-4 inline-flex rounded-xl p-2.5 bg-white/6">
+                <f.icon size={20} className="text-neutral-200" />
               </div>
               <div className="mb-2 flex items-center gap-2">
                 <h3 className="font-semibold text-white">{f.title}</h3>
-                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400 border border-emerald-500/20">
+                <span className="rounded-full px-2 py-0.5 font-mono text-[10px] text-neutral-500 border border-neutral-800">
                   {f.badge}
                 </span>
               </div>
@@ -159,13 +152,11 @@ function Features() {
 function MentorHighlight() {
   return (
     <section className="py-20 px-6">
-      <div className="mx-auto max-w-6xl rounded-2xl border border-emerald-500/20 bg-linear-to-br from-emerald-950/40 via-neutral-900/60 to-rose-950/30 p-10 shadow-[0_0_60px_rgba(56,189,248,0.07)]">
+      <div className="mx-auto max-w-6xl rounded-2xl border border-neutral-800 bg-white/3 p-10">
         <div className="flex flex-col gap-10 md:flex-row md:items-center">
           <div className="flex-1">
-            <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-400 uppercase tracking-widest">
-              <Sparkles size={11} /> RAG AI Mentor
-            </span>
-            <h2 className="text-3xl font-bold text-white leading-tight mb-4">
+            <SectionMarker n="02" label="The mentor" />
+            <h2 className="text-3xl font-semibold tracking-heading text-white leading-tight mb-4">
               Your personal prep assistant,<br />
               <span className="text-emerald-400">not just a chatbot</span>
             </h2>
@@ -189,7 +180,7 @@ function MentorHighlight() {
             </ul>
           </div>
 
-          <div className="flex-1 max-w-sm rounded-xl border border-neutral-700/60 bg-neutral-900/80 p-5 font-mono text-sm space-y-3 backdrop-blur">
+          <div className="flex-1 max-w-sm rounded-xl border border-neutral-800 bg-black p-5 font-mono text-sm space-y-3">
             <div className="flex gap-2">
               <span className="text-neutral-500 shrink-0">you</span>
               <p className="text-neutral-300">I want to prep for Meta. I&apos;m decent at arrays but weak on trees and DP.</p>
@@ -209,20 +200,73 @@ function MentorHighlight() {
   );
 }
 
+/* ─── FAQ ───────────────────────────────────────────────────────────────── */
+const faqs = [
+  {
+    q: "Is Codeward actually free?",
+    a: "Yes. It's a solo-built project, not a startup with a pricing page waiting to happen. No credit card, no trial timer, no locked features.",
+  },
+  {
+    q: "What's in the DSA catalog?",
+    a: "Preset sheets like Blind 75, Striver's SDE Sheet, and NeetCode 150, plus a bank of 300 curated problems tagged by company and pattern. You can build your own sheets or have the AI mentor generate one.",
+  },
+  {
+    q: "How is the AI mentor different from just using ChatGPT?",
+    a: "It's grounded in the app's prep content via retrieval, and it knows your context — your target company, experience level, and what you've already solved. It can also create sheets directly in your account instead of pasting a list back at you.",
+  },
+  {
+    q: "Do I solve problems inside Codeward?",
+    a: "No. Problems link out to LeetCode or GeeksforGeeks; Codeward is the layer on top — tracking status, revision flags, and notes so you always know what's next.",
+  },
+  {
+    q: "Can it build a plan for my target company?",
+    a: "Tell the mentor your company and timeline and it generates a pattern-focused sheet weighted toward what that company actually asks, with must-do problems flagged.",
+  },
+];
+
+function FAQ() {
+  return (
+    <section className="py-20 px-6">
+      <div className="mx-auto max-w-2xl">
+        <SectionMarker n="03" label="FAQ" />
+        <h2 className="text-3xl font-semibold tracking-heading text-white mb-8">
+          Questions worth answering honestly.
+        </h2>
+        <div className="divide-y divide-neutral-800">
+          {faqs.map((f) => (
+            <div key={f.q} className="py-5">
+              <h3 className="text-sm font-medium text-white mb-1.5">{f.q}</h3>
+              <p className="text-sm text-neutral-400 leading-relaxed">{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Footer ────────────────────────────────────────────────────────────── */
 function Footer() {
   return (
-    <footer className="border-t border-neutral-800/60 py-10 px-6">
-      <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span className="flex items-center gap-1.5 text-sm font-bold text-white">
-          <Sparkles size={14} className="text-emerald-400" />
-          Code<span className="text-emerald-400">ward</span>
-        </span>
-        <div className="flex items-center gap-6 text-xs text-neutral-500">
-          <span>Built to get you hired</span>
-          <Link href="/login" className="hover:text-neutral-400 transition-colors">Log in</Link>
-          <Link href="/register" className="hover:text-neutral-400 transition-colors">Sign up</Link>
+    <footer className="border-t border-neutral-800 py-12 px-6">
+      <div className="mx-auto max-w-6xl">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-6">
+          <div>
+            <span className="flex items-center gap-1.5 text-sm font-bold text-white">
+              <Sparkles size={14} className="text-emerald-400" />
+              Code<span className="text-emerald-400">ward</span>
+            </span>
+            <p className="mt-2 text-sm text-neutral-500 max-w-xs">
+              Structured interview prep with a mentor that knows where you stand.
+            </p>
+          </div>
+          <div className="flex items-center gap-6 text-sm text-neutral-400">
+            <Link href="/login" className="hover:text-white transition-colors">Log in</Link>
+            <Link href="/register" className="hover:text-white transition-colors">Sign up</Link>
+            <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
+          </div>
         </div>
+        <p className="mt-10 font-mono text-xs text-neutral-500">Built to get you hired</p>
       </div>
     </footer>
   );
@@ -236,6 +280,7 @@ export default function Home() {
       <Hero />
       <Features />
       <MentorHighlight />
+      <FAQ />
       <Footer />
     </div>
   );
