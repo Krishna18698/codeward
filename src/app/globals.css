@@ -2,19 +2,19 @@
 
 /* ─── Design tokens ──────────────────────────────────────────────────────── */
 :root {
-  --color-canvas:        #07090c;
-  --color-surface:       #0d1117;
-  --color-elevated:      #111827;
-  --color-border:        rgba(51, 65, 85, 0.6);
-  --color-border-accent: rgba(14, 165, 233, 0.35);
-  --color-accent:        #0ea5e9;
-  --color-accent-dim:    rgba(14, 165, 233, 0.12);
-  --color-accent-hover:  #38bdf8;
+  --color-canvas:        #000000;
+  --color-surface:       #0a0a0a;
+  --color-elevated:      #141414;
+  --color-border:        #2a2a2a;
+  --color-border-accent: rgba(52, 211, 153, 0.35);
+  --color-accent:        #34d399;
+  --color-accent-dim:    rgba(52, 211, 153, 0.12);
+  --color-accent-hover:  #6ee7b7;
   --color-success:       #34d399;
   --color-warning:       #fbbf24;
-  --color-danger:        #f87171;
-  --color-muted:         #64748b;
-  --color-subtle:        #334155;
+  --color-danger:        #fb7185;
+  --color-muted:         #a1a1a1;
+  --color-subtle:        #333333;
 
   --radius-sm:  8px;
   --radius-md:  12px;
@@ -22,9 +22,7 @@
   --radius-xl:  20px;
   --radius-2xl: 24px;
 
-  --shadow-glow-accent: 0 0 24px rgba(14, 165, 233, 0.35);
-  --shadow-glow-sm:     0 0 14px rgba(14, 165, 233, 0.2);
-  --shadow-card:        0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
 /* ─── Tailwind theme registration ────────────────────────────────────────── */
@@ -46,19 +44,20 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
+  --tracking-heading: -0.035em;
+
   --animate-fade-in:     fade-in 0.3s ease both;
   --animate-fade-up:     fade-up 0.4s ease both;
   --animate-scale-in:    scale-in 0.25s ease both;
   --animate-slide-right: slide-right 0.25s ease both;
   --animate-msg-pop:     msg-pop 0.2s ease both;
-  --animate-shimmer:     shimmer 2.5s linear infinite;
   --animate-spin-slow:   spin 1.5s linear infinite;
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────── */
 body {
   background: var(--color-canvas);
-  color: #e2e8f0;
+  color: #ededed;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -93,44 +92,12 @@ body {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-@keyframes shimmer {
-  from { background-position: 200% 0; }
-  to   { background-position: -200% 0; }
-}
-
-@keyframes border-spin {
-  to { --border-angle: 360deg; }
-}
-
 /* ─── Animation utility classes ───────────────────────────────────────────── */
 .animate-fade-in    { animation: var(--animate-fade-in); }
 .animate-fade-up    { animation: var(--animate-fade-up); }
 .animate-scale-in   { animation: var(--animate-scale-in); }
 .animate-slide-right{ animation: var(--animate-slide-right); }
 .animate-msg-pop    { animation: var(--animate-msg-pop); }
-.animate-shimmer    { animation: var(--animate-shimmer); }
-
-/* ─── Shimmer card border (pricing highlight) ─────────────────────────────── */
-.shimmer-border {
-  position: relative;
-}
-.shimmer-border::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    rgba(14,165,233,0.4) 0%,
-    rgba(99,102,241,0.6) 40%,
-    rgba(139,92,246,0.4) 60%,
-    rgba(14,165,233,0.4) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2.5s linear infinite;
-  z-index: -1;
-  border-radius: inherit;
-}
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 4px; height: 4px; }
@@ -145,7 +112,7 @@ body {
 }
 
 /* Inputs get a subtle accent ring on keyboard focus instead of the default
-   outline — matches the Input.tsx focus:ring-2 ring-sky-500/20 pattern so
+   outline — matches the Input.tsx focus:ring-2 ring-emerald-500/20 pattern so
    raw inputs/selects (search, filters, modals) are consistent for free. */
 input:focus,
 textarea:focus,
@@ -157,8 +124,8 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
   outline: none;
-  border-color: rgba(14, 165, 233, 0.5);
-  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.2);
 }
 
 /* ─── Reduced motion ──────────────────────────────────────────────────────── */

@@ -1,0 +1,280 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Senior Loop home" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]: senior loop
+      - navigation [ref=e9]:
+        - link "Code Review" [ref=e10] [cursor=pointer]:
+          - /url: /prs
+        - link "Bug Hunt" [ref=e11] [cursor=pointer]:
+          - /url: /bugs
+        - link "Build It" [ref=e12] [cursor=pointer]:
+          - /url: /lld
+        - link "Deep Dives" [ref=e13] [cursor=pointer]:
+          - /url: /study
+        - link "Pricing" [ref=e14] [cursor=pointer]:
+          - /url: /pricing
+        - link "Sign in" [ref=e15] [cursor=pointer]:
+          - /url: /sign-in
+  - main [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e19]:
+        - generic [ref=e20]: Code Review
+        - heading "Pick a PR to review. 15" [level=1] [ref=e21]
+        - paragraph [ref=e22]: Hand-authored diffs with planted bugs — the same class of issues a senior reviewer would catch in your loop.
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - generic [ref=e25]: "15"
+            - generic [ref=e26]: PRs
+          - generic [ref=e27]:
+            - generic [ref=e28]: "3"
+            - generic [ref=e29]: free
+          - generic [ref=e30]:
+            - generic [ref=e31]: "5"
+            - generic [ref=e32]: languages
+          - generic [ref=e33]: AI-graded
+      - link "Start here. Easiest free PR. Add health check endpoint for the payments service free Platform team asked every service to expose a /health endpoint so the load balancer can drop unhealthy instances and oncall has a single URL to hit at 2am. This PR adds it for the payments service. Reviewing before it gets wired into the LB config. payments · 5 languages · 6 min · 5 issues Start reviewing →" [ref=e36] [cursor=pointer]:
+        - /url: /prs/D-payments-003
+        - generic [ref=e37]: Start here. Easiest free PR.
+        - generic [ref=e40]:
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - heading "Add health check endpoint for the payments service" [level=2] [ref=e43]
+              - generic [ref=e44]: free
+            - paragraph [ref=e45]: Platform team asked every service to expose a /health endpoint so the load balancer can drop unhealthy instances and oncall has a single URL to hit at 2am. This PR adds it for the payments service. Reviewing before it gets wired into the LB config.
+            - generic [ref=e46]:
+              - generic [ref=e47]: payments
+              - generic [ref=e49]: ·
+              - generic [ref=e50]: 5 languages
+              - generic [ref=e51]: ·
+              - generic [ref=e52]: 6 min · 5 issues
+          - generic [ref=e53]: Start reviewing →
+      - generic [ref=e55]:
+        - button "all" [pressed] [ref=e56] [cursor=pointer]
+        - button "payments" [ref=e57] [cursor=pointer]
+        - button "distributed" [ref=e59] [cursor=pointer]
+        - button "api" [ref=e61] [cursor=pointer]
+        - button "security" [ref=e63] [cursor=pointer]
+        - button "performance" [ref=e65] [cursor=pointer]
+        - button "observability" [ref=e67] [cursor=pointer]
+        - button "ops" [ref=e69] [cursor=pointer]
+        - button "generic" [ref=e71] [cursor=pointer]
+      - generic [ref=e73]:
+        - link "Refactor refund flow to use ledger entries payments · 5 languages · 10 min · 6 issues Finance flagged that monthly reconciliation between our internal ledger and the PSP's settlement reports has been drifting since refunds went live. This PR has the refund handler write a reversing entry to the ledger after a successful PSP call so books match. Reviewing whether this actually closes the drift. Start →" [ref=e74] [cursor=pointer]:
+          - /url: /prs/D-payments-002
+          - generic [ref=e76]:
+            - heading "Refactor refund flow to use ledger entries" [level=2] [ref=e78]
+            - generic [ref=e79]:
+              - generic [ref=e80]: payments
+              - generic [ref=e83]: ·
+              - generic [ref=e84]: 5 languages
+              - generic [ref=e85]: ·
+              - generic [ref=e86]: 10 min · 6 issues
+            - paragraph [ref=e87]: Finance flagged that monthly reconciliation between our internal ledger and the PSP's settlement reports has been drifting since refunds went live. This PR has the refund handler write a reversing entry to the ledger after a successful PSP call so books match. Reviewing whether this actually closes the drift.
+          - generic [ref=e88]: Start →
+        - link "Add idempotency middleware to charge API payments · 5 languages · 12 min · 6 issues Last week support flagged three customers double-charged when the mobile app retried after a flaky network. We're adding an Idempotency-Key header + middleware so retries return the original response instead of re-charging. Reviewing for production-readiness before we route real traffic through it. Start →" [ref=e90] [cursor=pointer]:
+          - /url: /prs/D-payments-001
+          - generic [ref=e92]:
+            - heading "Add idempotency middleware to charge API" [level=2] [ref=e94]
+            - generic [ref=e95]:
+              - generic [ref=e96]: payments
+              - generic [ref=e99]: ·
+              - generic [ref=e100]: 5 languages
+              - generic [ref=e101]: ·
+              - generic [ref=e102]: 12 min · 6 issues
+            - paragraph [ref=e103]: Last week support flagged three customers double-charged when the mobile app retried after a flaky network. We're adding an Idempotency-Key header + middleware so retries return the original response instead of re-charging. Reviewing for production-readiness before we route real traffic through it.
+          - generic [ref=e104]: Start →
+        - 'link "Add user profile update endpoint pro api · Go · 7 min · 5 issues Mobile team needs to let users edit name / email / avatar without re-sending the entire profile object every time. This PR adds PATCH /users/{id} for partial updates. Reviewing the PATCH semantics carefully — partial-update endpoints are where every team eventually ships a regression. 🔒 Unlock →" [ref=e106] [cursor=pointer]':
+          - /url: /prs/D-api-008
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - heading "Add user profile update endpoint" [level=2] [ref=e110]
+              - generic "Paid tier" [ref=e111]: pro
+            - generic [ref=e112]:
+              - generic [ref=e113]: api
+              - generic [ref=e116]: ·
+              - generic [ref=e117]: Go
+              - generic [ref=e118]: ·
+              - generic [ref=e119]: 7 min · 5 issues
+            - paragraph [ref=e120]: "Mobile team needs to let users edit name / email / avatar without re-sending the entire profile object every time. This PR adds PATCH /users/{id} for partial updates. Reviewing the PATCH semantics carefully — partial-update endpoints are where every team eventually ships a regression."
+          - generic [ref=e121]:
+            - generic [ref=e122]: 🔒
+            - generic [ref=e123]: Unlock →
+        - 'link "Add metrics rollup endpoint pro distributed · Go · 9 min · 6 issues Product wants a per-user daily activity view in the customer dashboard. This PR adds GET /metrics/users/{id}/daily that aggregates 24-hour activity from a few database queries. Reviewing — customer-data endpoints have a different bar than internal analytics ones. 🔒 Unlock →" [ref=e124] [cursor=pointer]':
+          - /url: /prs/D-distributed-007
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - heading "Add metrics rollup endpoint" [level=2] [ref=e128]
+              - generic "Paid tier" [ref=e129]: pro
+            - generic [ref=e130]:
+              - generic [ref=e131]: distributed
+              - generic [ref=e134]: ·
+              - generic [ref=e135]: Go
+              - generic [ref=e136]: ·
+              - generic [ref=e137]: 9 min · 6 issues
+            - paragraph [ref=e138]: "Product wants a per-user daily activity view in the customer dashboard. This PR adds GET /metrics/users/{id}/daily that aggregates 24-hour activity from a few database queries. Reviewing — customer-data endpoints have a different bar than internal analytics ones."
+          - generic [ref=e139]:
+            - generic [ref=e140]: 🔒
+            - generic [ref=e141]: Unlock →
+        - 'link "Add partial-refund endpoint pro payments · Go · 9 min · 6 issues Customer service has been processing partial refunds manually through the PSP dashboard — slow, error-prone, no audit trail. This PR exposes POST /charges/{id}/refunds so the support tool can hit it directly. Reviewing for correctness and the audit story. 🔒 Unlock →" [ref=e142] [cursor=pointer]':
+          - /url: /prs/D-payments-006
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - heading "Add partial-refund endpoint" [level=2] [ref=e146]
+              - generic "Paid tier" [ref=e147]: pro
+            - generic [ref=e148]:
+              - generic [ref=e149]: payments
+              - generic [ref=e152]: ·
+              - generic [ref=e153]: Go
+              - generic [ref=e154]: ·
+              - generic [ref=e155]: 9 min · 6 issues
+            - paragraph [ref=e156]: "Customer service has been processing partial refunds manually through the PSP dashboard — slow, error-prone, no audit trail. This PR exposes POST /charges/{id}/refunds so the support tool can hit it directly. Reviewing for correctness and the audit story."
+          - generic [ref=e157]:
+            - generic [ref=e158]: 🔒
+            - generic [ref=e159]: Unlock →
+        - 'link "Add /healthz endpoint with build metadata pro ops · 5 languages · 8 min · 0 issues Adding `/healthz` so the LB and uptime checks have a stable target. Returns build SHA + version + uptime — readiness probe goes on `/readyz` in a separate PR. Tagging you for the API design + header choices. 🔒 Unlock →" [ref=e160] [cursor=pointer]':
+          - /url: /prs/D-api-011
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - heading "Add /healthz endpoint with build metadata" [level=2] [ref=e164]
+              - generic "Paid tier" [ref=e165]: pro
+            - generic [ref=e166]:
+              - generic [ref=e167]: ops
+              - generic [ref=e170]: ·
+              - generic [ref=e171]: 5 languages
+              - generic [ref=e172]: ·
+              - generic [ref=e173]: 8 min · 0 issues
+            - paragraph [ref=e174]: "Adding `/healthz` so the LB and uptime checks have a stable target. Returns build SHA + version + uptime — readiness probe goes on `/readyz` in a separate PR. Tagging you for the API design + header choices."
+          - generic [ref=e175]:
+            - generic [ref=e176]: 🔒
+            - generic [ref=e177]: Unlock →
+        - link "Add JWT auth middleware pro security · Go · 12 min · 6 issues We're cutting over from session cookies to JWT so mobile clients can authenticate without the cookie-jar dance. This PR adds the middleware that validates the bearer token, extracts the user, and attaches them to the request context. Reviewing carefully — auth bugs ship to every endpoint at once. 🔒 Unlock →" [ref=e178] [cursor=pointer]:
+          - /url: /prs/D-security-005
+          - generic [ref=e180]:
+            - generic [ref=e181]:
+              - heading "Add JWT auth middleware" [level=2] [ref=e182]
+              - generic "Paid tier" [ref=e183]: pro
+            - generic [ref=e184]:
+              - generic [ref=e185]: security
+              - generic [ref=e188]: ·
+              - generic [ref=e189]: Go
+              - generic [ref=e190]: ·
+              - generic [ref=e191]: 12 min · 6 issues
+            - paragraph [ref=e192]: We're cutting over from session cookies to JWT so mobile clients can authenticate without the cookie-jar dance. This PR adds the middleware that validates the bearer token, extracts the user, and attaches them to the request context. Reviewing carefully — auth bugs ship to every endpoint at once.
+          - generic [ref=e193]:
+            - generic [ref=e194]: 🔒
+            - generic [ref=e195]: Unlock →
+        - link "Migrate order processor to Kafka pro distributed · Go · 14 min · 6 issues Black Friday traffic broke our polling-based order processor — we fell behind by 40 minutes and customers got delayed confirmation emails. This PR replaces the poller with a Kafka consumer so we scale horizontally and get backpressure for free. Reviewing before we cut traffic over. 🔒 Unlock →" [ref=e196] [cursor=pointer]:
+          - /url: /prs/D-distributed-004
+          - generic [ref=e198]:
+            - generic [ref=e199]:
+              - heading "Migrate order processor to Kafka" [level=2] [ref=e200]
+              - generic "Paid tier" [ref=e201]: pro
+            - generic [ref=e202]:
+              - generic [ref=e203]: distributed
+              - generic [ref=e206]: ·
+              - generic [ref=e207]: Go
+              - generic [ref=e208]: ·
+              - generic [ref=e209]: 14 min · 6 issues
+            - paragraph [ref=e210]: Black Friday traffic broke our polling-based order processor — we fell behind by 40 minutes and customers got delayed confirmation emails. This PR replaces the poller with a Kafka consumer so we scale horizontally and get backpressure for free. Reviewing before we cut traffic over.
+          - generic [ref=e211]:
+            - generic [ref=e212]: 🔒
+            - generic [ref=e213]: Unlock →
+        - link "Add structured logging and metrics to order processor pro observability · 5 languages · 22 min · 8 issues Order processor needs basic instrumentation — adding logs around each stage and a Prometheus counter for throughput. Used the team's logging conventions doc. Open to feedback on log levels / label choices. 🔒 Unlock →" [ref=e214] [cursor=pointer]:
+          - /url: /prs/D-observability-013
+          - generic [ref=e216]:
+            - generic [ref=e217]:
+              - heading "Add structured logging and metrics to order processor" [level=2] [ref=e218]
+              - generic "Paid tier" [ref=e219]: pro
+            - generic [ref=e220]:
+              - generic [ref=e221]: observability
+              - generic [ref=e224]: ·
+              - generic [ref=e225]: 5 languages
+              - generic [ref=e226]: ·
+              - generic [ref=e227]: 22 min · 8 issues
+            - paragraph [ref=e228]: Order processor needs basic instrumentation — adding logs around each stage and a Prometheus counter for throughput. Used the team's logging conventions doc. Open to feedback on log levels / label choices.
+          - generic [ref=e229]:
+            - generic [ref=e230]: 🔒
+            - generic [ref=e231]: Unlock →
+        - link "Add recent-orders endpoint to user profile pro performance · 5 languages · 24 min · 3 issues Profile page wants a \"recent orders\" section showing the user's last 10 orders with line items and product info. Hooked it up to the existing repos. 🔒 Unlock →" [ref=e232] [cursor=pointer]:
+          - /url: /prs/D-performance-014
+          - generic [ref=e234]:
+            - generic [ref=e235]:
+              - heading "Add recent-orders endpoint to user profile" [level=2] [ref=e236]
+              - generic "Paid tier" [ref=e237]: pro
+            - generic [ref=e238]:
+              - generic [ref=e239]: performance
+              - generic [ref=e242]: ·
+              - generic [ref=e243]: 5 languages
+              - generic [ref=e244]: ·
+              - generic [ref=e245]: 24 min · 3 issues
+            - paragraph [ref=e246]: Profile page wants a "recent orders" section showing the user's last 10 orders with line items and product info. Hooked it up to the existing repos.
+          - generic [ref=e247]:
+            - generic [ref=e248]: 🔒
+            - generic [ref=e249]: Unlock →
+        - link "Refactor user lookup to use new identity service pro api · 5 languages · 25 min · 6 issues Auth team's new identity-service client is finally stable — moving login lookup over to it. Auth team owns user lifecycle now (active / banned / soft-deleted), so this should let us delete a chunk of our own bookkeeping. Last review I want before we route real traffic through this. 🔒 Unlock →" [ref=e250] [cursor=pointer]:
+          - /url: /prs/D-api-009
+          - generic [ref=e252]:
+            - generic [ref=e253]:
+              - heading "Refactor user lookup to use new identity service" [level=2] [ref=e254]
+              - generic "Paid tier" [ref=e255]: pro
+            - generic [ref=e256]:
+              - generic [ref=e257]: api
+              - generic [ref=e260]: ·
+              - generic [ref=e261]: 5 languages
+              - generic [ref=e262]: ·
+              - generic [ref=e263]: 25 min · 6 issues
+            - paragraph [ref=e264]: Auth team's new identity-service client is finally stable — moving login lookup over to it. Auth team owns user lifecycle now (active / banned / soft-deleted), so this should let us delete a chunk of our own bookkeeping. Last review I want before we route real traffic through this.
+          - generic [ref=e265]:
+            - generic [ref=e266]: 🔒
+            - generic [ref=e267]: Unlock →
+        - link "Add v2 orders listing endpoint pro api · 5 languages · 26 min · 6 issues Customers want a v2 of the orders listing API — v1's response shape was painful to evolve and we're locking in v2 before adding new features. Mirrors v1's behavior with cleaner field names. Tagging you for the once-over before partner docs go out. 🔒 Unlock →" [ref=e268] [cursor=pointer]:
+          - /url: /prs/D-api-015
+          - generic [ref=e270]:
+            - generic [ref=e271]:
+              - heading "Add v2 orders listing endpoint" [level=2] [ref=e272]
+              - generic "Paid tier" [ref=e273]: pro
+            - generic [ref=e274]:
+              - generic [ref=e275]: api
+              - generic [ref=e278]: ·
+              - generic [ref=e279]: 5 languages
+              - generic [ref=e280]: ·
+              - generic [ref=e281]: 26 min · 6 issues
+            - paragraph [ref=e282]: Customers want a v2 of the orders listing API — v1's response shape was painful to evolve and we're locking in v2 before adding new features. Mirrors v1's behavior with cleaner field names. Tagging you for the once-over before partner docs go out.
+          - generic [ref=e283]:
+            - generic [ref=e284]: 🔒
+            - generic [ref=e285]: Unlock →
+        - link "Add webhook subscription endpoint pro security · 5 languages · 28 min · 6 issues Customers want webhooks for our v2 API — they POST a URL and we fire HTTP callbacks on order events. This is the subscription endpoint plus the test-ping that fires immediately after creation so the customer can verify their endpoint received it. Auth team said the request middleware already injects the authenticated account into context. 🔒 Unlock →" [ref=e286] [cursor=pointer]:
+          - /url: /prs/D-security-012
+          - generic [ref=e288]:
+            - generic [ref=e289]:
+              - heading "Add webhook subscription endpoint" [level=2] [ref=e290]
+              - generic "Paid tier" [ref=e291]: pro
+            - generic [ref=e292]:
+              - generic [ref=e293]: security
+              - generic [ref=e296]: ·
+              - generic [ref=e297]: 5 languages
+              - generic [ref=e298]: ·
+              - generic [ref=e299]: 28 min · 6 issues
+            - paragraph [ref=e300]: Customers want webhooks for our v2 API — they POST a URL and we fire HTTP callbacks on order events. This is the subscription endpoint plus the test-ping that fires immediately after creation so the customer can verify their endpoint received it. Auth team said the request middleware already injects the authenticated account into context.
+          - generic [ref=e301]:
+            - generic [ref=e302]: 🔒
+            - generic [ref=e303]: Unlock →
+        - link "Add cache layer in front of pricing service pro distributed · 5 languages · 32 min · 4 issues Pricing service got hammered during last month's flash sale — adding a 60-second TTL cache in front so we don't blow it up again. Touches three files; pricing client now sits behind the cache wrapper. Need a once-over before we ship for the campaign next Friday. 🔒 Unlock →" [ref=e304] [cursor=pointer]:
+          - /url: /prs/D-distributed-010
+          - generic [ref=e306]:
+            - generic [ref=e307]:
+              - heading "Add cache layer in front of pricing service" [level=2] [ref=e308]
+              - generic "Paid tier" [ref=e309]: pro
+            - generic [ref=e310]:
+              - generic [ref=e311]: distributed
+              - generic [ref=e314]: ·
+              - generic [ref=e315]: 5 languages
+              - generic [ref=e316]: ·
+              - generic [ref=e317]: 32 min · 4 issues
+            - paragraph [ref=e318]: Pricing service got hammered during last month's flash sale — adding a 60-second TTL cache in front so we don't blow it up again. Touches three files; pricing client now sits behind the cache wrapper. Need a once-over before we ship for the campaign next Friday.
+          - generic [ref=e319]:
+            - generic [ref=e320]: 🔒
+            - generic [ref=e321]: Unlock →
+  - alert [ref=e322]
