@@ -3,14 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { redirect } from "next/navigation";
-import { Menu } from "lucide-react";
-import Sidebar from "@/components/dashboard/Sidebar";
+import TopNav from "@/components/dashboard/TopNav";
 import OnboardingModal from "@/components/dashboard/OnboardingModal";
 import FloatingMentor from "@/components/dashboard/FloatingMentor";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
-  const [mobileOpen, setMobileOpen] = useState(false);
   const mainRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
@@ -30,30 +28,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (status === "unauthenticated") redirect("/login");
 
   return (
-    <div className="flex h-dvh bg-canvas text-neutral-100 overflow-hidden">
-      <Sidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+    <div className="flex h-dvh flex-col bg-canvas text-neutral-100 overflow-hidden">
+      <TopNav />
 
-      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
-        {/* Mobile top bar */}
-        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-neutral-800/60 bg-canvas shrink-0">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="text-neutral-400 hover:text-white transition-colors"
-            aria-label="Open menu"
-          >
-            <Menu size={20} />
-          </button>
-          <span className="text-sm font-bold text-white">
-            Code<span className="text-emerald-400">ward</span>
-          </span>
-          {/* Spacer keeps the logo centered now that the icon is removed */}
-          <span className="w-5" aria-hidden />
-        </header>
-
-        <main ref={mainRef} className="flex-1 overflow-y-auto p-6 md:p-8" style={{ scrollbarGutter: "stable" }}>
+      <main ref={mainRef} className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
+        <div className="mx-auto w-full max-w-6xl p-4 md:p-8">
           {children}
-        </main>
-      </div>
+        </div>
+      </main>
 
       {/* Floating AI Mentor */}
       <FloatingMentor />
