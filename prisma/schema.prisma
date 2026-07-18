@@ -27,6 +27,7 @@ model User {
   customSheets        Sheet[]
   conversations       MentorConversation[]
   reviewAttempts      ReviewAttempt[]
+  bugHuntAttempts     BugHuntAttempt[]
 }
 
 // ─── Code Review practice mode ─────────────────────────────────────────────
@@ -40,6 +41,23 @@ model ReviewAttempt {
   score        Int
   caught       Json
   missed       Json
+  feedback     String   @db.Text
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, exerciseSlug])
+}
+
+// ─── Bug Hunt practice mode ────────────────────────────────────────────────
+model BugHuntAttempt {
+  id           String   @id @default(cuid())
+  userId       String
+  exerciseSlug String
+  diagnosis    String   @db.Text
+  score        Int
+  rootCaught   Boolean
+  fixReasonable Boolean
   feedback     String   @db.Text
   createdAt    DateTime @default(now())
 

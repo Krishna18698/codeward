@@ -2,10 +2,11 @@ import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Code2, Network, Sparkles, TrendingUp, Target, BookOpen, ArrowRight, GitPullRequest, RotateCcw, History, Play } from "lucide-react";
+import { Code2, Network, Sparkles, TrendingUp, Target, BookOpen, ArrowRight, GitPullRequest, Bug, RotateCcw, History, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Ring } from "@/components/ui/Ring";
 import { CODE_REVIEWS_META } from "@/content/code-reviews";
+import { BUG_HUNTS_META } from "@/content/bug-hunts";
 import { DEEP_DIVES } from "@/content/deep-dives";
 
 function timeAgo(date: Date): string {
@@ -18,7 +19,7 @@ function timeAgo(date: Date): string {
 }
 
 async function getDashboardData(userId: string) {
-  const [sheets, statuses, sdTotal, recent, reviseList, reviewCount] = await Promise.all([
+  const [sheets, statuses, sdTotal, recent, reviseList, reviewCount, bugHuntCount] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -47,15 +48,16 @@ async function getDashboardData(userId: string) {
       select: { problem: { select: { id: true, title: true, sheetId: true } } },
     }),
     prisma.reviewAttempt.count({ where: { userId } }),
+    prisma.bugHuntAttempt.count({ where: { userId } }),
   ]);
-  return { sheets, statuses, sdTotal, recent, reviseList, reviewCount };
+  return { sheets, statuses, sdTotal, recent, reviseList, reviewCount, bugHuntCount };
 }
 
 export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewCount }] = await Promise.all([
+  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewCount, bugHuntCount }] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, image: true, targetCompany: true, experienceLevel: true },
@@ -242,12 +244,14 @@ export default async function DashboardPage() {
         {/* ── Practice modes ── */}
         <div>
           <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">Practice</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[
               { href: "/dashboard/dsa",           icon: Code2,           label: "DSA Sheets",    sub: `${doneCount} solved`,                accent: "emerald" },
               { href: "/dashboard/system-design", icon: Network,         label: "System Design", sub: `${sdTotal} questions`,               accent: "rose" },
               { href: "/dashboard/code-review",   icon: GitPullRequest,  label: "Code Review",   sub: `${reviewCount} attempt${reviewCount === 1 ? "" : "s"} · ${CODE_REVIEWS_META.length} PRs`, accent: "emerald" },
-              { href: "/dashboard/deep-dives",    icon: BookOpen,        label: "Deep Dives",    sub: `${DEEP_DIVES.length} topics`,        accent: "rose" },
+              { href: "/dashboard/bug-hunt",      icon: Bug,             label: "Bug Hunt",      sub: `${bugHuntCount} attempt${bugHuntCount === 1 ? "" : "s"} · ${BUG_HUNTS_META.length} bugs`, accent: "rose" },
+              { href: "/dashboard/deep-dives",    icon: BookOpen,        label: "Deep Dives",    sub: `${DEEP_DIVES.length} topics`,        accent: "emerald" },
+              { href: "/dashboard/mentor",        icon: Sparkles,        label: "AI Mentor",     sub: "Always on",                          accent: "rose" },
             ].map((m, i) => (
               <Link
                 key={m.href}

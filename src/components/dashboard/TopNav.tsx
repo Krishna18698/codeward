@@ -3,7 +3,7 @@ import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
-  LayoutDashboard, Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest,
+  LayoutDashboard, Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -14,6 +14,7 @@ const nav = [
   { label: "DSA Sheets",    href: "/dashboard/dsa",           icon: Code2 },
   { label: "System Design", href: "/dashboard/system-design", icon: Network },
   { label: "Code Review",   href: "/dashboard/code-review",   icon: GitPullRequest },
+  { label: "Bug Hunt",      href: "/dashboard/bug-hunt",      icon: Bug },
   { label: "Deep Dives",    href: "/dashboard/deep-dives",    icon: BookOpen },
   { label: "AI Mentor",     href: "/dashboard/mentor",        icon: Sparkles },
 ];
@@ -47,7 +48,7 @@ export default function TopNav() {
         </Link>
 
         {/* Nav */}
-        <nav className="flex min-w-0 flex-1 items-center gap-0.5 md:gap-1">
+        <nav className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {nav.map(({ label, href, icon }) => {
             const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
             return (
@@ -57,14 +58,14 @@ export default function TopNav() {
                 aria-label={label}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-150",
+                  "flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-150",
                   active
                     ? "text-white bg-white/6"
                     : "text-neutral-400 hover:text-white hover:bg-white/4",
                 )}
               >
                 <NavIcon icon={icon} />
-                <span className="hidden md:inline whitespace-nowrap">{label}</span>
+                <span className="hidden lg:inline whitespace-nowrap">{label}</span>
               </Link>
             );
           })}
