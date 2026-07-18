@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Lock } from "lucide-react";
 import { getSessionUserId } from "@/lib/auth";
 import { DEEP_DIVES, getDeepDive } from "@/content/deep-dives";
 import { MarkRead } from "@/components/deep-dives/ReadBadge";
@@ -14,11 +14,13 @@ export default async function DeepDivePage({ params }: Props) {
 
   const { slug } = await params;
   const dive = getDeepDive(slug);
-  if (!dive) notFound();
+  if (!dive || dive.locked) notFound();
 
-  const index = DEEP_DIVES.findIndex((d) => d.slug === slug);
-  const prev = index > 0 ? DEEP_DIVES[index - 1] : null;
-  const next = index < DEEP_DIVES.length - 1 ? DEEP_DIVES[index + 1] : null;
+  // Prev/next navigate only among published dives.
+  const published = DEEP_DIVES.filter((d) => !d.locked);
+  const index = published.findIndex((d) => d.slug === slug);
+  const prev = index > 0 ? published[index - 1] : null;
+  const next = index < published.length - 1 ? published[index + 1] : null;
 
   return (
     <div className="flex gap-10 animate-fade-up">
@@ -76,20 +78,29 @@ export default async function DeepDivePage({ params }: Props) {
         <div className="sticky top-20">
           <p className="font-mono text-[11px] text-neutral-500 mb-3">{DEEP_DIVES.length} topics</p>
           <nav className="space-y-1">
-            {DEEP_DIVES.map((d) => (
-              <Link
-                key={d.slug}
-                href={`/dashboard/deep-dives/${d.slug}`}
-                aria-current={d.slug === slug ? "page" : undefined}
-                className={`block rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
-                  d.slug === slug
-                    ? "bg-white/6 text-white"
-                    : "text-neutral-500 hover:text-neutral-300 hover:bg-white/4"
-                }`}
-              >
-                {d.title}
-              </Link>
-            ))}
+            {DEEP_DIVES.map((d) =>
+              d.locked ? (
+                <span
+                  key={d.slug}
+                  className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-neutral-600"
+                >
+                  <Lock size={9} className="shrink-0" /> {d.title}
+                </span>
+              ) : (
+                <Link
+                  key={d.slug}
+                  href={`/dashboard/deep-dives/${d.slug}`}
+                  aria-current={d.slug === slug ? "page" : undefined}
+                  className={`block rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
+                    d.slug === slug
+                      ? "bg-white/6 text-white"
+                      : "text-neutral-500 hover:text-neutral-300 hover:bg-white/4"
+                  }`}
+                >
+                  {d.title}
+                </Link>
+              ),
+            )}
           </nav>
         </div>
       </aside>

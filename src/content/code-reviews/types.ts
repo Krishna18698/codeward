@@ -23,4 +23,9 @@ export type CodeReviewExercise = {
 };
 
 /** Client-safe shape: everything except the planted bug list. */
-export type ExerciseMeta = Omit<CodeReviewExercise, "bugs"> & { bugCount: number };
+export type ExerciseMeta = Omit<CodeReviewExercise, "bugs" | "files"> & {
+  bugCount: number;
+  files?: ExerciseFile[];
+  /** Coming soon — shown in the catalog, not yet playable. */
+  locked?: boolean;
+};

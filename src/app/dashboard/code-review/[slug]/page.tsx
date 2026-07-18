@@ -15,7 +15,7 @@ export default async function CodeReviewExercisePage({ params }: Props) {
   const { slug } = await params;
   // Client-safe meta only — the planted bug list never enters this page's payload.
   const meta = getExerciseMeta(slug);
-  if (!meta) notFound();
+  if (!meta || !meta.files) notFound();
 
   const attempts = await prisma.reviewAttempt.findMany({
     where: { userId, exerciseSlug: slug },
