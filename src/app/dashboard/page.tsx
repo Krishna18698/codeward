@@ -2,12 +2,23 @@ import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Code2, Network, Sparkles, TrendingUp, Target, BookOpen, ArrowRight } from "lucide-react";
+import { Code2, Network, Sparkles, TrendingUp, Target, BookOpen, ArrowRight, GitPullRequest, RotateCcw, History, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Ring } from "@/components/ui/Ring";
+import { CODE_REVIEWS_META } from "@/content/code-reviews";
+import { DEEP_DIVES } from "@/content/deep-dives";
+
+function timeAgo(date: Date): string {
+  const s = Math.floor((Date.now() - date.getTime()) / 1000);
+  const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
+  if (s < 60) return rtf.format(-s, "second");
+  if (s < 3600) return rtf.format(-Math.floor(s / 60), "minute");
+  if (s < 86400) return rtf.format(-Math.floor(s / 3600), "hour");
+  return rtf.format(-Math.floor(s / 86400), "day");
+}
 
 async function getDashboardData(userId: string) {
-  const [sheets, statuses, sdTotal] = await Promise.all([
+  const [sheets, statuses, sdTotal, recent, reviseList, reviewCount] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -18,15 +29,33 @@ async function getDashboardData(userId: string) {
       select: { status: true, problem: { select: { sheetId: true, pattern: true } } },
     }),
     prisma.systemDesignQuestion.count(),
+    // Recent activity + continue-where-left-off (most recently touched first)
+    prisma.userProblemStatus.findMany({
+      where: { userId },
+      orderBy: { updatedAt: "desc" },
+      take: 5,
+      select: {
+        status: true,
+        updatedAt: true,
+        problem: { select: { id: true, title: true, sheetId: true } },
+      },
+    }),
+    // Revision queue
+    prisma.userProblemStatus.findMany({
+      where: { userId, toRevise: true },
+      orderBy: { updatedAt: "desc" },
+      select: { problem: { select: { id: true, title: true, sheetId: true } } },
+    }),
+    prisma.reviewAttempt.count({ where: { userId } }),
   ]);
-  return { sheets, statuses, sdTotal };
+  return { sheets, statuses, sdTotal, recent, reviseList, reviewCount };
 }
 
 export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [user, { sheets, statuses, sdTotal }] = await Promise.all([
+  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewCount }] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, image: true, targetCompany: true, experienceLevel: true },
@@ -34,6 +63,9 @@ export default async function DashboardPage() {
     getDashboardData(userId),
   ]);
   if (!user) redirect("/login");
+
+  const continueItem = recent[0] ?? null;
+  const statusLabel: Record<string, string> = { DONE: "Solved", SOLVING: "Started", TODO: "Marked to do" };
 
   const doneCount    = statuses.filter((s) => s.status === "DONE").length;
   const totalTracked = sheets.filter((s) => s.isPreset).reduce((sum, s) => sum + s._count.problems, 0);
@@ -57,7 +89,7 @@ export default async function DashboardPage() {
   const userImage = user.image;
 
   return (
-    <div className="max-w-3xl space-y-6 animate-fade-up">
+    <div className="max-w-5xl space-y-6 animate-fade-up">
 
         {/* ── Hero banner ── */}
         <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-white/3 p-6">
@@ -160,35 +192,79 @@ export default async function DashboardPage() {
           ))}
         </div>
 
-        {/* ── Quick nav ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Link
-            href="/dashboard/dsa"
-            className="group flex items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-4 hover:border-emerald-500/30 hover:bg-neutral-900/80 transition-all duration-200"
-          >
-            <div className="rounded-xl bg-emerald-500/10 p-3 shrink-0 group-hover:bg-emerald-500/20 transition-colors">
-              <Code2 size={20} className="text-emerald-400" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-white">DSA Practice</p>
-              <p className="text-xs text-neutral-500 truncate">{doneCount} solved</p>
-            </div>
-            <ArrowRight size={14} className="text-neutral-700 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
-          </Link>
+        {/* ── Continue + Revision queue ── */}
+        {(continueItem || reviseList.length > 0) && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {continueItem && (
+              <Link
+                href={`/dashboard/dsa?sheet=${continueItem.problem.sheetId}`}
+                className="group flex items-center gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/6 p-4 hover:border-emerald-500/40 transition-colors"
+              >
+                <div className="rounded-xl bg-emerald-500/15 p-2.5 shrink-0">
+                  <Play size={16} className="text-emerald-400" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-mono text-[11px] text-emerald-400">Continue where you left off</p>
+                  <p className="text-sm font-medium text-white truncate group-hover:text-emerald-300 transition-colors">
+                    {continueItem.problem.title}
+                  </p>
+                  <p className="text-[11px] text-neutral-500">{timeAgo(continueItem.updatedAt)}</p>
+                </div>
+                <ArrowRight size={14} className="text-neutral-700 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
+              </Link>
+            )}
 
-          <Link
-            href="/dashboard/system-design"
-            className="group flex items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/50 p-4 hover:border-rose-500/30 hover:bg-neutral-900/80 transition-all duration-200"
-          >
-            <div className="rounded-xl bg-rose-500/10 p-3 shrink-0 group-hover:bg-rose-500/20 transition-colors">
-              <Network size={20} className="text-rose-400" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-white">System Design</p>
-              <p className="text-xs text-neutral-500 truncate">{sdTotal} questions · 3 levels</p>
-            </div>
-            <ArrowRight size={14} className="text-neutral-700 group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
-          </Link>
+            {reviseList.length > 0 && (
+              <div className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <RotateCcw size={14} className="text-amber-400" />
+                  <p className="font-mono text-[11px] text-amber-400">Revision queue · {reviseList.length}</p>
+                </div>
+                <div className="space-y-1">
+                  {reviseList.slice(0, 3).map((r) => (
+                    <Link
+                      key={r.problem.id}
+                      href={`/dashboard/dsa?sheet=${r.problem.sheetId}`}
+                      className="block text-xs text-neutral-300 hover:text-white truncate transition-colors"
+                    >
+                      • {r.problem.title}
+                    </Link>
+                  ))}
+                  {reviseList.length > 3 && (
+                    <p className="text-[11px] text-neutral-500 pt-0.5">+{reviseList.length - 3} more flagged</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Practice modes ── */}
+        <div>
+          <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">Practice</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { href: "/dashboard/dsa",           icon: Code2,           label: "DSA Sheets",    sub: `${doneCount} solved`,                accent: "emerald" },
+              { href: "/dashboard/system-design", icon: Network,         label: "System Design", sub: `${sdTotal} questions`,               accent: "rose" },
+              { href: "/dashboard/code-review",   icon: GitPullRequest,  label: "Code Review",   sub: `${reviewCount} attempt${reviewCount === 1 ? "" : "s"} · ${CODE_REVIEWS_META.length} PRs`, accent: "emerald" },
+              { href: "/dashboard/deep-dives",    icon: BookOpen,        label: "Deep Dives",    sub: `${DEEP_DIVES.length} topics`,        accent: "rose" },
+            ].map((m, i) => (
+              <Link
+                key={m.href}
+                href={m.href}
+                className="group flex flex-col gap-2.5 rounded-2xl border border-neutral-800 bg-white/3 p-4 hover:border-neutral-700 hover:bg-white/5 transition-colors animate-fade-up"
+                style={{ animationDelay: `${i * 50}ms` }}
+              >
+                <div className={`self-start rounded-xl p-2 ${m.accent === "emerald" ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
+                  <m.icon size={16} className={m.accent === "emerald" ? "text-emerald-400" : "text-rose-400"} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{m.label}</p>
+                  <p className="font-mono text-[11px] text-neutral-500 mt-0.5">{m.sub}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* ── Sheets grid ── */}
@@ -299,6 +375,34 @@ export default async function DashboardPage() {
             <Link href="/dashboard/dsa" className="inline-flex items-center gap-1 mt-4 text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-medium">
               Go to DSA Sheets <ArrowRight size={11} />
             </Link>
+          </div>
+        )}
+
+        {/* ── Recent activity ── */}
+        {recent.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <History size={14} className="text-neutral-500" />
+              <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Recent Activity</h2>
+            </div>
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 divide-y divide-neutral-800/60">
+              {recent.map((r) => (
+                <Link
+                  key={r.problem.id + r.updatedAt.toISOString()}
+                  href={`/dashboard/dsa?sheet=${r.problem.sheetId}`}
+                  className="flex items-center gap-3 px-5 py-2.5 hover:bg-neutral-800/20 transition-colors group"
+                >
+                  <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${
+                    r.status === "DONE" ? "bg-emerald-400" : r.status === "SOLVING" ? "bg-amber-400" : "bg-neutral-600"
+                  }`} />
+                  <span className="text-xs text-neutral-300 truncate group-hover:text-white transition-colors flex-1">
+                    {r.problem.title}
+                  </span>
+                  <span className="font-mono text-[10px] text-neutral-600 shrink-0">{statusLabel[r.status] ?? r.status}</span>
+                  <span className="text-[10px] text-neutral-500 shrink-0 w-20 text-right">{timeAgo(r.updatedAt)}</span>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
     </div>
