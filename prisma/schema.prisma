@@ -26,6 +26,26 @@ model User {
   chatMessages        ChatMessage[]
   customSheets        Sheet[]
   conversations       MentorConversation[]
+  reviewAttempts      ReviewAttempt[]
+}
+
+// ─── Code Review practice mode ─────────────────────────────────────────────
+// Exercises live as content-as-code (src/content/code-reviews); only the
+// user's graded attempts are persisted.
+model ReviewAttempt {
+  id           String   @id @default(cuid())
+  userId       String
+  exerciseSlug String
+  comments     String   @db.Text
+  score        Int
+  caught       Json
+  missed       Json
+  feedback     String   @db.Text
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, exerciseSlug])
 }
 
 model Account {
