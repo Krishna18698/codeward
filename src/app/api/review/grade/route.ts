@@ -22,6 +22,19 @@ export interface GradeResult {
   feedback: string;
 }
 
+/** Groq's tool_use_failed error carries the raw model output in `failed_generation`
+ *  at a nesting depth that varies by SDK version — search for it. */
+function findFailedGeneration(err: unknown, depth = 0): string | null {
+  if (depth > 4 || err === null || typeof err !== "object") return null;
+  const o = err as Record<string, unknown>;
+  if (typeof o.failed_generation === "string") return o.failed_generation;
+  for (const v of Object.values(o)) {
+    const found = findFailedGeneration(v, depth + 1);
+    if (found) return found;
+  }
+  return null;
+}
+
 export async function POST(req: Request) {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -64,61 +77,73 @@ export async function POST(req: Request) {
 
   const groq = new Groq({ apiKey });
 
-  let completion;
-  try {
-    completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      temperature: 0.1,
-      max_tokens: 1500,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      tools: [
-        {
-          type: "function",
-          function: {
-            name: "grade_review",
-            description: "Report which planted bugs the candidate's review identified.",
-            parameters: {
-              type: "object",
-              properties: {
-                results: {
-                  type: "array",
-                  description: `One entry per planted bug id (${exercise.bugs.map((b) => b.id).join(", ")}).`,
-                  items: {
-                    type: "object",
-                    properties: {
-                      bugId: { type: "string" },
-                      caught: { type: "boolean" },
-                      evidence: { type: "string", description: "Phrase from the review that identifies this bug, or empty if missed." },
+  type ParsedGrade = { results: { bugId: string; caught: boolean; evidence?: string }[]; feedback: string };
+
+  // llama-3.3 occasionally emits the tool call as literal `<function=grade_review>{...}</function>`
+  // text and the SDK throws tool_use_failed. That JSON is usually still valid, so we recover it,
+  // and we retry once on any failure before giving up (so the user never silently loses a review).
+  async function gradeOnce(): Promise<ParsedGrade | null> {
+    try {
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        temperature: 0.1,
+        max_tokens: 1500,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "grade_review",
+              description: "Report which planted bugs the candidate's review identified.",
+              parameters: {
+                type: "object",
+                properties: {
+                  results: {
+                    type: "array",
+                    description: `One entry per planted bug id (${exercise!.bugs.map((b) => b.id).join(", ")}).`,
+                    items: {
+                      type: "object",
+                      properties: {
+                        bugId: { type: "string" },
+                        caught: { type: "boolean" },
+                        evidence: { type: "string", description: "Phrase from the review that identifies this bug, or empty if missed." },
+                      },
+                      required: ["bugId", "caught"],
                     },
-                    required: ["bugId", "caught"],
                   },
+                  feedback: { type: "string", description: "2-3 sentences of overall feedback for the candidate." },
                 },
-                feedback: { type: "string", description: "2-3 sentences of overall feedback for the candidate." },
+                required: ["results", "feedback"],
               },
-              required: ["results", "feedback"],
             },
           },
-        },
-      ],
-      tool_choice: "required",
-    });
-  } catch (e) {
-    console.error("[review/grade] groq error:", e);
-    return NextResponse.json({ error: "Grading failed. Please try again." }, { status: 502 });
+        ],
+        tool_choice: "required",
+      });
+      const args = completion.choices[0]?.message?.tool_calls?.[0]?.function.arguments;
+      if (args) return JSON.parse(args) as ParsedGrade;
+      return null;
+    } catch (e) {
+      // Recover the wrapped `<function=...>{json}</function>` case: the model emitted valid
+      // grading JSON but not as a proper tool_call. Find failed_generation anywhere in the error.
+      const failed = findFailedGeneration(e);
+      if (failed) {
+        const m = failed.match(/\{[\s\S]*\}/);
+        if (m) {
+          try { return JSON.parse(m[0]) as ParsedGrade; } catch { /* fall through to retry */ }
+        }
+      }
+      console.error("[review/grade] groq attempt failed:", e instanceof Error ? e.message : e);
+      return null;
+    }
   }
 
-  const toolCall = completion.choices[0]?.message?.tool_calls?.[0];
-  if (!toolCall || toolCall.function.name !== "grade_review") {
-    return NextResponse.json({ error: "Grading failed. Please try again." }, { status: 502 });
-  }
-
-  let parsed: { results: { bugId: string; caught: boolean; evidence?: string }[]; feedback: string };
-  try {
-    parsed = JSON.parse(toolCall.function.arguments);
-  } catch {
+  let parsed = await gradeOnce();
+  if (!parsed || !Array.isArray(parsed.results)) parsed = await gradeOnce(); // one retry
+  if (!parsed || !Array.isArray(parsed.results)) {
     return NextResponse.json({ error: "Grading failed. Please try again." }, { status: 502 });
   }
 
