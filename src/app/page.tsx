@@ -89,7 +89,22 @@ function Hero() {
 }
 
 /* ─── Logo strip (marquee) ──────────────────────────────────────────────── */
-const COMPANIES = ["Google", "Amazon", "Meta", "Microsoft", "Netflix", "Uber", "Airbnb", "Stripe", "Razorpay", "Atlassian", "Flipkart", "Swiggy"];
+// Logo marquee — real brand marks pulled from Google's favicon service (the same
+// source the DSA problem rows already use), so no logo assets ship in the bundle.
+const COMPANIES: { name: string; domain: string }[] = [
+  { name: "Google", domain: "google.com" },
+  { name: "Amazon", domain: "amazon.com" },
+  { name: "Meta", domain: "meta.com" },
+  { name: "Microsoft", domain: "microsoft.com" },
+  { name: "Netflix", domain: "netflix.com" },
+  { name: "Uber", domain: "uber.com" },
+  { name: "Airbnb", domain: "airbnb.com" },
+  { name: "Stripe", domain: "stripe.com" },
+  { name: "Atlassian", domain: "atlassian.com" },
+  { name: "LinkedIn", domain: "linkedin.com" },
+  { name: "Flipkart", domain: "flipkart.com" },
+  { name: "Swiggy", domain: "swiggy.com" },
+];
 
 function LogoStrip() {
   // Track is the list rendered twice; translating -50% lands on the identical copy → seamless.
@@ -97,19 +112,30 @@ function LogoStrip() {
   return (
     <section className="py-10 px-6">
       <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-neutral-800 bg-white/2">
-        <div className="flex items-center">
-          <p className="shrink-0 px-5 py-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+        <div className="flex flex-col sm:flex-row sm:items-center">
+          <p className="shrink-0 px-5 pt-4 sm:py-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">
             Problems asked in real interviews at
           </p>
           {/* fade the seam where the label meets the scroll */}
           <div
-            className="relative flex-1 overflow-hidden py-4"
+            className="relative min-w-0 flex-1 overflow-hidden py-4"
             style={{ maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)" }}
           >
-            <div className="flex w-max animate-marquee items-center gap-10">
+            <div className="flex w-max animate-marquee items-center gap-9">
               {track.map((c, i) => (
-                <span key={i} className="whitespace-nowrap text-sm font-semibold text-neutral-400">
-                  {c}
+                <span key={i} className="flex shrink-0 items-center gap-2 whitespace-nowrap">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${c.domain}&sz=64`}
+                    alt=""
+                    aria-hidden
+                    loading="lazy"
+                    decoding="async"
+                    width={18}
+                    height={18}
+                    className="h-[18px] w-[18px] rounded-sm opacity-80"
+                  />
+                  <span className="text-sm font-semibold text-neutral-400">{c.name}</span>
                 </span>
               ))}
             </div>

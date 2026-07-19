@@ -1,21 +1,12 @@
-import { Check, Sparkles, GitPullRequest } from "lucide-react";
+import { Check, Sparkles, GitPullRequest, X } from "lucide-react";
+import { WindowFrame } from "@/components/ui/WindowFrame";
 
-/** Browser-chrome frame — the device that makes each section feel like the real product. */
+/** Editor-window frame for the landing mockups — same chrome the real product uses. */
 export function BrowserFrame({ url, children }: { url: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-surface overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.4)]">
-      <div className="flex items-center gap-2 border-b border-neutral-800 bg-white/3 px-3 py-2">
-        <span className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-neutral-700" />
-          <span className="h-2.5 w-2.5 rounded-full bg-neutral-700" />
-          <span className="h-2.5 w-2.5 rounded-full bg-neutral-700" />
-        </span>
-        <span className="ml-2 flex-1 truncate rounded-md bg-black/40 px-2.5 py-1 font-mono text-[11px] text-neutral-500">
-          {url}
-        </span>
-      </div>
-      <div className="p-4">{children}</div>
-    </div>
+    <WindowFrame label={url} bodyClassName="p-4">
+      {children}
+    </WindowFrame>
   );
 }
 
@@ -34,7 +25,7 @@ export function DsaMockup() {
     { title: "Trapping Rain Water", status: "todo", diff: "Hard", cos: ["G", "N"] },
   ];
   return (
-    <BrowserFrame url="codeward.app/dashboard/dsa">
+    <BrowserFrame url="codeward · arrays.sheet">
       <div className="space-y-3">
         {/* pattern header + progress */}
         <div>
@@ -78,7 +69,7 @@ export function DsaMockup() {
 /* ── AI Mentor mockup ── */
 export function MentorMockup() {
   return (
-    <BrowserFrame url="codeward.app/dashboard/mentor">
+    <BrowserFrame url="codeward · mentor">
       <div className="space-y-3 font-sans">
         <div className="flex justify-end">
           <p className="max-w-[85%] rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs text-neutral-200">
@@ -112,7 +103,7 @@ export function CodeReviewMockup() {
     "store[key] = result",
   ];
   return (
-    <BrowserFrame url="codeward.app/dashboard/code-review/idempotency-middleware">
+    <BrowserFrame url="review · idempotency.ts">
       <div className="space-y-3">
         <div className="flex items-center gap-2 font-mono text-[10px]">
           <span className="text-neutral-300">idempotency.ts</span>
@@ -147,7 +138,7 @@ export function CodeReviewMockup() {
 export function DeepDiveMockup() {
   const topics = ["Idempotency", "Caching at scale", "Rate limiting", "Kafka internals"];
   return (
-    <BrowserFrame url="codeward.app/dashboard/deep-dives/idempotency-exactly-once">
+    <BrowserFrame url="deep-dive · idempotency.md">
       <div className="grid grid-cols-[1fr_1.4fr] gap-4">
         <div className="space-y-1">
           <p className="mb-1.5 font-mono text-[10px] text-neutral-500">6 topics</p>
@@ -175,27 +166,57 @@ export function DeepDiveMockup() {
   );
 }
 
-/* ── Bug Hunt mockup ── */
+/* ── Bug Hunt mockup — test output on the left, diagnosis + canonical fix on the right ── */
 export function BugHuntMockup() {
   return (
-    <BrowserFrame url="codeward.app/dashboard/bug-hunt/double-charge-race">
-      <div className="space-y-3">
-        <div className="rounded-lg border border-neutral-800 bg-black/40 p-3 font-mono text-[11px] leading-5">
+    <BrowserFrame url="bug workspace · payment-service/tests">
+      <div className="grid gap-3 sm:grid-cols-[1fr_1.15fr]">
+        {/* Left: failing test output */}
+        <div className="rounded-lg border border-neutral-800 bg-black/40 p-3 font-mono text-[10.5px] leading-5">
           <p className="text-neutral-500">=== RUN TestChargeIdempotency</p>
           <p className="text-rose-400">--- FAIL: duplicate charge on retry (2.31s)</p>
-          <p className="text-neutral-400 pl-3">want: 1 charge · got: 2 (txn-4821, txn-4822)</p>
-          <p className="text-rose-400 mt-1">DATA RACE: concurrent write to store[key]</p>
+          <p className="pl-3 text-neutral-500">want: 1 charge</p>
+          <p className="pl-3 text-neutral-400">got:  2 (txn-4821, txn-4822)</p>
+          <p className="mt-2 text-rose-400">DATA RACE: concurrent write to store[key]</p>
+          <p className="pl-3 text-neutral-500">payment.go:41 · payment.go:41</p>
         </div>
-        <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-3">
-          <p className="font-mono text-[10px] text-emerald-400 mb-1">Root cause</p>
-          <p className="text-[11px] text-neutral-300 leading-relaxed">
-            The check and the store write aren&apos;t atomic — two concurrent requests both pass the guard before either writes.
-          </p>
+
+        {/* Right: root cause + hypotheses + canonical fix */}
+        <div className="space-y-2.5">
+          <div>
+            <div className="mb-1 flex items-center gap-1.5">
+              <span className="rounded bg-rose-500/15 px-1 font-mono text-[9px] font-bold text-rose-400">S5</span>
+              <span className="font-mono text-[9px] uppercase tracking-wider text-neutral-500">root cause · correctness</span>
+            </div>
+            <p className="text-[11px] leading-relaxed text-neutral-300">
+              Store mutation isn&apos;t atomic — two concurrent requests both pass the
+              guard before either writes.
+            </p>
+          </div>
+
+          <div>
+            <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-neutral-500">Hypotheses ruled out</p>
+            <ul className="space-y-0.5 text-[10.5px] text-neutral-500">
+              <li className="flex items-center gap-1.5"><X size={9} className="text-rose-400/70" /> PSP deduplicated on its end</li>
+              <li className="flex items-center gap-1.5"><X size={9} className="text-rose-400/70" /> Network retry stripped the key</li>
+              <li className="flex items-center gap-1.5"><Check size={9} className="text-emerald-400" strokeWidth={3} /> Race in store write (confirmed)</li>
+            </ul>
+          </div>
+
+          <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-2">
+            <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-emerald-400">Canonical fix</p>
+            <pre className="font-mono text-[10px] leading-4 text-neutral-300">
+{`m.mu.Lock()
+defer m.mu.Unlock()
+// check store inside lock`}
+            </pre>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">✓ root cause identified</span>
-          <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">100/100</span>
-        </div>
+      </div>
+
+      <div className="mt-3 flex gap-2">
+        <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">✓ root cause identified</span>
+        <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">100/100</span>
       </div>
     </BrowserFrame>
   );
@@ -204,7 +225,7 @@ export function BugHuntMockup() {
 /* ── System Design mockup ── */
 export function SystemDesignMockup() {
   return (
-    <BrowserFrame url="codeward.app/dashboard/system-design">
+    <BrowserFrame url="design · rate-limiter">
       <div className="space-y-3">
         <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3">
           <p className="font-mono text-[10px] text-rose-400 mb-1">Challenge spinner</p>

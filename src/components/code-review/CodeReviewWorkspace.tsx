@@ -4,6 +4,7 @@ import { Loader2, Check, X as XIcon, Send, MessageSquarePlus, Trash2 } from "luc
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
+import { WindowFrame } from "@/components/ui/WindowFrame";
 import type { GradeResult, GradedBug } from "@/app/api/review/grade/route";
 
 type FileT = { name: string; code: string };
@@ -146,7 +147,7 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
       {/* ── Code pane ── */}
       <div className="min-w-0">
-        <div className="rounded-2xl border border-neutral-800 bg-surface overflow-hidden">
+        <WindowFrame label={`code-review · ${file.name}`}>
           {/* File tabs */}
           <div className="flex items-center border-b border-neutral-800 bg-white/3 px-2">
             {files.map((f, i) => (
@@ -233,7 +234,7 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
               );
             })}
           </div>
-        </div>
+        </WindowFrame>
 
         {/* Summary + submit */}
         <div className="mt-4 rounded-2xl border border-neutral-800 bg-white/3 p-4">

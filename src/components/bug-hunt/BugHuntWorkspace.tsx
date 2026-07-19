@@ -4,6 +4,7 @@ import { Loader2, Send, Check, X as XIcon, Terminal, ScrollText } from "lucide-r
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
+import { WindowFrame } from "@/components/ui/WindowFrame";
 import type { BugHuntGradeResult } from "@/app/api/bug-hunt/grade/route";
 
 type FileT = { name: string; code: string };
@@ -54,7 +55,7 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
       {/* ── Left: code + evidence ── */}
       <div className="min-w-0 space-y-4">
         {/* Code */}
-        <div className="rounded-2xl border border-neutral-800 bg-surface overflow-hidden">
+        <WindowFrame label={`bug-hunt · ${file.name}`}>
           <div className="flex items-center border-b border-neutral-800 bg-white/3 px-2">
             {files.map((f, i) => (
               <button
@@ -77,7 +78,7 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
               </div>
             ))}
           </pre>
-        </div>
+        </WindowFrame>
 
         {/* Test output */}
         {testOutput && (
