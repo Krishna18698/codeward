@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Lock } from "lucide-react";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { CODE_REVIEWS_META } from "@/content/code-reviews";
@@ -9,8 +8,7 @@ export default async function CodeReviewPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const playable = CODE_REVIEWS_META.filter((e) => !e.locked);
-  const locked = CODE_REVIEWS_META.filter((e) => e.locked);
+  const playable = CODE_REVIEWS_META;
 
   // Best score per exercise for this user
   const attempts = await prisma.reviewAttempt.groupBy({
@@ -39,7 +37,7 @@ export default async function CodeReviewPage() {
             {CODE_REVIEWS_META.length} PRs
           </span>
           <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-emerald-400">
-            {playable.length} playable
+            all free
           </span>
           <span className="rounded-full border border-neutral-800 px-2.5 py-1 text-neutral-400">
             TypeScript
@@ -92,29 +90,6 @@ export default async function CodeReviewPage() {
           );
         })}
       </div>
-
-      {/* Coming soon */}
-      {locked.length > 0 && (
-        <div>
-          <p className="font-mono text-[11px] text-neutral-500 mb-3">Coming soon · {locked.length}</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {locked.map((ex) => (
-              <div key={ex.slug} className="rounded-2xl border border-neutral-800/60 bg-white/2 p-4 opacity-70">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-neutral-300">{ex.title}</h3>
-                  <span className="shrink-0 inline-flex items-center gap-1 font-mono text-[10px] text-neutral-500">
-                    <Lock size={9} /> soon
-                  </span>
-                </div>
-                <p className="mt-1.5 text-xs text-neutral-500 leading-relaxed">{ex.brief}</p>
-                <p className="mt-2 font-mono text-[10px] text-neutral-600">
-                  {ex.language} · ~{ex.minutes} min · {ex.bugCount} planted issues
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
