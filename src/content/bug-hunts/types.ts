@@ -28,5 +28,4 @@ export type BugHuntMeta = Pick<
   files?: BugHuntFile[];
   testOutput?: string;
   logs?: string;
-  locked?: boolean;
 };
