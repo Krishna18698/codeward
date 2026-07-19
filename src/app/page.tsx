@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
-import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup } from "@/components/landing/Mockups";
+import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMockup, SystemDesignMockup } from "@/components/landing/Mockups";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
@@ -88,19 +88,32 @@ function Hero() {
   );
 }
 
-/* ─── Logo strip ────────────────────────────────────────────────────────── */
+/* ─── Logo strip (marquee) ──────────────────────────────────────────────── */
+const COMPANIES = ["Google", "Amazon", "Meta", "Microsoft", "Netflix", "Uber", "Airbnb", "Stripe", "Razorpay", "Atlassian", "Flipkart", "Swiggy"];
+
 function LogoStrip() {
-  const companies = ["Google", "Amazon", "Meta", "Microsoft", "Netflix", "Uber", "Airbnb", "Stripe"];
+  // Track is the list rendered twice; translating -50% lands on the identical copy → seamless.
+  const track = [...COMPANIES, ...COMPANIES];
   return (
-    <section className="py-10 px-6 border-y border-neutral-800/60">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-center font-mono text-[11px] text-neutral-600 mb-5">
-          Problems drawn from the companies you&apos;re targeting
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {companies.map((c) => (
-            <span key={c} className="text-sm font-semibold text-neutral-500">{c}</span>
-          ))}
+    <section className="py-10 px-6">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-neutral-800 bg-white/2">
+        <div className="flex items-center">
+          <p className="shrink-0 px-5 py-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+            Problems asked in real interviews at
+          </p>
+          {/* fade the seam where the label meets the scroll */}
+          <div
+            className="relative flex-1 overflow-hidden py-4"
+            style={{ maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)" }}
+          >
+            <div className="flex w-max animate-marquee items-center gap-10">
+              {track.map((c, i) => (
+                <span key={i} className="whitespace-nowrap text-sm font-semibold text-neutral-400">
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -129,18 +142,36 @@ const modes = [
   },
   {
     n: "03",
+    marker: "System Design",
+    title: "Practice the design round, level by level",
+    copy: "Curated system-design questions by difficulty and experience level (junior → senior), plus a challenge spinner that generates a fresh prompt — problem × scale × traffic spike × constraint — to design against.",
+    cta: "Open system design →",
+    href: "/register",
+    Mockup: SystemDesignMockup,
+  },
+  {
+    n: "04",
     marker: "Code Review",
     title: "Review realistic PRs with planted bugs",
-    copy: "Hand-authored diffs across payments, auth, and caching — each with real bugs at graded severities. Write your review; the AI scores what you caught against the ground-truth list, like a senior reviewer would.",
+    copy: "15 hand-authored diffs across payments, auth, caching, and infra — each with real bugs at graded severities. Leave inline comments; the AI scores what you caught against the ground-truth list, like a senior reviewer would.",
     cta: "Try a review →",
     href: "/register",
     Mockup: CodeReviewMockup,
   },
   {
-    n: "04",
+    n: "05",
+    marker: "Bug Hunt",
+    title: "Diagnose the failure, not the symptom",
+    copy: "9 broken codebases with failing tests and real logs — races, N+1s, leaks, deadlocks. Write your root-cause diagnosis; the AI grades it and reveals the canonical fix and the tempting wrong turns.",
+    cta: "Start debugging →",
+    href: "/register",
+    Mockup: BugHuntMockup,
+  },
+  {
+    n: "06",
     marker: "Deep Dives",
     title: "Learn the trade-offs interviews actually probe",
-    copy: "Long-form deep dives on idempotency, caching, rate limiting, Kafka, consistent hashing, and more — failure modes, trade-offs, and the interview traps surface-level guides skip.",
+    copy: "13 long-form deep dives — idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas, and more. Failure modes, trade-offs, and the interview traps surface-level guides skip.",
     cta: "Read the deep dives →",
     href: "/register",
     Mockup: DeepDiveMockup,
@@ -153,7 +184,7 @@ function PracticeModes() {
       <div className="mx-auto max-w-6xl">
         <SectionMarker n="00" label="The platform" center />
         <h2 className="text-center text-3xl font-semibold tracking-heading text-white mb-16">
-          Four ways to actually get ready
+          Six ways to actually get ready
         </h2>
 
         <div className="space-y-20">
@@ -189,7 +220,7 @@ const faqs = [
   },
   {
     q: "What's actually on the platform?",
-    a: "Four modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 300-problem company-tagged bank), a RAG-powered AI mentor, Code Review exercises with planted bugs and AI grading, and long-form Deep Dives on distributed systems. Everything is free.",
+    a: "Six modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 300-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, 15 Code Review exercises with planted bugs and AI grading, 9 Bug Hunt debugging exercises, and 13 long-form Deep Dives on distributed systems. Everything is free.",
   },
   {
     q: "How is the AI mentor different from just using ChatGPT?",
@@ -227,27 +258,59 @@ function FAQ() {
 }
 
 /* ─── Footer ────────────────────────────────────────────────────────────── */
+const footerCols = [
+  {
+    heading: "Practice",
+    links: [
+      { label: "DSA Sheets", href: "/dashboard/dsa" },
+      { label: "System Design", href: "/dashboard/system-design" },
+      { label: "Code Review", href: "/dashboard/code-review" },
+      { label: "Bug Hunt", href: "/dashboard/bug-hunt" },
+      { label: "Deep Dives", href: "/dashboard/deep-dives" },
+      { label: "AI Mentor", href: "/dashboard/mentor" },
+    ],
+  },
+  {
+    heading: "Account",
+    links: [
+      { label: "Log in", href: "/login" },
+      { label: "Sign up", href: "/register" },
+      { label: "Dashboard", href: "/dashboard" },
+    ],
+  },
+];
+
 function Footer() {
   return (
-    <footer className="border-t border-neutral-800 py-12 px-6">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col sm:flex-row items-start justify-between gap-6">
-          <div>
-            <span className="flex items-center gap-1.5 text-sm font-bold text-white">
-              <Sparkles size={14} className="text-emerald-400" />
-              Code<span className="text-emerald-400">ward</span>
-            </span>
-            <p className="mt-2 text-sm text-neutral-500 max-w-xs">
-              Structured interview prep with a mentor that knows where you stand.
-            </p>
-          </div>
-          <div className="flex items-center gap-6 text-sm text-neutral-400">
-            <Link href="/login" className="hover:text-white transition-colors">Log in</Link>
-            <Link href="/register" className="hover:text-white transition-colors">Sign up</Link>
-            <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
-          </div>
+    <footer className="border-t border-neutral-800 py-14 px-6">
+      <div className="mx-auto max-w-6xl grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
+        {/* Brand */}
+        <div>
+          <span className="flex items-center gap-1.5 text-sm font-bold text-white">
+            <Sparkles size={14} className="text-emerald-400" />
+            Code<span className="text-emerald-400">ward</span>
+          </span>
+          <p className="mt-3 text-sm text-neutral-500 max-w-xs leading-relaxed">
+            Production-shaped interview prep — DSA, system design, code review, debugging, and a mentor that knows where you stand.
+          </p>
+          <p className="mt-4 font-mono text-xs text-neutral-600">© 2026 Codeward · Built to get you hired</p>
         </div>
-        <p className="mt-10 font-mono text-xs text-neutral-500">Built to get you hired</p>
+
+        {/* Link columns */}
+        {footerCols.map((col) => (
+          <div key={col.heading}>
+            <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500 mb-3">{col.heading}</p>
+            <ul className="space-y-2">
+              {col.links.map((l) => (
+                <li key={l.label}>
+                  <Link href={l.href} className="text-sm text-neutral-400 hover:text-white transition-colors">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </footer>
   );

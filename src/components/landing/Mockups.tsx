@@ -175,4 +175,56 @@ export function DeepDiveMockup() {
   );
 }
 
+/* ── Bug Hunt mockup ── */
+export function BugHuntMockup() {
+  return (
+    <BrowserFrame url="codeward.app/dashboard/bug-hunt/double-charge-race">
+      <div className="space-y-3">
+        <div className="rounded-lg border border-neutral-800 bg-black/40 p-3 font-mono text-[11px] leading-5">
+          <p className="text-neutral-500">=== RUN TestChargeIdempotency</p>
+          <p className="text-rose-400">--- FAIL: duplicate charge on retry (2.31s)</p>
+          <p className="text-neutral-400 pl-3">want: 1 charge · got: 2 (txn-4821, txn-4822)</p>
+          <p className="text-rose-400 mt-1">DATA RACE: concurrent write to store[key]</p>
+        </div>
+        <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-3">
+          <p className="font-mono text-[10px] text-emerald-400 mb-1">Root cause</p>
+          <p className="text-[11px] text-neutral-300 leading-relaxed">
+            The check and the store write aren&apos;t atomic — two concurrent requests both pass the guard before either writes.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">✓ root cause identified</span>
+          <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">100/100</span>
+        </div>
+      </div>
+    </BrowserFrame>
+  );
+}
+
+/* ── System Design mockup ── */
+export function SystemDesignMockup() {
+  return (
+    <BrowserFrame url="codeward.app/dashboard/system-design">
+      <div className="space-y-3">
+        <div className="rounded-lg border border-rose-500/20 bg-rose-500/5 p-3">
+          <p className="font-mono text-[10px] text-rose-400 mb-1">Challenge spinner</p>
+          <p className="text-sm font-semibold text-white">Design a rate limiter</p>
+          <p className="text-[11px] text-neutral-400 mt-0.5">100M DAU · flash-sale 50× spike · &lt;5ms p99</p>
+        </div>
+        {[
+          { t: "Design a URL shortener", d: "Easy", lvl: "Junior" },
+          { t: "Design a distributed cache", d: "Medium", lvl: "Mid" },
+          { t: "Design a payment ledger", d: "Hard", lvl: "Senior" },
+        ].map((q) => (
+          <div key={q.t} className="flex items-center gap-2 rounded-md border border-neutral-800 px-3 py-1.5">
+            <span className="flex-1 truncate text-xs text-neutral-300">{q.t}</span>
+            <span className={`font-mono text-[10px] ${q.d === "Easy" ? "text-emerald-400" : q.d === "Medium" ? "text-amber-400" : "text-rose-400"}`}>{q.d}</span>
+            <span className="font-mono text-[10px] text-neutral-600">{q.lvl}</span>
+          </div>
+        ))}
+      </div>
+    </BrowserFrame>
+  );
+}
+
 export const MODE_ICON = { GitPullRequest };

@@ -3,14 +3,14 @@ import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
-  LayoutDashboard, Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug,
+  Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import UserAvatar from "@/components/ui/UserAvatar";
 
+// Home is the Codeward logo itself (links to /dashboard) — no separate Home item.
 const nav = [
-  { label: "Home",          href: "/dashboard",               icon: LayoutDashboard },
   { label: "DSA Sheets",    href: "/dashboard/dsa",           icon: Code2 },
   { label: "System Design", href: "/dashboard/system-design", icon: Network },
   { label: "Code Review",   href: "/dashboard/code-review",   icon: GitPullRequest },
@@ -35,44 +35,49 @@ export default function TopNav() {
 
   return (
     <header className="sticky top-0 z-40 shrink-0 border-b border-neutral-800 bg-black/85 backdrop-blur-[20px]">
-      <div className="flex h-14 w-full items-center gap-2 px-4 md:px-6">
-        {/* Brand */}
+      <div className="flex h-14 w-full items-center gap-3 px-4 md:px-6">
+        {/* Brand (also the Home link) — far left */}
         <Link
           href="/dashboard"
-          className="mr-2 flex shrink-0 items-center gap-1.5 text-sm font-bold tracking-tight text-white md:mr-5"
+          aria-label="Codeward home"
+          className="flex shrink-0 items-center gap-1.5 text-sm font-bold tracking-tight text-white"
         >
-          <Sparkles size={13} className="text-emerald-400" />
-          <span className="hidden sm:inline">
+          <Sparkles size={14} className="text-emerald-400" />
+          <span>
             Code<span className="text-emerald-400">ward</span>
           </span>
         </Link>
 
-        {/* Nav */}
-        <nav className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {nav.map(({ label, href, icon }) => {
-            const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
-            return (
-              <Link
-                key={href}
-                href={href}
-                aria-label={label}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-150",
-                  active
-                    ? "text-white bg-white/6"
-                    : "text-neutral-400 hover:text-white hover:bg-white/4",
-                )}
-              >
-                <NavIcon icon={icon} />
-                <span className="hidden lg:inline whitespace-nowrap">{label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Everything else — pushed to the right */}
+        <div className="ml-auto flex min-w-0 items-center gap-1.5">
+          {/* Nav */}
+          <nav className="flex min-w-0 items-center gap-0.5 overflow-x-auto lg:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {nav.map(({ label, href, icon }) => {
+              const active = pathname === href || pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-label={label}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-150",
+                    active
+                      ? "text-white bg-white/6"
+                      : "text-neutral-400 hover:text-white hover:bg-white/4",
+                  )}
+                >
+                  <NavIcon icon={icon} />
+                  <span className="hidden lg:inline whitespace-nowrap">{label}</span>
+                </Link>
+              );
+            })}
+          </nav>
 
-        {/* User + sign out */}
-        <div className="flex shrink-0 items-center gap-1.5">
+          {/* Divider */}
+          <span className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block" />
+
+          {/* User + sign out */}
           {user && (
             <Link
               href="/dashboard/profile"

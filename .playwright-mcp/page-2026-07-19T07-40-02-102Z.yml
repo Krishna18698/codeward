@@ -1,0 +1,268 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - text: Code
+          - generic [ref=e9]: ward
+        - generic [ref=e10]:
+          - link "Log in" [ref=e11] [cursor=pointer]:
+            - /url: /login
+          - link "Get started" [ref=e12] [cursor=pointer]:
+            - /url: /register
+    - generic [ref=e13]:
+      - paragraph [ref=e14]: AI-powered interview prep
+      - heading "Crack your dream offer with a mentor that knows you_" [level=1] [ref=e18]: Crack your dream offerwith a mentor that knows you_
+      - paragraph [ref=e19]: Codeward combines curated DSA sheets, system design walkthroughs, and a RAG-powered AI mentor that adapts to your experience and target company.
+      - generic [ref=e20]:
+        - link "Start for free" [ref=e21] [cursor=pointer]:
+          - /url: /register
+        - link "Sign in" [ref=e22] [cursor=pointer]:
+          - /url: /login
+      - paragraph [ref=e23]: No credit card required
+    - generic [ref=e26]:
+      - paragraph [ref=e27]: Problems asked in real interviews at
+      - generic [ref=e29]:
+        - generic [ref=e30]: Google
+        - generic [ref=e31]: Amazon
+        - generic [ref=e32]: Meta
+        - generic [ref=e33]: Microsoft
+        - generic [ref=e34]: Netflix
+        - generic [ref=e35]: Uber
+        - generic [ref=e36]: Airbnb
+        - generic [ref=e37]: Stripe
+        - generic [ref=e38]: Razorpay
+        - generic [ref=e39]: Atlassian
+        - generic [ref=e40]: Flipkart
+        - generic [ref=e41]: Swiggy
+        - generic [ref=e42]: Google
+        - generic [ref=e43]: Amazon
+        - generic [ref=e44]: Meta
+        - generic [ref=e45]: Microsoft
+        - generic [ref=e46]: Netflix
+        - generic [ref=e47]: Uber
+        - generic [ref=e48]: Airbnb
+        - generic [ref=e49]: Stripe
+        - generic [ref=e50]: Razorpay
+        - generic [ref=e51]: Atlassian
+        - generic [ref=e52]: Flipkart
+        - generic [ref=e53]: Swiggy
+    - generic [ref=e55]:
+      - paragraph [ref=e56]: 00 — The platform
+      - heading "Six ways to actually get ready" [level=2] [ref=e57]
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - paragraph [ref=e61]: 01 — DSA Sheets
+            - heading "Track every pattern, not just problem counts" [level=3] [ref=e62]
+            - paragraph [ref=e63]: Blind 75, Striver's, NeetCode 150, and a 300-problem company-tagged bank — grouped by pattern, with status, revision flags, and notes. Or let the mentor generate a sheet weighted for your target company.
+            - link "Browse the sheets →" [ref=e64] [cursor=pointer]:
+              - /url: /register
+          - generic [ref=e66]:
+            - generic [ref=e67]: codeward.app/dashboard/dsa
+            - generic [ref=e74]:
+              - generic [ref=e76]:
+                - generic [ref=e77]: arrays
+                - generic [ref=e78]: 14/22
+              - generic [ref=e81]:
+                - generic [ref=e82]:
+                  - generic [ref=e86]: Two Sum
+                  - generic [ref=e87]:
+                    - generic [ref=e88]: G
+                    - generic [ref=e89]: A
+                  - generic [ref=e90]: Easy
+                - generic [ref=e91]:
+                  - generic [ref=e94]: Longest Substring Without Repeating
+                  - generic [ref=e95]:
+                    - generic [ref=e96]: A
+                    - generic [ref=e97]: M
+                  - generic [ref=e98]: Medium
+                - generic [ref=e99]:
+                  - generic [ref=e101]: Trapping Rain Water
+                  - generic [ref=e102]:
+                    - generic [ref=e103]: G
+                    - generic [ref=e104]: "N"
+                  - generic [ref=e105]: Hard
+        - generic [ref=e106]:
+          - generic [ref=e107]:
+            - paragraph [ref=e108]: 02 — AI Mentor
+            - heading "A mentor that knows what you've already solved" [level=3] [ref=e109]
+            - paragraph [ref=e110]: RAG-grounded in real prep content and aware of your context — target company, experience level, progress. It explains patterns, reviews your approach, and creates sheets directly in your account.
+            - link "Meet the mentor →" [ref=e111] [cursor=pointer]:
+              - /url: /register
+          - generic [ref=e113]:
+            - generic [ref=e114]: codeward.app/dashboard/mentor
+            - generic [ref=e121]:
+              - paragraph [ref=e123]: Prep me for Meta. I'm ok at arrays but weak on trees and DP.
+              - paragraph [ref=e128]: "Building you a Meta sheet: trees first (10 must-dos), then DP (12 patterns), arrays as warm-up."
+              - paragraph [ref=e131]: ✓ Sheet created · 34 problems
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - paragraph [ref=e134]: 03 — System Design
+            - heading "Practice the design round, level by level" [level=3] [ref=e135]
+            - paragraph [ref=e136]: Curated system-design questions by difficulty and experience level (junior → senior), plus a challenge spinner that generates a fresh prompt — problem × scale × traffic spike × constraint — to design against.
+            - link "Open system design →" [ref=e137] [cursor=pointer]:
+              - /url: /register
+          - generic [ref=e139]:
+            - generic [ref=e140]: codeward.app/dashboard/system-design
+            - generic [ref=e147]:
+              - generic [ref=e148]:
+                - paragraph [ref=e149]: Challenge spinner
+                - paragraph [ref=e150]: Design a rate limiter
+                - paragraph [ref=e151]: 100M DAU · flash-sale 50× spike · <5ms p99
+              - generic [ref=e152]:
+                - generic [ref=e153]: Design a URL shortener
+                - generic [ref=e154]: Easy
+                - generic [ref=e155]: Junior
+              - generic [ref=e156]:
+                - generic [ref=e157]: Design a distributed cache
+                - generic [ref=e158]: Medium
+                - generic [ref=e159]: Mid
+              - generic [ref=e160]:
+                - generic [ref=e161]: Design a payment ledger
+                - generic [ref=e162]: Hard
+                - generic [ref=e163]: Senior
+        - generic [ref=e164]:
+          - generic [ref=e165]:
+            - paragraph [ref=e166]: 04 — Code Review
+            - heading "Review realistic PRs with planted bugs" [level=3] [ref=e167]
+            - paragraph [ref=e168]: 15 hand-authored diffs across payments, auth, caching, and infra — each with real bugs at graded severities. Leave inline comments; the AI scores what you caught against the ground-truth list, like a senior reviewer would.
+            - link "Try a review →" [ref=e169] [cursor=pointer]:
+              - /url: /register
+          - generic [ref=e171]:
+            - generic [ref=e172]: codeward.app/dashboard/code-review/idempotency-middleware
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - generic [ref=e181]: idempotency.ts
+                - generic [ref=e182]: 2 missed
+                - generic [ref=e183]: ·
+                - generic [ref=e184]: 3 caught
+              - generic [ref=e185]:
+                - generic [ref=e186]:
+                  - generic [ref=e187]: "23"
+                  - generic [ref=e188]: "if cached, ok := store[key]; ok {"
+                - generic [ref=e189]:
+                  - generic [ref=e190]: "24"
+                  - generic [ref=e191]: writeCached(w, cached)
+                - generic [ref=e192]:
+                  - generic [ref=e193]: "25"
+                  - generic [ref=e194]: return
+                - generic [ref=e195]:
+                  - generic [ref=e196]: "26"
+                  - generic [ref=e197]: "}"
+                - generic [ref=e198]:
+                  - generic [ref=e199]: "27"
+                  - generic [ref=e200]: result := psp.Charge(amount)
+                - generic [ref=e201]:
+                  - generic [ref=e202]: "28"
+                  - generic [ref=e203]: store[key] = result
+              - generic [ref=e204]:
+                - generic [ref=e205]:
+                  - generic [ref=e206]: S5
+                  - generic [ref=e207]: Cache check isn't atomic with the charge — race window.
+                - generic [ref=e208]:
+                  - generic [ref=e209]: S4
+                  - generic [ref=e210]: In-memory store loses state on restart.
+        - generic [ref=e211]:
+          - generic [ref=e212]:
+            - paragraph [ref=e213]: 05 — Bug Hunt
+            - heading "Diagnose the failure, not the symptom" [level=3] [ref=e214]
+            - paragraph [ref=e215]: 9 broken codebases with failing tests and real logs — races, N+1s, leaks, deadlocks. Write your root-cause diagnosis; the AI grades it and reveals the canonical fix and the tempting wrong turns.
+            - link "Start debugging →" [ref=e216] [cursor=pointer]:
+              - /url: /register
+          - generic [ref=e218]:
+            - generic [ref=e219]: codeward.app/dashboard/bug-hunt/double-charge-race
+            - generic [ref=e226]:
+              - generic [ref=e227]:
+                - paragraph [ref=e228]: === RUN TestChargeIdempotency
+                - paragraph [ref=e229]: "--- FAIL: duplicate charge on retry (2.31s)"
+                - paragraph [ref=e230]: "want: 1 charge · got: 2 (txn-4821, txn-4822)"
+                - paragraph [ref=e231]: "DATA RACE: concurrent write to store[key]"
+              - generic [ref=e232]:
+                - paragraph [ref=e233]: Root cause
+                - paragraph [ref=e234]: The check and the store write aren't atomic — two concurrent requests both pass the guard before either writes.
+              - generic [ref=e235]:
+                - generic [ref=e236]: ✓ root cause identified
+                - generic [ref=e237]: 100/100
+        - generic [ref=e238]:
+          - generic [ref=e239]:
+            - paragraph [ref=e240]: 06 — Deep Dives
+            - heading "Learn the trade-offs interviews actually probe" [level=3] [ref=e241]
+            - paragraph [ref=e242]: 13 long-form deep dives — idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas, and more. Failure modes, trade-offs, and the interview traps surface-level guides skip.
+            - link "Read the deep dives →" [ref=e243] [cursor=pointer]:
+              - /url: /register
+          - generic [ref=e245]:
+            - generic [ref=e246]: codeward.app/dashboard/deep-dives/idempotency-exactly-once
+            - generic [ref=e253]:
+              - generic [ref=e254]:
+                - paragraph [ref=e255]: 6 topics
+                - generic [ref=e256]: Idempotency
+                - generic [ref=e257]: Caching at scale
+                - generic [ref=e258]: Rate limiting
+                - generic [ref=e259]: Kafka internals
+              - generic [ref=e260]:
+                - paragraph [ref=e261]: Deep Dive 01
+                - paragraph [ref=e262]: Idempotency
+                - paragraph [ref=e263]: A timeout is indistinguishable from a failure. Any retry that doesn't account for that double-charges.
+                - generic [ref=e264]: "if cached, ok := store.Get(key); ok { return cached // idempotent }"
+    - generic [ref=e266]:
+      - paragraph [ref=e267]: 05 — FAQ
+      - heading "Questions worth answering honestly." [level=2] [ref=e268]
+      - generic [ref=e269]:
+        - generic [ref=e270]:
+          - heading "Is Codeward actually free?" [level=3] [ref=e271]
+          - paragraph [ref=e272]: Yes. It's a solo-built project, not a startup with a pricing page waiting to happen. No credit card, no trial timer, no locked features.
+        - generic [ref=e273]:
+          - heading "What's actually on the platform?" [level=3] [ref=e274]
+          - paragraph [ref=e275]: "Six modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 300-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, 15 Code Review exercises with planted bugs and AI grading, 9 Bug Hunt debugging exercises, and 13 long-form Deep Dives on distributed systems. Everything is free."
+        - generic [ref=e276]:
+          - heading "How is the AI mentor different from just using ChatGPT?" [level=3] [ref=e277]
+          - paragraph [ref=e278]: It's grounded in the app's prep content via retrieval, and it knows your context — your target company, experience level, and what you've already solved. It can also create sheets directly in your account instead of pasting a list back at you.
+        - generic [ref=e279]:
+          - heading "Do I solve problems inside Codeward?" [level=3] [ref=e280]
+          - paragraph [ref=e281]: No. Problems link out to LeetCode or GeeksforGeeks; Codeward is the layer on top — tracking status, revision flags, and notes so you always know what's next.
+        - generic [ref=e282]:
+          - heading "Can it build a plan for my target company?" [level=3] [ref=e283]
+          - paragraph [ref=e284]: Tell the mentor your company and timeline and it generates a pattern-focused sheet weighted toward what that company actually asks, with must-do problems flagged.
+    - contentinfo [ref=e285]:
+      - generic [ref=e286]:
+        - generic [ref=e287]:
+          - generic [ref=e288]:
+            - text: Code
+            - generic [ref=e292]: ward
+          - paragraph [ref=e293]: Production-shaped interview prep — DSA, system design, code review, debugging, and a mentor that knows where you stand.
+          - paragraph [ref=e294]: © 2026 Codeward · Built to get you hired
+        - generic [ref=e295]:
+          - paragraph [ref=e296]: Practice
+          - list [ref=e297]:
+            - listitem [ref=e298]:
+              - link "DSA Sheets" [ref=e299] [cursor=pointer]:
+                - /url: /dashboard/dsa
+            - listitem [ref=e300]:
+              - link "System Design" [ref=e301] [cursor=pointer]:
+                - /url: /dashboard/system-design
+            - listitem [ref=e302]:
+              - link "Code Review" [ref=e303] [cursor=pointer]:
+                - /url: /dashboard/code-review
+            - listitem [ref=e304]:
+              - link "Bug Hunt" [ref=e305] [cursor=pointer]:
+                - /url: /dashboard/bug-hunt
+            - listitem [ref=e306]:
+              - link "Deep Dives" [ref=e307] [cursor=pointer]:
+                - /url: /dashboard/deep-dives
+            - listitem [ref=e308]:
+              - link "AI Mentor" [ref=e309] [cursor=pointer]:
+                - /url: /dashboard/mentor
+        - generic [ref=e310]:
+          - paragraph [ref=e311]: Account
+          - list [ref=e312]:
+            - listitem [ref=e313]:
+              - link "Log in" [ref=e314] [cursor=pointer]:
+                - /url: /login
+            - listitem [ref=e315]:
+              - link "Sign up" [ref=e316] [cursor=pointer]:
+                - /url: /register
+            - listitem [ref=e317]:
+              - link "Dashboard" [ref=e318] [cursor=pointer]:
+                - /url: /dashboard
+  - region "Notifications alt+T"
