@@ -33,12 +33,18 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 ### Auth & Onboarding
 - Google OAuth (one-click) and email/password (bcrypt, 12 rounds)
 - Onboarding flow capturing experience level and target company
-- Profile page with selectable avatar
+- Profile page laid out as a sticky identity/stats card (avatar, experience level, target company, attempt/sheet counts) alongside an editable profile form with a selectable avatar
+
+### Landing Page
+- Hero, an animated logo marquee ("problems asked in real interviews at…") with real company logos, and a section for each of the six practice modes — DSA Sheets, AI Mentor, System Design, Code Review, Bug Hunt, and Deep Dives — each with its own product mockup
+- Mockups share the same mac-style windowed chrome as the real in-app Code Review and Bug Hunt workspaces, so the marketing screenshots match the actual product
+- Multi-column footer with brand/tagline, a Practice links column, and an Account links column
 
 ### Polish
+- Dashboard top nav: brand/logo doubles as the Home link (no separate "Home" item), pinned far left, with all section links, the user menu, and sign-out grouped on the right
 - Instant navigation feedback (spinner swap on sidebar links and sheet tabs) with zero layout shift — no route-level skeletons
 - Toasts confirm every mutation (sheet create/delete, add problems, status/revise toggles); optimistic UI reverts and reports failures instead of silently diverging
-- Accessible by default: keyboard-visible focus rings, `aria-current`/`aria-expanded`/`aria-label` on interactive controls, `prefers-reduced-motion` respected
+- Accessible by default: keyboard-visible focus rings, `aria-current`/`aria-expanded`/`aria-label` on interactive controls, `prefers-reduced-motion` respected (including the landing page's logo marquee)
 - WCAG AA-compliant secondary text contrast
 - Installable as a PWA (favicon set + manifest)
 
