@@ -42,10 +42,7 @@ function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
       <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1 font-mono text-[8.5px] text-emerald-400 sm:px-4 sm:py-1.5 sm:text-[12px]">
-        <span className="relative flex h-1.5 w-1.5 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-        </span>
+        <span className="h-1.5 w-1.5 shrink-0 animate-dot-pulse rounded-full bg-emerald-400" />
         <span className="text-center sm:whitespace-nowrap">
           DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Deep Dives
         </span>
@@ -280,10 +277,16 @@ function FAQ() {
         </h2>
         <div className="divide-y divide-neutral-800">
           {faqs.map((f) => (
-            <div key={f.q} className="py-5">
-              <h3 className="text-sm font-medium text-white mb-1.5">{f.q}</h3>
-              <p className="text-sm text-neutral-400 leading-relaxed">{f.a}</p>
-            </div>
+            <details key={f.q} className="group py-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 select-none [&::-webkit-details-marker]:hidden">
+                <span className="text-sm font-medium text-white leading-snug">{f.q}</span>
+                <span className="w-[18px] shrink-0 text-center font-mono text-base text-neutral-600 transition-colors duration-150 group-open:text-emerald-400">
+                  <span className="group-open:hidden">+</span>
+                  <span className="hidden group-open:inline">&minus;</span>
+                </span>
+              </summary>
+              <p className="mt-3 text-sm text-neutral-400 leading-relaxed">{f.a}</p>
+            </details>
           ))}
         </div>
       </div>
@@ -351,6 +354,14 @@ function Footer() {
 }
 
 /* ─── Page ──────────────────────────────────────────────────────────────── */
+function Divider() {
+  return (
+    <div className="px-6">
+      <div className="section-divider mx-auto max-w-6xl" />
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className="min-h-dvh bg-canvas text-neutral-100">
@@ -368,8 +379,11 @@ export default function Home() {
         <LogoStrip />
       </div>
 
+      <Divider />
       <PracticeModes />
+      <Divider />
       <FAQ />
+      <Divider />
       <Footer />
     </div>
   );
