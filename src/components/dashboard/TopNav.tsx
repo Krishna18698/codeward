@@ -1,10 +1,11 @@
 "use client";
+import { useState } from "react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
   Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug,
-  type LucideIcon,
+  Menu, X, type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import UserAvatar from "@/components/ui/UserAvatar";
@@ -32,6 +33,7 @@ export default function TopNav() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const user = session?.user;
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 shrink-0 border-b border-neutral-800 bg-black/85 backdrop-blur-[20px]">
@@ -50,8 +52,8 @@ export default function TopNav() {
 
         {/* Everything else — pushed to the right */}
         <div className="ml-auto flex min-w-0 items-center gap-1.5">
-          {/* Nav */}
-          <nav className="flex min-w-0 items-center gap-0.5 overflow-x-auto lg:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {/* Nav — collapses into a hamburger below md */}
+          <nav className="hidden min-w-0 items-center gap-0.5 overflow-x-auto md:flex lg:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {nav.map(({ label, href, icon }) => {
               const active = pathname === href || pathname.startsWith(href);
               return (
@@ -73,6 +75,16 @@ export default function TopNav() {
               );
             })}
           </nav>
+
+          {/* Hamburger — mobile/narrow only */}
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-white/4 hover:text-white md:hidden"
+          >
+            {menuOpen ? <X size={17} /> : <Menu size={17} />}
+          </button>
 
           {/* Divider */}
           <span className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block" />
@@ -106,6 +118,39 @@ export default function TopNav() {
           </button>
         </div>
       </div>
+
+      {/* Mobile nav dropdown */}
+      {menuOpen && (
+        <>
+          <button
+            aria-label="Close menu"
+            onClick={() => setMenuOpen(false)}
+            className="fixed inset-0 z-40 md:hidden"
+          />
+          <nav className="absolute inset-x-4 top-[calc(100%+8px)] z-40 rounded-xl border border-neutral-800 bg-black/95 p-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl md:hidden">
+            {nav.map(({ label, href, icon: Icon }) => {
+              const active = pathname === href || pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-150",
+                    active
+                      ? "text-white bg-white/6"
+                      : "text-neutral-400 hover:text-white hover:bg-white/4",
+                  )}
+                >
+                  <Icon size={16} className="shrink-0" />
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
+        </>
+      )}
     </header>
   );
 }
