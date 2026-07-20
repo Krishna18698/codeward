@@ -53,7 +53,8 @@ function Hero() {
         className="animate-fade-up max-w-3xl text-5xl font-semibold tracking-heading leading-tight text-white sm:text-6xl"
         style={{ animationDelay: "80ms" }}
       >
-        Get interview-ready at{" "}
+        Get interview-ready at
+        <br />
         <span className="text-emerald-400"><RotatingWord /></span>
       </h1>
 
