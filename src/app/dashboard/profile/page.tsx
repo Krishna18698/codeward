@@ -24,17 +24,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="space-y-6 animate-fade-up">
-      {/* Page header — matches the other dashboard sections */}
-      <div className="space-y-3">
-        <p className="font-mono text-[11px] uppercase tracking-widest text-emerald-400">Profile</p>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-heading text-white">
-          Your account &amp; study preferences
-        </h1>
-        <p className="text-sm text-neutral-400 max-w-xl leading-relaxed">
-          Set your experience level and target company — the AI mentor uses them to
-          shape your sheets, pattern picks, and system-design depth.
-        </p>
-      </div>
+      <p className="font-mono text-[11px] uppercase tracking-widest text-emerald-400">Profile</p>
 
       {/* Flat, borderless layout — a single vertical rule splits identity from
           the editor, no nested card boxes (matches the landing page's editorial feel). */}
