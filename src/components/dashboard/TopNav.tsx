@@ -73,7 +73,7 @@ export default function TopNav() {
 
         {/* Nav slot — sized by flexbox from whatever's left; holds the full
             nav only when it actually fits (measured, not guessed). */}
-        <div ref={slotRef} className="flex min-w-0 flex-1 items-center overflow-hidden">
+        <div ref={slotRef} className="flex min-w-0 flex-1 items-center justify-end overflow-hidden">
           {fits && (
             <nav className="flex items-center gap-1">
               {nav.map(({ label, href, icon }) => {
