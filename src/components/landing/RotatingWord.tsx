@@ -13,7 +13,7 @@ export default function RotatingWord() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), 2200);
+    const id = setInterval(() => setIndex((i) => (i + 1) % WORDS.length), 3400);
     return () => clearInterval(id);
   }, []);
 
@@ -24,8 +24,8 @@ export default function RotatingWord() {
           <span
             key={word}
             className={cn(
-              "col-start-1 row-start-1 whitespace-nowrap transition-all duration-500 ease-out",
-              i === index ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 -translate-y-2",
+              "col-start-1 row-start-1 whitespace-nowrap transition-all duration-900 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              i === index ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 -translate-y-1.5",
             )}
           >
             {word}.<span className="motion-safe:animate-pulse">_</span>

@@ -352,8 +352,19 @@ export default function Home() {
   return (
     <div className="min-h-dvh bg-canvas text-neutral-100">
       <Navbar />
-      <Hero />
-      <LogoStrip />
+
+      {/* Ambient emerald glow behind the hero + logo strip — on by default
+          (matches the reference), brightens further on hover. */}
+      <div className="group relative isolate">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[700px] opacity-60 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
+          style={{ background: "radial-gradient(650px circle at 50% 0%, rgba(52,211,153,0.18), transparent 70%)" }}
+        />
+        <Hero />
+        <LogoStrip />
+      </div>
+
       <PracticeModes />
       <FAQ />
       <Footer />
