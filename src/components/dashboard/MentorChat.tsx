@@ -420,7 +420,7 @@ export default function MentorChat({
                 }
               }}
               placeholder="Ask me anything…"
-              className="flex-1 bg-transparent text-[13px] md:text-sm text-neutral-200 placeholder-neutral-500 outline-none resize-none max-h-24 leading-relaxed focus-visible:outline-none focus-visible:shadow-none focus-visible:border-transparent"
+              className="chat-textarea flex-1 bg-transparent text-[13px] md:text-sm text-neutral-200 placeholder-neutral-500 outline-none resize-none max-h-24 leading-relaxed"
               disabled={loading}
             />
             {(streaming || thinking) ? (
