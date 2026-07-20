@@ -4,6 +4,7 @@ import Image from "next/image";
 import { User, Target } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import ProfileForm from "@/components/dashboard/ProfileForm";
+import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
 
 export default async function ProfilePage() {
   const userId = await getSessionUserId();
@@ -30,7 +31,11 @@ export default async function ProfilePage() {
           just wasted space. Top to bottom: identity, tags, stats, then account details. */}
       <div className="max-w-md space-y-6">
         <div className="flex items-center gap-4">
-          {user.image ? (
+          {isLocalAvatar(user.image) ? (
+            <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-neutral-800 ${getAvatarMeta(user.image).bg}`}>
+              <span className="text-2xl">{getAvatarMeta(user.image).emoji}</span>
+            </div>
+          ) : user.image ? (
             <Image
               src={user.image}
               alt={user.name ?? "avatar"}

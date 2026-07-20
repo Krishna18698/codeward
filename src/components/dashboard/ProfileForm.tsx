@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -23,6 +24,7 @@ type User = {
 };
 
 export default function ProfileForm({ user }: { user: User }) {
+  const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [name, setName]       = useState(user.name ?? "");
   const [exp, setExp]         = useState(user.experienceLevel ?? "");
@@ -61,6 +63,11 @@ export default function ProfileForm({ user }: { user: User }) {
       if (!res.ok) throw new Error();
       toast.success("Profile updated");
       setEditing(false);
+      // The page's identity block (avatar/name/tags) is server-rendered from
+      // a snapshot fetched at page load — it won't pick up this save on its
+      // own. Re-run the server components so it reflects the new values
+      // immediately instead of only after a manual reload.
+      router.refresh();
     } catch {
       toast.error("Failed to save profile");
     } finally {

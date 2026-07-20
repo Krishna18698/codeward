@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Code2, Network, Sparkles, TrendingUp, Target, BookOpen, ArrowRight, GitPullRequest, Bug, RotateCcw, History, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
 import { Ring } from "@/components/ui/Ring";
 import { CODE_REVIEWS_META } from "@/content/code-reviews";
 import { BUG_HUNTS_META } from "@/content/bug-hunts";
@@ -98,7 +99,11 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {/* Avatar */}
-              {userImage ? (
+              {isLocalAvatar(userImage) ? (
+                <div className={`w-13 h-13 rounded-full border-2 border-emerald-500/30 flex items-center justify-center shrink-0 ${getAvatarMeta(userImage).bg}`}>
+                  <span className="text-2xl">{getAvatarMeta(userImage).emoji}</span>
+                </div>
+              ) : userImage ? (
                 <Image
                   src={userImage}
                   alt={firstName}
