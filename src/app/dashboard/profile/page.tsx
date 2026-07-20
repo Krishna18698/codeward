@@ -36,68 +36,73 @@ export default async function ProfilePage() {
         </p>
       </div>
 
-      {/* Dashboard layout: summary rail (left) + editor (right) */}
-      <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
-        {/* ── Left rail ── */}
-        <aside className="space-y-4 lg:sticky lg:top-20">
-          {/* Identity card */}
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-6">
-            <div className="flex flex-col items-center text-center">
-              <div className="relative">
-                {user.image ? (
-                  <Image
-                    src={user.image}
-                    alt={user.name ?? "avatar"}
-                    width={80}
-                    height={80}
-                    referrerPolicy="no-referrer"
-                    className="rounded-2xl border-2 border-neutral-700 object-cover"
-                  />
-                ) : (
-                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-neutral-700 bg-neutral-800 text-2xl font-bold text-white">
-                    {initials}
-                  </div>
-                )}
-                <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-neutral-900 bg-emerald-400" />
-              </div>
-              <h2 className="mt-3 truncate text-base font-semibold tracking-heading text-white">
+      {/* Flat, borderless layout — a single vertical rule splits identity from
+          the editor, no nested card boxes (matches the landing page's editorial feel). */}
+      <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:divide-x lg:divide-neutral-800">
+        {/* ── Left: identity ── */}
+        <aside className="space-y-6 lg:sticky lg:top-20 lg:pr-8">
+          <div className="flex items-center gap-4">
+            <div className="relative shrink-0">
+              {user.image ? (
+                <Image
+                  src={user.image}
+                  alt={user.name ?? "avatar"}
+                  width={56}
+                  height={56}
+                  referrerPolicy="no-referrer"
+                  className="rounded-xl border border-neutral-800 object-cover"
+                />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900 text-lg font-bold text-white">
+                  {initials}
+                </div>
+              )}
+              <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-black bg-emerald-400" />
+            </div>
+            <div className="min-w-0">
+              <h2 className="truncate text-base font-semibold tracking-heading text-white">
                 {user.name ?? "No name set"}
               </h2>
-              <p className="max-w-full truncate text-xs text-neutral-500">{user.email}</p>
-
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-                {user.experienceLevel && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-400">
-                    <User size={10} />
-                    {user.experienceLevel.charAt(0) + user.experienceLevel.slice(1).toLowerCase()}
-                  </span>
-                )}
-                {user.targetCompany && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[11px] font-medium text-rose-400">
-                    <Target size={10} />
-                    {user.targetCompany}
-                  </span>
-                )}
-              </div>
+              <p className="truncate text-xs text-neutral-500">{user.email}</p>
             </div>
+          </div>
 
-            {/* Stats */}
-            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-neutral-800 pt-4">
-              <div className="rounded-xl border border-neutral-800 bg-black/20 py-3 text-center">
-                <p className="text-2xl font-bold text-white">{user._count.problemStatuses}</p>
-                <p className="text-[11px] text-neutral-500">Attempts</p>
-              </div>
-              <div className="rounded-xl border border-neutral-800 bg-black/20 py-3 text-center">
-                <p className="text-2xl font-bold text-white">{user._count.customSheets}</p>
-                <p className="text-[11px] text-neutral-500">Sheets</p>
-              </div>
+          {(user.experienceLevel || user.targetCompany) && (
+            <div className="flex flex-wrap items-center gap-2">
+              {user.experienceLevel && (
+                <span className="inline-flex items-center gap-1 font-mono text-[11px] text-emerald-400">
+                  <User size={10} />
+                  {user.experienceLevel.charAt(0) + user.experienceLevel.slice(1).toLowerCase()}
+                </span>
+              )}
+              {user.experienceLevel && user.targetCompany && (
+                <span className="text-neutral-700">·</span>
+              )}
+              {user.targetCompany && (
+                <span className="inline-flex items-center gap-1 font-mono text-[11px] text-rose-400">
+                  <Target size={10} />
+                  {user.targetCompany}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Stats */}
+          <div className="flex gap-6 border-t border-neutral-800 pt-5">
+            <div>
+              <p className="text-xl font-bold text-white">{user._count.problemStatuses}</p>
+              <p className="font-mono text-[11px] text-neutral-500">Attempts</p>
+            </div>
+            <div>
+              <p className="text-xl font-bold text-white">{user._count.customSheets}</p>
+              <p className="font-mono text-[11px] text-neutral-500">Sheets</p>
             </div>
           </div>
 
           {/* AI mentor tip */}
-          <div className="flex items-start gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-            <Sparkles size={14} className="mt-0.5 shrink-0 text-emerald-400" />
-            <p className="text-xs leading-relaxed text-neutral-400">
+          <div className="flex items-start gap-2.5 border-t border-neutral-800 pt-5">
+            <Sparkles size={13} className="mt-0.5 shrink-0 text-emerald-400" />
+            <p className="text-xs leading-relaxed text-neutral-500">
               Keeping these current means every generated sheet and mentor answer is
               tuned to where you are and where you&apos;re headed.
             </p>
@@ -105,8 +110,8 @@ export default async function ProfilePage() {
         </aside>
 
         {/* ── Right: editor ── */}
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
-          <h2 className="mb-5 text-sm font-semibold text-neutral-300">Edit profile</h2>
+        <div className="lg:pl-8">
+          <p className="mb-5 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Edit profile</p>
           <ProfileForm user={{ name: user.name, email: user.email, image: user.image, experienceLevel: user.experienceLevel, targetCompany: user.targetCompany }} />
         </div>
       </div>
