@@ -28,8 +28,7 @@ export default function RotatingWord() {
               i === index ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 -translate-y-2",
             )}
           >
-            {word}
-            <span className="motion-safe:animate-pulse">_</span>
+            {word}.<span className="motion-safe:animate-pulse">_</span>
           </span>
         ))}
       </span>

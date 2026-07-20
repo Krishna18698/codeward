@@ -6,8 +6,8 @@ import RotatingWord from "@/components/landing/RotatingWord";
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
   return (
-    <p className={`font-mono text-[13px] text-neutral-500 mb-4 ${center ? "text-center" : ""}`}>
-      <span className="text-emerald-400">{n}</span> — {label}
+    <p className={`font-mono text-[13px] uppercase tracking-wide text-emerald-400 mb-4 ${center ? "text-center" : ""}`}>
+      {n} — {label}
     </p>
   );
 }
@@ -41,8 +41,11 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
-      <div className="animate-fade-in mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-4 py-1.5 font-mono text-[12px] text-neutral-400">
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+      <div className="animate-fade-in mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-4 py-1.5 font-mono text-[12px] text-emerald-400">
+        <span className="relative flex h-1.5 w-1.5 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+        </span>
         DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Deep Dives
       </div>
 
@@ -50,7 +53,7 @@ function Hero() {
         className="animate-fade-up max-w-3xl text-5xl font-semibold tracking-heading leading-tight text-white sm:text-6xl"
         style={{ animationDelay: "80ms" }}
       >
-        Codeward trains{" "}
+        Get interview-ready at{" "}
         <span className="text-emerald-400"><RotatingWord /></span>
       </h1>
 
@@ -58,8 +61,9 @@ function Hero() {
         className="animate-fade-up mt-6 max-w-xl text-lg text-neutral-400 leading-relaxed"
         style={{ animationDelay: "160ms" }}
       >
-        Codeward combines curated DSA sheets, system design walkthroughs, and a
-        RAG-powered AI mentor that adapts to your experience and target company.
+        DSA sheets, system design, code review, live debugging, deep dives on
+        distributed systems, and an AI mentor that adapts to your experience
+        and target company — six ways to actually get ready, all free.
       </p>
 
       <div
@@ -110,14 +114,14 @@ function LogoStrip() {
   const track = [...COMPANIES, ...COMPANIES];
   return (
     <section className="py-10 px-6">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-neutral-800 bg-white/2">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-[12px] border border-neutral-800 bg-white/2">
         <div className="flex flex-col sm:flex-row sm:items-center">
-          <p className="shrink-0 px-5 pt-4 sm:py-4 font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+          <p className="shrink-0 px-5 pt-6 sm:py-6 font-mono text-[11px] uppercase tracking-widest text-neutral-500">
             Problems asked in real interviews at
           </p>
           {/* fade the seam where the label meets the scroll */}
           <div
-            className="relative min-w-0 flex-1 overflow-hidden py-4"
+            className="relative min-w-0 flex-1 overflow-hidden py-6"
             style={{ maskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 6%, black 94%, transparent)" }}
           >
             <div className="flex w-max animate-marquee items-center gap-9">
@@ -207,7 +211,9 @@ function PracticeModes() {
   return (
     <section className="py-16 px-6">
       <div className="mx-auto max-w-6xl">
-        <SectionMarker n="00" label="The platform" center />
+        <p className="text-center font-mono text-[13px] uppercase tracking-wide text-emerald-400 mb-4">
+          The Platform
+        </p>
         <h2 className="text-center text-3xl font-semibold tracking-heading text-white mb-16">
           Six ways to actually get ready
         </h2>
@@ -265,7 +271,7 @@ function FAQ() {
   return (
     <section className="py-20 px-6">
       <div className="mx-auto max-w-2xl">
-        <SectionMarker n="05" label="FAQ" />
+        <SectionMarker n="07" label="FAQ" />
         <h2 className="text-3xl font-semibold tracking-heading text-white mb-8">
           Questions worth answering honestly.
         </h2>
