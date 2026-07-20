@@ -256,9 +256,9 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
 
       {/* Empty state */}
       {!challenge && !spinning && (
-        <div className="px-5 py-12 text-center">
-          <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-4">
-            <Zap size={22} className="text-rose-400" />
+        <div className="px-5 py-7 text-center">
+          <div className="w-11 h-11 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-3">
+            <Zap size={18} className="text-rose-400" />
           </div>
           <p className="text-sm font-medium text-neutral-300">Ready for a random challenge?</p>
           <p className="text-xs text-neutral-500 mt-1 max-w-xs mx-auto">
@@ -269,8 +269,8 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
 
       {/* Spinning state */}
       {spinning && (
-        <div className="px-5 py-12 text-center">
-          <div className="flex justify-center gap-2 mb-4">
+        <div className="px-5 py-7 text-center">
+          <div className="flex justify-center gap-2 mb-3">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
