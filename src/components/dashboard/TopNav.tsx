@@ -20,15 +20,16 @@ const nav = [
   { label: "AI Mentor",     href: "/dashboard/mentor",        icon: Sparkles },
 ];
 
-const NAV_LINK_CLASS = "flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm whitespace-nowrap";
+const NAV_LINK_CLASS = "flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs whitespace-nowrap";
+const ROW_GAP_PX = 12; // matches the header row's gap-3
 
 /** Swaps the nav icon for a same-size spinner while the route loads — instant
  *  click feedback with zero layout shift. Must live inside the <Link>. */
 function NavIcon({ icon: Icon }: { icon: LucideIcon }) {
   const { pending } = useLinkStatus();
   return pending
-    ? <Loader2 size={15} className="shrink-0 animate-spin text-emerald-400" />
-    : <Icon size={15} className="shrink-0" />;
+    ? <Loader2 size={13} className="shrink-0 animate-spin text-emerald-400" />
+    : <Icon size={13} className="shrink-0" />;
 }
 
 /** Three-bar hamburger that morphs into an X — each bar animates its own
@@ -51,34 +52,53 @@ export default function TopNav() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Full text+icon nav vs. hamburger is decided by actually measuring whether
-  // the nav's natural width fits the space available — no guessed breakpoint,
-  // and no in-between icon-only state.
-  const slotRef = useRef<HTMLDivElement>(null);
-  const measureRef = useRef<HTMLDivElement>(null);
+  // the nav's natural width fits the space available.
+  //
+  // Critically, the "available space" must NOT depend on which of {hamburger}
+  // vs {profile + sign-out} is currently rendered — that would make the
+  // measurement depend on its own prior output (hamburger appears -> shrinks
+  // available space -> triggers a re-check -> ...), which is what caused the
+  // flicker: rapid, self-inflicted true/false flips during a resize drag.
+  // So we measure against row/logo/right-group widths that never change
+  // because of `fits` itself — the right-group figure always comes from an
+  // off-screen clone of its widest (profile+sign-out) form, never the live
+  // toggling DOM.
+  const rowRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLAnchorElement>(null);
+  const navMeasureRef = useRef<HTMLDivElement>(null);
+  const rightMeasureRef = useRef<HTMLDivElement>(null);
   const [fits, setFits] = useState(true);
 
   useLayoutEffect(() => {
-    const slot = slotRef.current;
-    const measure = measureRef.current;
-    if (!slot || !measure) return;
-    const check = () => setFits(measure.scrollWidth <= slot.clientWidth);
+    const row = rowRef.current;
+    const logo = logoRef.current;
+    const navMeasure = navMeasureRef.current;
+    const rightMeasure = rightMeasureRef.current;
+    if (!row || !logo || !navMeasure || !rightMeasure) return;
+    const check = () => {
+      const available = row.clientWidth - logo.offsetWidth - rightMeasure.offsetWidth - ROW_GAP_PX * 2;
+      setFits(navMeasure.scrollWidth <= available);
+    };
     check();
     const ro = new ResizeObserver(check);
-    ro.observe(slot);
-    ro.observe(measure);
+    ro.observe(row);
+    ro.observe(logo);
+    ro.observe(navMeasure);
+    ro.observe(rightMeasure);
     return () => ro.disconnect();
   }, []);
 
   return (
     <header className="sticky top-0 z-40 shrink-0 border-b border-neutral-800 bg-black/85 backdrop-blur-[20px]">
-      <div className="flex h-14 w-full items-center gap-3 px-4 md:px-6">
+      <div ref={rowRef} className="flex h-14 w-full items-center gap-3 px-4 md:px-6">
         {/* Brand (also the Home link) — far left */}
         <Link
+          ref={logoRef}
           href="/dashboard"
           aria-label="Codeward home"
-          className="flex shrink-0 items-center gap-1.5 text-sm font-bold tracking-tight text-white"
+          className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight text-white"
         >
-          <Sparkles size={14} className="text-emerald-400" />
+          <Sparkles size={19} className="text-emerald-400" />
           <span>
             Code<span className="text-emerald-400">ward</span>
           </span>
@@ -86,7 +106,7 @@ export default function TopNav() {
 
         {/* Nav slot — sized by flexbox from whatever's left; holds the full
             nav only when it actually fits (measured, not guessed). */}
-        <div ref={slotRef} className="flex min-w-0 flex-1 items-center justify-end overflow-hidden">
+        <div className="flex min-w-0 flex-1 items-center justify-end overflow-hidden">
           {fits && (
             <nav className="flex items-center gap-1">
               {nav.map(({ label, href, icon }) => {
@@ -116,16 +136,36 @@ export default function TopNav() {
         {/* Off-screen clone of the nav at its natural (unshrunk) width — used
             purely to measure whether the real nav above would fit. */}
         <div
-          ref={measureRef}
+          ref={navMeasureRef}
           aria-hidden
           className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex items-center gap-1"
         >
           {nav.map(({ label, href, icon: Icon }) => (
             <span key={href} className={NAV_LINK_CLASS}>
-              <Icon size={15} className="shrink-0" />
+              <Icon size={13} className="shrink-0" />
               {label}
             </span>
           ))}
+        </div>
+
+        {/* Off-screen clone of the profile+sign-out group (its widest form) —
+            used to compute available nav space independent of which control
+            (this vs. the hamburger) is actually visible right now. */}
+        <div
+          ref={rightMeasureRef}
+          aria-hidden
+          className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex items-center gap-1.5"
+        >
+          <span className="mx-1 h-5 w-px bg-neutral-800" />
+          {user && (
+            <span className="flex items-center gap-2 rounded-lg px-1.5 py-1">
+              <UserAvatar image={user.image} name={user.name} size={26} />
+              <span className="max-w-[120px] truncate text-xs font-medium">{user.name ?? "Profile"}</span>
+            </span>
+          )}
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg">
+            <LogOut size={15} />
+          </span>
         </div>
 
         {/* Right-fixed group */}
@@ -160,7 +200,7 @@ export default function TopNav() {
                   )}
                 >
                   <UserAvatar image={user.image} name={user.name} size={26} />
-                  <span className="hidden lg:block max-w-[120px] truncate text-xs font-medium text-neutral-300">
+                  <span className="max-w-[120px] truncate text-xs font-medium text-neutral-300">
                     {user.name ?? "Profile"}
                   </span>
                 </Link>
