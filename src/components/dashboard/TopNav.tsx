@@ -235,7 +235,7 @@ export default function TopNav() {
             onClick={() => setMenuOpen(false)}
             className="fixed inset-0 z-40"
           />
-          <nav className="absolute inset-x-4 top-[calc(100%+8px)] z-40 overflow-hidden rounded-xl border border-neutral-800 bg-black/95 py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:inset-x-auto sm:right-4 sm:w-56">
+          <nav className="absolute inset-x-4 top-[calc(100%+8px)] z-40 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)] sm:inset-x-auto sm:right-4 sm:w-56">
             {nav.map(({ label, href }) => {
               const active = pathname === href || pathname.startsWith(href);
               return (
