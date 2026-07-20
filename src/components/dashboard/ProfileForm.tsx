@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Pencil } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -22,6 +23,7 @@ type User = {
 };
 
 export default function ProfileForm({ user }: { user: User }) {
+  const [editing, setEditing] = useState(false);
   const [name, setName]       = useState(user.name ?? "");
   const [exp, setExp]         = useState(user.experienceLevel ?? "");
   const [company, setCompany] = useState(user.targetCompany ?? "");
@@ -29,9 +31,17 @@ export default function ProfileForm({ user }: { user: User }) {
     isLocalAvatar(user.image) ? user.image : null,
   );
   const [saving, setSaving]   = useState(false);
-  const [saved, setSaved]     = useState(false);
 
   const showAvatarPicker = !user.image || isLocalAvatar(user.image);
+  const expLabel = EXP_LEVELS.find((l) => l.value === exp)?.label;
+
+  const cancel = () => {
+    setName(user.name ?? "");
+    setExp(user.experienceLevel ?? "");
+    setCompany(user.targetCompany ?? "");
+    setAvatar(isLocalAvatar(user.image) ? user.image : null);
+    setEditing(false);
+  };
 
   const save = async () => {
     setSaving(true);
@@ -50,14 +60,41 @@ export default function ProfileForm({ user }: { user: User }) {
       });
       if (!res.ok) throw new Error();
       toast.success("Profile updated");
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
+      setEditing(false);
     } catch {
       toast.error("Failed to save profile");
     } finally {
       setSaving(false);
     }
   };
+
+  // ── Read-only summary, with an Edit button that swaps in the form ──
+  if (!editing) {
+    return (
+      <div className="space-y-5">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-medium text-neutral-400 mb-1">Display name</p>
+            <p className="text-sm text-neutral-200">{name || "—"}</p>
+          </div>
+          <button
+            onClick={() => setEditing(true)}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-800 px-3 py-1.5 text-xs text-neutral-300 transition-colors hover:border-neutral-600 hover:text-white"
+          >
+            <Pencil size={11} /> Edit
+          </button>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-neutral-400 mb-1">Experience level</p>
+          <p className="text-sm text-neutral-200">{expLabel ?? "Not set"}</p>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-neutral-400 mb-1">Target company</p>
+          <p className="text-sm text-neutral-200">{company || "Not set"}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -137,9 +174,18 @@ export default function ProfileForm({ user }: { user: User }) {
         </div>
       </div>
 
-      <Button onClick={save} loading={saving} size="md">
-        {saved ? "Saved ✓" : "Save changes"}
-      </Button>
+      <div className="flex items-center gap-3">
+        <Button onClick={save} loading={saving} size="md">
+          Save changes
+        </Button>
+        <button
+          onClick={cancel}
+          disabled={saving}
+          className="px-3 py-2 text-xs text-neutral-500 transition-colors hover:text-neutral-300 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }

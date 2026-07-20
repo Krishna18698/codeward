@@ -89,7 +89,7 @@ export default async function ProfilePage() {
 
         {/* ── Right: editor ── */}
         <div className="lg:pl-8">
-          <p className="mb-5 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Edit profile</p>
+          <p className="mb-5 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Account details</p>
           <ProfileForm user={{ name: user.name, email: user.email, image: user.image, experienceLevel: user.experienceLevel, targetCompany: user.targetCompany }} />
         </div>
       </div>
