@@ -220,21 +220,23 @@ function PracticeModes() {
 
         <div className="space-y-20">
           {modes.map((m, i) => (
-            <div
-              key={m.n}
-              className={`flex flex-col gap-8 md:items-center md:gap-12 ${i % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"}`}
-            >
-              <div className="flex-1">
-                <SectionMarker n={m.n} label={m.marker} />
-                <h3 className="text-2xl font-semibold tracking-heading text-white leading-tight mb-3">{m.title}</h3>
-                <p className="text-neutral-400 leading-relaxed mb-5 max-w-md">{m.copy}</p>
-                <Link href={m.href} className="text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
-                  {m.cta}
-                </Link>
+            <div key={m.n}>
+              <div
+                className={`flex flex-col gap-8 md:items-center md:gap-12 ${i % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"}`}
+              >
+                <div className="flex-1">
+                  <SectionMarker n={m.n} label={m.marker} />
+                  <h3 className="text-2xl font-semibold tracking-heading text-white leading-tight mb-3">{m.title}</h3>
+                  <p className="text-neutral-400 leading-relaxed mb-5 max-w-md">{m.copy}</p>
+                  <Link href={m.href} className="text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+                    {m.cta}
+                  </Link>
+                </div>
+                <div className="flex-1 w-full min-w-0">
+                  <m.Mockup />
+                </div>
               </div>
-              <div className="flex-1 w-full min-w-0">
-                <m.Mockup />
-              </div>
+              <div className="section-divider mt-20" />
             </div>
           ))}
         </div>
@@ -289,6 +291,7 @@ function FAQ() {
             </details>
           ))}
         </div>
+        <div className="section-divider mt-16" />
       </div>
     </section>
   );
@@ -354,13 +357,6 @@ function Footer() {
 }
 
 /* ─── Page ──────────────────────────────────────────────────────────────── */
-function Divider() {
-  return (
-    <div className="px-6">
-      <div className="section-divider mx-auto max-w-6xl" />
-    </div>
-  );
-}
 
 export default function Home() {
   return (
@@ -379,11 +375,8 @@ export default function Home() {
         <LogoStrip />
       </div>
 
-      <Divider />
       <PracticeModes />
-      <Divider />
       <FAQ />
-      <Divider />
       <Footer />
     </div>
   );
