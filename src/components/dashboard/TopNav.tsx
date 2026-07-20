@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
   Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug,
-  Menu, X, type LucideIcon,
+  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import UserAvatar from "@/components/ui/UserAvatar";
@@ -29,6 +29,19 @@ function NavIcon({ icon: Icon }: { icon: LucideIcon }) {
   return pending
     ? <Loader2 size={15} className="shrink-0 animate-spin text-emerald-400" />
     : <Icon size={15} className="shrink-0" />;
+}
+
+/** Three-bar hamburger that morphs into an X — each bar animates its own
+ *  transform/opacity, rather than swapping between two unrelated icons. */
+function HamburgerIcon({ open }: { open: boolean }) {
+  const bar = "absolute h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-300 ease-in-out";
+  return (
+    <span className="relative flex h-[18px] w-[18px] items-center justify-center">
+      <span className={cn(bar, open ? "rotate-45" : "-translate-y-[5px]")} />
+      <span className={cn(bar, "transition-opacity", open ? "opacity-0" : "opacity-100")} />
+      <span className={cn(bar, open ? "-rotate-45" : "translate-y-[5px]")} />
+    </span>
+  );
 }
 
 export default function TopNav() {
@@ -125,7 +138,7 @@ export default function TopNav() {
               aria-expanded={menuOpen}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-white/4 hover:text-white"
             >
-              {menuOpen ? <X size={17} /> : <Menu size={17} />}
+              <HamburgerIcon open={menuOpen} />
             </button>
           )}
 
@@ -170,8 +183,8 @@ export default function TopNav() {
             onClick={() => setMenuOpen(false)}
             className="fixed inset-0 z-40"
           />
-          <nav className="absolute inset-x-4 top-[calc(100%+8px)] z-40 rounded-xl border border-neutral-800 bg-black/95 p-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:inset-x-auto sm:right-4 sm:w-64">
-            {nav.map(({ label, href, icon: Icon }) => {
+          <nav className="absolute inset-x-4 top-[calc(100%+8px)] z-40 overflow-hidden rounded-xl border border-neutral-800 bg-black/95 py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:inset-x-auto sm:right-4 sm:w-56">
+            {nav.map(({ label, href }) => {
               const active = pathname === href || pathname.startsWith(href);
               return (
                 <Link
@@ -180,17 +193,44 @@ export default function TopNav() {
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-150",
+                    "block px-4 py-3 text-sm transition-colors duration-150",
                     active
                       ? "text-white bg-white/6"
                       : "text-neutral-400 hover:text-white hover:bg-white/4",
                   )}
                 >
-                  <Icon size={16} className="shrink-0" />
                   {label}
                 </Link>
               );
             })}
+
+            {user && (
+              <>
+                <div className="my-1.5 h-px bg-neutral-800" />
+                <Link
+                  href="/dashboard/profile"
+                  onClick={() => setMenuOpen(false)}
+                  aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
+                  className={cn(
+                    "block px-4 py-3 text-sm transition-colors duration-150",
+                    pathname.startsWith("/dashboard/profile")
+                      ? "text-white bg-white/6"
+                      : "text-neutral-400 hover:text-white hover:bg-white/4",
+                  )}
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="block w-full px-4 py-3 text-left text-sm text-neutral-400 transition-colors duration-150 hover:bg-white/4 hover:text-white"
+                >
+                  Sign out
+                </button>
+              </>
+            )}
           </nav>
         </>
       )}
