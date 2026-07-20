@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -20,6 +20,8 @@ const nav = [
   { label: "AI Mentor",     href: "/dashboard/mentor",        icon: Sparkles },
 ];
 
+const NAV_LINK_CLASS = "flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm whitespace-nowrap";
+
 /** Swaps the nav icon for a same-size spinner while the route loads — instant
  *  click feedback with zero layout shift. Must live inside the <Link>. */
 function NavIcon({ icon: Icon }: { icon: LucideIcon }) {
@@ -34,6 +36,25 @@ export default function TopNav() {
   const { data: session } = useSession();
   const user = session?.user;
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Full text+icon nav vs. hamburger is decided by actually measuring whether
+  // the nav's natural width fits the space available — no guessed breakpoint,
+  // and no in-between icon-only state.
+  const slotRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const [fits, setFits] = useState(true);
+
+  useLayoutEffect(() => {
+    const slot = slotRef.current;
+    const measure = measureRef.current;
+    if (!slot || !measure) return;
+    const check = () => setFits(measure.scrollWidth <= slot.clientWidth);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(slot);
+    ro.observe(measure);
+    return () => ro.disconnect();
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 shrink-0 border-b border-neutral-800 bg-black/85 backdrop-blur-[20px]">
@@ -50,41 +71,63 @@ export default function TopNav() {
           </span>
         </Link>
 
-        {/* Everything else — pushed to the right */}
-        <div className="ml-auto flex min-w-0 items-center gap-1.5">
-          {/* Nav — collapses into a hamburger below md */}
-          <nav className="hidden min-w-0 items-center gap-0.5 overflow-x-auto md:flex lg:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {nav.map(({ label, href, icon }) => {
-              const active = pathname === href || pathname.startsWith(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  aria-label={label}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "flex shrink-0 items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-150",
-                    active
-                      ? "text-white bg-white/6"
-                      : "text-neutral-400 hover:text-white hover:bg-white/4",
-                  )}
-                >
-                  <NavIcon icon={icon} />
-                  <span className="hidden lg:inline whitespace-nowrap">{label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+        {/* Nav slot — sized by flexbox from whatever's left; holds the full
+            nav only when it actually fits (measured, not guessed). */}
+        <div ref={slotRef} className="flex min-w-0 flex-1 items-center overflow-hidden">
+          {fits && (
+            <nav className="flex items-center gap-1">
+              {nav.map(({ label, href, icon }) => {
+                const active = pathname === href || pathname.startsWith(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      NAV_LINK_CLASS,
+                      "transition-colors duration-150",
+                      active
+                        ? "text-white bg-white/6"
+                        : "text-neutral-400 hover:text-white hover:bg-white/4",
+                    )}
+                  >
+                    <NavIcon icon={icon} />
+                    {label}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
+        </div>
 
-          {/* Hamburger — mobile/narrow only */}
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-white/4 hover:text-white md:hidden"
-          >
-            {menuOpen ? <X size={17} /> : <Menu size={17} />}
-          </button>
+        {/* Off-screen clone of the nav at its natural (unshrunk) width — used
+            purely to measure whether the real nav above would fit. */}
+        <div
+          ref={measureRef}
+          aria-hidden
+          className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex items-center gap-1"
+        >
+          {nav.map(({ label, href, icon: Icon }) => (
+            <span key={href} className={NAV_LINK_CLASS}>
+              <Icon size={15} className="shrink-0" />
+              {label}
+            </span>
+          ))}
+        </div>
+
+        {/* Right-fixed group */}
+        <div className="flex shrink-0 items-center gap-1.5">
+          {/* Hamburger — only when the full nav doesn't fit */}
+          {!fits && (
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-white/4 hover:text-white"
+            >
+              {menuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
+          )}
 
           {/* Divider */}
           <span className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block" />
@@ -119,15 +162,15 @@ export default function TopNav() {
         </div>
       </div>
 
-      {/* Mobile nav dropdown */}
-      {menuOpen && (
+      {/* Nav dropdown — shown whenever the full nav doesn't fit, at any width */}
+      {!fits && menuOpen && (
         <>
           <button
             aria-label="Close menu"
             onClick={() => setMenuOpen(false)}
-            className="fixed inset-0 z-40 md:hidden"
+            className="fixed inset-0 z-40"
           />
-          <nav className="absolute inset-x-4 top-[calc(100%+8px)] z-40 rounded-xl border border-neutral-800 bg-black/95 p-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl md:hidden">
+          <nav className="absolute inset-x-4 top-[calc(100%+8px)] z-40 rounded-xl border border-neutral-800 bg-black/95 p-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl sm:inset-x-auto sm:right-4 sm:w-64">
             {nav.map(({ label, href, icon: Icon }) => {
               const active = pathname === href || pathname.startsWith(href);
               return (
