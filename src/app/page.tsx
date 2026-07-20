@@ -291,7 +291,6 @@ function FAQ() {
             </details>
           ))}
         </div>
-        <div className="section-divider mt-16" />
       </div>
     </section>
   );

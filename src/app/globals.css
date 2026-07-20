@@ -121,10 +121,12 @@ body {
 .animate-dot-pulse  { animation: dot-pulse 2s ease-in-out infinite; }
 
 /* A shimmering section divider — a 1px line with a soft emerald glow that
-   sweeps across it on a loop. */
+   sweeps across it on a loop. No margin here on purpose — it's unlayered
+   CSS, so any margin set here would silently beat a Tailwind mt-* utility
+   on the element regardless of specificity (unlayered always wins over
+   @layer utilities). Callers control spacing entirely via Tailwind classes. */
 .section-divider {
   height: 1px;
-  margin: 0;
   background: linear-gradient(90deg,
     rgba(52, 211, 153, 0)    0%,
     rgba(52, 211, 153, 0.06) 20%,
@@ -184,3 +186,4 @@ textarea.chat-textarea:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
