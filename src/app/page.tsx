@@ -41,12 +41,14 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
-      <div className="animate-fade-in mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-4 py-1.5 font-mono text-[12px] text-emerald-400">
+      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1 font-mono text-[8.5px] text-emerald-400 sm:px-4 sm:py-1.5 sm:text-[12px]">
         <span className="relative flex h-1.5 w-1.5 shrink-0">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
         </span>
-        DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Deep Dives
+        <span className="text-center sm:whitespace-nowrap">
+          DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Deep Dives
+        </span>
       </div>
 
       <h1
@@ -117,7 +119,7 @@ function LogoStrip() {
     <section className="py-10 px-6">
       <div className="mx-auto max-w-6xl overflow-hidden rounded-[12px] border border-neutral-800 bg-white/2">
         <div className="flex flex-col sm:flex-row sm:items-center">
-          <p className="shrink-0 px-5 pt-6 sm:py-6 font-mono text-[11px] uppercase tracking-widest text-neutral-500">
+          <p className="hidden shrink-0 px-5 font-mono text-[11px] uppercase tracking-widest text-neutral-500 sm:block sm:py-6">
             Problems asked in real interviews at
           </p>
           {/* fade the seam where the label meets the scroll */}

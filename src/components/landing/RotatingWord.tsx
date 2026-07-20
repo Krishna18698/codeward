@@ -20,9 +20,9 @@ function getServerSnapshot() {
   return false;
 }
 
-/** Classic typewriter loop: types a word out char by char (with a trailing
- *  "."), holds, deletes it back out, then moves to the next word — forever.
- *  Freezes on the first word, fully typed, under prefers-reduced-motion. */
+/** Classic typewriter loop: types a word out char by char, holds, deletes it
+ *  back out, then moves to the next word — forever. Freezes on the first
+ *  word, fully typed, under prefers-reduced-motion. */
 export default function RotatingWord() {
   // useSyncExternalStore (not a useEffect + setState) is the React-recommended
   // way to read a browser API like matchMedia: it has a built-in, warning-free
@@ -36,7 +36,7 @@ export default function RotatingWord() {
 
   useEffect(() => {
     if (reducedMotion) return;
-    const target = WORDS[wordIndex] + ".";
+    const target = WORDS[wordIndex];
     let timeout: ReturnType<typeof setTimeout>;
 
     if (phase === "typing") {
@@ -59,7 +59,7 @@ export default function RotatingWord() {
     return () => clearTimeout(timeout);
   }, [phase, charCount, wordIndex, reducedMotion]);
 
-  const target = WORDS[wordIndex] + ".";
+  const target = WORDS[wordIndex];
   const visible = reducedMotion ? target : target.slice(0, charCount);
 
   return (
