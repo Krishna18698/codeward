@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
-const WORDS = ["DSA", "system design", "debugging", "code review"];
+const WORDS = ["DSA", "system design", "debugging", "code review", "low-level design"];
 const TYPE_MS = 90;    // per character, typing in
 const DELETE_MS = 50;  // per character, deleting out (backspace reads faster than typing)
 const HOLD_MS = 1600;  // pause on the fully-typed word

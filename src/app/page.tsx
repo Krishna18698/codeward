@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
-import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMockup, SystemDesignMockup } from "@/components/landing/Mockups";
+import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMockup, BuildItMockup, SystemDesignMockup } from "@/components/landing/Mockups";
 import RotatingWord from "@/components/landing/RotatingWord";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
@@ -44,7 +44,7 @@ function Hero() {
       <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1 font-mono text-[8.5px] text-emerald-400 sm:px-4 sm:py-1.5 sm:text-[12px]">
         <span className="h-1.5 w-1.5 shrink-0 animate-dot-pulse rounded-full bg-emerald-400" />
         <span className="text-center sm:whitespace-nowrap">
-          DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Deep Dives
+          DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Build It &middot; Deep Dives
         </span>
       </div>
 
@@ -61,9 +61,10 @@ function Hero() {
         className="animate-fade-up mt-6 max-w-xl text-lg text-neutral-400 leading-relaxed"
         style={{ animationDelay: "160ms" }}
       >
-        DSA sheets, system design, code review, live debugging, deep dives on
-        distributed systems, and an AI mentor that adapts to your experience
-        and target company — six ways to actually get ready, all free.
+        DSA sheets, system design, code review, live debugging, staged low-level
+        design builds, deep dives on distributed systems, and an AI mentor that
+        adapts to your experience and target company — seven ways to actually
+        get ready, all free.
       </p>
 
       <div
@@ -198,6 +199,15 @@ const modes = [
   },
   {
     n: "06",
+    marker: "Build It",
+    title: "Design it, then watch your own design break",
+    copy: "5 real low-level-design problems — a thread-safe wallet, an inventory reservation service, a durable job queue, an idempotent payment processor, a notification service — each evolving across 4 stages as new constraints break your last approach, in C#, Python, or Kotlin. Stage 3 always makes you prove a correctness invariant holds under concurrency.",
+    cta: "Start building →",
+    href: "/register",
+    Mockup: BuildItMockup,
+  },
+  {
+    n: "07",
     marker: "Deep Dives",
     title: "Learn the trade-offs interviews actually probe",
     copy: "13 long-form deep dives — idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas, and more. Failure modes, trade-offs, and the interview traps surface-level guides skip.",
@@ -215,7 +225,7 @@ function PracticeModes() {
           The Platform
         </p>
         <h2 className="text-center text-3xl font-semibold tracking-heading text-white mb-16">
-          Six ways to actually get ready
+          Seven ways to actually get ready
         </h2>
 
         <div className="space-y-20">
@@ -253,7 +263,7 @@ const faqs = [
   },
   {
     q: "What's actually on the platform?",
-    a: "Six modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 300-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, 15 Code Review exercises with planted bugs and AI grading, 9 Bug Hunt debugging exercises, and 13 long-form Deep Dives on distributed systems. Everything is free.",
+    a: "Seven modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 300-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, 15 Code Review exercises with planted bugs and AI grading, 9 Bug Hunt debugging exercises, 5 staged Build It low-level-design problems in C#/Python/Kotlin, and 13 long-form Deep Dives on distributed systems. Everything is free.",
   },
   {
     q: "How is the AI mentor different from just using ChatGPT?",
@@ -273,7 +283,7 @@ function FAQ() {
   return (
     <section className="py-20 px-6">
       <div className="mx-auto max-w-2xl">
-        <SectionMarker n="07" label="FAQ" />
+        <SectionMarker n="08" label="FAQ" />
         <h2 className="text-3xl font-semibold tracking-heading text-white mb-8">
           Questions worth answering honestly.
         </h2>
@@ -305,6 +315,7 @@ const footerCols = [
       { label: "System Design", href: "/dashboard/system-design" },
       { label: "Code Review", href: "/dashboard/code-review" },
       { label: "Bug Hunt", href: "/dashboard/bug-hunt" },
+      { label: "Build It", href: "/dashboard/build-it" },
       { label: "Deep Dives", href: "/dashboard/deep-dives" },
       { label: "AI Mentor", href: "/dashboard/mentor" },
     ],

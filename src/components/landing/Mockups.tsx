@@ -222,6 +222,65 @@ defer m.mu.Unlock()
   );
 }
 
+/* ── Build It mockup ── */
+export function BuildItMockup() {
+  const stages = [
+    { n: 1, label: "Basic ops", done: true },
+    { n: 2, label: "Atomic transfer", done: true },
+    { n: 3, label: "Thread-safe", done: false },
+    { n: 4, label: "Multi-currency", done: false },
+  ];
+  return (
+    <BrowserFrame url="build-it · thread-safe-wallet.cs">
+      <div className="space-y-3">
+        {/* stage stepper */}
+        <div className="flex items-center gap-1.5">
+          {stages.map((s) => (
+            <span
+              key={s.n}
+              className={`rounded-md border px-2 py-1 font-mono text-[9.5px] ${
+                s.done
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : s.n === 3
+                    ? "border-neutral-700 text-neutral-300"
+                    : "border-neutral-800 text-neutral-600"
+              }`}
+            >
+              {s.done ? "✓" : s.n === 3 ? "●" : "🔒"} S{s.n}
+            </span>
+          ))}
+        </div>
+
+        <pre className="rounded-lg border border-neutral-800 bg-black/40 p-3 font-mono text-[10px] leading-5 text-neutral-300 overflow-x-auto">
+{`class Wallet {
+  decimal balance;
+  object gate = new();
+
+  bool Transfer(Wallet to, decimal amt) {
+    lock (gate) { ... }
+  }
+}`}
+        </pre>
+
+        <div className="rounded-lg border border-rose-500/25 bg-rose-500/5 p-2.5">
+          <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-rose-400">
+            Stage 3 · make-or-break invariant
+          </p>
+          <p className="text-[10.5px] leading-relaxed text-neutral-300">
+            balance never goes negative and no transfer is ever double-applied —
+            even with 50 concurrent transfers hitting the same wallet.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-3 flex gap-2">
+        <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">C# · Python · Kotlin</span>
+        <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">invariant argued ✓</span>
+      </div>
+    </BrowserFrame>
+  );
+}
+
 /* ── System Design mockup ── */
 export function SystemDesignMockup() {
   return (
