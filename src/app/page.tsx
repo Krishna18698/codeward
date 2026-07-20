@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMockup, SystemDesignMockup } from "@/components/landing/Mockups";
+import RotatingWord from "@/components/landing/RotatingWord";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
@@ -40,19 +41,17 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
-      <p className="animate-fade-in mb-5 flex items-center gap-1.5 font-mono text-[13px] text-neutral-500">
-        <Sparkles size={11} className="text-emerald-400" />
-        AI-powered interview prep
-      </p>
+      <div className="animate-fade-in mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-4 py-1.5 font-mono text-[12px] text-neutral-400">
+        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+        DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Deep Dives
+      </div>
 
       <h1
         className="animate-fade-up max-w-3xl text-5xl font-semibold tracking-heading leading-tight text-white sm:text-6xl"
         style={{ animationDelay: "80ms" }}
       >
-        Crack your{" "}
-        <span className="text-emerald-400">dream offer</span>
-        <br />with a mentor that knows you
-        <span className="text-emerald-400 motion-safe:animate-pulse">_</span>
+        Codeward trains{" "}
+        <span className="text-emerald-400"><RotatingWord /></span>
       </h1>
 
       <p
