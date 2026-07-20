@@ -406,11 +406,12 @@ export default function MentorChat({
 
       <div className="border-t border-neutral-800 px-5 md:px-8 py-4 shrink-0 bg-canvas md:bg-transparent">
         <div className="mx-auto max-w-3xl">
-          <div className="flex items-end gap-2 rounded-2xl border border-neutral-700 bg-neutral-800/80 px-4 py-3 focus-within:border-emerald-500/50 transition-colors">
+          <div className="flex items-end gap-2 rounded-3xl border border-neutral-800 bg-neutral-900 px-4 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
             <textarea
               ref={inputRef}
               value={input}
               rows={1}
+              autoComplete="off"
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -419,26 +420,26 @@ export default function MentorChat({
                 }
               }}
               placeholder="Ask me anything…"
-              className="flex-1 bg-transparent text-[13px] md:text-sm text-neutral-200 placeholder-neutral-500 outline-none resize-none max-h-24 leading-relaxed"
+              className="flex-1 bg-transparent text-[13px] md:text-sm text-neutral-200 placeholder-neutral-500 outline-none resize-none max-h-24 leading-relaxed focus-visible:outline-none focus-visible:shadow-none focus-visible:border-transparent"
               disabled={loading}
             />
             {(streaming || thinking) ? (
               <button
                 onClick={stop}
-                className="text-red-400 hover:text-red-300 transition-colors p-1 -mr-1"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500/15 text-red-400 transition-colors hover:bg-red-500/25"
                 title="Stop"
                 aria-label="Stop generating"
               >
-                <Square size={15} fill="currentColor" />
+                <Square size={12} fill="currentColor" />
               </button>
             ) : (
               <button
                 onClick={send}
                 disabled={loading || !input.trim()}
                 aria-label="Send message"
-                className="text-emerald-400 hover:text-emerald-300 disabled:text-neutral-700 transition-colors p-1 -mr-1"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-black transition-colors hover:bg-emerald-400 disabled:bg-neutral-800 disabled:text-neutral-600"
               >
-                <Send size={16} />
+                <Send size={13} />
               </button>
             )}
           </div>

@@ -257,8 +257,11 @@ export default function MentorPageClient({ initialConversations }: Props) {
     </div>
   );
 
+  // Bleeds edge-to-edge past the dashboard shell's p-4/md:p-8 padding.
+  // 57px = TopNav's h-14 (56px) + its 1px bottom border — md:h-screen used
+  // to ignore that and overflow the viewport by exactly 57px.
   return (
-    <div className="-m-6 md:-m-8 h-[calc(100svh-53px)] md:h-screen flex overflow-hidden">
+    <div className="-m-4 md:-m-8 h-[calc(100svh-57px)] flex overflow-hidden">
       {/* Sidebar — always visible on desktop, toggled on mobile */}
       <div className={cn(
         "w-full md:w-64 md:flex shrink-0 flex-col",

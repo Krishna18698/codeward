@@ -68,21 +68,22 @@ export default function ProfileForm({ user }: { user: User }) {
     }
   };
 
-  // ── Read-only summary, with an Edit button that swaps in the form ──
+  // ── Read-only summary, with an Edit button right next to the section it edits ──
   if (!editing) {
     return (
-      <div className="space-y-5">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-medium text-neutral-400 mb-1">Display name</p>
-            <p className="text-sm text-neutral-200">{name || "—"}</p>
-          </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">Account details</p>
           <button
             onClick={() => setEditing(true)}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-800 px-3 py-1.5 text-xs text-neutral-300 transition-colors hover:border-neutral-600 hover:text-white"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-800 px-2.5 py-1 text-xs text-neutral-300 transition-colors hover:border-neutral-600 hover:text-white"
           >
             <Pencil size={11} /> Edit
           </button>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-neutral-400 mb-1">Display name</p>
+          <p className="text-sm text-neutral-200">{name || "—"}</p>
         </div>
         <div>
           <p className="text-xs font-medium text-neutral-400 mb-1">Experience level</p>
@@ -98,6 +99,7 @@ export default function ProfileForm({ user }: { user: User }) {
 
   return (
     <div className="space-y-5">
+      <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">Account details</p>
       <Input
         label="Display name"
         value={name}

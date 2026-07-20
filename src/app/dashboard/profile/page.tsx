@@ -26,70 +26,67 @@ export default async function ProfilePage() {
     <div className="space-y-6 animate-fade-up">
       <p className="font-mono text-[11px] uppercase tracking-widest text-emerald-400">Profile</p>
 
-      {/* Flat, borderless layout — a single vertical rule splits identity from
-          the editor, no nested card boxes (matches the landing page's editorial feel). */}
-      <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:divide-x lg:divide-neutral-800">
-        {/* ── Left: identity ── */}
-        <aside className="space-y-6 lg:sticky lg:top-20 lg:pr-8">
-          <div className="flex items-center gap-4">
-            {user.image ? (
-              <Image
-                src={user.image}
-                alt={user.name ?? "avatar"}
-                width={56}
-                height={56}
-                referrerPolicy="no-referrer"
-                className="shrink-0 rounded-xl border border-neutral-800 object-cover"
-              />
-            ) : (
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900 text-lg font-bold text-white">
-                {initials}
-              </div>
-            )}
-            <div className="min-w-0">
-              <h2 className="truncate text-base font-semibold tracking-heading text-white">
-                {user.name ?? "No name set"}
-              </h2>
-              <p className="truncate text-xs text-neutral-500">{user.email}</p>
-            </div>
-          </div>
-
-          {(user.experienceLevel || user.targetCompany) && (
-            <div className="flex flex-wrap items-center gap-2">
-              {user.experienceLevel && (
-                <span className="inline-flex items-center gap-1 font-mono text-[11px] text-emerald-400">
-                  <User size={10} />
-                  {user.experienceLevel.charAt(0) + user.experienceLevel.slice(1).toLowerCase()}
-                </span>
-              )}
-              {user.experienceLevel && user.targetCompany && (
-                <span className="text-neutral-700">·</span>
-              )}
-              {user.targetCompany && (
-                <span className="inline-flex items-center gap-1 font-mono text-[11px] text-rose-400">
-                  <Target size={10} />
-                  {user.targetCompany}
-                </span>
-              )}
+      {/* Flat, single-column stack — few enough items that a two-column split
+          just wasted space. Top to bottom: identity, tags, stats, then account details. */}
+      <div className="max-w-md space-y-6">
+        <div className="flex items-center gap-4">
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt={user.name ?? "avatar"}
+              width={56}
+              height={56}
+              referrerPolicy="no-referrer"
+              className="shrink-0 rounded-xl border border-neutral-800 object-cover"
+            />
+          ) : (
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900 text-lg font-bold text-white">
+              {initials}
             </div>
           )}
-
-          {/* Stats */}
-          <div className="flex gap-6 border-t border-neutral-800 pt-5">
-            <div>
-              <p className="text-xl font-bold text-white">{user._count.problemStatuses}</p>
-              <p className="font-mono text-[11px] text-neutral-500">Attempts</p>
-            </div>
-            <div>
-              <p className="text-xl font-bold text-white">{user._count.customSheets}</p>
-              <p className="font-mono text-[11px] text-neutral-500">Sheets</p>
-            </div>
+          <div className="min-w-0">
+            <h2 className="truncate text-base font-semibold tracking-heading text-white">
+              {user.name ?? "No name set"}
+            </h2>
+            <p className="truncate text-xs text-neutral-500">{user.email}</p>
           </div>
-        </aside>
+        </div>
 
-        {/* ── Right: editor ── */}
-        <div className="lg:pl-8">
-          <p className="mb-5 font-mono text-[11px] uppercase tracking-widest text-neutral-500">Account details</p>
+        {(user.experienceLevel || user.targetCompany) && (
+          <div className="flex flex-wrap items-center gap-2">
+            {user.experienceLevel && (
+              <span className="inline-flex items-center gap-1 font-mono text-[11px] text-emerald-400">
+                <User size={10} />
+                {user.experienceLevel.charAt(0) + user.experienceLevel.slice(1).toLowerCase()}
+              </span>
+            )}
+            {user.experienceLevel && user.targetCompany && (
+              <span className="text-neutral-700">·</span>
+            )}
+            {user.targetCompany && (
+              <span className="inline-flex items-center gap-1 font-mono text-[11px] text-rose-400">
+                <Target size={10} />
+                {user.targetCompany}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="flex gap-6 border-t border-neutral-800 pt-5">
+          <div>
+            <p className="text-xl font-bold text-white">{user._count.problemStatuses}</p>
+            <p className="font-mono text-[11px] text-neutral-500">Attempts</p>
+          </div>
+          <div>
+            <p className="text-xl font-bold text-white">{user._count.customSheets}</p>
+            <p className="font-mono text-[11px] text-neutral-500">Sheets</p>
+          </div>
+        </div>
+
+        {/* Account details — ProfileForm owns its own header + Edit button,
+            right above the fields it toggles. */}
+        <div className="border-t border-neutral-800 pt-5">
           <ProfileForm user={{ name: user.name, email: user.email, image: user.image, experienceLevel: user.experienceLevel, targetCompany: user.targetCompany }} />
         </div>
       </div>

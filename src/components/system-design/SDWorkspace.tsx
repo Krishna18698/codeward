@@ -34,8 +34,9 @@ export default function SDWorkspace({ question, initialNote, userId }: Props) {
     `sketch the architecture, quiz you on trade-offs, or explain any concept it touches.\n\n` +
     `Try: *"Walk me through designing this"* or *"What breaks first at 10x scale?"*`;
 
+  // 57px = TopNav's h-14 (56px) + its 1px bottom border, same fix as MentorPageClient.
   return (
-    <div className="flex h-[calc(100vh-0px)] overflow-hidden -m-8">
+    <div className="flex h-[calc(100svh-57px)] overflow-hidden -m-4 md:-m-8">
       {/* ── Left panel ── */}
       <div className="w-[420px] shrink-0 flex flex-col border-r border-neutral-800 bg-canvas overflow-hidden">
         {/* Breadcrumb */}
