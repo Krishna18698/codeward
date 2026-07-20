@@ -28,6 +28,7 @@ model User {
   conversations       MentorConversation[]
   reviewAttempts      ReviewAttempt[]
   bugHuntAttempts     BugHuntAttempt[]
+  buildItAttempts     BuildItAttempt[]
 }
 
 // ─── Code Review practice mode ─────────────────────────────────────────────
@@ -64,6 +65,29 @@ model BugHuntAttempt {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, exerciseSlug])
+}
+
+// ─── Build It practice mode (staged LLD) ───────────────────────────────────
+// One row per stage submission — never mutated. "Highest unlocked stage" and
+// "best score per stage" are both derived from this table (groupBy), same as
+// Code Review and Bug Hunt — no separate progress table.
+model BuildItAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  problemSlug    String
+  stage          Int
+  language       String   // "csharp" | "python" | "kotlin"
+  approach       String   @db.Text
+  explanation    String   @db.Text
+  score          Int
+  criteria       Json
+  invariantHolds Boolean?
+  feedback       String   @db.Text
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, problemSlug, stage])
 }
 
 model Account {
