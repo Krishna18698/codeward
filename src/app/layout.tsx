@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Instrument_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
 
-const geistSans = Geist({
+const geistSans = Instrument_Sans({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
