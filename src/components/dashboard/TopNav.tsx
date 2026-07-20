@@ -21,7 +21,6 @@ const nav = [
 ];
 
 const NAV_LINK_CLASS = "flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs whitespace-nowrap";
-const ROW_GAP_PX = 12; // matches the header row's gap-3
 
 /** Swaps the nav icon for a same-size spinner while the route loads — instant
  *  click feedback with zero layout shift. Must live inside the <Link>. */
@@ -76,7 +75,17 @@ export default function TopNav() {
     const rightMeasure = rightMeasureRef.current;
     if (!row || !logo || !navMeasure || !rightMeasure) return;
     const check = () => {
-      const available = row.clientWidth - logo.offsetWidth - rightMeasure.offsetWidth - ROW_GAP_PX * 2;
+      // clientWidth includes the row's own padding (px-4/md:px-6), which
+      // isn't space the flex children can use — has to be subtracted, or
+      // "available" is overestimated by the full padding amount and the
+      // first nav item gets clipped instead of the row ever flipping to
+      // the hamburger. Measuring padding/gap live instead of assuming a
+      // fixed px value keeps this correct if either class ever changes.
+      const rowStyle = getComputedStyle(row);
+      const paddingX = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight);
+      const gap = parseFloat(rowStyle.columnGap || rowStyle.gap) || 0;
+      const contentWidth = row.clientWidth - paddingX;
+      const available = contentWidth - logo.offsetWidth - rightMeasure.offsetWidth - gap * 2;
       setFits(navMeasure.scrollWidth <= available);
     };
     check();
