@@ -22,14 +22,13 @@ type Props = {
   conversationId?: string;
   initialMessages?: Message[];
   onSheetOpen?: () => void;
+  /** Overrides the default welcome message — e.g. a hint scoped to the
+   *  specific system-design question this chat instance is attached to. */
+  welcome?: string;
 };
 
-const WELCOME: Message = {
-  role: "assistant",
-  type: "text",
-  content:
-    "Hey! I'm your AI prep mentor. I can help you plan your DSA sheet, explain patterns, review your approach, or answer system design questions.\n\nTry: *\"Create a sheet for Meta focused on trees and DP\"*",
-};
+const DEFAULT_WELCOME =
+  "Hey! I'm your AI prep mentor. I can help you plan your DSA sheet, explain patterns, review your approach, or answer system design questions.\n\nTry: *\"Create a sheet for Meta focused on trees and DP\"*";
 
 const SHEET_TRIGGERS = [
   "create a sheet", "make a sheet", "generate a sheet", "build a sheet",
@@ -74,9 +73,11 @@ export default function MentorChat({
   conversationId,
   initialMessages,
   onSheetOpen,
+  welcome,
 }: Props) {
+  const welcomeMsg: Message = { role: "assistant", type: "text", content: welcome ?? DEFAULT_WELCOME };
   const [messages, setMessages] = useState<Message[]>(
-    initialMessages && initialMessages.length > 0 ? initialMessages : [WELCOME]
+    initialMessages && initialMessages.length > 0 ? initialMessages : [welcomeMsg]
   );
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,7 @@ export default function MentorChat({
   const receivedRef = useRef("");
 
   useEffect(() => {
-    setMessages(initialMessages && initialMessages.length > 0 ? initialMessages : [WELCOME]);
+    setMessages(initialMessages && initialMessages.length > 0 ? initialMessages : [welcomeMsg]);
     setInput("");
     setLoading(false);
     setThinking(false);
@@ -342,105 +343,109 @@ export default function MentorChat({
         </div>
       )}
 
-      <div ref={messagesRef} onScroll={handleMessagesScroll} className="flex-1 overflow-y-auto px-4 py-4 space-y-3 text-sm">
-        {messages.map((msg, i) => (
-          <div key={i} className={cn("flex gap-2 animate-msg-pop", msg.role === "user" ? "justify-end" : "justify-start")}>
-            {msg.role === "assistant" && (
-              <Sparkles size={12} className="mt-1 shrink-0 text-emerald-400" />
-            )}
+      <div ref={messagesRef} onScroll={handleMessagesScroll} className="flex-1 overflow-y-auto px-5 md:px-8 py-6 text-sm">
+        <div className="mx-auto max-w-3xl space-y-5">
+          {messages.map((msg, i) => (
+            <div key={i} className={cn("flex gap-2.5 animate-msg-pop", msg.role === "user" ? "justify-end" : "justify-start")}>
+              {msg.role === "assistant" && (
+                <Sparkles size={12} className="mt-1 shrink-0 text-emerald-400" />
+              )}
 
-            {msg.type === "sheet" ? (
-              <div className="max-w-[92%] rounded-xl border border-emerald-500/30 bg-emerald-500/8 p-3 space-y-1.5 animate-scale-in">
-                <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wide">Sheet created</p>
-                <p className="text-sm font-semibold text-white">{msg.sheetName}</p>
-                <p className="text-xs text-neutral-400 leading-relaxed">{msg.rationale}</p>
-                <p className="text-xs text-neutral-500">{msg.problemCount} problems</p>
-                <Link
-                  href={`/dashboard/dsa?sheet=${msg.sheetId}`}
-                  onClick={() => onSheetOpen?.()}
-                  className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
-                >
-                  Open sheet <ArrowRight size={11} />
-                </Link>
-              </div>
-            ) : msg.type === "sheet-update" ? (
-              <div className="max-w-[92%] rounded-xl border border-emerald-500/30 bg-emerald-500/8 p-3 space-y-1.5 animate-scale-in">
-                <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wide">Problems added</p>
-                <p className="text-sm font-semibold text-white">{msg.sheetName}</p>
-                <p className="text-xs text-neutral-500">+{msg.addedCount} new problems · {msg.totalCount} total</p>
-                <Link
-                  href={`/dashboard/dsa?sheet=${msg.sheetId}`}
-                  onClick={() => onSheetOpen?.()}
-                  className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
-                >
-                  <PlusCircle size={11} /> Open sheet
-                </Link>
-              </div>
-            ) : msg.role === "user" ? (
-              <div className="max-w-[88%] rounded-2xl px-3.5 py-2.5 leading-relaxed whitespace-pre-wrap text-[13px] md:text-sm bg-emerald-500/15 text-neutral-200 border border-emerald-500/20">
-                {msg.content}
-              </div>
-            ) : (
-              <div className="max-w-[92%] text-[13px] md:text-sm text-neutral-300 space-y-0.5">
-                <Suspense fallback={<div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>}>
-                  <MarkdownMessage content={msg.content} />
-                </Suspense>
-                {streaming && i === messages.length - 1 && (
-                  <span className="inline-block w-0.5 h-[1em] bg-emerald-400 animate-pulse rounded-sm ml-0.5 align-text-bottom" />
-                )}
-              </div>
-            )}
-          </div>
-        ))}
+              {msg.type === "sheet" ? (
+                <div className="max-w-[90%] rounded-2xl border border-emerald-500/30 bg-emerald-500/8 p-4 space-y-2 animate-scale-in">
+                  <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wide">Sheet created</p>
+                  <p className="text-sm font-semibold text-white">{msg.sheetName}</p>
+                  <p className="text-xs text-neutral-400 leading-relaxed">{msg.rationale}</p>
+                  <p className="text-xs text-neutral-500">{msg.problemCount} problems</p>
+                  <Link
+                    href={`/dashboard/dsa?sheet=${msg.sheetId}`}
+                    onClick={() => onSheetOpen?.()}
+                    className="inline-flex items-center gap-1 mt-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    Open sheet <ArrowRight size={11} />
+                  </Link>
+                </div>
+              ) : msg.type === "sheet-update" ? (
+                <div className="max-w-[90%] rounded-2xl border border-emerald-500/30 bg-emerald-500/8 p-4 space-y-2 animate-scale-in">
+                  <p className="text-[10px] text-emerald-400 font-medium uppercase tracking-wide">Problems added</p>
+                  <p className="text-sm font-semibold text-white">{msg.sheetName}</p>
+                  <p className="text-xs text-neutral-500">+{msg.addedCount} new problems · {msg.totalCount} total</p>
+                  <Link
+                    href={`/dashboard/dsa?sheet=${msg.sheetId}`}
+                    onClick={() => onSheetOpen?.()}
+                    className="inline-flex items-center gap-1 mt-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    <PlusCircle size={11} /> Open sheet
+                  </Link>
+                </div>
+              ) : msg.role === "user" ? (
+                <div className="max-w-[85%] rounded-2xl px-4 py-2.5 leading-relaxed whitespace-pre-wrap text-[13px] md:text-sm bg-emerald-500/15 text-neutral-200 border border-emerald-500/20">
+                  {msg.content}
+                </div>
+              ) : (
+                <div className="max-w-[90%] text-[13px] md:text-sm text-neutral-300 space-y-0.5">
+                  <Suspense fallback={<div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>}>
+                    <MarkdownMessage content={msg.content} />
+                  </Suspense>
+                  {streaming && i === messages.length - 1 && (
+                    <span className="inline-block w-0.5 h-[1em] bg-emerald-400 animate-pulse rounded-sm ml-0.5 align-text-bottom" />
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
 
-        {thinking && (
-          <div className="flex gap-2 justify-start animate-msg-pop">
-            <Sparkles size={12} className="mt-2 shrink-0 text-emerald-400" />
-            <ThinkingDots />
-          </div>
-        )}
-      </div>
-
-      <div className="border-t border-neutral-800 px-3 py-3 md:p-3 shrink-0 bg-canvas md:bg-transparent">
-        <div className="flex items-end gap-2 rounded-2xl border border-neutral-700 bg-neutral-800/80 px-4 py-3 focus-within:border-emerald-500/50 transition-colors">
-          <textarea
-            ref={inputRef}
-            value={input}
-            rows={1}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                send();
-              }
-            }}
-            placeholder="Ask me anything…"
-            className="flex-1 bg-transparent text-[13px] md:text-sm text-neutral-200 placeholder-neutral-500 outline-none resize-none max-h-24 leading-relaxed"
-            disabled={loading}
-          />
-          {(streaming || thinking) ? (
-            <button
-              onClick={stop}
-              className="text-red-400 hover:text-red-300 transition-colors p-1 -mr-1"
-              title="Stop"
-              aria-label="Stop generating"
-            >
-              <Square size={15} fill="currentColor" />
-            </button>
-          ) : (
-            <button
-              onClick={send}
-              disabled={loading || !input.trim()}
-              aria-label="Send message"
-              className="text-emerald-400 hover:text-emerald-300 disabled:text-neutral-700 transition-colors p-1 -mr-1"
-            >
-              <Send size={16} />
-            </button>
+          {thinking && (
+            <div className="flex gap-2.5 justify-start animate-msg-pop">
+              <Sparkles size={12} className="mt-2 shrink-0 text-emerald-400" />
+              <ThinkingDots />
+            </div>
           )}
         </div>
-        <p className="mt-1.5 text-[10px] text-neutral-500 text-center hidden md:block">
-          Say &quot;create a sheet for Meta&quot; to generate a personalized plan
-        </p>
+      </div>
+
+      <div className="border-t border-neutral-800 px-5 md:px-8 py-4 shrink-0 bg-canvas md:bg-transparent">
+        <div className="mx-auto max-w-3xl">
+          <div className="flex items-end gap-2 rounded-2xl border border-neutral-700 bg-neutral-800/80 px-4 py-3 focus-within:border-emerald-500/50 transition-colors">
+            <textarea
+              ref={inputRef}
+              value={input}
+              rows={1}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
+              placeholder="Ask me anything…"
+              className="flex-1 bg-transparent text-[13px] md:text-sm text-neutral-200 placeholder-neutral-500 outline-none resize-none max-h-24 leading-relaxed"
+              disabled={loading}
+            />
+            {(streaming || thinking) ? (
+              <button
+                onClick={stop}
+                className="text-red-400 hover:text-red-300 transition-colors p-1 -mr-1"
+                title="Stop"
+                aria-label="Stop generating"
+              >
+                <Square size={15} fill="currentColor" />
+              </button>
+            ) : (
+              <button
+                onClick={send}
+                disabled={loading || !input.trim()}
+                aria-label="Send message"
+                className="text-emerald-400 hover:text-emerald-300 disabled:text-neutral-700 transition-colors p-1 -mr-1"
+              >
+                <Send size={16} />
+              </button>
+            )}
+          </div>
+          <p className="mt-1.5 text-[10px] text-neutral-500 text-center hidden md:block">
+            Say &quot;create a sheet for Meta&quot; to generate a personalized plan
+          </p>
+        </div>
       </div>
     </div>
   );

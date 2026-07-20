@@ -129,14 +129,14 @@ export default function MentorPageClient({ initialConversations }: Props) {
   const sidebar = (
     <div className="flex flex-col h-full border-r border-neutral-800/60 bg-canvas md:bg-transparent">
       {/* Sidebar header */}
-      <div className="px-4 pt-5 pb-3 shrink-0">
-        <div className="flex items-center gap-2 mb-4">
-          <Sparkles size={14} className="text-emerald-400" />
-          <span className="text-sm font-semibold text-white">AI Mentor</span>
+      <div className="px-5 pt-6 pb-4 shrink-0">
+        <div className="flex items-center gap-2 mb-5">
+          <Sparkles size={13} className="text-emerald-400" />
+          <span className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">AI Mentor</span>
         </div>
         <button
           onClick={createNew}
-          className="w-full flex items-center gap-2 rounded-xl border border-dashed border-emerald-500/30 px-3 py-2 text-sm text-emerald-400/80 hover:text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-colors"
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25 px-3 py-2.5 text-sm font-medium text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-500/40 transition-colors"
         >
           <Plus size={14} />
           New chat
@@ -144,7 +144,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
       </div>
 
       {/* Conversation list */}
-      <div className="flex-1 overflow-y-auto px-2 pb-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
         {groups.length === 0 ? (
           <div className="px-2 py-8 text-center">
             <MessageSquare size={24} className="text-neutral-700 mx-auto mb-2" />
@@ -196,7 +196,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
   const chatPanel = (
     <div className="flex flex-col h-full min-w-0">
       {/* Chat header — always visible */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-800/60 shrink-0 bg-canvas/80 backdrop-blur-sm">
+      <div className="flex items-center gap-3 px-5 md:px-8 py-4 border-b border-neutral-800/60 shrink-0 bg-canvas/80 backdrop-blur-sm">
         {/* Mobile back button */}
         <button
           onClick={() => setShowList(true)}
@@ -204,7 +204,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
         >
           <ChevronLeft size={16} />
         </button>
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
           <Sparkles size={13} className="text-emerald-400 shrink-0" />
           <span className="text-sm font-semibold text-white truncate">
             {activeId ? activeConvTitle : "AI Mentor"}

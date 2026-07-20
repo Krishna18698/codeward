@@ -29,6 +29,11 @@ export default function SDWorkspace({ question, initialNote, userId }: Props) {
   const [tab, setTab] = useState<Tab>("prompt");
   const [showMentor, setShowMentor] = useState(true);
 
+  const mentorWelcome =
+    `Hey! I can help you design **${question.title}** — walk through the requirements, ` +
+    `sketch the architecture, quiz you on trade-offs, or explain any concept it touches.\n\n` +
+    `Try: *"Walk me through designing this"* or *"What breaks first at 10x scale?"*`;
+
   return (
     <div className="flex h-[calc(100vh-0px)] overflow-hidden -m-8">
       {/* ── Left panel ── */}
@@ -162,6 +167,8 @@ export default function SDWorkspace({ question, initialNote, userId }: Props) {
           <MentorChat
             userId={userId}
             context={`sd:${question.id}`}
+            welcome={mentorWelcome}
+            hideHeader
             className="h-full rounded-none border-0"
           />
         </div>
