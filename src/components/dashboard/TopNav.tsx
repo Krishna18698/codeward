@@ -142,36 +142,39 @@ export default function TopNav() {
             </button>
           )}
 
-          {/* Divider */}
-          <span className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block" />
-
-          {/* User + sign out */}
-          {user && (
-            <Link
-              href="/dashboard/profile"
-              aria-label="Profile"
-              aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
-              className={cn(
-                "flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors duration-150",
-                pathname.startsWith("/dashboard/profile")
-                  ? "bg-white/6"
-                  : "hover:bg-white/4",
+          {/* User + sign out — hidden in hamburger mode, since Profile and
+              Sign out already live as text entries in that dropdown. */}
+          {fits && (
+            <>
+              <span className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block" />
+              {user && (
+                <Link
+                  href="/dashboard/profile"
+                  aria-label="Profile"
+                  aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors duration-150",
+                    pathname.startsWith("/dashboard/profile")
+                      ? "bg-white/6"
+                      : "hover:bg-white/4",
+                  )}
+                >
+                  <UserAvatar image={user.image} name={user.name} size={26} />
+                  <span className="hidden lg:block max-w-[120px] truncate text-xs font-medium text-neutral-300">
+                    {user.name ?? "Profile"}
+                  </span>
+                </Link>
               )}
-            >
-              <UserAvatar image={user.image} name={user.name} size={26} />
-              <span className="hidden lg:block max-w-[120px] truncate text-xs font-medium text-neutral-300">
-                {user.name ?? "Profile"}
-              </span>
-            </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                title="Sign out"
+                aria-label="Sign out"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-500 transition-colors hover:bg-white/4 hover:text-neutral-200"
+              >
+                <LogOut size={15} />
+              </button>
+            </>
           )}
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            title="Sign out"
-            aria-label="Sign out"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-500 transition-colors hover:bg-white/4 hover:text-neutral-200"
-          >
-            <LogOut size={15} />
-          </button>
         </div>
       </div>
 
