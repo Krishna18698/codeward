@@ -4,7 +4,7 @@ import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
-  Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug,
+  Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug, Blocks,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -16,6 +16,7 @@ const nav = [
   { label: "System Design", href: "/dashboard/system-design", icon: Network },
   { label: "Code Review",   href: "/dashboard/code-review",   icon: GitPullRequest },
   { label: "Bug Hunt",      href: "/dashboard/bug-hunt",      icon: Bug },
+  { label: "Build It",      href: "/dashboard/build-it",      icon: Blocks },
   { label: "Deep Dives",    href: "/dashboard/deep-dives",    icon: BookOpen },
   { label: "AI Mentor",     href: "/dashboard/mentor",        icon: Sparkles },
 ];
