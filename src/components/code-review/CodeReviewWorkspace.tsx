@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
 import { WindowFrame } from "@/components/ui/WindowFrame";
+import { highlightTs } from "@/lib/highlightTs";
 import type { GradeResult, GradedBug } from "@/app/api/review/grade/route";
 
 type FileT = { name: string; code: string };
@@ -195,7 +196,7 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
                       )}
                       {ln}
                     </span>
-                    <code className="text-neutral-300 whitespace-pre">{line || " "}</code>
+                    <code className="text-neutral-300 whitespace-pre" dangerouslySetInnerHTML={{ __html: highlightTs(line) || " " }} />
                   </div>
 
                   {/* inline comment / editor */}
