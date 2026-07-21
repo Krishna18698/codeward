@@ -80,6 +80,44 @@ export const inventoryReservationService: BuildItProblem = {
       commonPitfalls: [
         "Mutating stock directly on reservation instead of tracking a separate reserved counter — loses the distinction stage 2 needs between 'reserved' and 'sold'.",
       ],
+      tests: {
+        python: `# --- tests (read-only) ---
+def _run():
+    item = InventoryItem(10)
+    assert item.available == 10, "starts with full stock available"
+    assert item.reserve(4) is True, "reserving 4 of 10 succeeds"
+    assert item.available == 6, "available reduced to 6 after reserving 4"
+    assert item.reserve(100) is False, "reserving more than available is rejected"
+    assert item.available == 6, "rejected reservation doesn't change available"
+    print("__BUILD_IT_PASS__")
+
+_run()`,
+        kotlin: `// --- tests (read-only) ---
+fun main() {
+    val item = InventoryItem(10)
+    check(item.available == 10) { "starts with full stock available" }
+    check(item.reserve(4)) { "reserving 4 of 10 succeeds" }
+    check(item.available == 6) { "available reduced to 6 after reserving 4" }
+    check(!item.reserve(100)) { "reserving more than available is rejected" }
+    check(item.available == 6) { "rejected reservation doesn't change available" }
+    println("__BUILD_IT_PASS__")
+}`,
+        csharp: `// --- tests (read-only) ---
+class TestRunner
+{
+    static void Check(bool cond, string msg) { if (!cond) throw new Exception("FAILED: " + msg); }
+    static void Main()
+    {
+        var item = new InventoryItem(10);
+        Check(item.Available == 10, "starts with full stock available");
+        Check(item.Reserve(4) == true, "reserving 4 of 10 succeeds");
+        Check(item.Available == 6, "available reduced to 6 after reserving 4");
+        Check(item.Reserve(100) == false, "reserving more than available is rejected");
+        Check(item.Available == 6, "rejected reservation doesn't change available");
+        Console.WriteLine("__BUILD_IT_PASS__");
+    }
+}`,
+      },
     },
     {
       stage: 2,

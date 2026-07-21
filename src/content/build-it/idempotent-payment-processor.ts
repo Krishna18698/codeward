@@ -33,9 +33,20 @@ public class PaymentProcessor
     }
 }
 
-public record Payment(Guid Id, decimal Amount, PaymentState State);
+public class Payment
+{
+    public Guid Id { get; }
+    public decimal Amount { get; }
+    public PaymentState State { get; }
+    public Payment(Guid id, decimal amount, PaymentState state) { Id = id; Amount = amount; State = state; }
+}
 public interface IGateway { GatewayResult Charge(decimal amount); }
-public record GatewayResult(bool Success, string TransactionId);`,
+public class GatewayResult
+{
+    public bool Success { get; }
+    public string TransactionId { get; }
+    public GatewayResult(bool success, string transactionId) { Success = success; TransactionId = transactionId; }
+}`,
         },
         python: {
           fileName: "payment_processor.py",
@@ -69,7 +80,9 @@ class PaymentProcessor:
         },
         kotlin: {
           fileName: "PaymentProcessor.kt",
-          code: `enum class PaymentState { PENDING, SUCCEEDED, FAILED }
+          code: `import java.util.UUID
+
+enum class PaymentState { PENDING, SUCCEEDED, FAILED }
 
 data class Payment(val id: UUID, val amount: Double, val state: PaymentState)
 data class GatewayResult(val success: Boolean, val transactionId: String)
@@ -97,6 +110,51 @@ class PaymentProcessor {
         "call succeeds but before the record is written, there's no evidence the charge happened, and a naive retry " +
         "double-charges.",
       ],
+      tests: {
+        python: `# --- tests (read-only) ---
+def _run():
+    class OkGateway:
+        def charge(self, amount):
+            return GatewayResult(True, "txn-1")
+    class FailGateway:
+        def charge(self, amount):
+            return GatewayResult(False, "")
+    p = PaymentProcessor()
+    ok = p.charge(100.0, OkGateway())
+    assert ok.state == PaymentState.SUCCEEDED, "successful gateway → SUCCEEDED"
+    assert ok.amount == 100.0, "amount recorded on the payment"
+    bad = p.charge(50.0, FailGateway())
+    assert bad.state == PaymentState.FAILED, "failed gateway → FAILED"
+    print("__BUILD_IT_PASS__")
+
+_run()`,
+        kotlin: `// --- tests (read-only) ---
+fun main() {
+    val ok = PaymentProcessor().charge(100.0, Gateway { GatewayResult(true, "txn-1") })
+    check(ok.state == PaymentState.SUCCEEDED) { "successful gateway → SUCCEEDED" }
+    check(ok.amount == 100.0) { "amount recorded on the payment" }
+    val bad = PaymentProcessor().charge(50.0, Gateway { GatewayResult(false, "") })
+    check(bad.state == PaymentState.FAILED) { "failed gateway → FAILED" }
+    println("__BUILD_IT_PASS__")
+}`,
+        csharp: `// --- tests (read-only) ---
+class OkGateway : IGateway { public GatewayResult Charge(decimal amount) => new GatewayResult(true, "txn-1"); }
+class FailGateway : IGateway { public GatewayResult Charge(decimal amount) => new GatewayResult(false, ""); }
+
+class TestRunner
+{
+    static void Check(bool cond, string msg) { if (!cond) throw new Exception("FAILED: " + msg); }
+    static void Main()
+    {
+        var ok = new PaymentProcessor().Charge(100m, new OkGateway());
+        Check(ok.State == PaymentState.Succeeded, "successful gateway → Succeeded");
+        Check(ok.Amount == 100m, "amount recorded on the payment");
+        var bad = new PaymentProcessor().Charge(50m, new FailGateway());
+        Check(bad.State == PaymentState.Failed, "failed gateway → Failed");
+        Console.WriteLine("__BUILD_IT_PASS__");
+    }
+}`,
+      },
     },
     {
       stage: 2,

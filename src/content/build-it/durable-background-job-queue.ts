@@ -30,7 +30,7 @@ export const durableBackgroundJobQueue: BuildItProblem = {
         throw new NotImplementedException();
     }
 
-    public Job? Dequeue()
+    public Job Dequeue()
     {
         // TODO: return the next unprocessed job, or null if empty
         throw new NotImplementedException();
@@ -43,7 +43,12 @@ export const durableBackgroundJobQueue: BuildItProblem = {
     }
 }
 
-public record Job(Guid Id, string Payload);`,
+public class Job
+{
+    public Guid Id { get; }
+    public string Payload { get; }
+    public Job(Guid id, string payload) { Id = id; Payload = payload; }
+}`,
         },
         python: {
           fileName: "job_queue.py",
@@ -70,7 +75,9 @@ class JobQueue:
         },
         kotlin: {
           fileName: "JobQueue.kt",
-          code: `data class Job(val id: UUID, val payload: String)
+          code: `import java.util.UUID
+
+data class Job(val id: UUID, val payload: String)
 
 class JobQueue {
     fun enqueue(payload: String): UUID {
@@ -102,6 +109,60 @@ class JobQueue {
       commonPitfalls: [
         "Removing the job from the queue on dequeue() with no in-flight tracking at all, so a crash between dequeue and ack loses the job permanently — the exact problem stage 2 exists to fix, but worth not accidentally solving early in a way that breaks the stage-1 contract.",
       ],
+      tests: {
+        python: `# --- tests (read-only) ---
+def _run():
+    q = JobQueue()
+    q.enqueue("a")
+    q.enqueue("b")
+    j1 = q.dequeue()
+    assert j1 is not None, "dequeue returns a job when the queue is non-empty"
+    assert j1.payload in ("a", "b"), "dequeued job carries a real payload"
+    q.ack(j1.id)
+    j2 = q.dequeue()
+    assert j2 is not None, "second job is still available"
+    assert j2.payload in ("a", "b"), "second job carries a real payload"
+    q.ack(j2.id)
+    assert q.dequeue() is None, "queue is empty after both jobs are acked"
+    print("__BUILD_IT_PASS__")
+
+_run()`,
+        kotlin: `// --- tests (read-only) ---
+fun main() {
+    val q = JobQueue()
+    q.enqueue("a")
+    q.enqueue("b")
+    val j1 = q.dequeue()
+    checkNotNull(j1) { "dequeue returns a job when the queue is non-empty" }
+    check(j1.payload == "a" || j1.payload == "b") { "dequeued job carries a real payload" }
+    q.ack(j1.id)
+    val j2 = q.dequeue()
+    checkNotNull(j2) { "second job is still available" }
+    q.ack(j2.id)
+    check(q.dequeue() == null) { "queue is empty after both jobs are acked" }
+    println("__BUILD_IT_PASS__")
+}`,
+        csharp: `// --- tests (read-only) ---
+class TestRunner
+{
+    static void Check(bool cond, string msg) { if (!cond) throw new Exception("FAILED: " + msg); }
+    static void Main()
+    {
+        var q = new JobQueue();
+        q.Enqueue("a");
+        q.Enqueue("b");
+        var j1 = q.Dequeue();
+        Check(j1 != null, "dequeue returns a job when the queue is non-empty");
+        Check(j1.Payload == "a" || j1.Payload == "b", "dequeued job carries a real payload");
+        q.Ack(j1.Id);
+        var j2 = q.Dequeue();
+        Check(j2 != null, "second job is still available");
+        q.Ack(j2.Id);
+        Check(q.Dequeue() == null, "queue is empty after both jobs are acked");
+        Console.WriteLine("__BUILD_IT_PASS__");
+    }
+}`,
+      },
     },
     {
       stage: 2,

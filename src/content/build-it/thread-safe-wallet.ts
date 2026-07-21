@@ -158,12 +158,22 @@ class TestRunner
 {
     private decimal _balance;
 
-    // ...deposit/withdraw from stage 1...
+    public Wallet(decimal openingBalance) => _balance = openingBalance;
+    public decimal Balance => _balance;
+
+    // Given from stage 1:
+    public void Deposit(decimal amount) => _balance += amount;
+    public bool Withdraw(decimal amount)
+    {
+        if (amount > _balance) return false;
+        _balance -= amount;
+        return true;
+    }
 
     public void Transfer(Wallet to, decimal amount)
     {
-        // TODO: debit this wallet and credit "to" atomically —
-        // if anything throws partway through, neither side should have moved.
+        // TODO: debit this wallet and credit "to" atomically. If the source has
+        // insufficient funds, abort WITHOUT moving money on either side.
         throw new NotImplementedException();
     }
 }`,
@@ -171,25 +181,97 @@ class TestRunner
         python: {
           fileName: "wallet.py",
           code: `class Wallet:
-    # ...deposit/withdraw from stage 1...
+    def __init__(self, opening_balance: float):
+        self._balance = opening_balance
+
+    @property
+    def balance(self) -> float:
+        return self._balance
+
+    # Given from stage 1:
+    def deposit(self, amount: float) -> None:
+        self._balance += amount
+
+    def withdraw(self, amount: float) -> bool:
+        if amount > self._balance:
+            return False
+        self._balance -= amount
+        return True
 
     def transfer(self, to: "Wallet", amount: float) -> None:
-        # TODO: debit self and credit "to" atomically —
-        # if anything throws partway through, neither side should have moved.
+        # TODO: debit self and credit "to" atomically. If self has insufficient
+        # funds, abort WITHOUT moving money on either side.
         raise NotImplementedError`,
         },
         kotlin: {
           fileName: "Wallet.kt",
           code: `class Wallet(openingBalance: Double) {
-    // ...deposit/withdraw from stage 1...
+    var balance: Double = openingBalance
+        private set
+
+    // Given from stage 1:
+    fun deposit(amount: Double) { balance += amount }
+    fun withdraw(amount: Double): Boolean {
+        if (amount > balance) return false
+        balance -= amount
+        return true
+    }
 
     fun transfer(to: Wallet, amount: Double) {
-        // TODO: debit this wallet and credit "to" atomically —
-        // if anything throws partway through, neither side should have moved.
+        // TODO: debit this wallet and credit "to" atomically. If this wallet has
+        // insufficient funds, abort WITHOUT moving money on either side.
         TODO()
     }
 }`,
         },
+      },
+      tests: {
+        python: `# --- tests (read-only) ---
+def _run():
+    a = Wallet(100.0)
+    b = Wallet(50.0)
+    a.transfer(b, 30.0)
+    assert a.balance == 70.0, "source should be debited by 30"
+    assert b.balance == 80.0, "destination should be credited by 30"
+    # insufficient funds: must not move money (may raise or no-op)
+    try:
+        a.transfer(b, 1000.0)
+    except Exception:
+        pass
+    assert a.balance == 70.0, "source unchanged when transfer can't complete"
+    assert b.balance == 80.0, "destination unchanged when transfer can't complete"
+    print("__BUILD_IT_PASS__")
+
+_run()`,
+        kotlin: `// --- tests (read-only) ---
+fun main() {
+    val a = Wallet(100.0)
+    val b = Wallet(50.0)
+    a.transfer(b, 30.0)
+    check(a.balance == 70.0) { "source should be debited by 30" }
+    check(b.balance == 80.0) { "destination should be credited by 30" }
+    try { a.transfer(b, 1000.0) } catch (e: Throwable) { }
+    check(a.balance == 70.0) { "source unchanged when transfer can't complete" }
+    check(b.balance == 80.0) { "destination unchanged when transfer can't complete" }
+    println("__BUILD_IT_PASS__")
+}`,
+        csharp: `// --- tests (read-only) ---
+class TestRunner
+{
+    static void Check(bool cond, string msg) { if (!cond) throw new Exception("FAILED: " + msg); }
+    static void Main()
+    {
+        var a = new Wallet(100m);
+        var b = new Wallet(50m);
+        a.Transfer(b, 30m);
+        Check(a.Balance == 70m, "source should be debited by 30");
+        Check(b.Balance == 80m, "destination should be credited by 30");
+        try { a.Transfer(b, 1000m); } catch (Exception) { }
+        Check(a.Balance == 70m, "source unchanged when transfer can't complete");
+        Check(b.Balance == 80m, "destination unchanged when transfer can't complete");
+        Console.WriteLine("__BUILD_IT_PASS__");
+    }
+}`,
       },
       rubric: [
         { id: "single-unit", description: "Debit and credit are treated as one unit of work with a clear rollback/undo path on failure.", weight: 40 },

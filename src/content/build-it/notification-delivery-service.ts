@@ -83,6 +83,64 @@ class NotificationService {
       commonPitfalls: [
         "Storing one token per user (overwriting on each registerDevice call) instead of a set — silently breaks multi-device fan-out.",
       ],
+      tests: {
+        python: `# --- tests (read-only) ---
+def _run():
+    sent = []
+    class FakeProvider:
+        def send(self, token, message):
+            sent.append((token, message))
+    svc = NotificationService()
+    svc.register_device("u1", "tokenA")
+    svc.register_device("u1", "tokenB")
+    svc.register_device("u2", "tokenC")
+    svc.notify("u1", "hello", FakeProvider())
+    tokens = sorted(t for t, _ in sent)
+    assert tokens == ["tokenA", "tokenB"], "notify fans out to all of u1's devices and no others"
+    assert all(m == "hello" for _, m in sent), "message is delivered as-is"
+    print("__BUILD_IT_PASS__")
+
+_run()`,
+        kotlin: `// --- tests (read-only) ---
+fun main() {
+    val sent = mutableListOf<Pair<String, String>>()
+    val provider = PushProvider { token, message -> sent.add(token to message) }
+    val svc = NotificationService()
+    svc.registerDevice("u1", "tokenA")
+    svc.registerDevice("u1", "tokenB")
+    svc.registerDevice("u2", "tokenC")
+    svc.notify("u1", "hello", provider)
+    val tokens = sent.map { it.first }.sorted()
+    check(tokens == listOf("tokenA", "tokenB")) { "notify fans out to all of u1's devices and no others" }
+    check(sent.all { it.second == "hello" }) { "message is delivered as-is" }
+    println("__BUILD_IT_PASS__")
+}`,
+        csharp: `// --- tests (read-only) ---
+class CapturingProvider : IPushProvider
+{
+    public List<string> Tokens = new();
+    public List<string> Messages = new();
+    public void Send(string token, string message) { Tokens.Add(token); Messages.Add(message); }
+}
+
+class TestRunner
+{
+    static void Check(bool cond, string msg) { if (!cond) throw new Exception("FAILED: " + msg); }
+    static void Main()
+    {
+        var provider = new CapturingProvider();
+        var svc = new NotificationService();
+        svc.RegisterDevice("u1", "tokenA");
+        svc.RegisterDevice("u1", "tokenB");
+        svc.RegisterDevice("u2", "tokenC");
+        svc.Notify("u1", "hello", provider);
+        provider.Tokens.Sort();
+        Check(provider.Tokens.Count == 2 && provider.Tokens[0] == "tokenA" && provider.Tokens[1] == "tokenB", "notify fans out to all of u1's devices and no others");
+        Check(provider.Messages.TrueForAll(m => m == "hello"), "message is delivered as-is");
+        Console.WriteLine("__BUILD_IT_PASS__");
+    }
+}`,
+      },
     },
     {
       stage: 2,
