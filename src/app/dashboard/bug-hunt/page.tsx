@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BUG_HUNTS_META } from "@/content/bug-hunts";
+import PreloadCodeEditor from "@/components/ui/PreloadCodeEditor";
 
 const categoryColor: Record<string, string> = {
   concurrency: "text-rose-400 border-rose-500/30 bg-rose-500/10",
@@ -27,6 +28,7 @@ export default async function BugHuntPage() {
 
   return (
     <div className="space-y-6 animate-fade-up">
+      <PreloadCodeEditor />
       <div>
         <p className="font-mono text-[13px] text-emerald-400 mb-2">Bug Hunt</p>
         <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-white">

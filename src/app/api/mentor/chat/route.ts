@@ -1,4 +1,7 @@
 export const runtime = "nodejs";
+// Groq calls (grading retries / streamed replies) can exceed the default 10s
+// function limit; raise the ceiling so slow responses finish instead of 504ing.
+export const maxDuration = 60;
 
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -31,6 +34,37 @@ export async function POST(req: Request) {
     data: { userId, role: "USER", content: message, context },
   });
 
+  // ── Fetch the three independent inputs in parallel ─────────────────────
+  // The RAG embedding round-trip is the slow one; running the context lookup
+  // and chat-history read alongside it (rather than in sequence) shortens the
+  // time before the first token streams.
+  const contextRecordP = context?.startsWith("problem:")
+    ? prisma.problem
+        .findUnique({
+          where: { id: context.split(":")[1] },
+          select: { title: true, description: true, pattern: true, difficulty: true },
+        })
+        .then((p) => (p ? { kind: "problem" as const, ...p } : null))
+    : context?.startsWith("sd:")
+      ? prisma.systemDesignQuestion
+          .findUnique({
+            where: { id: context.split(":")[1] },
+            select: { title: true, description: true, difficulty: true },
+          })
+          .then((q) => (q ? { kind: "sd" as const, ...q } : null))
+      : Promise.resolve(null);
+
+  const [ragContext, history, contextRecord] = await Promise.all([
+    retrieveContext(message).catch(() => ""),
+    prisma.chatMessage.findMany({
+      where: { userId, context },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+      select: { role: true, content: true },
+    }),
+    contextRecordP,
+  ]);
+
   // ── System prompt ──────────────────────────────────────────────────────
   let systemPrompt = `You are Codeward Mentor, an expert software engineering interview coach.
 You help engineers prepare for technical interviews at top product companies (Google, Meta, Amazon, Microsoft, Apple, and similar).
@@ -38,47 +72,23 @@ You specialize in DSA (algorithms and data structures), system design, and AI/ML
 Be concise, practical, and encouraging. Use code examples when helpful (Python preferred unless the user specifies otherwise).
 When explaining DSA problems, guide with hints before giving full solutions — ask about their approach first.`;
 
-  if (context?.startsWith("problem:")) {
-    const problemId = context.split(":")[1];
-    const problem = await prisma.problem.findUnique({
-      where: { id: problemId },
-      select: { title: true, description: true, pattern: true, difficulty: true },
-    });
-    if (problem) {
-      systemPrompt += `\n\nThe user is working on: "${problem.title}" (${problem.difficulty}, pattern: ${problem.pattern.replace(/_/g, " ").toLowerCase()}).
-Problem: ${problem.description}
+  if (contextRecord?.kind === "problem") {
+    systemPrompt += `\n\nThe user is working on: "${contextRecord.title}" (${contextRecord.difficulty}, pattern: ${contextRecord.pattern.replace(/_/g, " ").toLowerCase()}).
+Problem: ${contextRecord.description}
 Guide them with hints. Ask about their approach before revealing the solution.`;
-    }
   } else if (context === "system-design") {
     systemPrompt += `\n\nThe user is in the system design section. Help them understand system design concepts, walk through architectures, discuss trade-offs, and prepare for system design interviews.`;
   } else if (context?.startsWith("sheet:") || context === "dsa") {
     systemPrompt += `\n\nThe user is viewing their DSA sheet. You can help them plan which patterns to focus on, explain DSA concepts, or generate a custom study plan based on their goals, target company, or weak areas.`;
-  } else if (context?.startsWith("sd:")) {
-    const questionId = context.split(":")[1];
-    const question = await prisma.systemDesignQuestion.findUnique({
-      where: { id: questionId },
-      select: { title: true, description: true, difficulty: true },
-    });
-    if (question) {
-      systemPrompt += `\n\nThe user is studying this system design question: "${question.title}" (${question.difficulty}).
-Description: ${question.description}
+  } else if (contextRecord?.kind === "sd") {
+    systemPrompt += `\n\nThe user is studying this system design question: "${contextRecord.title}" (${contextRecord.difficulty}).
+Description: ${contextRecord.description}
 Help them think through the design — ask clarifying questions first, then guide through requirements, estimation, high-level design, deep dives, and trade-offs.`;
-    }
   }
 
-  // ── RAG context ────────────────────────────────────────────────────────
-  const ragContext = await retrieveContext(message).catch(() => "");
   if (ragContext) {
     systemPrompt += `\n\n--- Relevant knowledge ---\n${ragContext}\n--- End knowledge ---\nUse this to ground your answer when relevant.`;
   }
-
-  // ── Chat history ───────────────────────────────────────────────────────
-  const history = await prisma.chatMessage.findMany({
-    where: { userId, context },
-    orderBy: { createdAt: "desc" },
-    take: 12,
-    select: { role: true, content: true },
-  });
 
   const messages = [
     ...history

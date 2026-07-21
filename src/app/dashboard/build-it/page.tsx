@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BUILD_IT_META } from "@/content/build-it";
+import PreloadCodeEditor from "@/components/ui/PreloadCodeEditor";
 
 const categoryColor: Record<string, string> = {
   concurrency: "text-rose-400 border-rose-500/30 bg-rose-500/10",
@@ -29,6 +30,7 @@ export default async function BuildItPage() {
 
   return (
     <div className="space-y-6 animate-fade-up">
+      <PreloadCodeEditor />
       <div>
         <p className="font-mono text-[13px] text-emerald-400 mb-2">Build It</p>
         <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-white">

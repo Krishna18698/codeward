@@ -1,4 +1,7 @@
 export const runtime = "nodejs";
+// Groq calls (grading retries / streamed replies) can exceed the default 10s
+// function limit; raise the ceiling so slow responses finish instead of 504ing.
+export const maxDuration = 60;
 
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
