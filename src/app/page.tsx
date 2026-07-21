@@ -41,9 +41,9 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
-      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1 font-mono text-[8.5px] text-emerald-400 sm:px-4 sm:py-1.5 sm:text-[12px]">
+      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2 py-1 font-mono text-[7px] tracking-tight text-emerald-400 sm:gap-1.5 sm:px-4 sm:py-1.5 sm:text-[12px] sm:tracking-normal">
         <span className="h-1.5 w-1.5 shrink-0 animate-dot-pulse rounded-full bg-emerald-400" />
-        <span className="text-center sm:whitespace-nowrap">
+        <span className="whitespace-nowrap">
           DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Build It &middot; Deep Dives
         </span>
       </div>
