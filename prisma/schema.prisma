@@ -56,9 +56,11 @@ model BugHuntAttempt {
   userId       String
   exerciseSlug String
   diagnosis    String   @db.Text
+  fixedCode    String?  @db.Text // candidate's edited code (their attempted fix)
   score        Int
   rootCaught   Boolean
   fixReasonable Boolean
+  findings     Json?    // structured line-anchored diff-review findings
   feedback     String   @db.Text
   createdAt    DateTime @default(now())
 
