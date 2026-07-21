@@ -29,6 +29,7 @@ function toStageMeta(s: BuildItStage) {
     prompt: s.prompt,
     invariant: s.invariant,
     skeletons: s.skeletons,
+    tests: s.tests, // visible to the candidate (read-only Tests tab), like example tests
   };
 }
 

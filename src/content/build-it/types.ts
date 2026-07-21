@@ -29,6 +29,16 @@ export type BuildItStage = {
    *  Everything else on a stage is shared across all three languages. */
   skeletons: Record<BuildItLanguage, BuildItSkeleton>;
 
+  /** Optional runnable test harness per language. When present, the workspace
+   *  shows a Tests tab + "Run Tests" that executes the candidate's code
+   *  concatenated with this harness via JDoodle. The harness must print
+   *  BUILD_IT_PASS_SENTINEL on the last line iff all assertions pass. Absent =
+   *  a design-only stage (e.g. the concurrency-invariant stage, which a single
+   *  deterministic run can't verify) — that stays LLM-graded only.
+   *  Visible to the candidate (like example tests), but the authoritative copy
+   *  is loaded server-side so the executed harness can't be tampered with. */
+  tests?: Partial<Record<BuildItLanguage, string>>;
+
   // ── Ground truth — never sent to the client before grading ──
   rubric: BuildItRubricCriterion[];
   canonicalApproach: string;

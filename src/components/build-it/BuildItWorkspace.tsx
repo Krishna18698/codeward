@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { Loader2, Send, AlertTriangle, Check, X as XIcon } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Loader2, Send, AlertTriangle, Check, X as XIcon, Play, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
@@ -10,6 +11,13 @@ import type { BuildItLanguage } from "@/content/build-it/languages";
 import type { BuildItProblemMeta } from "@/content/build-it/types";
 import type { BuildItGradeResult } from "@/app/api/build-it/grade/route";
 import StageStepper from "./StageStepper";
+
+const CodeEditor = dynamic(() => import("@/components/ui/CodeEditor"), {
+  ssr: false,
+  loading: () => <div className="p-4 font-mono text-xs text-neutral-500">Loading editor…</div>,
+});
+
+type RunResult = { passed: boolean | null; output: string; creditsRemaining: number | null };
 
 type PrevAttempt = { id: string; stage: number; score: number; createdAt: string };
 
@@ -29,12 +37,41 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
   const [explanationByStage, setExplanationByStage] = useState<Record<number, string>>({});
   const [grading, setGrading] = useState(false);
   const [resultByStage, setResultByStage] = useState<Record<number, BuildItGradeResult>>({});
+  const [codeTab, setCodeTab] = useState<"code" | "tests">("code");
+  const [running, setRunning] = useState(false);
+  const [runByCombo, setRunByCombo] = useState<Record<string, RunResult | undefined>>({});
 
   const activeStage = problem.stages.find((s) => s.stage === activeStageNum)!;
   const comboKey = `${activeStageNum}:${activeLanguage}`;
   const approach = approachByCombo[comboKey] ?? activeStage.skeletons[activeLanguage].code;
   const explanation = explanationByStage[activeStageNum] ?? "";
   const result = resultByStage[activeStageNum];
+  const harness = activeStage.tests?.[activeLanguage];
+  const runResult = runByCombo[comboKey];
+
+  const runTests = async () => {
+    if (running || !harness) return;
+    setRunning(true);
+    try {
+      const res = await fetch("/api/code/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "build-it", slug, stage: activeStageNum, language: activeLanguage, code: approach }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setRunByCombo((p) => ({ ...p, [comboKey]: { passed: null, output: data.error ?? "Run failed", creditsRemaining: null } }));
+        if (data.budgetExhausted) toast("Daily run budget reached — you can still submit for grading.");
+        else toast.error(data.error ?? "Run failed");
+        return;
+      }
+      setRunByCombo((p) => ({ ...p, [comboKey]: data as RunResult }));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Run failed. Try again.");
+    } finally {
+      setRunning(false);
+    }
+  };
 
   const bestScoreForStage = (stage: number): number | null => {
     const scores = previousAttempts.filter((a) => a.stage === stage).map((a) => a.score);
@@ -125,7 +162,7 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                 {BUILD_IT_LANGUAGES.map((l) => (
                   <button
                     key={l.value}
-                    onClick={() => setActiveLanguage(l.value)}
+                    onClick={() => { setActiveLanguage(l.value); setCodeTab("code"); }}
                     className={cn(
                       "rounded px-2 py-0.5 font-mono text-[10px] transition-colors",
                       activeLanguage === l.value
@@ -139,15 +176,82 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
               </div>
             }
           >
-            <textarea
-              value={approach}
-              onChange={(e) => setApproachByCombo((prev) => ({ ...prev, [comboKey]: e.target.value }))}
-              disabled={!!result}
-              rows={16}
-              spellCheck={false}
-              className="w-full resize-y bg-transparent p-4 font-mono text-[12.5px] leading-6 text-neutral-200 outline-none disabled:opacity-70"
-            />
+            {/* Code / Tests sub-tabs + Run */}
+            <div className="flex items-center justify-between border-b border-neutral-800 bg-white/3 pl-1 pr-2">
+              <div className="flex">
+                <button
+                  onClick={() => setCodeTab("code")}
+                  className={cn(
+                    "px-3 py-2 font-mono text-xs transition-colors border-b-2",
+                    codeTab === "code" ? "text-white border-emerald-400" : "text-neutral-500 border-transparent hover:text-neutral-300",
+                  )}
+                >
+                  Code
+                </button>
+                {harness && (
+                  <button
+                    onClick={() => setCodeTab("tests")}
+                    className={cn(
+                      "px-3 py-2 font-mono text-xs transition-colors border-b-2",
+                      codeTab === "tests" ? "text-white border-emerald-400" : "text-neutral-500 border-transparent hover:text-neutral-300",
+                    )}
+                  >
+                    Tests
+                  </button>
+                )}
+              </div>
+              {harness && !result && (
+                <button
+                  onClick={runTests}
+                  disabled={running}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-neutral-700 px-2.5 py-1 font-mono text-[10px] text-neutral-300 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors disabled:opacity-50"
+                >
+                  {running ? <Loader2 size={11} className="animate-spin" /> : <Play size={11} />}
+                  {running ? "Running…" : "Run Tests"}
+                </button>
+              )}
+            </div>
+
+            {codeTab === "code" ? (
+              <CodeEditor
+                key={`${comboKey}:code`}
+                value={approach}
+                onChange={(v) => setApproachByCombo((prev) => ({ ...prev, [comboKey]: v }))}
+                language={activeLanguage}
+                readOnly={!!result}
+                minHeight="320px"
+              />
+            ) : (
+              <CodeEditor
+                key={`${comboKey}:tests`}
+                value={harness ?? ""}
+                language={activeLanguage}
+                readOnly
+                minHeight="320px"
+              />
+            )}
           </WindowFrame>
+
+          {/* Run output */}
+          {runResult && (
+            <div className={cn(
+              "rounded-2xl border bg-surface overflow-hidden",
+              runResult.passed === true ? "border-emerald-500/30" : runResult.passed === false ? "border-rose-500/30" : "border-neutral-800",
+            )}>
+              <div className="flex items-center justify-between gap-2 border-b border-neutral-800 bg-white/3 px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <Terminal size={12} className={runResult.passed === true ? "text-emerald-400" : runResult.passed === false ? "text-rose-400" : "text-neutral-400"} />
+                  <span className="font-mono text-[11px] text-neutral-400">
+                    {runResult.passed === true ? "tests passed" : runResult.passed === false ? "tests failed" : "run output"}
+                  </span>
+                </div>
+                {runResult.creditsRemaining !== null && (
+                  <span className="font-mono text-[10px] text-neutral-600">{runResult.creditsRemaining} runs left today</span>
+                )}
+              </div>
+              <pre className="max-h-56 overflow-auto p-4 font-mono text-[11.5px] leading-5 text-neutral-300 whitespace-pre-wrap">{runResult.output || "(no output)"}</pre>
+            </div>
+          )}
 
           <div className="rounded-2xl border border-neutral-800 bg-white/3 p-4">
             <p className="font-mono text-[11px] text-neutral-500 mb-2">

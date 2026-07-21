@@ -90,6 +90,54 @@ export const threadSafeWallet: BuildItProblem = {
         "Exposing balance as a public mutable field — looks fine until stage 3 makes it a liability.",
         "Allowing withdraw to leave balance negative on a race between the check and the mutation (irrelevant at stage 1, but candidates who guard against it here often carry the right instinct forward).",
       ],
+      tests: {
+        python: `# --- tests (read-only) ---
+def _run():
+    w = Wallet(100.0)
+    assert w.balance == 100.0, "opening balance should be 100"
+    w.deposit(50.0)
+    assert w.balance == 150.0, "balance after deposit(50) should be 150"
+    assert w.withdraw(30.0) is True, "withdraw(30) should return True"
+    assert w.balance == 120.0, "balance after withdraw(30) should be 120"
+    assert w.withdraw(1000.0) is False, "withdraw over balance should return False"
+    assert w.balance == 120.0, "rejected withdraw must not change balance"
+    print("__BUILD_IT_PASS__")
+
+_run()`,
+        kotlin: `// --- tests (read-only) ---
+fun main() {
+    val w = Wallet(100.0)
+    check(w.balance == 100.0) { "opening balance should be 100" }
+    w.deposit(50.0)
+    check(w.balance == 150.0) { "balance after deposit(50) should be 150" }
+    check(w.withdraw(30.0)) { "withdraw(30) should return true" }
+    check(w.balance == 120.0) { "balance after withdraw(30) should be 120" }
+    check(!w.withdraw(1000.0)) { "withdraw over balance should return false" }
+    check(w.balance == 120.0) { "rejected withdraw must not change balance" }
+    println("__BUILD_IT_PASS__")
+}`,
+        csharp: `// --- tests (read-only) ---
+class TestRunner
+{
+    static void Check(bool cond, string msg)
+    {
+        if (!cond) throw new Exception("FAILED: " + msg);
+    }
+
+    static void Main()
+    {
+        var w = new Wallet(100m);
+        Check(w.Balance == 100m, "opening balance should be 100");
+        w.Deposit(50m);
+        Check(w.Balance == 150m, "balance after Deposit(50) should be 150");
+        Check(w.Withdraw(30m) == true, "Withdraw(30) should return true");
+        Check(w.Balance == 120m, "balance after Withdraw(30) should be 120");
+        Check(w.Withdraw(1000m) == false, "Withdraw over balance should return false");
+        Check(w.Balance == 120m, "rejected withdraw must not change balance");
+        Console.WriteLine("__BUILD_IT_PASS__");
+    }
+}`,
+      },
     },
     {
       stage: 2,

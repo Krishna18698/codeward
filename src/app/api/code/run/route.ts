@@ -5,6 +5,8 @@ import { getSessionUserId } from "@/lib/auth";
 import { execLimiter } from "@/lib/ratelimit";
 import { tryConsume, refund, getRemaining } from "@/lib/execBudget";
 import { execute, isExecConfigured, type ExecLanguage } from "@/lib/jdoodle";
+import { getBuildItStageWithSolution } from "@/content/build-it";
+import { BUILD_IT_PASS_SENTINEL } from "@/content/build-it/languages";
 
 const LANGUAGES: ExecLanguage[] = ["nodejs", "python", "kotlin", "csharp", "go", "java"];
 
@@ -27,16 +29,35 @@ const PING_SNIPPETS: Record<ExecLanguage, string> = {
   java: `public class Main { public static void main(String[] a) { System.out.println("__EXEC_OK__"); } }`,
 };
 
-/** Assembles a runnable script (candidate code + ground-truth test harness) for
- *  a given mode. Wired per phase: bug-hunt (Phase 2), build-it (Phase 3). The
- *  harness is loaded server-side only so tests are never leaked or tamperable. */
-async function loadHarness(
+/** Language-specific preamble so the assembled script compiles even when the
+ *  candidate's edit omits common imports. */
+const CSHARP_PREAMBLE = "using System;\nusing System.Collections.Generic;\nusing System.Threading;\n\n";
+/** JDoodle names the Kotlin source "JDoodle.kt" and runs class "JDoodle", but a
+ *  top-level main compiles to "JDoodleKt" → ClassNotFoundException. This forces
+ *  the generated class name to match what JDoodle's runner invokes. */
+const KOTLIN_PREAMBLE = '@file:JvmName("JDoodle")\n\n';
+
+/** Assembles a runnable script (candidate code + authoritative test harness).
+ *  The harness is loaded server-side from content so the executed tests can't
+ *  be tampered with, even though the same tests are shown read-only in the UI. */
+function loadHarness(
   mode: string,
   slug: string,
+  stage: number | undefined,
   language: ExecLanguage,
   code: string,
-): Promise<{ script: string; sentinel: string } | null> {
-  void mode; void slug; void language; void code; // TODO(phase 2/3): dispatch to getBugHuntHarness / getBuildItHarness.
+): { script: string; sentinel: string } | null {
+  if (mode === "build-it") {
+    if (typeof stage !== "number") return null;
+    const gradedStage = getBuildItStageWithSolution(slug, stage);
+    // Build It only executes csharp/python/kotlin.
+    if (!gradedStage || (language !== "csharp" && language !== "python" && language !== "kotlin")) return null;
+    const harness = gradedStage.tests?.[language];
+    if (!harness) return null; // design-only stage (e.g. the concurrency invariant)
+    const body = `${code}\n\n${harness}`;
+    const preamble = language === "csharp" ? CSHARP_PREAMBLE : language === "kotlin" ? KOTLIN_PREAMBLE : "";
+    return { script: preamble + body, sentinel: BUILD_IT_PASS_SENTINEL };
+  }
   return null;
 }
 
@@ -58,10 +79,11 @@ export async function POST(req: Request) {
   const body = (await req.json()) as {
     mode?: string;
     slug?: string;
+    stage?: number;
     language?: string;
     code?: string;
   };
-  const { mode, slug, language, code } = body;
+  const { mode, slug, stage, language, code } = body;
 
   if (!language || !LANGUAGES.includes(language as ExecLanguage)) {
     return NextResponse.json({ error: "Missing or unsupported language" }, { status: 400 });
@@ -82,8 +104,8 @@ export async function POST(req: Request) {
     if (code.length > 20000) {
       return NextResponse.json({ error: "Code is too long." }, { status: 400 });
     }
-    const harness = await loadHarness(mode, slug, lang, code);
-    if (!harness) return NextResponse.json({ error: "Unknown mode or exercise" }, { status: 404 });
+    const harness = loadHarness(mode, slug, stage, lang, code);
+    if (!harness) return NextResponse.json({ error: "No runnable tests for this exercise/stage" }, { status: 404 });
     script = harness.script;
     sentinel = harness.sentinel;
   }
