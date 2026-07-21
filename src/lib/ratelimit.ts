@@ -26,3 +26,7 @@ export const chatLimiter = make(30, "1 m");
 
 // 5 sheet generations per hour per user
 export const sheetLimiter = make(5, "1 h");
+
+// 8 code executions per hour per user — a per-user cap so a single user can't
+// drain the shared daily JDoodle budget (the global cap lives in execBudget.ts).
+export const execLimiter = make(8, "1 h");
