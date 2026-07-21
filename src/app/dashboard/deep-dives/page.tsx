@@ -77,6 +77,11 @@ export default async function DeepDivesPage() {
                   {t}
                 </span>
               ))}
+              {d.level && (
+                <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] text-violet-300">
+                  {d.level}
+                </span>
+              )}
             </div>
             <p className="mt-2 text-xs text-neutral-400 leading-relaxed flex-1">{d.hook}</p>
             <div className="mt-3 flex items-center justify-between font-mono text-[11px] text-neutral-500">

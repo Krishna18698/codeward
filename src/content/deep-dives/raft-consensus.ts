@@ -4,6 +4,14 @@ export const raftConsensus = {
   hook: "A replicated system needs one agreed history despite crashes and delayed messages. Raft builds that from three ideas — terms, a leader, and a majority — and the commit rule is where the subtlety lives.",
   tags: ["Consensus", "Distributed Systems"],
   minutes: 35,
+  level: "Senior IC",
+  prerequisites: "Replication basics, quorums, and why split-brain is dangerous.",
+  afterThis: "Two-Phase Commit — contrast Raft's availability with 2PC's blocking behavior.",
+  suggestedFirstPass: "Follow the three sub-problems in order: leader election → log replication → commit safety. Raft is designed to be read that way.",
+  references: [
+    { label: "Ongaro & Ousterhout — In Search of an Understandable Consensus Algorithm", url: "https://raft.github.io/raft.pdf" },
+    { label: "The Raft site (visualization)", url: "https://raft.github.io/" },
+  ],
   body: `
 ## The problem consensus solves
 

@@ -4,6 +4,10 @@ export const urlShortenerAtScale = {
   hook: "The 'design bit.ly' question. The baseline design is table stakes — the interview actually happens in the follow-ups: ID generation, hot keys, analytics, and CAP trade-offs.",
   tags: ["System Design", "Caching"],
   minutes: 25,
+  level: "Mid → Senior",
+  prerequisites: "Basic hashing, base-62 encoding, and read/write path thinking.",
+  afterThis: "Caching at Scale — the read path here lives or dies on cache hit rate.",
+  suggestedFirstPass: "Start with the key-generation trade-offs (hash vs counter vs KGS); that's the crux of the design.",
   body: `
 ## Why interviewers still ask this
 

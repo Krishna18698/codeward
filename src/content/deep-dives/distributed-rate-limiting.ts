@@ -4,6 +4,13 @@ export const distributedRateLimiting = {
   hook: "Has this caller used up its quota? Answering accurately across many nodes, through clock skew and traffic spikes, within a 1ms budget — that's the real problem.",
   tags: ["Distributed Systems", "Infrastructure"],
   minutes: 25,
+  level: "Senior IC",
+  prerequisites: "Redis atomic operations and a feel for token-bucket vs sliding-window algorithms.",
+  afterThis: "Distributed Locking — the coordination primitive underneath many limiter designs.",
+  suggestedFirstPass: "Compare the algorithm trade-offs first, then read why a single Redis + Lua script is the pragmatic answer.",
+  references: [
+    { label: "Redis rate limiting patterns", url: "https://redis.io/docs/" },
+  ],
   body: `
 ## Why it's harder than it looks
 

@@ -4,6 +4,13 @@ export const kafkaFundamentals = {
   hook: "Almost every guarantee Kafka makes reduces to one primitive: a partition is an append-only log with a single leader. Build up from that and the failure modes explain themselves.",
   tags: ["Streaming", "Distributed Systems"],
   minutes: 30,
+  level: "Senior IC",
+  prerequisites: "Basic pub/sub and the idea of a partitioned, append-only log.",
+  afterThis: "Idempotency & Exactly-Once Effects — how consumers dedupe redelivered messages.",
+  suggestedFirstPass: "Anchor on partitions → ordering → delivery guarantees; those three ideas explain most of Kafka's behavior.",
+  references: [
+    { label: "Apache Kafka documentation", url: "https://kafka.apache.org/documentation/" },
+  ],
   body: `
 ## The one primitive
 

@@ -4,6 +4,14 @@ export const cachingAtScale = {
   hook: "A cache is a bet — keep a hot slice of data close and fast, accept some staleness. The hard part is everything that goes wrong under load.",
   tags: ["Caching", "Infrastructure"],
   minutes: 30,
+  level: "Senior IC",
+  prerequisites: "Basic Redis/Memcached usage and HTTP cache headers.",
+  afterThis: "Consistent Hashing & Sharding — how cache keys spread across nodes without mass invalidation.",
+  suggestedFirstPass: "Read the invalidation and failure-mode sections first — cache stampede and thundering herd are the usual interview targets.",
+  references: [
+    { label: "Redis documentation", url: "https://redis.io/docs/" },
+    { label: "Scaling Memcache at Facebook (NSDI 2013)" },
+  ],
   body: `
 ## The bet you're making
 

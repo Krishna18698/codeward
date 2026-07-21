@@ -4,6 +4,13 @@ export const twoPhaseCommit = {
   hook: "Atomic commit across distributed participants: the protocol, its one fatal flaw every interviewer probes, and why the industry usually reaches for a saga instead.",
   tags: ["Distributed Systems"],
   minutes: 22,
+  level: "Senior IC",
+  prerequisites: "ACID transactions and the idea of a coordinator/participant protocol.",
+  afterThis: "Saga, Outbox & CDC — the non-blocking pattern most systems reach for instead.",
+  suggestedFirstPass: "Focus on the blocking/coordinator-failure window; that single weakness is why 2PC is usually avoided.",
+  references: [
+    { label: "Jim Gray — Notes on Database Operating Systems (1978)" },
+  ],
   body: `
 ## What it's trying to do
 

@@ -4,6 +4,14 @@ export const sagaOutboxCdc = {
   hook: "One local transaction can't span a multi-service payment flow. A saga coordinates committed steps, reliable events, compensation, and forward recovery — and the outbox is what makes the events reliable.",
   tags: ["Payments", "Microservices"],
   minutes: 30,
+  level: "Senior IC",
+  prerequisites: "Database transactions, message queues, and the idempotency deep dive.",
+  afterThis: "Two-Phase Commit — the blocking alternative sagas are designed to avoid.",
+  suggestedFirstPass: "Read why dual writes fail first; the outbox pattern only makes sense once you feel that pain.",
+  references: [
+    { label: "Debezium (change data capture)", url: "https://debezium.io/" },
+    { label: "Chris Richardson — Saga pattern (microservices.io)" },
+  ],
   body: `
 ## The problem a saga solves
 

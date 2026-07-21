@@ -4,6 +4,14 @@ export const distributedLocks = {
   hook: "'Only one worker may run this at a time' sounds trivial until the worker is one of many processes on different machines. This is where fencing tokens and lease expiry earn their keep.",
   tags: ["Distributed Systems"],
   minutes: 30,
+  level: "Senior IC",
+  prerequisites: "Redis/ZooKeeper basics and a healthy fear of clock skew.",
+  afterThis: "Raft — how consensus systems provide locks with real safety guarantees.",
+  suggestedFirstPass: "Read the fencing-token section carefully; it's the difference between a lock that's safe and one that only looks safe.",
+  references: [
+    { label: "Martin Kleppmann — How to do distributed locking" },
+    { label: "Redis distributed locks (Redlock)" },
+  ],
   body: `
 ## Why you can't just use a mutex
 

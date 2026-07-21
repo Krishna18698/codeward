@@ -4,6 +4,10 @@ export const pushNotifications = {
   hook: "A notification pipeline: fan-out, queueing, provider delivery, token lifecycle, and the failure modes an interviewer probes — because 'send a push' hides a surprising amount of systems work.",
   tags: ["Infrastructure"],
   minutes: 28,
+  level: "Senior IC",
+  prerequisites: "Message queues, fan-out, and third-party gateway (APNs/FCM) basics.",
+  afterThis: "Chat Systems at Scale — the realtime path push notifications complement.",
+  suggestedFirstPass: "Focus on the bounded-concurrency and retry/invalid-token sections; that's where delivery correctness lives.",
   body: `
 ## The shape of the problem
 

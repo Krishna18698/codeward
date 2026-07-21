@@ -4,6 +4,10 @@ export const chatAtScale = {
   hook: "A chat app looks trivial until you count the hard parts: millions of live connections, presence that's always slightly wrong, per-conversation ordering across devices, and reconnect storms.",
   tags: ["Realtime", "Distributed Systems"],
   minutes: 35,
+  level: "Senior IC",
+  prerequisites: "WebSockets, pub/sub fan-out, and connection-state basics.",
+  afterThis: "Push Notifications at Scale — reaching users who are offline or backgrounded.",
+  suggestedFirstPass: "Read the fan-out and presence sections first; message ordering and delivery come easier once those are clear.",
   body: `
 ## Why it's a real systems question
 

@@ -4,7 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { getSessionUserId } from "@/lib/auth";
 import { DEEP_DIVES, getDeepDive } from "@/content/deep-dives";
 import { MarkRead } from "@/components/deep-dives/ReadBadge";
-import ArticleBody from "@/components/deep-dives/ArticleBody";
+import DeepDiveReader from "@/components/deep-dives/DeepDiveReader";
+import { splitSections } from "@/lib/deepDiveSections";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -19,6 +20,7 @@ export default async function DeepDivePage({ params }: Props) {
   const index = DEEP_DIVES.findIndex((d) => d.slug === slug);
   const prev = index > 0 ? DEEP_DIVES[index - 1] : null;
   const next = index < DEEP_DIVES.length - 1 ? DEEP_DIVES[index + 1] : null;
+  const sections = splitSections(dive.body);
 
   return (
     <div className="flex gap-10 animate-fade-up">
@@ -34,18 +36,31 @@ export default async function DeepDivePage({ params }: Props) {
         </Link>
 
         <p className="font-mono text-[13px] text-emerald-400 mb-2">
-          Deep Dive {String(index + 1).padStart(2, "0")}
+          Deep Dives <span className="text-neutral-600">/</span> {dive.title}
         </p>
         <h1 className="text-2xl md:text-3xl font-semibold tracking-heading text-white leading-tight">
           {dive.title}
         </h1>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {dive.tags.map((t) => (
+            <span key={t} className="rounded-full border border-neutral-800 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-400">{t}</span>
+          ))}
+          {dive.level && (
+            <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-violet-300">{dive.level}</span>
+          )}
+          <span className="font-mono text-[11px] text-neutral-500">~{dive.minutes} min · {sections.length} sections</span>
+        </div>
         <p className="mt-3 text-sm text-neutral-400 leading-relaxed">{dive.hook}</p>
-        <p className="mt-3 font-mono text-[11px] text-neutral-500">
-          {dive.tags.join(" · ")} · ~{dive.minutes} min read
-        </p>
 
         <div className="mt-8 border-t border-neutral-800 pt-8">
-          <ArticleBody body={dive.body} />
+          <DeepDiveReader
+            slug={slug}
+            sections={sections}
+            prerequisites={dive.prerequisites}
+            afterThis={dive.afterThis}
+            suggestedFirstPass={dive.suggestedFirstPass}
+            references={dive.references}
+          />
         </div>
 
         {/* Prev / next */}

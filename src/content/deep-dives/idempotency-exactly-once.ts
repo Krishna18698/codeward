@@ -4,6 +4,14 @@ export const idempotencyExactlyOnce = {
   hook: "Networks lose responses. Clients retry. Without protection, that retry charges the card twice. The protocol every backend engineer must know cold.",
   tags: ["Payments", "Distributed Systems"],
   minutes: 25,
+  level: "Senior IC",
+  prerequisites: "HTTP retries, database transactions, and unique constraints.",
+  afterThis: "Saga, Outbox & CDC for Payments — exactly-once effects across services.",
+  suggestedFirstPass: "Read the four planted bugs in 'The fix' section closely — those are the exact traps interviewers set.",
+  references: [
+    { label: "RFC 9110 — HTTP idempotent methods", url: "https://www.rfc-editor.org/rfc/rfc9110.html" },
+    { label: "Stripe: Idempotent requests" },
+  ],
   body: `
 ## The duplicate charge
 

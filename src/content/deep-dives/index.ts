@@ -12,6 +12,8 @@ import { chatAtScale } from "./chat-at-scale";
 import { pushNotifications } from "./push-notifications";
 import { matchingEngine } from "./matching-engine";
 
+export type DeepDiveReference = { label: string; url?: string };
+
 export type DeepDive = {
   slug: string;
   title: string;
@@ -19,6 +21,17 @@ export type DeepDive = {
   tags: string[];
   minutes: number;
   body: string;
+  // ── Optional structured metadata (rendered when present) ──
+  /** Seniority framing chip, e.g. "Senior IC". */
+  level?: string;
+  /** What to know first. */
+  prerequisites?: string;
+  /** What this unlocks next. */
+  afterThis?: string;
+  /** How to work through it. */
+  suggestedFirstPass?: string;
+  /** Canonical sources. */
+  references?: DeepDiveReference[];
 };
 
 /** Catalog order — first entry is the "Start here" feature. All published. */

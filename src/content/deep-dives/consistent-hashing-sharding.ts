@@ -4,6 +4,14 @@ export const consistentHashingSharding = {
   hook: "Naive modulo hashing reshuffles almost every key when a node joins or leaves. Consistent hashing moves only the keys that must move — here's how, and where it still hurts.",
   tags: ["Distributed Systems", "Sharding"],
   minutes: 25,
+  level: "Senior IC",
+  prerequisites: "Hashing basics and why naive modulo-N sharding breaks on resize.",
+  afterThis: "Caching at Scale — consistent hashing is what keeps a cache warm through node changes.",
+  suggestedFirstPass: "Understand the ring + virtual nodes first; the rest is consequences of those two ideas.",
+  references: [
+    { label: "Karger et al. — Consistent Hashing and Random Trees (1997)" },
+    { label: "Amazon Dynamo paper (2007)" },
+  ],
   body: `
 ## The problem with modulo
 

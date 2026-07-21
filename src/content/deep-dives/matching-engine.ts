@@ -4,6 +4,10 @@ export const matchingEngine = {
   hook: "The core of every exchange — FX, crypto, equities. Orders pour in; the engine keeps a price-time priority book and matches each against the best opposite side, deterministically, at brutal latency.",
   tags: ["Fintech", "Distributed Systems"],
   minutes: 32,
+  level: "Senior IC",
+  prerequisites: "Data-structure fluency (heaps/trees) and a feel for single-threaded determinism.",
+  afterThis: "Raft — how the matching engine's state is replicated without losing determinism.",
+  suggestedFirstPass: "Start with why the core is single-threaded and deterministic; every other decision follows from that constraint.",
   body: `
 ## What it must do
 
