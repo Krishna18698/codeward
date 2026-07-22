@@ -390,7 +390,7 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                   .map((a) => (
                     <div key={a.id} className="flex items-center justify-between text-xs">
                       <span className="text-neutral-400">
-                        {new Date(a.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                        {new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </span>
                       <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-emerald-400" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
                         {a.score}/100

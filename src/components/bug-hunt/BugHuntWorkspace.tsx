@@ -254,7 +254,7 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
             <div className="space-y-2">
               {previousAttempts.map((a) => (
                 <div key={a.id} className="flex items-center justify-between text-xs">
-                  <span className="text-neutral-400">{new Date(a.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+                  <span className="text-neutral-400">{new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                   <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-emerald-400" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>{a.score}/100</span>
                 </div>
               ))}
