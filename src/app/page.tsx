@@ -228,6 +228,8 @@ function PracticeModes() {
           Seven ways to actually get ready
         </h2>
 
+        <div className="section-divider mb-20" />
+
         <div className="space-y-20">
           {modes.map((m, i) => (
             <div key={m.n}>
@@ -382,6 +384,9 @@ export default function Home() {
           style={{ background: "radial-gradient(650px circle at 50% 0%, rgba(52,211,153,0.18), transparent 70%)" }}
         />
         <Hero />
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="section-divider" />
+        </div>
         <LogoStrip />
       </div>
 
