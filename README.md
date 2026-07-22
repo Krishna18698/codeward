@@ -1,6 +1,6 @@
 # Codeward — AI-Powered Interview Prep Platform
 
-A full-stack interview prep platform: curated DSA sheets with pattern tracking, system design practice, and a RAG-powered AI mentor that adapts to your experience level and target company.
+A full-stack interview prep platform: curated DSA sheets with pattern tracking, system design practice, code review and debugging exercises, staged low-level-design builds with real code execution, long-form distributed-systems deep dives, and a RAG-powered AI mentor that adapts to your experience level and target company.
 
 ---
 
@@ -30,13 +30,36 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - **Curated questions** organized by difficulty (Easy / Medium / Hard) and experience level (Junior / Mid / Senior), with "must do" flags and one-line summaries
 - **Challenge Spinner**: generates a randomized design prompt — *problem × scale × traffic spike × special constraint* — with a copyable prompt to practice against
 
+### Code Review
+- **15 hand-authored PRs** with planted bugs across payments, auth, caching, and infra — each at a graded severity
+- Syntax-highlighted code; click any line to leave an inline review comment, plus optional overall notes
+- The AI grades your review against the ground-truth bug list (severity-weighted score) and shows, per bug, whether you caught it — with the evidence phrase it matched from your comments
+
+### Bug Hunt
+- **9 broken codebases** with failing tests and real log excerpts — races, N+1s, resource leaks, deadlocks, timezone bugs
+- **Editable code**: fix the bug directly in a syntax-highlighted editor (CodeMirror), then write your root-cause diagnosis
+- The AI grades it as a **structured, line-anchored diff review** — findings tagged root-cause / side-effect and fixed / partial / missed / introduced, with counts and senior-reviewer feedback — then reveals the canonical fix and the tempting wrong turns it ruled out
+
+### Build It (low-level design)
+- **5 staged LLD problems**: thread-safe wallet, inventory reservation service, durable background job queue, idempotent payment processor, notification delivery service
+- Each evolves across **4 stages**, every stage adding one constraint that breaks the previous design; stage 3 is the "make-or-break" — proving a correctness invariant holds under concurrency
+- Three languages per problem: **C#, Python, Kotlin**
+- **Real code execution**: a Code / Tests split with a "Run Tests" button that runs your code against per-language test harnesses via the JDoodle Compiler API — guarded by a shared daily budget (server-side counter) and a per-user rate limit, with graceful fallback to LLM-only grading when the budget is spent
+- The AI grades the *mechanism* and the invariant argument against a weighted rubric; stages unlock sequentially on submission
+- All content is free (nothing locked)
+
+### Deep Dives
+- **13 long-form articles** on distributed systems (idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas & outbox/CDC, two-phase commit, distributed locks, and more)
+- **Sectioned reader**: each article is split into numbered, collapsible sections with a per-section "mark complete" toggle and a progress bar (persisted in localStorage)
+- Prerequisites / after-this / suggested-first-pass and canonical references header, experience-level chips, and prev/next navigation with a topic rail
+
 ### Auth & Onboarding
 - Google OAuth (one-click) and email/password (bcrypt, 12 rounds)
 - Onboarding flow capturing experience level and target company
 - Profile page laid out as a sticky identity/stats card (avatar, experience level, target company, attempt/sheet counts) alongside an editable profile form with a selectable avatar
 
 ### Landing Page
-- Hero, an animated logo marquee ("problems asked in real interviews at…") with real company logos, and a section for each of the six practice modes — DSA Sheets, AI Mentor, System Design, Code Review, Bug Hunt, and Deep Dives — each with its own product mockup
+- Hero, an animated logo marquee ("problems asked in real interviews at…") with real company logos, and a section for each of the seven practice modes — DSA Sheets, AI Mentor, System Design, Code Review, Bug Hunt, Build It, and Deep Dives — each with its own product mockup
 - Mockups share the same mac-style windowed chrome as the real in-app Code Review and Bug Hunt workspaces, so the marketing screenshots match the actual product
 - Multi-column footer with brand/tagline, a Practice links column, and an Account links column
 
@@ -62,6 +85,8 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 | ORM | Prisma 7 |
 | Vector search | pgvector + Voyage AI embeddings |
 | LLM | Groq (`llama-3.3-70b-versatile`) |
+| Code execution | JDoodle Compiler API (C#, Python, Kotlin, Node) |
+| Code editor | CodeMirror 6 (lazy-loaded) |
 | Rate limiting | Upstash Redis |
 | Analytics | Vercel Analytics |
 | Hosting | Vercel (functions pinned to `sin1` to co-locate with the database) |
@@ -77,6 +102,7 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - A [Groq](https://console.groq.com) API key (free tier available)
 - A [Voyage AI](https://dash.voyageai.com) API key (for RAG embeddings)
 - Optional: [Upstash Redis](https://console.upstash.com) — rate limiting is silently skipped if not set
+- Optional: [JDoodle](https://www.jdoodle.com) Compiler API credentials — Build It's "Run Tests" is hidden if not set (grading stays LLM-only)
 
 ---
 
@@ -107,7 +133,8 @@ Then fill in `.env.local`:
 | `GROQ_API_KEY` | ✅ | LLM for mentor chat, evals, sheet generation |
 | `VOYAGE_API_KEY` | ✅ | Embeddings for RAG semantic search |
 | `INGEST_SECRET` | ✅ | Protects `/api/mentor/ingest` — any strong random string |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Optional | Rate limiting (skipped in dev if unset) |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Optional | Rate limiting + the shared Build It code-execution budget (skipped in dev if unset) |
+| `JDOODLE_CLIENT_ID` / `JDOODLE_CLIENT_SECRET` | Optional | Build It "Run Tests" code execution — the button is hidden and grading stays LLM-only if unset |
 
 ### 3. Enable pgvector on Neon
 
@@ -171,6 +198,10 @@ src/
 │   │   │   └── revise/          # "To revise" toggle
 │   │   ├── mentor/              # RAG chat, conversations, eval,
 │   │   │                        #   generate-sheet, add-to-sheet, ingest
+│   │   ├── review/grade/        # Code Review grading (severity-weighted)
+│   │   ├── bug-hunt/grade/      # Bug Hunt grading (line-anchored diff review)
+│   │   ├── build-it/grade/      # Build It design/invariant grading
+│   │   ├── code/run/            # JDoodle code execution ("Run Tests")
 │   │   ├── notes/               # Per-problem notes
 │   │   └── user/profile/        # Profile + onboarding
 │   └── dashboard/
@@ -178,16 +209,28 @@ src/
 │       ├── dsa/                 # DSA sheets + Problem Bank
 │       ├── mentor/              # Full-page AI mentor
 │       ├── system-design/       # System design questions + [id] detail
+│       ├── code-review/         # Code Review workspace + [slug]
+│       ├── bug-hunt/            # Bug Hunt workspace + [slug]
+│       ├── build-it/            # Build It workspace + [slug]
+│       ├── deep-dives/          # Deep Dive reader + [slug]
 │       └── profile/             # Profile page
+├── content/                     # Content-as-code (meta/ground-truth split)
+│   ├── code-reviews/            # 15 planted-bug PRs
+│   ├── bug-hunts/               # 9 debugging exercises
+│   ├── build-it/                # 5 staged LLD problems + test harnesses
+│   └── deep-dives/              # 13 long-form articles
 ├── components/
 │   ├── dashboard/               # Sheet UI, mentor chat, modals, sidebar
 │   ├── system-design/           # Challenge Spinner, etc.
-│   └── ui/                      # Shared icons/primitives
+│   ├── code-review/ bug-hunt/ build-it/ deep-dives/  # Mode workspaces
+│   └── ui/                      # Shared primitives (CodeEditor, Ring, …)
 ├── lib/
 │   ├── auth.ts                  # NextAuth config + getSessionUserId()
 │   ├── prisma.ts                # Prisma client
 │   ├── rag.ts                   # Retrieval + embeddings
 │   ├── ratelimit.ts             # Upstash limiters
+│   ├── jdoodle.ts               # JDoodle code-execution client
+│   ├── execBudget.ts            # Shared daily code-execution budget guard
 │   ├── knowledge/               # RAG knowledge base source
 │   └── ...
 ├── types/
@@ -207,8 +250,11 @@ prisma/
 - `/api/mentor/ingest` is **fail-secure** — returns 503 if `INGEST_SECRET` is unset, 401 on mismatch
 - Google OAuth tokens are never persisted — the app only uses Google to authenticate, so `access_token`/`refresh_token`/`id_token` are stripped before the `Account` row is written
 - AI-generated markdown is sanitized with `rehype-sanitize` (XSS protection)
-- Rate limiting (Upstash) on mentor chat, eval, sheet generation, add-to-sheet, and sign-up
+- **Ground truth never reaches the client**: Code Review bug lists, Bug Hunt root causes/fixes, and Build It rubrics/canonical answers live in a server-only half of a meta/solution content split — only the grading routes import the solution accessor (verified against the client bundle)
+- **Code execution is sandboxed and budgeted**: candidate code runs in JDoodle's network-disabled sandbox (never on our infra); `/api/code/run` is authenticated, per-user rate-limited, and gated by a shared server-side daily budget so it can't be drained or abused
+- Rate limiting (Upstash) on mentor chat, eval, sheet generation, add-to-sheet, code execution, and sign-up
 - Security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, etc.) set in `next.config.ts`
+- Groq-calling routes set `maxDuration` so slow grading/streaming finishes instead of hitting the default function timeout
 - Passwords hashed with bcrypt (12 rounds); sheet queries scoped to preset or owning user
 
 ---
