@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
 import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMockup, BuildItMockup, SystemDesignMockup } from "@/components/landing/Mockups";
 import RotatingWord from "@/components/landing/RotatingWord";
+import SiteNav from "@/components/landing/SiteNav";
+import SiteFooter from "@/components/landing/SiteFooter";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
@@ -9,31 +10,6 @@ function SectionMarker({ n, label, center }: { n: string; label: string; center?
     <p className={`font-mono text-[13px] uppercase tracking-wide text-emerald-400 mb-4 ${center ? "text-center" : ""}`}>
       {n} — {label}
     </p>
-  );
-}
-
-/* ─── Navbar ──────────────────────────────────────────────────────────── */
-function Navbar() {
-  return (
-    <nav className="fixed top-0 inset-x-0 z-50 border-b border-neutral-800 bg-black/85 backdrop-blur-[20px]">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <span className="flex items-center gap-1.5 text-lg font-bold tracking-tight text-white">
-          <Sparkles size={16} className="text-emerald-400" />
-          Code<span className="text-emerald-400">ward</span>
-        </span>
-        <div className="flex items-center gap-3">
-          <Link href="/login" className="text-sm text-neutral-400 hover:text-white transition-colors px-3 py-1.5">
-            Log in
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-medium px-4 py-2 transition-colors"
-          >
-            Get started
-          </Link>
-        </div>
-      </div>
-    </nav>
   );
 }
 
@@ -308,72 +284,13 @@ function FAQ() {
   );
 }
 
-/* ─── Footer ────────────────────────────────────────────────────────────── */
-const footerCols = [
-  {
-    heading: "Practice",
-    links: [
-      { label: "DSA Sheets", href: "/dashboard/dsa" },
-      { label: "System Design", href: "/dashboard/system-design" },
-      { label: "Code Review", href: "/dashboard/code-review" },
-      { label: "Bug Hunt", href: "/dashboard/bug-hunt" },
-      { label: "Build It", href: "/dashboard/build-it" },
-      { label: "Deep Dives", href: "/dashboard/deep-dives" },
-      { label: "AI Mentor", href: "/dashboard/mentor" },
-    ],
-  },
-  {
-    heading: "Account",
-    links: [
-      { label: "Log in", href: "/login" },
-      { label: "Sign up", href: "/register" },
-      { label: "Dashboard", href: "/dashboard" },
-    ],
-  },
-];
-
-function Footer() {
-  return (
-    <footer className="border-t border-neutral-800 py-14 px-6">
-      <div className="mx-auto max-w-6xl grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
-        {/* Brand */}
-        <div>
-          <span className="flex items-center gap-1.5 text-sm font-bold text-white">
-            <Sparkles size={14} className="text-emerald-400" />
-            Code<span className="text-emerald-400">ward</span>
-          </span>
-          <p className="mt-3 text-sm text-neutral-500 max-w-xs leading-relaxed">
-            Production-shaped interview prep — DSA, system design, code review, debugging, and a mentor that knows where you stand.
-          </p>
-          <p className="mt-4 font-mono text-xs text-neutral-600">© 2026 Codeward · Built to get you hired</p>
-        </div>
-
-        {/* Link columns */}
-        {footerCols.map((col) => (
-          <div key={col.heading}>
-            <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500 mb-3">{col.heading}</p>
-            <ul className="space-y-2">
-              {col.links.map((l) => (
-                <li key={l.label}>
-                  <Link href={l.href} className="text-sm text-neutral-400 hover:text-white transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </footer>
-  );
-}
 
 /* ─── Page ──────────────────────────────────────────────────────────────── */
 
 export default function Home() {
   return (
     <div className="min-h-dvh bg-canvas text-neutral-100">
-      <Navbar />
+      <SiteNav />
 
       {/* Ambient emerald glow behind the hero + logo strip — on by default
           (matches the reference), brightens further on hover. */}
@@ -392,7 +309,7 @@ export default function Home() {
 
       <PracticeModes />
       <FAQ />
-      <Footer />
+      <SiteFooter />
     </div>
   );
 }
