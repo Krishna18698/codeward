@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState, useSyncExternalStore } from "react";
 
-// Matches the hero pill's mode list, in the same order.
-const WORDS = ["DSA", "system design", "code review", "bug hunt", "build it", "deep dives"];
+// Topic form of each mode (reads cleanly after "Master …"), in pill order.
+const WORDS = ["DSA", "system design", "code review", "debugging", "low-level design", "distributed systems"];
 const TYPE_MS = 90;    // per character, typing in
 const DELETE_MS = 50;  // per character, deleting out (backspace reads faster than typing)
 const HOLD_MS = 1600;  // pause on the fully-typed word

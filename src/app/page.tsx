@@ -17,7 +17,7 @@ function SectionMarker({ n, label, center }: { n: string; label: string; center?
 function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
-      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-3 py-1.5 font-mono text-[8.5px] tracking-tight text-emerald-400 sm:px-4 sm:text-[12px] sm:tracking-normal">
+      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1.5 font-mono text-[8px] tracking-tight text-emerald-400 sm:gap-1.5 sm:px-4 sm:text-[12px] sm:tracking-normal">
         <span className="h-1.5 w-1.5 shrink-0 animate-dot-pulse rounded-full bg-emerald-400" />
         <span className="whitespace-nowrap">
           DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Build It &middot; Deep Dives
@@ -25,10 +25,10 @@ function Hero() {
       </div>
 
       <h1
-        className="animate-fade-up max-w-3xl text-5xl font-semibold tracking-heading leading-tight text-white sm:text-6xl"
+        className="animate-fade-up max-w-3xl text-3xl font-semibold tracking-heading leading-tight text-white sm:text-5xl md:text-6xl"
         style={{ animationDelay: "80ms" }}
       >
-        Get interview-ready at
+        Master
         <br />
         <span className="text-emerald-400"><RotatingWord /></span>
       </h1>
