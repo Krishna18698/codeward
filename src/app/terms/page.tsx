@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 export default function TermsPage() {
   return (
     <MarketingPage
-      eyebrow="Terms · Last updated July 2026"
+      eyebrow="Legal"
+      lastUpdated="July 2026"
       title="Terms of Service"
       intro="The short version: Codeward is a free service provided as-is, to help you practice. Use it fairly, don't abuse the infrastructure, and understand there are no guarantees."
     >
