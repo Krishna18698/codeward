@@ -1,9 +1,10 @@
 import { Sparkles } from "lucide-react";
 import { Ring } from "@/components/ui/Ring";
+import { highlightTs } from "@/lib/highlightTs";
 
 // A large, on-brand product mockup of Codeward's Code Review workspace — the
-// "here's what we do" showcase under the hero. Floats gently up and down.
-// Content is illustrative (marketing), styled to match the real app chrome.
+// "here's what we do" showcase under the hero. Floats gently and sits on an
+// emerald backlight. Content is illustrative (marketing).
 
 const modes: { label: string; count?: string; active?: boolean }[] = [
   { label: "DSA Sheets", count: "300+" },
@@ -33,15 +34,17 @@ const issues: { sev: string; state: "missed" | "caught"; text: string }[] = [
 
 export default function HeroShowcase() {
   return (
-    <section className="px-6 pb-6">
-      <div className="relative mx-auto max-w-6xl motion-safe:animate-float">
-        {/* Emerald backlight glow behind the card. */}
+    <section className="px-6 pb-10">
+      <div className="relative isolate mx-auto max-w-6xl animate-float">
+        {/* Emerald backlight — isolate on the wrapper keeps this -z-10 layer in
+            front of the page background so the glow actually shows. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -inset-6 -z-10 rounded-[36px] opacity-70 blur-3xl"
-          style={{ background: "radial-gradient(58% 62% at 50% 22%, rgba(52,211,153,0.28), transparent 72%)" }}
+          className="pointer-events-none absolute -inset-10 -z-10 blur-2xl"
+          style={{ background: "radial-gradient(55% 55% at 50% 8%, rgba(52,211,153,0.38), transparent 70%)" }}
         />
-        <div className="relative overflow-hidden rounded-2xl border border-emerald-500/15 bg-surface shadow-[0_40px_120px_-40px_rgba(0,0,0,0.85)]">
+
+        <div className="overflow-hidden rounded-2xl border border-emerald-500/20 bg-surface shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]">
           {/* Title bar */}
           <div className="flex items-center gap-2.5 border-b border-neutral-800 bg-linear-to-b from-white/5 to-transparent px-3.5 py-2.5">
             <span className="flex shrink-0 gap-2" aria-hidden>
@@ -67,43 +70,55 @@ export default function HeroShowcase() {
                   <div
                     key={m.label}
                     className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs ${
-                      m.active ? "bg-white/6 text-white" : "text-neutral-500"
+                      m.active ? "bg-emerald-500/10 text-white" : "text-neutral-500"
                     }`}
                   >
                     <span>{m.label}</span>
-                    {m.count && <span className="font-mono text-[10px] text-neutral-600">{m.count}</span>}
+                    {m.count && (
+                      <span className={`font-mono text-[10px] ${m.active ? "text-emerald-400" : "text-neutral-600"}`}>{m.count}</span>
+                    )}
                   </div>
                 ))}
               </nav>
-              <div className="mt-auto pt-6">
+              <div className="mt-8">
                 <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-600 mb-1.5">Your progress</p>
                 <div className="h-1 overflow-hidden rounded-full bg-neutral-800">
                   <div className="h-full w-[45%] rounded-full bg-emerald-500" />
                 </div>
                 <p className="mt-1.5 font-mono text-[10px] text-neutral-600">19 of 42 done</p>
               </div>
+              <div className="mt-auto flex items-center gap-2 pt-6">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-800 font-mono text-[10px] text-neutral-400">A</span>
+                <span className="font-mono text-[10px] text-neutral-600">you@codeward.app</span>
+              </div>
             </aside>
 
             {/* ── Code pane ── */}
             <div className="min-w-0 flex-1 border-r border-neutral-800">
-              <div className="flex items-center gap-3 border-b border-neutral-800 px-4 py-2">
-                <span className="font-mono text-[11px] text-white border-b-2 border-emerald-400 pb-1.5 -mb-2">idempotency.ts</span>
+              <div className="flex items-center gap-3 border-b border-neutral-800 px-4 py-2.5">
+                <span className="font-mono text-[11px] font-medium text-white">
+                  idempotency.ts
+                  <span className="mt-1.5 block h-0.5 rounded-full bg-emerald-400" />
+                </span>
                 <span className="font-mono text-[11px] text-neutral-600">idempotency.test.ts</span>
                 <span className="ml-auto flex gap-1.5">
                   <span className="rounded bg-rose-500/15 px-1.5 py-0.5 font-mono text-[9px] text-rose-400">2 missed</span>
                   <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 font-mono text-[9px] text-emerald-400">3 caught</span>
                 </span>
               </div>
-              <div className="p-3 font-mono text-[11.5px] leading-6">
+              <div className="py-3 font-mono text-[11.5px] leading-6">
                 {codeLines.map((l) => (
                   <div
                     key={l.n}
-                    className={`grid grid-cols-[2.5ch_1fr] gap-3 px-2 ${
-                      l.bug ? "border-l-2 border-rose-500/60 bg-rose-500/5" : "border-l-2 border-transparent"
+                    className={`grid grid-cols-[3ch_1fr] gap-3 pr-3 ${
+                      l.bug ? "border-l-2 border-rose-500 bg-rose-500/10" : "border-l-2 border-transparent"
                     }`}
                   >
                     <span className="select-none text-right text-neutral-600">{l.n}</span>
-                    <code className={`whitespace-pre ${l.bug ? "text-neutral-200" : "text-neutral-400"}`}>{l.t}</code>
+                    <code
+                      className={`whitespace-pre ${l.bug ? "" : "opacity-55"}`}
+                      dangerouslySetInnerHTML={{ __html: highlightTs(l.t) || " " }}
+                    />
                   </div>
                 ))}
               </div>
