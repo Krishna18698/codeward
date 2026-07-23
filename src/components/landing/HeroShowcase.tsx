@@ -36,15 +36,12 @@ export default function HeroShowcase() {
   return (
     <section className="px-6 pb-10">
       <div className="relative isolate mx-auto max-w-6xl animate-float">
-        {/* Emerald backlight — isolate on the wrapper keeps this -z-10 layer in
-            front of the page background so the glow actually shows. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -inset-10 -z-10 blur-2xl"
-          style={{ background: "radial-gradient(55% 55% at 50% 8%, rgba(52,211,153,0.38), transparent 70%)" }}
-        />
+        {/* Emerald backlight around the ENTIRE card — a blurred emerald shape
+            slightly larger than the card, so the glow bleeds out on all sides.
+            isolate on the wrapper keeps this -z-10 layer in front of the page. */}
+        <div aria-hidden className="pointer-events-none absolute -inset-6 -z-10 rounded-[36px] bg-emerald-500/25 blur-3xl" />
 
-        <div className="overflow-hidden rounded-2xl border border-emerald-500/20 bg-surface shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]">
+        <div className="overflow-hidden rounded-2xl border border-emerald-500/20 bg-black shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]">
           {/* Title bar */}
           <div className="flex items-center gap-2.5 border-b border-neutral-800 bg-linear-to-b from-white/5 to-transparent px-3.5 py-2.5">
             <span className="flex shrink-0 gap-2" aria-hidden>
@@ -69,13 +66,17 @@ export default function HeroShowcase() {
                 {modes.map((m) => (
                   <div
                     key={m.label}
-                    className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs ${
-                      m.active ? "bg-emerald-500/10 text-white" : "text-neutral-500"
+                    className={`flex items-center justify-between rounded-lg px-2.5 py-2 text-xs ${
+                      m.active ? "bg-white/[0.07] text-white ring-1 ring-white/10" : "text-neutral-500"
                     }`}
                   >
                     <span>{m.label}</span>
                     {m.count && (
-                      <span className={`font-mono text-[10px] ${m.active ? "text-emerald-400" : "text-neutral-600"}`}>{m.count}</span>
+                      <span className={`rounded px-1.5 py-0.5 font-mono text-[9px] ${
+                        m.active ? "bg-emerald-500/15 text-emerald-400" : "bg-white/5 text-neutral-500"
+                      }`}>
+                        {m.count}
+                      </span>
                     )}
                   </div>
                 ))}
