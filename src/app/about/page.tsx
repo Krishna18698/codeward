@@ -33,29 +33,34 @@ export default function AboutPage() {
     <div className="min-h-dvh bg-canvas text-neutral-100">
       <SiteNav />
 
-      <main className="mx-auto max-w-3xl px-6 pt-40 pb-24">
+      <main className="mx-auto max-w-3xl px-6 pt-36 pb-24 text-center">
         {/* Hero */}
-        <p className="mb-6 font-mono text-[13px] uppercase tracking-wide text-emerald-400">About</p>
-        <h1 className="text-5xl font-semibold tracking-heading leading-[1.05] text-white md:text-6xl">Codeward</h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-neutral-400">
-          Interview prep that looks like the actual job — code review, debugging, low-level design, and the
-          judgment rounds pattern-grinding skips.
-        </p>
-        <Link
-          href="/register"
-          className="mt-6 inline-block text-sm font-medium text-emerald-400 transition-colors hover:text-emerald-300"
-        >
-          Start for free →
-        </Link>
+        <div className="flex flex-col items-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-3 py-1 font-mono text-[11px] uppercase tracking-wide text-emerald-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-dot-pulse" />
+            About
+          </span>
+          <h1 className="mt-8 text-5xl font-semibold tracking-heading leading-[1.05] text-white md:text-6xl">Codeward</h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-neutral-400">
+            Interview prep that looks like the actual job — code review, debugging, low-level design, and the
+            judgment rounds pattern-grinding skips.
+          </p>
+          <Link
+            href="/register"
+            className="mt-8 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-neutral-200"
+          >
+            Start for free →
+          </Link>
+        </div>
 
         {/* Numbered sections */}
-        <div className="mt-28 space-y-24">
+        <div className="mt-32 space-y-24">
           <section>
             <SectionEyebrow n="01" label="Why it exists" />
             <h2 className="text-3xl font-semibold tracking-heading leading-tight text-white md:text-4xl">
               Practice what the job actually tests.
             </h2>
-            <div className="mt-6 space-y-4 text-[15px] leading-7 text-neutral-400">
+            <div className="mx-auto mt-6 max-w-xl space-y-4 text-[15px] leading-7 text-neutral-400">
               <p>
                 Grinding isolated algorithm problems teaches you to pass a specific kind of screen and little else.
                 Real interviews — and the job that follows — ask you to reason about concurrency, catch a subtle bug
@@ -73,11 +78,11 @@ export default function AboutPage() {
             <h2 className="text-3xl font-semibold tracking-heading leading-tight text-white md:text-4xl">
               Seven modes, one focused platform.
             </h2>
-            <div className="mt-8 divide-y divide-neutral-800 border-y border-neutral-800">
+            <div className="mx-auto mt-8 max-w-xl space-y-4">
               {modeList.map(([name, desc]) => (
-                <div key={name} className="grid grid-cols-[9rem_1fr] gap-4 py-4 max-sm:grid-cols-1 max-sm:gap-1">
-                  <span className="text-sm font-medium text-white">{name}</span>
-                  <span className="text-[15px] leading-7 text-neutral-500">{desc}</span>
+                <div key={name}>
+                  <p className="text-sm font-semibold text-white">{name}</p>
+                  <p className="mt-0.5 text-[15px] leading-7 text-neutral-500">{desc}</p>
                 </div>
               ))}
             </div>
@@ -88,7 +93,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-semibold tracking-heading leading-tight text-white md:text-4xl">
               Free, production-shaped, honestly graded.
             </h2>
-            <div className="mt-6 space-y-4 text-[15px] leading-7 text-neutral-400">
+            <div className="mx-auto mt-6 max-w-xl space-y-4 text-[15px] leading-7 text-neutral-400">
               <p>
                 <strong className="font-semibold text-white">Everything is free.</strong> No locked modes, no trial
                 timer, no credit card. It&rsquo;s a solo-built project, not a startup with a pricing page waiting to happen.
@@ -110,14 +115,14 @@ export default function AboutPage() {
             <h2 className="text-3xl font-semibold tracking-heading leading-tight text-white md:text-4xl">
               For engineers who learn by doing.
             </h2>
-            <div className="mt-6 space-y-4 text-[15px] leading-7 text-neutral-400">
+            <div className="mx-auto mt-6 max-w-xl space-y-4 text-[15px] leading-7 text-neutral-400">
               <p>
                 Engineers preparing for backend, full-stack, and platform roles at product companies — from your first
                 senior loop to leveling up. If you learn best by doing the real thing and getting told where your
                 reasoning breaks, this is built for you.
               </p>
             </div>
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-neutral-800 pt-6 text-sm">
+            <div className="mx-auto mt-10 flex max-w-xl flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-neutral-800 pt-6 text-sm">
               <Link href="/register" className="font-medium text-emerald-400 transition-colors hover:text-emerald-300">
                 Start for free →
               </Link>
