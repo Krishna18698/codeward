@@ -1,12 +1,29 @@
 "use client";
 import { useRef } from "react";
 
-/** Wraps the hero area and renders an emerald radial glow that follows the
- *  cursor. Rests at top-center (matching the old static glow) until the pointer
- *  moves over it, then tracks the mouse and brightens. Touch devices just see
- *  the resting glow — no regression. Updates are rAF-throttled and only mutate a
- *  CSS variable (compositor-only), so it stays smooth. */
-export default function HeroGlow({ children }: { children: React.ReactNode }) {
+/** Wraps content and renders emerald glow:
+ *  - optional permanent glow anchored to the top (`topGlow`), always on;
+ *  - a smaller radial glow that follows the cursor, resting at `baseOpacity`
+ *    and brightening to full while the pointer moves over the area.
+ *  Touch devices just see the resting/top glow. Updates are rAF-throttled and
+ *  only mutate a CSS variable (compositor-only), so it stays smooth. */
+export default function HeroGlow({
+  children,
+  radius = 240,
+  restX = "50%",
+  restY = "40%",
+  baseOpacity = 0,
+  topGlow = false,
+  className = "",
+}: {
+  children: React.ReactNode;
+  radius?: number;
+  restX?: string;
+  restY?: string;
+  baseOpacity?: number;
+  topGlow?: boolean;
+  className?: string;
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
@@ -28,18 +45,27 @@ export default function HeroGlow({ children }: { children: React.ReactNode }) {
   };
 
   const onLeave = () => {
-    if (glowRef.current) glowRef.current.style.opacity = ""; // revert to the class default (0.6)
+    if (glowRef.current) glowRef.current.style.opacity = String(baseOpacity);
   };
 
   return (
-    <div ref={wrapRef} onMouseMove={onMove} onMouseLeave={onLeave} className="relative isolate">
+    <div ref={wrapRef} onMouseMove={onMove} onMouseLeave={onLeave} className={`relative isolate ${className}`}>
+      {/* Permanent top glow — always on. */}
+      {topGlow && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-60 blur-3xl"
+          style={{ background: "radial-gradient(650px circle at 50% 0%, rgba(52,211,153,0.16), transparent 70%)" }}
+        />
+      )}
+      {/* Cursor-following glow. */}
       <div
         ref={glowRef}
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 opacity-60 blur-2xl transition-opacity duration-500 motion-reduce:transition-none"
+        className="pointer-events-none absolute inset-0 -z-10 blur-2xl transition-opacity duration-500 motion-reduce:transition-none"
         style={{
-          background:
-            "radial-gradient(600px circle at var(--gx, 50%) var(--gy, 14%), rgba(52,211,153,0.20), transparent 70%)",
+          opacity: baseOpacity,
+          background: `radial-gradient(${radius}px circle at var(--gx, ${restX}) var(--gy, ${restY}), rgba(52,211,153,0.22), transparent 70%)`,
         }}
       />
       {children}

@@ -4,6 +4,7 @@ import RotatingWord from "@/components/landing/RotatingWord";
 import SiteNav from "@/components/landing/SiteNav";
 import SiteFooter from "@/components/landing/SiteFooter";
 import HeroGlow from "@/components/landing/HeroGlow";
+import HeroShowcase from "@/components/landing/HeroShowcase";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
@@ -293,15 +294,18 @@ export default function Home() {
     <div className="min-h-dvh bg-canvas text-neutral-100">
       <SiteNav />
 
-      {/* Emerald glow behind the hero + logo strip that follows the cursor
-          while hovering, resting at top-center otherwise. */}
-      <HeroGlow>
+      {/* Permanent top glow + a smaller cursor-following glow — scoped to the
+          hero only, so it ends at the divider above the logo strip. */}
+      <HeroGlow topGlow>
         <Hero />
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="section-divider" />
-        </div>
-        <LogoStrip />
       </HeroGlow>
+
+      <HeroShowcase />
+
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="section-divider" />
+      </div>
+      <LogoStrip />
 
       <PracticeModes />
       <FAQ />
