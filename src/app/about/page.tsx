@@ -30,10 +30,23 @@ const modeList = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-dvh bg-canvas text-neutral-100">
+    <div className="relative min-h-dvh bg-canvas text-neutral-100">
       <SiteNav />
 
-      <main className="mx-auto max-w-3xl px-6 pt-36 pb-24 text-center">
+      {/* Dotted matrix behind the hero — full-width, radial-masked so it fades
+          out around the hero content. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[680px]"
+        style={{
+          backgroundImage: "radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          maskImage: "radial-gradient(ellipse 65% 55% at 50% 32%, #000 20%, transparent 72%)",
+          WebkitMaskImage: "radial-gradient(ellipse 65% 55% at 50% 32%, #000 20%, transparent 72%)",
+        }}
+      />
+
+      <main className="relative z-10 mx-auto max-w-3xl px-6 pt-36 pb-24 text-center">
         {/* Hero */}
         <div className="flex flex-col items-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-3 py-1 font-mono text-[11px] uppercase tracking-wide text-emerald-400">
