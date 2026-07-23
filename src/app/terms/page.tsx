@@ -10,7 +10,7 @@ export default function TermsPage() {
   return (
     <MarketingPage
       eyebrow="Legal"
-      lastUpdated="July 2026"
+      lastUpdated=" 20 July 2026"
       title="Terms of Service"
       intro="The short version: Codeward is a free service provided as-is, to help you practice. Use it fairly, don't abuse the infrastructure, and understand there are no guarantees."
     >

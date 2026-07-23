@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMockup, BuildItMockup, SystemDesignMockup } from "@/components/landing/Mockups";
 import RotatingWord from "@/components/landing/RotatingWord";
 import SiteNav from "@/components/landing/SiteNav";
 import SiteFooter from "@/components/landing/SiteFooter";
 import HeroGlow from "@/components/landing/HeroGlow";
 import HeroShowcase from "@/components/landing/HeroShowcase";
+import ModesShowcase from "@/components/landing/ModesShowcase";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
-function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
+function SectionMarker({ n, label, center }: { n?: string; label: string; center?: boolean }) {
   return (
     <p className={`font-mono text-[13px] uppercase tracking-wide text-emerald-400 mb-4 ${center ? "text-center" : ""}`}>
-      {n} — {label}
+      {n ? `${n} — ${label}` : label}
     </p>
   );
 }
@@ -128,107 +128,76 @@ function LogoStrip() {
   );
 }
 
-/* ─── Practice modes (alternating product mockups) ──────────────────────── */
-const modes = [
-  {
-    n: "01",
-    marker: "DSA Sheets",
-    title: "Track every pattern, not just problem counts",
-    copy: "Blind 75, Striver's, NeetCode 150, and a 300-problem company-tagged bank — grouped by pattern, with status, revision flags, and notes. Or let the mentor generate a sheet weighted for your target company.",
-    cta: "Browse the sheets →",
-    href: "/register",
-    Mockup: DsaMockup,
-  },
-  {
-    n: "02",
-    marker: "AI Mentor",
-    title: "A mentor that knows what you've already solved",
-    copy: "RAG-grounded in real prep content and aware of your context — target company, experience level, progress. It explains patterns, reviews your approach, and creates sheets directly in your account.",
-    cta: "Meet the mentor →",
-    href: "/register",
-    Mockup: MentorMockup,
-  },
-  {
-    n: "03",
-    marker: "System Design",
-    title: "Practice the design round, level by level",
-    copy: "Curated system-design questions by difficulty and experience level (junior → senior), plus a challenge spinner that generates a fresh prompt — problem × scale × traffic spike × constraint — to design against.",
-    cta: "Open system design →",
-    href: "/register",
-    Mockup: SystemDesignMockup,
-  },
-  {
-    n: "04",
-    marker: "Code Review",
-    title: "Review realistic PRs with planted bugs",
-    copy: "15 hand-authored diffs across payments, auth, caching, and infra — each with real bugs at graded severities. Leave inline comments; the AI scores what you caught against the ground-truth list, like a senior reviewer would.",
-    cta: "Try a review →",
-    href: "/register",
-    Mockup: CodeReviewMockup,
-  },
-  {
-    n: "05",
-    marker: "Bug Hunt",
-    title: "Diagnose the failure, not the symptom",
-    copy: "9 broken codebases with failing tests and real logs — races, N+1s, leaks, deadlocks. Write your root-cause diagnosis; the AI grades it and reveals the canonical fix and the tempting wrong turns.",
-    cta: "Start debugging →",
-    href: "/register",
-    Mockup: BugHuntMockup,
-  },
-  {
-    n: "06",
-    marker: "Build It",
-    title: "Design it, then watch your own design break",
-    copy: "5 real low-level-design problems — a thread-safe wallet, an inventory reservation service, a durable job queue, an idempotent payment processor, a notification service — each evolving across 4 stages as new constraints break your last approach, in C#, Python, or Kotlin. Stage 3 always makes you prove a correctness invariant holds under concurrency.",
-    cta: "Start building →",
-    href: "/register",
-    Mockup: BuildItMockup,
-  },
-  {
-    n: "07",
-    marker: "Deep Dives",
-    title: "Learn the trade-offs interviews actually probe",
-    copy: "13 long-form deep dives — idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas, and more. Failure modes, trade-offs, and the interview traps surface-level guides skip.",
-    cta: "Read the deep dives →",
-    href: "/register",
-    Mockup: DeepDiveMockup,
-  },
+/* ─── Proof band ────────────────────────────────────────────────────────── */
+// One glanceable row of stats — compresses "this is substantial" into a line,
+// instead of implying scale across seven full-width cards.
+const PROOF: { num: string; label: string }[] = [
+  { num: "300+", label: "DSA problems" },
+  { num: "15", label: "Code reviews" },
+  { num: "9", label: "Bug hunts" },
+  { num: "5", label: "Build-it problems" },
+  { num: "13", label: "Deep dives" },
+  { num: "Free", label: "Every mode" },
 ];
 
-function PracticeModes() {
+function ProofBand() {
   return (
-    <section className="py-16 px-6">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-center font-mono text-[13px] uppercase tracking-wide text-emerald-400 mb-4">
-          The Platform
-        </p>
-        <h2 className="text-center text-3xl font-semibold tracking-heading text-white mb-16">
-          Seven ways to actually get ready
-        </h2>
+    <section className="px-6 py-6">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-5 rounded-[12px] border border-neutral-800 bg-white/2 px-6 py-6">
+        {PROOF.map((s) => (
+          <div key={s.label} className="flex flex-col items-center text-center">
+            <span className="font-mono text-xl font-semibold text-emerald-400">{s.num}</span>
+            <span className="mt-0.5 text-[11px] uppercase tracking-wide text-neutral-500">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-        <div className="section-divider mb-20" />
+/* ─── Build It spotlight ────────────────────────────────────────────────── */
+// The one thing nobody else in this space does: your submission actually runs.
+function BuildSpotlight() {
+  return (
+    <section className="px-6 py-16">
+      <div className="mx-auto max-w-5xl overflow-hidden rounded-sm border border-emerald-500/20 bg-emerald-500/[0.04]">
+        <div className="grid items-center gap-8 p-8 md:grid-cols-2 md:gap-12 md:p-12">
+          <div>
+            <SectionMarker label="Run real code" />
+            <h2 className="text-3xl font-semibold tracking-heading leading-tight text-white">
+              Write real code. Run it against real tests.
+            </h2>
+            <p className="mt-4 max-w-md leading-relaxed text-neutral-400">
+              Build It isn&rsquo;t a prose exercise. You write C#, Python, or Kotlin in a real editor and
+              execute it against a hidden test harness in a sandbox — pass/fail, stdout, and stderr, right in
+              the workspace. Design reasoning is still AI-graded; correctness is proven by running it.
+            </p>
+            <Link
+              href="/register"
+              className="mt-6 inline-block rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-emerald-400"
+            >
+              Start building →
+            </Link>
+          </div>
 
-        <div className="space-y-20">
-          {modes.map((m, i) => (
-            <div key={m.n}>
-              <div
-                className={`flex flex-col gap-8 md:items-center md:gap-12 ${i % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"}`}
-              >
-                <div className="flex-1">
-                  <SectionMarker n={m.n} label={m.marker} />
-                  <h3 className="text-2xl font-semibold tracking-heading text-white leading-tight mb-3">{m.title}</h3>
-                  <p className="text-neutral-400 leading-relaxed mb-5 max-w-md">{m.copy}</p>
-                  <Link href={m.href} className="text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
-                    {m.cta}
-                  </Link>
-                </div>
-                <div className="flex-1 w-full min-w-0">
-                  <m.Mockup />
-                </div>
-              </div>
-              <div className="section-divider mt-20" />
+          {/* mini terminal — illustrative test run */}
+          <div className="overflow-hidden rounded-sm border border-neutral-800 bg-black">
+            <div className="flex items-center gap-2 border-b border-neutral-800 px-3 py-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" aria-hidden />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" aria-hidden />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" aria-hidden />
+              <span className="ml-1 font-mono text-[10px] text-neutral-500">run · thread-safe-wallet</span>
             </div>
-          ))}
+            <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-6 text-neutral-300">
+{`$ run tests · kotlin
+✓ basic deposit / withdraw
+✓ atomic transfer between wallets
+✓ balance never goes negative
+✓ 50 concurrent transfers — no lost update
+`}<span className="text-emerald-400">{`PASSED · 4/4 · 0.42s`}</span>{`
+`}<span className="text-neutral-600">{`17 runs left today`}</span>
+            </pre>
+          </div>
         </div>
       </div>
     </section>
@@ -263,7 +232,7 @@ function FAQ() {
   return (
     <section className="py-20 px-6">
       <div className="mx-auto max-w-2xl">
-        <SectionMarker n="08" label="FAQ" />
+        <SectionMarker label="FAQ" />
         <h2 className="text-3xl font-semibold tracking-heading text-white mb-8">
           Questions worth answering honestly.
         </h2>
@@ -306,8 +275,18 @@ export default function Home() {
         <div className="section-divider" />
       </div>
       <LogoStrip />
+      <ProofBand />
 
-      <PracticeModes />
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="section-divider" />
+      </div>
+      <ModesShowcase />
+
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="section-divider" />
+      </div>
+      <BuildSpotlight />
+
       <FAQ />
       <SiteFooter />
     </div>

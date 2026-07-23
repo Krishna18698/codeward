@@ -10,7 +10,7 @@ export default function PrivacyPage() {
   return (
     <MarketingPage
       eyebrow="Legal"
-      lastUpdated="July 2026"
+      lastUpdated=" 20 July 2026"
       title="Privacy Policy"
       intro="Plain-language version: Codeward stores what it needs to run your account and grade your work, shares data only with the services that make those features work, and never sells it."
     >
