@@ -3,6 +3,7 @@ import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMocku
 import RotatingWord from "@/components/landing/RotatingWord";
 import SiteNav from "@/components/landing/SiteNav";
 import SiteFooter from "@/components/landing/SiteFooter";
+import HeroGlow from "@/components/landing/HeroGlow";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
@@ -292,20 +293,15 @@ export default function Home() {
     <div className="min-h-dvh bg-canvas text-neutral-100">
       <SiteNav />
 
-      {/* Ambient emerald glow behind the hero + logo strip — on by default
-          (matches the reference), brightens further on hover. */}
-      <div className="group relative isolate">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[700px] opacity-60 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
-          style={{ background: "radial-gradient(650px circle at 50% 0%, rgba(52,211,153,0.18), transparent 70%)" }}
-        />
+      {/* Emerald glow behind the hero + logo strip that follows the cursor
+          while hovering, resting at top-center otherwise. */}
+      <HeroGlow>
         <Hero />
         <div className="mx-auto max-w-6xl px-6">
           <div className="section-divider" />
         </div>
         <LogoStrip />
-      </div>
+      </HeroGlow>
 
       <PracticeModes />
       <FAQ />
