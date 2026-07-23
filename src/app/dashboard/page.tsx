@@ -2,7 +2,7 @@ import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Code2, Network, Sparkles, TrendingUp, Target, BookOpen, ArrowRight, GitPullRequest, Bug, Blocks, RotateCcw, History, Play } from "lucide-react";
+import { Code2, Network, Sparkles, TrendingUp, BookOpen, ArrowRight, GitPullRequest, Bug, Blocks, RotateCcw, History, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
 import { Ring } from "@/components/ui/Ring";
@@ -21,7 +21,7 @@ function timeAgo(date: Date): string {
 }
 
 async function getDashboardData(userId: string) {
-  const [sheets, statuses, sdTotal, recent, reviseList, reviewCount, bugHuntCount, buildItCount] = await Promise.all([
+  const [sheets, statuses, sdTotal, recent, reviseList] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -49,18 +49,15 @@ async function getDashboardData(userId: string) {
       orderBy: { updatedAt: "desc" },
       select: { problem: { select: { id: true, title: true, sheetId: true } } },
     }),
-    prisma.reviewAttempt.count({ where: { userId } }),
-    prisma.bugHuntAttempt.count({ where: { userId } }),
-    prisma.buildItAttempt.count({ where: { userId } }),
   ]);
-  return { sheets, statuses, sdTotal, recent, reviseList, reviewCount, bugHuntCount, buildItCount };
+  return { sheets, statuses, sdTotal, recent, reviseList };
 }
 
 export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewCount, bugHuntCount, buildItCount }] = await Promise.all([
+  const [user, { sheets, statuses, sdTotal, recent, reviseList }] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, image: true, targetCompany: true, experienceLevel: true },
@@ -157,48 +154,13 @@ export default async function DashboardPage() {
               />
             </div>
           </div>
-        </div>
 
-        {/* ── Stat cards ── */}
-        <div className="grid grid-cols-2 gap-4">
-          {[
-            {
-              label: "Solved",
-              value: doneCount,
-              icon: Target,
-              color: "text-emerald-400",
-              bg: "bg-emerald-500/10",
-              border: "border-emerald-500/20",
-              ring: "#34d399",
-              sub: doneCount > 0 ? `${overallPct}% of tracked` : "Get started!",
-            },
-            {
-              label: "Sheets",
-              value: sheets.length,
-              icon: BookOpen,
-              color: "text-rose-400",
-              bg: "bg-rose-500/10",
-              border: "border-rose-500/20",
-              ring: "#fb7185",
-              sub: `${sheets.filter(s => !s.isPreset).length} custom`,
-            },
-          ].map((stat, i) => (
-            <div
-              key={stat.label}
-              className={`relative overflow-hidden rounded-2xl border ${stat.border} bg-neutral-900/60 p-5 animate-fade-up`}
-              style={{ animationDelay: `${i * 60}ms` }}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className={`rounded-xl p-2 ${stat.bg}`}>
-                  <stat.icon size={16} className={stat.color} />
-                </div>
-                <Ring pct={stat.label === "Solved" ? overallPct : stat.label === "Sheets" ? Math.min(100, (stat.value / 5) * 100) : Math.min(100, (stat.value / 5) * 100)} size={36} stroke={3} color={stat.ring} />
-              </div>
-              <p className={`text-3xl font-bold ${stat.color} mb-0.5`}>{stat.value}</p>
-              <p className="text-xs font-medium text-neutral-300">{stat.label}</p>
-              <p className="text-[11px] text-neutral-500 mt-0.5">{stat.sub}</p>
-            </div>
-          ))}
+          {/* Inline stats — folded in from the old Solved/Sheets stat cards */}
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 border-t border-neutral-800/60 pt-3 text-xs text-neutral-400">
+            <span><span className="font-semibold text-white">{doneCount}</span> solved</span>
+            <span><span className="font-semibold text-white">{sheets.length}</span> sheets</span>
+            <span><span className="font-semibold text-white">{sheets.filter((s) => !s.isPreset).length}</span> custom</span>
+          </div>
         </div>
 
         {/* ── Continue + Revision queue ── */}
@@ -248,31 +210,31 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* ── Practice modes ── */}
+        {/* ── Practice modes (compact row) ── */}
         <div>
           <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">Practice</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
             {[
-              { href: "/dashboard/dsa",           icon: Code2,           label: "DSA Sheets",    sub: `${doneCount} solved`,                accent: "emerald" },
-              { href: "/dashboard/system-design", icon: Network,         label: "System Design", sub: `${sdTotal} questions`,               accent: "rose" },
-              { href: "/dashboard/code-review",   icon: GitPullRequest,  label: "Code Review",   sub: `${reviewCount} attempt${reviewCount === 1 ? "" : "s"} · ${CODE_REVIEWS_META.length} PRs`, accent: "emerald" },
-              { href: "/dashboard/bug-hunt",      icon: Bug,             label: "Bug Hunt",      sub: `${bugHuntCount} attempt${bugHuntCount === 1 ? "" : "s"} · ${BUG_HUNTS_META.length} bugs`, accent: "rose" },
-              { href: "/dashboard/build-it",      icon: Blocks,          label: "Build It",      sub: `${buildItCount} attempt${buildItCount === 1 ? "" : "s"} · ${BUILD_IT_META.length} problems`, accent: "emerald" },
-              { href: "/dashboard/deep-dives",    icon: BookOpen,        label: "Deep Dives",    sub: `${DEEP_DIVES.length} topics`,        accent: "rose" },
-              { href: "/dashboard/mentor",        icon: Sparkles,        label: "AI Mentor",     sub: "Always on",                          accent: "emerald" },
+              { href: "/dashboard/dsa",           icon: Code2,           label: "DSA Sheets",    sub: `${doneCount} solved`,             accent: "emerald" },
+              { href: "/dashboard/system-design", icon: Network,         label: "System Design", sub: `${sdTotal} qs`,                   accent: "rose" },
+              { href: "/dashboard/code-review",   icon: GitPullRequest,  label: "Code Review",   sub: `${CODE_REVIEWS_META.length} PRs`, accent: "emerald" },
+              { href: "/dashboard/bug-hunt",      icon: Bug,             label: "Bug Hunt",      sub: `${BUG_HUNTS_META.length} bugs`,   accent: "rose" },
+              { href: "/dashboard/build-it",      icon: Blocks,          label: "Build It",      sub: `${BUILD_IT_META.length} builds`,  accent: "emerald" },
+              { href: "/dashboard/deep-dives",    icon: BookOpen,        label: "Deep Dives",    sub: `${DEEP_DIVES.length} topics`,     accent: "rose" },
+              { href: "/dashboard/mentor",        icon: Sparkles,        label: "AI Mentor",     sub: "Always on",                       accent: "emerald" },
             ].map((m, i) => (
               <Link
                 key={m.href}
                 href={m.href}
-                className="group flex flex-col gap-2.5 rounded-2xl border border-neutral-800 bg-white/3 p-4 hover:border-neutral-700 hover:bg-white/5 transition-colors animate-fade-up"
-                style={{ animationDelay: `${i * 50}ms` }}
+                className="group flex flex-col items-center gap-2 rounded-xl border border-neutral-800 bg-white/3 p-3 text-center hover:border-neutral-700 hover:bg-white/5 transition-colors animate-fade-up"
+                style={{ animationDelay: `${i * 40}ms` }}
               >
-                <div className={`self-start rounded-xl p-2 ${m.accent === "emerald" ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
-                  <m.icon size={16} className={m.accent === "emerald" ? "text-emerald-400" : "text-rose-400"} />
+                <div className={`rounded-lg p-2 ${m.accent === "emerald" ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
+                  <m.icon size={15} className={m.accent === "emerald" ? "text-emerald-400" : "text-rose-400"} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{m.label}</p>
-                  <p className="font-mono text-[11px] text-neutral-500 mt-0.5">{m.sub}</p>
+                  <p className="text-[12px] font-semibold leading-tight text-white">{m.label}</p>
+                  <p className="mt-0.5 font-mono text-[10px] text-neutral-500">{m.sub}</p>
                 </div>
               </Link>
             ))}
@@ -347,7 +309,9 @@ export default async function DashboardPage() {
           </div>
         </div>
 
+        <div className="grid gap-6 lg:grid-cols-2">
         {/* ── Pattern progress ── */}
+        <div className={topPatterns.length > 0 && recent.length > 0 ? "" : "lg:col-span-2"}>
         {topPatterns.length > 0 ? (
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -389,6 +353,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
         )}
+        </div>
 
         {/* ── Recent activity ── */}
         {recent.length > 0 && (
@@ -417,6 +382,7 @@ export default async function DashboardPage() {
             </div>
           </div>
         )}
+        </div>
     </div>
   );
 }
