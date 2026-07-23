@@ -41,7 +41,7 @@ export default function HeroShowcase() {
             isolate on the wrapper keeps this -z-10 layer in front of the page. */}
         <div aria-hidden className="pointer-events-none absolute -inset-6 -z-10 rounded-[36px] bg-emerald-500/25 blur-3xl" />
 
-        <div className="overflow-hidden rounded-lg border border-neutral-800 bg-black shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]">
+        <div className="overflow-hidden rounded-sm border border-neutral-800 bg-black shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]">
           {/* Title bar */}
           <div className="flex items-center gap-2.5 border-b border-neutral-800 bg-linear-to-b from-white/5 to-transparent px-3.5 py-2.5">
             <span className="flex shrink-0 gap-2" aria-hidden>
@@ -66,7 +66,7 @@ export default function HeroShowcase() {
                 {modes.map((m) => (
                   <div
                     key={m.label}
-                    className={`flex items-center justify-between rounded-md px-2.5 py-2 text-xs ${
+                    className={`flex items-center justify-between rounded-sm px-2.5 py-2 text-xs ${
                       m.active ? "bg-emerald-500/15 text-emerald-100 ring-1 ring-emerald-500/30" : "text-neutral-500"
                     }`}
                   >

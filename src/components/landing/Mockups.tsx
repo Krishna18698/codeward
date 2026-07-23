@@ -1,10 +1,11 @@
 import { Check, Sparkles, GitPullRequest, X } from "lucide-react";
 import { WindowFrame } from "@/components/ui/WindowFrame";
 
-/** Editor-window frame for the landing mockups — same chrome the real product uses. */
+/** Editor-window frame for the landing mockups — boxy (rounded-lg) black cards,
+ *  matching the hero showcase. (twMerge overrides WindowFrame's rounded-xl/bg-surface.) */
 export function BrowserFrame({ url, children }: { url: string; children: React.ReactNode }) {
   return (
-    <WindowFrame label={url} bodyClassName="p-4">
+    <WindowFrame label={url} bodyClassName="p-4" className="rounded-sm border-neutral-800 bg-black">
       {children}
     </WindowFrame>
   );
