@@ -74,7 +74,8 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 
 ### Company Pages
 - **About** — the project's story in numbered sections (why it exists, what's inside, the principles, who it's for) over a dot-matrix hero, with alternating section bands
-- **Contact**, **Privacy Policy**, and **Terms of Service** — a shared marketing shell with an emerald-dot "Legal" eyebrow, a greyed last-updated line, and the same dot-matrix header
+- **Contact** — reachable at **codewardmentor@gmail.com** for questions, bug reports, feedback, and account-deletion requests
+- **Privacy Policy** and **Terms of Service** — a shared marketing shell with an emerald-dot "Legal" eyebrow, a greyed last-updated line, and the same dot-matrix header
 - Privacy documents exactly what's collected and every third-party processor (Google, Groq, Voyage AI, JDoodle, Neon, Upstash, Vercel); Terms covers acceptable use, the code-execution sandbox, and the no-warranty stance
 
 ### Polish
@@ -268,7 +269,7 @@ prisma/
 - `/api/mentor/ingest` is **fail-secure** — returns 503 if `INGEST_SECRET` is unset, 401 on mismatch
 - Google OAuth tokens are never persisted — the app only uses Google to authenticate, so `access_token`/`refresh_token`/`id_token` are stripped before the `Account` row is written
 - AI-generated markdown is sanitized with `rehype-sanitize` (XSS protection)
-- **Ground truth never reaches the client**: Code Review bug lists, Bug Hunt root causes/fixes, and Build It rubrics/canonical answers live in a server-only half of a meta/solution content split — only the grading routes import the solution accessor (verified against the client bundle)
+- **Ground truth never ships in the client bundle**: Code Review bug lists, Bug Hunt root causes/fixes, and Build It rubrics/canonical answers live in a server-only half of a meta/solution content split — only the grading routes import the solution accessor (verified by grepping the built client bundle). This is a *runtime* boundary that keeps answers out of the browser; the repo itself is public, so the content is readable in source
 - **Code execution is sandboxed and budgeted**: candidate code runs in JDoodle's network-disabled sandbox (never on our infra); `/api/code/run` is authenticated, per-user rate-limited, and gated by a shared server-side daily budget so it can't be drained or abused
 - Rate limiting (Upstash) on mentor chat, eval, sheet generation, add-to-sheet, code execution, and sign-up
 - Security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, etc.) set in `next.config.ts`

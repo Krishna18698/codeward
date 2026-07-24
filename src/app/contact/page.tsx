@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 // TODO: replace with your real contact address before going public.
-const CONTACT_EMAIL = "hello@codeward.app";
+const CONTACT_EMAIL = "codewardmentor@gmail.com";
 
 export default function ContactPage() {
   return (
