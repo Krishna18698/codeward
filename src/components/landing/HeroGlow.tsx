@@ -1,12 +1,11 @@
-"use client";
-import { useRef } from "react";
-
-/** Wraps content and renders emerald glow:
- *  - optional permanent glow anchored to the top (`topGlow`), always on;
- *  - a smaller radial glow that follows the cursor, resting at `baseOpacity`
- *    and brightening to full while the pointer moves over the area.
- *  Touch devices just see the resting/top glow. Updates are rAF-throttled and
- *  only mutate a CSS variable (compositor-only), so it stays smooth. */
+/** Wraps content and renders a static emerald glow:
+ *  - optional permanent glow anchored to the top (`topGlow`);
+ *  - an optional resting radial glow at `restX`/`restY`, shown at `baseOpacity`.
+ *
+ *  Deliberately pure CSS with no pointer tracking — an earlier version followed
+ *  the cursor via mousemove, but repainting a large blurred gradient every frame
+ *  janked the page. Being handler-free also keeps this a server component, so it
+ *  ships no JavaScript at all. */
 export default function HeroGlow({
   children,
   radius = 240,
@@ -24,33 +23,9 @@ export default function HeroGlow({
   topGlow?: boolean;
   className?: string;
 }) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const frame = useRef(0);
-
-  const onMove = (e: React.MouseEvent) => {
-    const x = e.clientX;
-    const y = e.clientY;
-    if (frame.current) return;
-    frame.current = requestAnimationFrame(() => {
-      frame.current = 0;
-      const wrap = wrapRef.current;
-      const glow = glowRef.current;
-      if (!wrap || !glow) return;
-      const r = wrap.getBoundingClientRect();
-      glow.style.setProperty("--gx", `${x - r.left}px`);
-      glow.style.setProperty("--gy", `${y - r.top}px`);
-      glow.style.opacity = "1";
-    });
-  };
-
-  const onLeave = () => {
-    if (glowRef.current) glowRef.current.style.opacity = String(baseOpacity);
-  };
-
   return (
-    <div ref={wrapRef} onMouseMove={onMove} onMouseLeave={onLeave} className={`relative isolate ${className}`}>
-      {/* Permanent top glow — always on. */}
+    <div className={`relative isolate ${className}`}>
+      {/* Permanent top glow. */}
       {topGlow && (
         <div
           aria-hidden
@@ -58,16 +33,17 @@ export default function HeroGlow({
           style={{ background: "radial-gradient(650px circle at 50% 0%, rgba(52,211,153,0.16), transparent 70%)" }}
         />
       )}
-      {/* Cursor-following glow. */}
-      <div
-        ref={glowRef}
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 blur-2xl transition-opacity duration-500 motion-reduce:transition-none"
-        style={{
-          opacity: baseOpacity,
-          background: `radial-gradient(${radius}px circle at var(--gx, ${restX}) var(--gy, ${restY}), rgba(52,211,153,0.22), transparent 70%)`,
-        }}
-      />
+      {/* Resting glow — skipped entirely when it would be invisible. */}
+      {baseOpacity > 0 && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 blur-2xl"
+          style={{
+            opacity: baseOpacity,
+            background: `radial-gradient(${radius}px circle at ${restX} ${restY}, rgba(52,211,153,0.22), transparent 70%)`,
+          }}
+        />
+      )}
       {children}
     </div>
   );

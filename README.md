@@ -65,7 +65,7 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - Your sheets (including an "ask the mentor to build one" card), with **pattern breakdown and recent activity paired side-by-side**
 
 ### Landing Page
-- Hero with a **rotating topic headline** ("Master DSA / system design / code review / …") over a layered emerald glow — a permanent top glow plus a smaller spotlight that **follows the cursor** (rAF-throttled, CSS-variable driven, reduced-motion aware)
+- Hero with a **rotating topic headline** ("Master DSA / system design / code review / …") over an ambient emerald top glow — pure CSS, no pointer tracking, so it renders once and costs nothing at runtime
 - A **floating product showcase** under the hero: a full Code Review workspace mockup — mode sidebar with problem counts, syntax-highlighted diff with flagged bug lines, severity-scored issues panel — drifting gently up and down on an emerald backlight
 - An animated logo marquee ("problems asked in real interviews at…") with real company logos, and a section for each of the seven practice modes — DSA Sheets, AI Mentor, System Design, Code Review, Bug Hunt, Build It, and Deep Dives — each with its own product mockup, separated by shimmering section dividers
 - Mockups share the same mac-style windowed chrome as the real in-app workspaces (boxy black cards, emerald-highlighted active items), so the marketing screenshots match the actual product
