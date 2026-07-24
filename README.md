@@ -58,10 +58,24 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - Onboarding flow capturing experience level and target company
 - Profile page laid out as a sticky identity/stats card (avatar, experience level, target company, attempt/sheet counts) alongside an editable profile form with a selectable avatar
 
+### Dashboard Home
+- Hero banner with greeting, target company / experience level, an overall progress ring, and inline solved / sheets / custom stats
+- **Continue where you left off** plus a revision queue of problems you flagged
+- A **compact one-row Practice launcher** across all seven modes, each with its live count (problems, PRs, bugs, builds, topics)
+- Your sheets (including an "ask the mentor to build one" card), with **pattern breakdown and recent activity paired side-by-side**
+
 ### Landing Page
-- Hero, an animated logo marquee ("problems asked in real interviews at…") with real company logos, and a section for each of the seven practice modes — DSA Sheets, AI Mentor, System Design, Code Review, Bug Hunt, Build It, and Deep Dives — each with its own product mockup
-- Mockups share the same mac-style windowed chrome as the real in-app Code Review and Bug Hunt workspaces, so the marketing screenshots match the actual product
-- Multi-column footer with brand/tagline, a Practice links column, and an Account links column
+- Hero with a **rotating topic headline** ("Master DSA / system design / code review / …") over a layered emerald glow — a permanent top glow plus a smaller spotlight that **follows the cursor** (rAF-throttled, CSS-variable driven, reduced-motion aware)
+- A **floating product showcase** under the hero: a full Code Review workspace mockup — mode sidebar with problem counts, syntax-highlighted diff with flagged bug lines, severity-scored issues panel — drifting gently up and down on an emerald backlight
+- An animated logo marquee ("problems asked in real interviews at…") with real company logos, and a section for each of the seven practice modes — DSA Sheets, AI Mentor, System Design, Code Review, Bug Hunt, Build It, and Deep Dives — each with its own product mockup, separated by shimmering section dividers
+- Mockups share the same mac-style windowed chrome as the real in-app workspaces (boxy black cards, emerald-highlighted active items), so the marketing screenshots match the actual product
+- The sign-up page carries the same ambient emerald glow behind the auth card
+- Multi-column footer with brand/tagline and Practice, Account, and Company link columns
+
+### Company Pages
+- **About** — the project's story in numbered sections (why it exists, what's inside, the principles, who it's for) over a dot-matrix hero, with alternating section bands
+- **Contact**, **Privacy Policy**, and **Terms of Service** — a shared marketing shell with an emerald-dot "Legal" eyebrow, a greyed last-updated line, and the same dot-matrix header
+- Privacy documents exactly what's collected and every third-party processor (Google, Groq, Voyage AI, JDoodle, Neon, Upstash, Vercel); Terms covers acceptable use, the code-execution sandbox, and the no-warranty stance
 
 ### Polish
 - Dashboard top nav: brand/logo doubles as the Home link (no separate "Home" item), pinned far left, with all section links, the user menu, and sign-out grouped on the right
@@ -186,6 +200,8 @@ curl -X POST http://localhost:3000/api/mentor/ingest \
 src/
 ├── app/
 │   ├── (auth)/                  # Login, register
+│   ├── about/ contact/          # Company pages — About, Contact,
+│   ├── privacy/ terms/          #   Privacy Policy, Terms of Service
 │   ├── api/
 │   │   ├── auth/                # NextAuth handlers + registration
 │   │   ├── dsa/
@@ -221,6 +237,8 @@ src/
 │   └── deep-dives/              # 13 long-form articles
 ├── components/
 │   ├── dashboard/               # Sheet UI, mentor chat, modals, sidebar
+│   ├── landing/                 # Nav, footer, hero glow, product showcase,
+│   │                            #   mockups, shared marketing page shell
 │   ├── system-design/           # Challenge Spinner, etc.
 │   ├── code-review/ bug-hunt/ build-it/ deep-dives/  # Mode workspaces
 │   └── ui/                      # Shared primitives (CodeEditor, Ring, …)
