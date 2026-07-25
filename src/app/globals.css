@@ -50,10 +50,12 @@
 
 /* ─── Light theme overrides ──────────────────────────────────────────────── */
 [data-theme="light"] {
-  --color-canvas:        #ffffff;
-  --color-surface:       #f5f6f8;
-  --color-elevated:      #eef0f3;
-  --color-border:        #e5e5e5;
+  /* Soft-grey page + white cards (not grey cards on white) so cards separate
+     and the UI reads crisp instead of flat. */
+  --color-canvas:        #f4f5f7;
+  --color-surface:       #ffffff;
+  --color-elevated:      #ffffff;
+  --color-border:        #e2e4e9;
   --color-border-accent: rgba(5, 150, 105, 0.30);
 
   --color-primary:       #171717;   /* neutral-900 */
