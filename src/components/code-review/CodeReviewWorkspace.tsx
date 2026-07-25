@@ -169,8 +169,9 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
               {bugCount} planted issues · click a line to comment
             </span>
           </div>
-          {/* Line-numbered code with inline comments */}
-          <div className="overflow-x-auto p-2 font-mono text-[12.5px] leading-6">
+          {/* Line-numbered code with inline comments. code-surface pins this
+              dark in both themes so highlightTs' light-on-dark colors hold. */}
+          <div className="code-surface overflow-x-auto p-2 font-mono text-[12.5px] leading-6">
             {lines.map((line, i) => {
               const ln = i + 1;
               const key = `${file.name}:${ln}`;
@@ -196,7 +197,7 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
                       )}
                       {ln}
                     </span>
-                    <code className="text-secondary whitespace-pre" dangerouslySetInnerHTML={{ __html: highlightTs(line) || " " }} />
+                    <code className="whitespace-pre" dangerouslySetInnerHTML={{ __html: highlightTs(line) || " " }} />
                   </div>
 
                   {/* inline comment / editor */}

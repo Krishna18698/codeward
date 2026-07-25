@@ -29,7 +29,7 @@ export default function HeroGlow({
       {topGlow && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-60 blur-3xl"
+          className="theme-glow pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-60 blur-3xl"
           style={{ background: "radial-gradient(650px circle at 50% 0%, rgba(52,211,153,0.16), transparent 70%)" }}
         />
       )}
@@ -37,7 +37,7 @@ export default function HeroGlow({
       {baseOpacity > 0 && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 blur-2xl"
+          className="theme-glow pointer-events-none absolute inset-0 -z-10 blur-2xl"
           style={{
             opacity: baseOpacity,
             background: `radial-gradient(${radius}px circle at ${restX} ${restY}, rgba(52,211,153,0.22), transparent 70%)`,

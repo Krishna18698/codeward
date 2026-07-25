@@ -26,7 +26,7 @@ export default function MarketingPage({
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[560px]"
         style={{
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(var(--dot-color) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           maskImage: "radial-gradient(ellipse 60% 55% at 50% 22%, #000 15%, transparent 70%)",
           WebkitMaskImage: "radial-gradient(ellipse 60% 55% at 50% 22%, #000 15%, transparent 70%)",

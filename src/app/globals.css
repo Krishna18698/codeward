@@ -28,6 +28,15 @@
   --color-danger:        #fb7185;
   --color-subtle:        #333333;   /* scrollbar thumb, hairlines */
 
+  /* Code surfaces stay dark in BOTH themes (GitHub-style) — deliberately NOT
+     overridden in the light block, so a syntax-highlighted pane keeps its
+     light-on-dark palette even on a light page. Applied via .code-surface. */
+  --color-code-bg:       #0a0a0a;
+  --color-code-fg:       #e5e5e5;
+  --color-code-border:   #262626;
+
+  --dot-color:           rgba(255, 255, 255, 0.06);  /* hero/legal dot-matrix */
+
   --radius-sm:  8px;
   --radius-md:  12px;
   --radius-lg:  16px;
@@ -59,8 +68,14 @@
   --color-danger:        #dc2626;
   --color-subtle:        #d4d4d4;
 
+  --dot-color:           rgba(0, 0, 0, 0.05);   /* dark dots on the light page */
+
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
+
+/* Decorative emerald glows are tuned for a black canvas; hide them in light so
+   they don't wash out over white. Applied via the .theme-glow marker class. */
+[data-theme="light"] .theme-glow { display: none; }
 
 /* ─── Tailwind theme registration ────────────────────────────────────────── */
 @theme inline {
@@ -104,6 +119,15 @@ body {
 
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+/* Code panes that render fixed light-on-dark syntax colors (highlightTs) must
+   stay dark in both themes; this class pins their bg/text/border regardless of
+   the active theme. The CodeMirror editor is dark by its own theme already. */
+.code-surface {
+  background-color: var(--color-code-bg);
+  color: var(--color-code-fg);
+  border-color: var(--color-code-border);
 }
 
 /* ─── Keyframe animations ─────────────────────────────────────────────────── */
