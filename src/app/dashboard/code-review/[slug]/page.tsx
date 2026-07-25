@@ -28,16 +28,16 @@ export default async function CodeReviewExercisePage({ params }: Props) {
     <div className="space-y-5 animate-fade-up">
       <Link
         href="/dashboard/code-review"
-        className="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-300 transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-secondary transition-colors"
       >
         <ArrowLeft size={12} /> All PRs
       </Link>
 
       <div>
-        <p className="font-mono text-[13px] text-emerald-400 mb-2">PR · {meta.slug}</p>
-        <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-white">{meta.title}</h1>
-        <p className="text-sm text-neutral-400 mt-2 max-w-2xl leading-relaxed">{meta.brief}</p>
-        <p className="mt-2 font-mono text-[11px] text-neutral-500">
+        <p className="font-mono text-[13px] text-accent mb-2">PR · {meta.slug}</p>
+        <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary">{meta.title}</h1>
+        <p className="text-sm text-secondary mt-2 max-w-2xl leading-relaxed">{meta.brief}</p>
+        <p className="mt-2 font-mono text-[11px] text-muted">
           {meta.language} · ~{meta.minutes} min · {meta.bugCount} planted issues
         </p>
       </div>

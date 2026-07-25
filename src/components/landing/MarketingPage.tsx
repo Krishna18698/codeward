@@ -18,7 +18,7 @@ export default function MarketingPage({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-dvh bg-canvas text-neutral-100">
+    <div className="relative min-h-dvh bg-canvas text-primary">
       <SiteNav />
 
       {/* Dotted matrix behind the page header — radial-masked so it fades out. */}
@@ -35,17 +35,17 @@ export default function MarketingPage({
 
       <main className="relative z-10 mx-auto max-w-3xl px-6 pt-36 pb-24">
         {eyebrow && (
-          <p className="mb-4 inline-flex items-center gap-2 font-mono text-[13px] uppercase tracking-wide text-emerald-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          <p className="mb-4 inline-flex items-center gap-2 font-mono text-[13px] uppercase tracking-wide text-accent">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent-hover" />
             {eyebrow}
           </p>
         )}
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-heading text-white leading-tight">{title}</h1>
-        {intro && <p className="mt-4 text-lg text-neutral-400 leading-relaxed">{intro}</p>}
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-heading text-primary leading-tight">{title}</h1>
+        {intro && <p className="mt-4 text-lg text-secondary leading-relaxed">{intro}</p>}
         {lastUpdated && (
-          <p className="mt-4 font-mono text-[13px] text-neutral-600">Last updated: {lastUpdated}</p>
+          <p className="mt-4 font-mono text-[13px] text-muted">Last updated: {lastUpdated}</p>
         )}
-        <div className="mt-10 space-y-5 text-[15px] leading-7 text-neutral-300">{children}</div>
+        <div className="mt-10 space-y-5 text-[15px] leading-7 text-secondary">{children}</div>
       </main>
       <SiteFooter />
     </div>
@@ -56,7 +56,7 @@ export default function MarketingPage({
 export function MarketingSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="pt-4">
-      <h2 className="text-lg font-semibold tracking-heading text-white mb-2">{title}</h2>
+      <h2 className="text-lg font-semibold tracking-heading text-primary mb-2">{title}</h2>
       <div className="space-y-3">{children}</div>
     </section>
   );

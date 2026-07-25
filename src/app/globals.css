@@ -1,20 +1,32 @@
 @import "tailwindcss";
 
 /* ─── Design tokens ──────────────────────────────────────────────────────── */
+/* Dark is the default theme (next-themes sets data-theme="dark"); the light
+   values live in the [data-theme="light"] block below. Only these
+   CSS-variable-backed tokens flip between themes, so components must use the
+   token utilities (bg-canvas, bg-surface, text-primary, text-secondary,
+   text-muted, border-border, text-accent, bg-accent-fill, …) rather than
+   hardcoded Tailwind colors — a hardcoded `text-white` won't switch. */
 :root {
   --color-canvas:        #000000;
   --color-surface:       #0a0a0a;
   --color-elevated:      #141414;
   --color-border:        #2a2a2a;
   --color-border-accent: rgba(52, 211, 153, 0.35);
-  --color-accent:        #34d399;
+
+  --color-primary:       #ededed;   /* primary text (replaces text-white) */
+  --color-secondary:     #a3a3a3;   /* secondary text (~neutral-400) */
+  --color-muted:         #6b6b6b;   /* faint text (~neutral-500/600) */
+
+  --color-accent:        #34d399;   /* accent text / icons */
+  --color-accent-fill:   #10b981;   /* accent button background */
   --color-accent-dim:    rgba(52, 211, 153, 0.12);
   --color-accent-hover:  #6ee7b7;
+
   --color-success:       #34d399;
   --color-warning:       #fbbf24;
   --color-danger:        #fb7185;
-  --color-muted:         #a1a1a1;
-  --color-subtle:        #333333;
+  --color-subtle:        #333333;   /* scrollbar thumb, hairlines */
 
   --radius-sm:  8px;
   --radius-md:  12px;
@@ -25,6 +37,31 @@
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
+/* ─── Light theme overrides ──────────────────────────────────────────────── */
+[data-theme="light"] {
+  --color-canvas:        #ffffff;
+  --color-surface:       #f5f6f8;
+  --color-elevated:      #eef0f3;
+  --color-border:        #e5e5e5;
+  --color-border-accent: rgba(5, 150, 105, 0.30);
+
+  --color-primary:       #171717;   /* neutral-900 */
+  --color-secondary:     #525252;   /* neutral-600 */
+  --color-muted:         #737373;   /* neutral-500 */
+
+  --color-accent:        #047857;   /* emerald-700 — ~5:1 on white */
+  --color-accent-fill:   #059669;   /* emerald-600 button background */
+  --color-accent-dim:    rgba(5, 150, 105, 0.10);
+  --color-accent-hover:  #065f46;
+
+  --color-success:       #047857;
+  --color-warning:       #b45309;
+  --color-danger:        #dc2626;
+  --color-subtle:        #d4d4d4;
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
 /* ─── Tailwind theme registration ────────────────────────────────────────── */
 @theme inline {
   --color-canvas:        var(--color-canvas);
@@ -32,7 +69,10 @@
   --color-elevated:      var(--color-elevated);
   --color-border:        var(--color-border);
   --color-border-accent: var(--color-border-accent);
+  --color-primary:       var(--color-primary);
+  --color-secondary:     var(--color-secondary);
   --color-accent:        var(--color-accent);
+  --color-accent-fill:   var(--color-accent-fill);
   --color-accent-dim:    var(--color-accent-dim);
   --color-accent-hover:  var(--color-accent-hover);
   --color-success:       var(--color-success);
@@ -57,7 +97,7 @@
 /* ─── Base ────────────────────────────────────────────────────────────────── */
 body {
   background: var(--color-canvas);
-  color: #ededed;
+  color: var(--color-primary);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

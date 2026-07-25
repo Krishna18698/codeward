@@ -11,7 +11,7 @@ import type { BugHuntGradeResult } from "@/app/api/bug-hunt/grade/route";
 // CodeMirror is heavy + browser-only — lazy-load so it never hits the server bundle.
 const CodeEditor = dynamic(() => import("@/components/ui/CodeEditor"), {
   ssr: false,
-  loading: () => <div className="p-4 font-mono text-xs text-neutral-500">Loading editor…</div>,
+  loading: () => <div className="p-4 font-mono text-xs text-muted">Loading editor…</div>,
 });
 
 type FileT = { name: string; code: string };
@@ -19,7 +19,7 @@ type PrevAttempt = { id: string; score: number; createdAt: string };
 
 // Finding tag styling — matches the diff-review vocabulary (fixed/partial/missed/introduced).
 const STATUS_STYLE: Record<string, { chip: string; card: string; label: string }> = {
-  fixed: { chip: "bg-emerald-500/15 text-emerald-400", card: "border-emerald-500/25 bg-emerald-500/5", label: "Fixed" },
+  fixed: { chip: "bg-accent/15 text-accent", card: "border-accent/25 bg-accent/5", label: "Fixed" },
   partial: { chip: "bg-amber-500/15 text-amber-400", card: "border-amber-500/25 bg-amber-500/5", label: "Partial" },
   missed: { chip: "bg-rose-500/15 text-rose-400", card: "border-rose-500/25 bg-rose-500/5", label: "Missed" },
   introduced: { chip: "bg-rose-500/15 text-rose-400", card: "border-rose-500/25 bg-rose-500/5", label: "Introduced" },
@@ -81,18 +81,18 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
             edited ? (
               <span className="font-mono text-[10px] text-amber-400">edited</span>
             ) : (
-              <span className="font-mono text-[10px] text-neutral-600">edit to fix</span>
+              <span className="font-mono text-[10px] text-muted">edit to fix</span>
             )
           }
         >
-          <div className="flex items-center border-b border-neutral-800 bg-white/3 px-2">
+          <div className="flex items-center border-b border-border bg-surface px-2">
             {files.map((f, i) => (
               <button
                 key={f.name}
                 onClick={() => setActiveFile(i)}
                 className={cn(
                   "px-3 py-2 font-mono text-xs transition-colors border-b-2",
-                  i === activeFile ? "text-white border-emerald-400" : "text-neutral-500 border-transparent hover:text-neutral-300",
+                  i === activeFile ? "text-primary border-accent" : "text-muted border-transparent hover:text-secondary",
                 )}
               >
                 {f.name}
@@ -112,44 +112,44 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
 
         {/* Reported failing test (the symptom that was filed) */}
         {testOutput && (
-          <div className="rounded-2xl border border-neutral-800 bg-surface overflow-hidden">
-            <div className="flex items-center gap-2 border-b border-neutral-800 bg-white/3 px-3 py-2">
+          <div className="rounded-2xl border border-border bg-surface overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-border bg-surface px-3 py-2">
               <Terminal size={12} className="text-rose-400" />
-              <span className="font-mono text-[11px] text-neutral-400">reported failure</span>
+              <span className="font-mono text-[11px] text-secondary">reported failure</span>
             </div>
-            <pre className="overflow-x-auto p-4 font-mono text-[11.5px] leading-5 text-neutral-300 whitespace-pre">{testOutput}</pre>
+            <pre className="overflow-x-auto p-4 font-mono text-[11.5px] leading-5 text-secondary whitespace-pre">{testOutput}</pre>
           </div>
         )}
 
         {/* Logs */}
         {logs && (
-          <div className="rounded-2xl border border-neutral-800 bg-surface overflow-hidden">
-            <div className="flex items-center gap-2 border-b border-neutral-800 bg-white/3 px-3 py-2">
+          <div className="rounded-2xl border border-border bg-surface overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-border bg-surface px-3 py-2">
               <ScrollText size={12} className="text-amber-400" />
-              <span className="font-mono text-[11px] text-neutral-400">logs</span>
+              <span className="font-mono text-[11px] text-secondary">logs</span>
             </div>
-            <pre className="overflow-x-auto p-4 font-mono text-[11.5px] leading-5 text-neutral-300 whitespace-pre">{logs}</pre>
+            <pre className="overflow-x-auto p-4 font-mono text-[11.5px] leading-5 text-secondary whitespace-pre">{logs}</pre>
           </div>
         )}
 
         {/* Diagnosis input */}
-        <div className="rounded-2xl border border-neutral-800 bg-white/3 p-4">
-          <p className="font-mono text-[11px] text-neutral-500 mb-2">Your diagnosis</p>
+        <div className="rounded-2xl border border-border bg-surface p-4">
+          <p className="font-mono text-[11px] text-muted mb-2">Your diagnosis</p>
           <textarea
             value={diagnosis}
             onChange={(e) => setDiagnosis(e.target.value)}
             rows={5}
             disabled={grading || !!result}
             placeholder={"What's the ROOT CAUSE (not the symptom)? Edit the code above to fix it, then explain your reasoning here.\ne.g. \"The check and the write aren't atomic, so two concurrent requests both pass the guard. I reserved the key atomically before charging.\""}
-            className="w-full resize-y rounded-xl border border-neutral-700/60 bg-surface px-3 py-2.5 text-sm text-neutral-200 placeholder:text-neutral-600 leading-relaxed disabled:opacity-60"
+            className="w-full resize-y rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-primary placeholder:text-muted leading-relaxed disabled:opacity-60"
           />
           <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="text-[11px] text-neutral-500">Graded on the root cause (70) + your fix (30).</p>
+            <p className="text-[11px] text-muted">Graded on the root cause (70) + your fix (30).</p>
             {!result && (
               <button
                 onClick={submit}
                 disabled={grading || diagnosis.trim().length < 30}
-                className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-black hover:bg-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 rounded-lg bg-accent-fill px-4 py-2 text-xs font-semibold text-black hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {grading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
                 {grading ? "Grading…" : "Submit fix"}
@@ -162,20 +162,20 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
       {/* ── Right: result / attempts ── */}
       <div className="space-y-4">
         {result ? (
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5 space-y-4">
+          <div className="rounded-2xl border border-border bg-surface p-5 space-y-4">
             <div className="flex items-center gap-4">
               <div className="relative shrink-0">
                 <Ring pct={result.score} size={64} stroke={5} color={result.score >= 70 ? "#34d399" : result.score >= 40 ? "#fbbf24" : "#fb7185"} />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-mono text-sm font-bold text-white">{result.score}</span>
+                  <span className="font-mono text-sm font-bold text-primary">{result.score}</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <span className={cn("flex items-center gap-1.5 text-xs", result.rootCaught ? "text-emerald-400" : "text-rose-400")}>
+                <span className={cn("flex items-center gap-1.5 text-xs", result.rootCaught ? "text-accent" : "text-rose-400")}>
                   {result.rootCaught ? <Check size={12} strokeWidth={3} /> : <XIcon size={12} strokeWidth={3} />}
                   Root cause {result.rootCaught ? "identified" : "missed"}
                 </span>
-                <span className="font-mono text-[10px] text-neutral-500">
+                <span className="font-mono text-[10px] text-muted">
                   {result.findings.filter((f) => f.category === "root-cause").length} bug ·{" "}
                   {result.findings.filter((f) => f.status === "introduced").length} side effect
                 </span>
@@ -184,7 +184,7 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
 
             {/* Structured, line-anchored findings */}
             {result.findings.length > 0 && (
-              <div className="space-y-2 border-t border-neutral-800 pt-3">
+              <div className="space-y-2 border-t border-border pt-3">
                 {result.findings.map((f, i) => {
                   const s = STATUS_STYLE[f.status] ?? STATUS_STYLE.missed;
                   return (
@@ -198,12 +198,12 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
                             {s.label}
                           </span>
                         </div>
-                        <span className="shrink-0 font-mono text-[10px] text-neutral-500">
+                        <span className="shrink-0 font-mono text-[10px] text-muted">
                           {f.file}{f.line !== null ? `:${f.line}` : ""}
                         </span>
                       </div>
-                      {f.title && <p className="text-xs font-medium text-neutral-200 leading-snug">{f.title}</p>}
-                      {f.detail && <p className="mt-1 text-[11px] text-neutral-400 leading-relaxed">{f.detail}</p>}
+                      {f.title && <p className="text-xs font-medium text-primary leading-snug">{f.title}</p>}
+                      {f.detail && <p className="mt-1 text-[11px] text-secondary leading-relaxed">{f.detail}</p>}
                     </div>
                   );
                 })}
@@ -211,25 +211,25 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
             )}
 
             {result.feedback && (
-              <p className="text-xs text-neutral-300 leading-relaxed border-t border-neutral-800 pt-3">{result.feedback}</p>
+              <p className="text-xs text-secondary leading-relaxed border-t border-border pt-3">{result.feedback}</p>
             )}
 
-            <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-3">
-              <p className="font-mono text-[10px] text-emerald-400 mb-1">Root cause</p>
-              <p className="text-xs text-neutral-300 leading-relaxed">{result.rootCause}</p>
+            <div className="rounded-xl border border-accent/25 bg-accent/5 p-3">
+              <p className="font-mono text-[10px] text-accent mb-1">Root cause</p>
+              <p className="text-xs text-secondary leading-relaxed">{result.rootCause}</p>
             </div>
 
-            <div className="rounded-xl border border-neutral-800 bg-white/3 p-3">
-              <p className="font-mono text-[10px] text-neutral-500 mb-1">Canonical fix</p>
-              <p className="text-xs text-neutral-300 leading-relaxed">{result.canonicalFix}</p>
+            <div className="rounded-xl border border-border bg-surface p-3">
+              <p className="font-mono text-[10px] text-muted mb-1">Canonical fix</p>
+              <p className="text-xs text-secondary leading-relaxed">{result.canonicalFix}</p>
             </div>
 
             {result.ruledOut.length > 0 && (
               <div>
-                <p className="font-mono text-[10px] text-neutral-500 mb-1.5">Hypotheses ruled out</p>
+                <p className="font-mono text-[10px] text-muted mb-1.5">Hypotheses ruled out</p>
                 <ul className="space-y-1">
                   {result.ruledOut.map((r, i) => (
-                    <li key={i} className="flex items-start gap-1.5 text-[11px] text-neutral-500">
+                    <li key={i} className="flex items-start gap-1.5 text-[11px] text-muted">
                       <XIcon size={10} className="mt-0.5 shrink-0 text-rose-400/70" /> {r}
                     </li>
                   ))}
@@ -238,24 +238,24 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
             )}
           </div>
         ) : (
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
-            <p className="font-mono text-[11px] text-neutral-500 mb-2">How it works</p>
-            <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc ml-4">
+          <div className="rounded-2xl border border-border bg-surface p-5">
+            <p className="font-mono text-[11px] text-muted mb-2">How it works</p>
+            <ul className="space-y-2 text-xs text-secondary leading-relaxed list-disc ml-4">
               <li>Read the code, the reported failure, and the logs together — they triangulate the cause.</li>
-              <li><span className="text-neutral-200">Edit the code</span> to fix the bug, then name the <span className="text-neutral-200">root cause</span> (not the symptom) in your diagnosis.</li>
+              <li><span className="text-primary">Edit the code</span> to fix the bug, then name the <span className="text-primary">root cause</span> (not the symptom) in your diagnosis.</li>
               <li>The AI grades your reasoning and your fix, then reveals the canonical fix and the tempting wrong turns.</li>
             </ul>
           </div>
         )}
 
         {previousAttempts.length > 0 && (
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
-            <p className="font-mono text-[11px] text-neutral-500 mb-3">Previous attempts</p>
+          <div className="rounded-2xl border border-border bg-surface p-5">
+            <p className="font-mono text-[11px] text-muted mb-3">Previous attempts</p>
             <div className="space-y-2">
               {previousAttempts.map((a) => (
                 <div key={a.id} className="flex items-center justify-between text-xs">
-                  <span className="text-neutral-400">{new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                  <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-emerald-400" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>{a.score}/100</span>
+                  <span className="text-secondary">{new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                  <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>{a.score}/100</span>
                 </div>
               ))}
             </div>

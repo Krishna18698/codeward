@@ -16,7 +16,7 @@ export default function ReadBadge({ slug }: { slug: string }) {
   return (
     <span
       title="Read"
-      className="shrink-0 inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-400"
+      className="shrink-0 inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] text-accent"
     >
       <Check size={9} strokeWidth={3} /> read
     </span>

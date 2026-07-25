@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (status === "unauthenticated") redirect("/login");
 
   return (
-    <div className="flex h-dvh flex-col bg-canvas text-neutral-100 overflow-hidden">
+    <div className="flex h-dvh flex-col bg-canvas text-primary overflow-hidden">
       <TopNav />
 
       <main ref={mainRef} className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>

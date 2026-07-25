@@ -127,16 +127,16 @@ export default function MentorPageClient({ initialConversations }: Props) {
   const groups = groupByDate(conversations);
 
   const sidebar = (
-    <div className="flex flex-col h-full border-r border-neutral-800/60 bg-canvas md:bg-transparent">
+    <div className="flex flex-col h-full border-r border-border bg-canvas md:bg-transparent">
       {/* Sidebar header */}
       <div className="px-5 pt-6 pb-4 shrink-0">
         <div className="flex items-center gap-2 mb-5">
-          <Sparkles size={13} className="text-emerald-400" />
-          <span className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">AI Mentor</span>
+          <Sparkles size={13} className="text-accent" />
+          <span className="font-mono text-[11px] uppercase tracking-widest text-muted">AI Mentor</span>
         </div>
         <button
           onClick={createNew}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25 px-3 py-2.5 text-sm font-medium text-emerald-400 hover:bg-emerald-500/15 hover:border-emerald-500/40 transition-colors"
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-accent/10 border border-accent/25 px-3 py-2.5 text-sm font-medium text-accent hover:bg-accent/15 hover:border-accent/40 transition-colors"
         >
           <Plus size={14} />
           New chat
@@ -147,14 +147,14 @@ export default function MentorPageClient({ initialConversations }: Props) {
       <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
         {groups.length === 0 ? (
           <div className="px-2 py-8 text-center">
-            <MessageSquare size={24} className="text-neutral-700 mx-auto mb-2" />
-            <p className="text-xs text-neutral-500">No conversations yet</p>
-            <p className="text-xs text-neutral-500 mt-1">Click &ldquo;New chat&rdquo; to start</p>
+            <MessageSquare size={24} className="text-muted mx-auto mb-2" />
+            <p className="text-xs text-muted">No conversations yet</p>
+            <p className="text-xs text-muted mt-1">Click &ldquo;New chat&rdquo; to start</p>
           </div>
         ) : (
           groups.map((group) => (
             <div key={group.label}>
-              <p className="px-2 mb-1 text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
+              <p className="px-2 mb-1 text-[10px] font-semibold text-muted uppercase tracking-wider">
                 {group.label}
               </p>
               {group.items.map((conv) => (
@@ -164,20 +164,20 @@ export default function MentorPageClient({ initialConversations }: Props) {
                     className={cn(
                       "w-full text-left flex items-start gap-2 rounded-lg px-2 py-2 pr-7 transition-colors",
                       activeId === conv.id
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : "text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-200"
+                        ? "bg-accent/10 text-accent"
+                        : "text-secondary hover:bg-border hover:text-primary"
                     )}
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate leading-snug">{conv.title}</p>
                       {conv.lastMessage && (
-                        <p className="text-[11px] text-neutral-500 truncate mt-0.5">{conv.lastMessage}</p>
+                        <p className="text-[11px] text-muted truncate mt-0.5">{conv.lastMessage}</p>
                       )}
                     </div>
                   </button>
                   <button
                     onClick={(e) => deleteConversation(conv.id, e)}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 text-neutral-700 hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-0.5"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted hover:text-red-400 opacity-0 group-hover:opacity-100 transition p-0.5"
                     title="Delete"
                   >
                     <Trash2 size={12} />
@@ -196,17 +196,17 @@ export default function MentorPageClient({ initialConversations }: Props) {
   const chatPanel = (
     <div className="flex flex-col h-full min-w-0">
       {/* Chat header — always visible */}
-      <div className="flex items-center gap-3 px-5 md:px-8 py-4 border-b border-neutral-800/60 shrink-0 bg-canvas/80 backdrop-blur-sm">
+      <div className="flex items-center gap-3 px-5 md:px-8 py-4 border-b border-border shrink-0 bg-canvas/80 backdrop-blur-sm">
         {/* Mobile back button */}
         <button
           onClick={() => setShowList(true)}
-          className="md:hidden flex items-center gap-1 text-neutral-400 hover:text-white transition-colors shrink-0"
+          className="md:hidden flex items-center gap-1 text-secondary hover:text-primary transition-colors shrink-0"
         >
           <ChevronLeft size={16} />
         </button>
         <div className="flex items-center gap-2.5 min-w-0">
-          <Sparkles size={13} className="text-emerald-400 shrink-0" />
-          <span className="text-sm font-semibold text-white truncate">
+          <Sparkles size={13} className="text-accent shrink-0" />
+          <span className="text-sm font-semibold text-primary truncate">
             {activeId ? activeConvTitle : "AI Mentor"}
           </span>
         </div>
@@ -219,7 +219,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
               {[0, 150, 300].map((d) => (
                 <span
                   key={d}
-                  className="w-1.5 h-1.5 rounded-full bg-emerald-400/60 animate-bounce"
+                  className="w-1.5 h-1.5 rounded-full bg-accent/60 animate-bounce"
                   style={{ animationDelay: `${d}ms`, animationDuration: "900ms" }}
                 />
               ))}
@@ -237,18 +237,18 @@ export default function MentorPageClient({ initialConversations }: Props) {
         )
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-8">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-            <Sparkles size={20} className="text-emerald-400" />
+          <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+            <Sparkles size={20} className="text-accent" />
           </div>
           <div>
-            <p className="text-white font-semibold text-sm">Start a conversation</p>
-            <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
+            <p className="text-primary font-semibold text-sm">Start a conversation</p>
+            <p className="text-muted text-xs mt-1 leading-relaxed">
               Ask about DSA patterns, system design,<br />or generate a custom study sheet.
             </p>
           </div>
           <button
             onClick={createNew}
-            className="mt-1 px-4 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-sm hover:bg-emerald-500/20 transition-colors"
+            className="mt-1 px-4 py-2 rounded-xl bg-accent/15 border border-accent/30 text-accent text-sm hover:bg-accent/20 transition-colors"
           >
             New chat
           </button>

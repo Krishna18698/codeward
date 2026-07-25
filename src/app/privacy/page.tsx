@@ -15,10 +15,10 @@ export default function PrivacyPage() {
       intro="Plain-language version: Codeward stores what it needs to run your account and grade your work, shares data only with the services that make those features work, and never sells it."
     >
       <MarketingSection title="What we collect">
-        <ul className="list-disc ml-5 space-y-1.5 text-neutral-300">
-          <li><strong className="text-white">Account details</strong> — your name and email. If you sign in with Google, we receive your basic profile and email from Google; if you sign up with email, we store your email and a bcrypt-hashed password (never the plaintext).</li>
-          <li><strong className="text-white">Profile</strong> — the experience level and target company you set during onboarding.</li>
-          <li><strong className="text-white">Your work</strong> — practice progress, notes, revision flags, saved sheets, mentor chat messages, and the submissions and scores from Code Review, Bug Hunt, and Build It.</li>
+        <ul className="list-disc ml-5 space-y-1.5 text-secondary">
+          <li><strong className="text-primary">Account details</strong> — your name and email. If you sign in with Google, we receive your basic profile and email from Google; if you sign up with email, we store your email and a bcrypt-hashed password (never the plaintext).</li>
+          <li><strong className="text-primary">Profile</strong> — the experience level and target company you set during onboarding.</li>
+          <li><strong className="text-primary">Your work</strong> — practice progress, notes, revision flags, saved sheets, mentor chat messages, and the submissions and scores from Code Review, Bug Hunt, and Build It.</li>
         </ul>
         <p>We do not collect payment information — the service is free.</p>
       </MarketingSection>
@@ -33,14 +33,14 @@ export default function PrivacyPage() {
 
       <MarketingSection title="Third-party services">
         <p>Codeward relies on a small set of providers to work. Relevant data is sent to them only to deliver the feature you&rsquo;re using:</p>
-        <ul className="list-disc ml-5 space-y-1.5 text-neutral-300">
-          <li><strong className="text-white">Google</strong> — optional sign-in (OAuth). We use it only to authenticate you; we don&rsquo;t store Google access/refresh tokens.</li>
-          <li><strong className="text-white">Groq</strong> — runs the AI mentor and grades your submissions. Your message or submission text is sent to Groq to generate a response.</li>
-          <li><strong className="text-white">Voyage AI</strong> — generates the embeddings used for the mentor&rsquo;s knowledge retrieval.</li>
-          <li><strong className="text-white">JDoodle</strong> — executes your Build It code when you click &ldquo;Run Tests.&rdquo; The code you submit is sent to JDoodle&rsquo;s sandbox to run.</li>
-          <li><strong className="text-white">Neon</strong> — the PostgreSQL database where your account and work are stored.</li>
-          <li><strong className="text-white">Upstash</strong> — rate limiting and usage counters.</li>
-          <li><strong className="text-white">Vercel</strong> — hosting and privacy-friendly, aggregate analytics.</li>
+        <ul className="list-disc ml-5 space-y-1.5 text-secondary">
+          <li><strong className="text-primary">Google</strong> — optional sign-in (OAuth). We use it only to authenticate you; we don&rsquo;t store Google access/refresh tokens.</li>
+          <li><strong className="text-primary">Groq</strong> — runs the AI mentor and grades your submissions. Your message or submission text is sent to Groq to generate a response.</li>
+          <li><strong className="text-primary">Voyage AI</strong> — generates the embeddings used for the mentor&rsquo;s knowledge retrieval.</li>
+          <li><strong className="text-primary">JDoodle</strong> — executes your Build It code when you click &ldquo;Run Tests.&rdquo; The code you submit is sent to JDoodle&rsquo;s sandbox to run.</li>
+          <li><strong className="text-primary">Neon</strong> — the PostgreSQL database where your account and work are stored.</li>
+          <li><strong className="text-primary">Upstash</strong> — rate limiting and usage counters.</li>
+          <li><strong className="text-primary">Vercel</strong> — hosting and privacy-friendly, aggregate analytics.</li>
         </ul>
         <p>Each provider has its own privacy terms governing how it handles the data it receives.</p>
       </MarketingSection>
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
       <MarketingSection title="Contact">
         <p>
           Questions about privacy? Reach us via the{" "}
-          <a href="/contact" className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">contact page</a>.
+          <a href="/contact" className="font-medium text-accent hover:text-accent-hover transition-colors">contact page</a>.
         </p>
       </MarketingSection>
     </MarketingPage>

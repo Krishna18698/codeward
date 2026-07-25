@@ -80,25 +80,25 @@ export default function ProfileForm({ user }: { user: User }) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">Account details</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted">Account details</p>
           <button
             onClick={() => setEditing(true)}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-neutral-800 px-2.5 py-1 text-xs text-neutral-300 transition-colors hover:border-neutral-600 hover:text-white"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 text-xs text-secondary transition-colors hover:border-border hover:text-primary"
           >
             <Pencil size={11} /> Edit
           </button>
         </div>
         <div>
-          <p className="text-xs font-medium text-neutral-400 mb-1">Display name</p>
-          <p className="text-sm text-neutral-200">{name || "—"}</p>
+          <p className="text-xs font-medium text-secondary mb-1">Display name</p>
+          <p className="text-sm text-primary">{name || "—"}</p>
         </div>
         <div>
-          <p className="text-xs font-medium text-neutral-400 mb-1">Experience level</p>
-          <p className="text-sm text-neutral-200">{expLabel ?? "Not set"}</p>
+          <p className="text-xs font-medium text-secondary mb-1">Experience level</p>
+          <p className="text-sm text-primary">{expLabel ?? "Not set"}</p>
         </div>
         <div>
-          <p className="text-xs font-medium text-neutral-400 mb-1">Target company</p>
-          <p className="text-sm text-neutral-200">{company || "Not set"}</p>
+          <p className="text-xs font-medium text-secondary mb-1">Target company</p>
+          <p className="text-sm text-primary">{company || "Not set"}</p>
         </div>
       </div>
     );
@@ -106,7 +106,7 @@ export default function ProfileForm({ user }: { user: User }) {
 
   return (
     <div className="space-y-5">
-      <p className="font-mono text-[11px] uppercase tracking-widest text-neutral-500">Account details</p>
+      <p className="font-mono text-[11px] uppercase tracking-widest text-muted">Account details</p>
       <Input
         label="Display name"
         value={name}
@@ -116,7 +116,7 @@ export default function ProfileForm({ user }: { user: User }) {
 
       {showAvatarPicker && (
         <div>
-          <label className="block text-xs font-medium text-neutral-400 mb-2">Profile avatar</label>
+          <label className="block text-xs font-medium text-secondary mb-2">Profile avatar</label>
           <div className="flex gap-3">
             {AVATARS.map((av) => (
               <button
@@ -127,8 +127,8 @@ export default function ProfileForm({ user }: { user: User }) {
                 className={cn(
                   "flex flex-col items-center gap-1.5 rounded-2xl border p-3 transition-all duration-150",
                   avatar === av.key
-                    ? "border-emerald-500/60 bg-emerald-500/10 ring-1 ring-emerald-500/30"
-                    : "border-neutral-800 hover:border-neutral-600 bg-neutral-900/40",
+                    ? "border-accent/60 bg-accent/10 ring-1 ring-accent/30"
+                    : "border-border hover:border-border bg-surface",
                 )}
               >
                 <div className={cn(
@@ -136,7 +136,7 @@ export default function ProfileForm({ user }: { user: User }) {
                 )}>
                   {av.emoji}
                 </div>
-                <span className="text-[10px] text-neutral-500">{av.label}</span>
+                <span className="text-[10px] text-muted">{av.label}</span>
               </button>
             ))}
           </div>
@@ -144,7 +144,7 @@ export default function ProfileForm({ user }: { user: User }) {
       )}
 
       <div>
-        <label className="block text-xs font-medium text-neutral-400 mb-1.5">Experience level</label>
+        <label className="block text-xs font-medium text-secondary mb-1.5">Experience level</label>
         <div className="flex gap-2">
           {EXP_LEVELS.map((l) => (
             <button
@@ -153,8 +153,8 @@ export default function ProfileForm({ user }: { user: User }) {
               className={cn(
                 "flex-1 rounded-xl border px-3 py-2 text-xs transition-all duration-150",
                 exp === l.value
-                  ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-300"
-                  : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300",
+                  ? "border-accent/60 bg-accent/10 text-accent-hover"
+                  : "border-border text-muted hover:border-border hover:text-secondary",
               )}
             >
               {l.label}
@@ -164,7 +164,7 @@ export default function ProfileForm({ user }: { user: User }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-neutral-400 mb-1.5">Target company</label>
+        <label className="block text-xs font-medium text-secondary mb-1.5">Target company</label>
         <div className="grid grid-cols-4 gap-2">
           {COMPANIES.map((c) => (
             <button
@@ -173,8 +173,8 @@ export default function ProfileForm({ user }: { user: User }) {
               className={cn(
                 "rounded-xl border px-2 py-2 text-xs transition-all duration-150",
                 company === c
-                  ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-300"
-                  : "border-neutral-800 text-neutral-500 hover:border-neutral-600 hover:text-neutral-300",
+                  ? "border-accent/60 bg-accent/10 text-accent-hover"
+                  : "border-border text-muted hover:border-border hover:text-secondary",
               )}
             >
               {c}
@@ -190,7 +190,7 @@ export default function ProfileForm({ user }: { user: User }) {
         <button
           onClick={cancel}
           disabled={saving}
-          className="px-3 py-2 text-xs text-neutral-500 transition-colors hover:text-neutral-300 disabled:opacity-50"
+          className="px-3 py-2 text-xs text-muted transition-colors hover:text-secondary disabled:opacity-50"
         >
           Cancel
         </button>

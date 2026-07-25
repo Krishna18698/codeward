@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Instrument_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
-import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ThemedToaster } from "@/components/providers/ThemedToaster";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Instrument_Sans({
@@ -41,12 +42,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster theme="dark" position="bottom-right" richColors />
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <ThemedToaster />
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

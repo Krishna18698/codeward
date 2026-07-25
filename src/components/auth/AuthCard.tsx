@@ -97,18 +97,18 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
     <div className="animate-scale-in">
       {/* Mobile-only brand */}
       <div className="flex items-center gap-2 mb-8 lg:hidden">
-        <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-          <Sparkles size={14} className="text-emerald-400" />
+        <div className="w-8 h-8 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center">
+          <Sparkles size={14} className="text-accent" />
         </div>
-        <span className="text-sm font-bold text-white">
-          Code<span className="text-emerald-400">ward</span>
+        <span className="text-sm font-bold text-primary">
+          Code<span className="text-accent">ward</span>
         </span>
       </div>
 
       {/* Heading */}
       <div className="mb-8">
-        <h2 className="text-3xl font-semibold tracking-heading text-white">{title}</h2>
-        {subtitle && <p className="text-sm text-neutral-500 mt-1.5">{subtitle}</p>}
+        <h2 className="text-3xl font-semibold tracking-heading text-primary">{title}</h2>
+        {subtitle && <p className="text-sm text-muted mt-1.5">{subtitle}</p>}
       </div>
 
       {/* Google OAuth — primary CTA */}
@@ -118,9 +118,9 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
         disabled={googleLoading}
         className={cn(
           "w-full inline-flex items-center justify-center gap-3",
-          "rounded-2xl border border-neutral-700/80 bg-neutral-900 hover:bg-neutral-800",
-          "text-neutral-100 text-sm font-medium px-5 py-3.5 transition-all duration-150",
-          "hover:border-neutral-600",
+          "rounded-2xl border border-border bg-surface hover:bg-border",
+          "text-primary text-sm font-medium px-5 py-3.5 transition-all duration-150",
+          "hover:border-border",
           "disabled:opacity-60 disabled:cursor-not-allowed",
         )}
       >
@@ -129,15 +129,15 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
           ? "Redirecting to Google…"
           : isLogin ? "Continue with Google" : "Sign up with Google"}
         {googleLoading
-          ? <Loader2 size={14} className="ml-auto text-neutral-500 animate-spin" />
-          : <ArrowRight size={14} className="ml-auto text-neutral-500" />}
+          ? <Loader2 size={14} className="ml-auto text-muted animate-spin" />
+          : <ArrowRight size={14} className="ml-auto text-muted" />}
       </button>
 
       {/* Divider */}
       <div className="flex items-center gap-3 my-6">
-        <div className="h-px flex-1 bg-neutral-800/80" />
-        <span className="text-[11px] uppercase tracking-widest text-neutral-500">or continue with email</span>
-        <div className="h-px flex-1 bg-neutral-800/80" />
+        <div className="h-px flex-1 bg-border" />
+        <span className="text-[11px] uppercase tracking-widest text-muted">or continue with email</span>
+        <div className="h-px flex-1 bg-border" />
       </div>
 
       {/* Email/password form */}
@@ -178,7 +178,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="p-1.5 text-neutral-500 hover:text-neutral-300 transition-colors"
+              className="p-1.5 text-muted hover:text-secondary transition-colors"
               tabIndex={-1}
             >
               {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -202,18 +202,18 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
         </Button>
       </form>
 
-      <p className="mt-6 text-xs text-neutral-500 text-center">
+      <p className="mt-6 text-xs text-muted text-center">
         {isLogin ? (
           <>
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-emerald-400 hover:text-emerald-300 transition-colors font-medium">
+            <Link href="/register" className="text-accent hover:text-accent-hover transition-colors font-medium">
               Sign up free
             </Link>
           </>
         ) : (
           <>
             Already have an account?{" "}
-            <Link href="/login" className="text-emerald-400 hover:text-emerald-300 transition-colors font-medium">
+            <Link href="/login" className="text-accent hover:text-accent-hover transition-colors font-medium">
               Sign in
             </Link>
           </>

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import UserAvatar from "@/components/ui/UserAvatar";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 // Home is the Codeward logo itself (links to /dashboard) — no separate Home item.
 const nav = [
@@ -28,7 +29,7 @@ const NAV_LINK_CLASS = "flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.
 function NavIcon({ icon: Icon }: { icon: LucideIcon }) {
   const { pending } = useLinkStatus();
   return pending
-    ? <Loader2 size={13} className="shrink-0 animate-spin text-emerald-400" />
+    ? <Loader2 size={13} className="shrink-0 animate-spin text-accent" />
     : <Icon size={13} className="shrink-0" />;
 }
 
@@ -107,18 +108,18 @@ export default function TopNav() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 shrink-0 border-b border-neutral-800 bg-black/85 backdrop-blur-[20px]">
+    <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-canvas/85 backdrop-blur-[20px]">
       <div ref={rowRef} className="flex h-14 w-full items-center gap-3 px-4 md:px-6">
         {/* Brand (also the Home link) — far left */}
         <Link
           ref={logoRef}
           href="/dashboard"
           aria-label="Codeward home"
-          className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight text-white"
+          className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight text-primary"
         >
-          <Sparkles size={19} className="text-emerald-400" />
+          <Sparkles size={19} className="text-accent" />
           <span>
-            Code<span className="text-emerald-400">ward</span>
+            Code<span className="text-accent">ward</span>
           </span>
         </Link>
 
@@ -138,8 +139,8 @@ export default function TopNav() {
                       NAV_LINK_CLASS,
                       "transition-colors duration-150",
                       active
-                        ? "text-white bg-white/6"
-                        : "text-neutral-400 hover:text-white hover:bg-white/4",
+                        ? "text-primary bg-primary/6"
+                        : "text-secondary hover:text-primary hover:bg-primary/5",
                     )}
                   >
                     <NavIcon icon={icon} />
@@ -174,7 +175,9 @@ export default function TopNav() {
           aria-hidden
           className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex items-center gap-1.5"
         >
-          <span className="mx-1 h-5 w-px bg-neutral-800" />
+          {/* stand-in for the always-visible theme toggle */}
+          <span className="h-8 w-8" />
+          <span className="mx-1 h-5 w-px bg-border" />
           {user && (
             <span className="flex items-center gap-2 rounded-lg px-1.5 py-1">
               <UserAvatar image={user.image} name={user.name} size={26} />
@@ -188,6 +191,9 @@ export default function TopNav() {
 
         {/* Right-fixed group */}
         <div className="flex shrink-0 items-center gap-1.5">
+          {/* Theme toggle — always visible in both fits states. */}
+          <ThemeToggle className="border-0" />
+
           {/* Hamburger + its dropdown share a relative wrapper so the panel
               anchors exactly to the button's own edge, not a guessed offset
               from the header. */}
@@ -197,7 +203,7 @@ export default function TopNav() {
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-white/4 hover:text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-secondary transition-colors hover:bg-primary/5 hover:text-primary"
               >
                 <HamburgerIcon open={menuOpen} />
               </button>
@@ -209,7 +215,7 @@ export default function TopNav() {
                     onClick={() => setMenuOpen(false)}
                     className="fixed inset-0 z-40"
                   />
-                  <nav className="absolute right-0 top-[calc(100%+8px)] z-40 w-56 overflow-hidden rounded-[8px] border border-neutral-800 bg-neutral-900 py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
+                  <nav className="absolute right-0 top-[calc(100%+8px)] z-40 w-56 overflow-hidden rounded-[8px] border border-border bg-elevated py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
                     {nav.map(({ label, href }) => {
                       const active = pathname === href || pathname.startsWith(href);
                       return (
@@ -221,8 +227,8 @@ export default function TopNav() {
                           className={cn(
                             "block px-4 py-3 text-sm transition-colors duration-150",
                             active
-                              ? "text-white bg-white/6"
-                              : "text-neutral-400 hover:text-white hover:bg-white/4",
+                              ? "text-primary bg-primary/6"
+                              : "text-secondary hover:text-primary hover:bg-primary/5",
                           )}
                         >
                           {label}
@@ -232,7 +238,7 @@ export default function TopNav() {
 
                     {user && (
                       <>
-                        <div className="my-1.5 h-px bg-neutral-800" />
+                        <div className="my-1.5 h-px bg-border" />
                         <Link
                           href="/dashboard/profile"
                           onClick={() => setMenuOpen(false)}
@@ -240,8 +246,8 @@ export default function TopNav() {
                           className={cn(
                             "block px-4 py-3 text-sm transition-colors duration-150",
                             pathname.startsWith("/dashboard/profile")
-                              ? "text-white bg-white/6"
-                              : "text-neutral-400 hover:text-white hover:bg-white/4",
+                              ? "text-primary bg-primary/6"
+                              : "text-secondary hover:text-primary hover:bg-primary/5",
                           )}
                         >
                           Profile
@@ -251,7 +257,7 @@ export default function TopNav() {
                             setMenuOpen(false);
                             signOut({ callbackUrl: "/" });
                           }}
-                          className="block w-full px-4 py-3 text-left text-sm text-neutral-400 transition-colors duration-150 hover:bg-white/4 hover:text-white"
+                          className="block w-full px-4 py-3 text-left text-sm text-secondary transition-colors duration-150 hover:bg-primary/5 hover:text-primary"
                         >
                           Sign out
                         </button>
@@ -267,7 +273,7 @@ export default function TopNav() {
               Sign out already live as text entries in that dropdown. */}
           {fits === true && (
             <>
-              <span className="mx-1 hidden h-5 w-px bg-neutral-800 sm:block" />
+              <span className="mx-1 hidden h-5 w-px bg-border sm:block" />
               {user && (
                 <Link
                   href="/dashboard/profile"
@@ -276,12 +282,12 @@ export default function TopNav() {
                   className={cn(
                     "flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors duration-150",
                     pathname.startsWith("/dashboard/profile")
-                      ? "bg-white/6"
-                      : "hover:bg-white/4",
+                      ? "bg-primary/6"
+                      : "hover:bg-primary/5",
                   )}
                 >
                   <UserAvatar image={user.image} name={user.name} size={26} />
-                  <span className="max-w-[120px] truncate text-xs font-medium text-neutral-300">
+                  <span className="max-w-[120px] truncate text-xs font-medium text-secondary">
                     {user.name ?? "Profile"}
                   </span>
                 </Link>
@@ -290,7 +296,7 @@ export default function TopNav() {
                 onClick={() => signOut({ callbackUrl: "/" })}
                 title="Sign out"
                 aria-label="Sign out"
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-500 transition-colors hover:bg-white/4 hover:text-neutral-200"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-primary/5 hover:text-primary"
               >
                 <LogOut size={15} />
               </button>

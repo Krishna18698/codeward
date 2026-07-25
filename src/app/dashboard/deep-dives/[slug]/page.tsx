@@ -30,29 +30,29 @@ export default async function DeepDivePage({ params }: Props) {
       <article className="min-w-0 max-w-3xl flex-1">
         <Link
           href="/dashboard/deep-dives"
-          className="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-300 transition-colors mb-6"
+          className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-secondary transition-colors mb-6"
         >
           <ArrowLeft size={12} /> All deep dives
         </Link>
 
-        <p className="font-mono text-[13px] text-emerald-400 mb-2">
-          Deep Dives <span className="text-neutral-600">/</span> {dive.title}
+        <p className="font-mono text-[13px] text-accent mb-2">
+          Deep Dives <span className="text-muted">/</span> {dive.title}
         </p>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-heading text-white leading-tight">
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-heading text-primary leading-tight">
           {dive.title}
         </h1>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {dive.tags.map((t) => (
-            <span key={t} className="rounded-full border border-neutral-800 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-400">{t}</span>
+            <span key={t} className="rounded-full border border-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-secondary">{t}</span>
           ))}
           {dive.level && (
             <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-violet-300">{dive.level}</span>
           )}
-          <span className="font-mono text-[11px] text-neutral-500">~{dive.minutes} min · {sections.length} sections</span>
+          <span className="font-mono text-[11px] text-muted">~{dive.minutes} min · {sections.length} sections</span>
         </div>
-        <p className="mt-3 text-sm text-neutral-400 leading-relaxed">{dive.hook}</p>
+        <p className="mt-3 text-sm text-secondary leading-relaxed">{dive.hook}</p>
 
-        <div className="mt-8 border-t border-neutral-800 pt-8">
+        <div className="mt-8 border-t border-border pt-8">
           <DeepDiveReader
             slug={slug}
             sections={sections}
@@ -64,23 +64,23 @@ export default async function DeepDivePage({ params }: Props) {
         </div>
 
         {/* Prev / next */}
-        <div className="mt-12 border-t border-neutral-800 pt-6 flex items-stretch justify-between gap-4">
+        <div className="mt-12 border-t border-border pt-6 flex items-stretch justify-between gap-4">
           {prev ? (
             <Link
               href={`/dashboard/deep-dives/${prev.slug}`}
-              className="flex-1 rounded-xl border border-neutral-800 p-4 hover:border-neutral-700 transition-colors group"
+              className="flex-1 rounded-xl border border-border p-4 hover:border-border transition-colors group"
             >
-              <p className="font-mono text-[10px] text-neutral-500 mb-1">← Previous</p>
-              <p className="text-xs font-medium text-neutral-300 group-hover:text-white">{prev.title}</p>
+              <p className="font-mono text-[10px] text-muted mb-1">← Previous</p>
+              <p className="text-xs font-medium text-secondary group-hover:text-primary">{prev.title}</p>
             </Link>
           ) : <div className="flex-1" />}
           {next ? (
             <Link
               href={`/dashboard/deep-dives/${next.slug}`}
-              className="flex-1 rounded-xl border border-neutral-800 p-4 text-right hover:border-neutral-700 transition-colors group"
+              className="flex-1 rounded-xl border border-border p-4 text-right hover:border-border transition-colors group"
             >
-              <p className="font-mono text-[10px] text-neutral-500 mb-1">Next →</p>
-              <p className="text-xs font-medium text-neutral-300 group-hover:text-white">{next.title}</p>
+              <p className="font-mono text-[10px] text-muted mb-1">Next →</p>
+              <p className="text-xs font-medium text-secondary group-hover:text-primary">{next.title}</p>
             </Link>
           ) : <div className="flex-1" />}
         </div>
@@ -89,7 +89,7 @@ export default async function DeepDivePage({ params }: Props) {
       {/* Topic rail — desktop only */}
       <aside className="hidden xl:block w-56 shrink-0">
         <div className="sticky top-20">
-          <p className="font-mono text-[11px] text-neutral-500 mb-3">{DEEP_DIVES.length} topics</p>
+          <p className="font-mono text-[11px] text-muted mb-3">{DEEP_DIVES.length} topics</p>
           <nav className="space-y-1">
             {DEEP_DIVES.map((d) => (
               <Link
@@ -98,8 +98,8 @@ export default async function DeepDivePage({ params }: Props) {
                 aria-current={d.slug === slug ? "page" : undefined}
                 className={`block rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
                   d.slug === slug
-                    ? "bg-white/6 text-white"
-                    : "text-neutral-500 hover:text-neutral-300 hover:bg-white/4"
+                    ? "bg-primary/6 text-primary"
+                    : "text-muted hover:text-secondary hover:bg-primary/5"
                 }`}
               >
                 {d.title}

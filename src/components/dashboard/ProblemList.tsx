@@ -49,7 +49,7 @@ const COMPANY_DOMAINS: Record<string, string> = {
 };
 
 const difficultyColor: Record<Difficulty, string> = {
-  EASY: "text-emerald-400",
+  EASY: "text-accent",
   MEDIUM: "text-amber-400",
   HARD: "text-red-400",
 };
@@ -92,10 +92,10 @@ const statusTitle: Record<ProblemStatus, string> = {
 
 function StatusIcon({ status }: { status: ProblemStatus }) {
   if (status === "DONE")
-    return <Check size={12} strokeWidth={2.5} className="text-emerald-400" />;
+    return <Check size={12} strokeWidth={2.5} className="text-accent" />;
   if (status === "SOLVING")
     return <Circle size={12} strokeWidth={2.5} className="text-amber-400" fill="rgba(251, 191, 36, 0.3)" />;
-  return <Circle size={12} strokeWidth={1.5} className="text-neutral-500" />;
+  return <Circle size={12} strokeWidth={1.5} className="text-muted" />;
 }
 
 function InlineNote({
@@ -135,17 +135,17 @@ function InlineNote({
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   return (
-    <div className="px-4 pb-3 bg-neutral-900/80">
-      <div className="rounded-lg border border-neutral-700/60 bg-canvas overflow-hidden">
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-neutral-800/60">
-          <span className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+    <div className="px-4 pb-3 bg-surface">
+      <div className="rounded-lg border border-border bg-canvas overflow-hidden">
+        <div className="flex items-center justify-between px-3 py-1.5 border-b border-border">
+          <span className="text-[11px] text-muted flex items-center gap-1.5">
             <StickyNote size={11} />
             Notes
           </span>
           <div className="flex items-center gap-3">
-            {saveState === "saving" && <span className="text-[10px] text-neutral-500">saving…</span>}
-            {saveState === "saved"  && <span className="text-[10px] text-emerald-500">saved ✓</span>}
-            <button onClick={onClose} className="text-neutral-500 hover:text-neutral-400 transition-colors">
+            {saveState === "saving" && <span className="text-[10px] text-muted">saving…</span>}
+            {saveState === "saved"  && <span className="text-[10px] text-accent">saved ✓</span>}
+            <button onClick={onClose} className="text-muted hover:text-secondary transition-colors">
               <X size={13} />
             </button>
           </div>
@@ -154,7 +154,7 @@ function InlineNote({
           value={content}
           onChange={handleChange}
           placeholder="Add your notes, key insights, approach…"
-          className="w-full bg-transparent text-neutral-300 text-xs px-3 py-2.5 resize-none focus:outline-none placeholder:text-neutral-500"
+          className="w-full bg-transparent text-secondary text-xs px-3 py-2.5 resize-none focus:outline-none placeholder:text-muted"
           rows={4}
           autoFocus
         />
@@ -298,12 +298,12 @@ export default function ProblemList({
     <div className="space-y-3">
       {/* Search */}
       <div className="relative">
-        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none" />
+        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search problems…"
-          className="w-full bg-neutral-900/60 border border-neutral-800 rounded-xl pl-8 pr-3 py-2 text-sm text-neutral-300 placeholder:text-neutral-500 focus:outline-none focus:border-neutral-700 transition-colors"
+          className="w-full bg-surface border border-border rounded-xl pl-8 pr-3 py-2 text-sm text-secondary placeholder:text-muted focus:outline-none focus:border-border transition-colors"
         />
       </div>
 
@@ -312,7 +312,7 @@ export default function ProblemList({
         <select
           value={diffFilter}
           onChange={(e) => setDiffFilter(e.target.value)}
-          className="bg-neutral-900/60 border border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-neutral-700 transition-colors"
+          className="bg-surface border border-border rounded-xl px-3 py-1.5 text-xs text-secondary focus:outline-none focus:border-border transition-colors"
         >
           <option value="ALL">All difficulties</option>
           <option value="EASY">Easy</option>
@@ -323,7 +323,7 @@ export default function ProblemList({
           <select
             value={compFilter}
             onChange={(e) => setCompFilter(e.target.value)}
-            className="bg-neutral-900/60 border border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-neutral-300 focus:outline-none focus:border-neutral-700 transition-colors"
+            className="bg-surface border border-border rounded-xl px-3 py-1.5 text-xs text-secondary focus:outline-none focus:border-border transition-colors"
           >
             <option value="ALL">All companies</option>
             {availableCompanies.map((c) => (
@@ -334,7 +334,7 @@ export default function ProblemList({
         {(diffFilter !== "ALL" || compFilter !== "ALL") && (
           <button
             onClick={() => { setDiffFilter("ALL"); setCompFilter("ALL"); }}
-            className="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-300 border border-neutral-800 rounded-xl px-2.5 py-1.5 transition-colors"
+            className="flex items-center gap-1 text-xs text-muted hover:text-secondary border border-border rounded-xl px-2.5 py-1.5 transition-colors"
           >
             <X size={10} /> Clear
           </button>
@@ -342,7 +342,7 @@ export default function ProblemList({
         {onAddProblems && (
           <button
             onClick={onAddProblems}
-            className="ml-auto flex items-center gap-1.5 rounded-xl border border-emerald-500/25 bg-emerald-500/5 px-3 py-1.5 text-xs text-emerald-400/80 hover:text-emerald-300 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all"
+            className="ml-auto flex items-center gap-1.5 rounded-xl border border-accent/25 bg-accent/5 px-3 py-1.5 text-xs text-accent/80 hover:text-accent-hover hover:border-accent/50 hover:bg-accent/10 transition-all"
           >
             <span className="text-sm leading-none">＋</span> Add Problems
           </button>
@@ -350,7 +350,7 @@ export default function ProblemList({
       </div>
 
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Pattern Distribution</h3>
+        <h3 className="text-xs font-semibold text-muted uppercase tracking-wider">Pattern Distribution</h3>
       </div>
 
       {patterns.map((pattern) => {
@@ -359,36 +359,36 @@ export default function ProblemList({
         const isCollapsed = collapsed[pattern] !== false;
 
         return (
-          <div key={pattern} className="rounded-xl border border-neutral-800 bg-neutral-900/50 overflow-hidden">
+          <div key={pattern} className="rounded-xl border border-border bg-surface overflow-hidden">
             <button
               onClick={() => setCollapsed((prev) => ({ ...prev, [pattern]: prev[pattern] === false }))}
               aria-expanded={!isCollapsed}
-              className="w-full flex items-center justify-between px-4 py-3 hover:bg-neutral-800/40 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 hover:bg-border transition-colors"
             >
               <div className="flex-1 min-w-0 text-left">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-neutral-300 capitalize font-medium">
+                  <span className="text-xs text-secondary capitalize font-medium">
                     {pattern.replace(/_/g, " ").toLowerCase()}
                   </span>
-                  <span className="text-[10px] text-neutral-500">{groupDone}/{problems.length}</span>
+                  <span className="text-[10px] text-muted">{groupDone}/{problems.length}</span>
                 </div>
                 {PATTERN_DESCRIPTIONS[pattern] && (
-                  <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+                  <p className="text-[11px] text-muted mt-0.5 leading-snug">
                     {PATTERN_DESCRIPTIONS[pattern]}
                   </p>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-20 h-1 rounded-full bg-neutral-800 overflow-hidden">
+                <div className="w-20 h-1 rounded-full bg-border overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                    className="h-full rounded-full bg-accent-fill transition-all duration-500"
                     style={{ width: `${Math.round((groupDone / problems.length) * 100)}%` }}
                   />
                 </div>
                 <ChevronRight
                   size={14}
                   className={cn(
-                    "text-neutral-500 transition-transform duration-200",
+                    "text-muted transition-transform duration-200",
                     !isCollapsed && "rotate-90",
                   )}
                 />
@@ -396,7 +396,7 @@ export default function ProblemList({
             </button>
 
             {!isCollapsed && (
-              <div className="divide-y divide-neutral-800/60">
+              <div className="divide-y divide-border">
                 {problems.map((p, idx) => {
                   const status = statuses[p.id] ?? "TODO";
                   const noteOpen = openNoteId === p.id;
@@ -407,16 +407,16 @@ export default function ProblemList({
                   return (
                     <div key={p.id} className="animate-fade-in" style={{ animationDelay: animDelay }}>
                       {/* Problem row */}
-                      <div className="flex items-start gap-3 px-4 py-2.5 hover:bg-neutral-800/30 transition-colors">
+                      <div className="flex items-start gap-3 px-4 py-2.5 hover:bg-border transition-colors">
                         {/* Status circle — self-center so it stays centered across both lines */}
                         <button
                           onClick={() => toggleDone(p.id)}
                           title={statusTitle[status]}
                           className={cn(
                             "shrink-0 self-center w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-150",
-                            status === "DONE"    && "border-emerald-500/60 bg-emerald-500/10",
+                            status === "DONE"    && "border-accent/60 bg-accent/10",
                             status === "SOLVING" && "border-amber-500/60 bg-amber-500/10",
-                            status === "TODO"    && "border-neutral-700 hover:border-neutral-500",
+                            status === "TODO"    && "border-border hover:border-border",
                           )}
                         >
                           <StatusIcon status={status} />
@@ -428,7 +428,7 @@ export default function ProblemList({
                           {/* ── Mobile: 2-line ── */}
                           <div className="md:hidden space-y-1">
                             <div className="flex items-start justify-between gap-2">
-                              <span className="text-sm text-neutral-300 leading-snug">{p.title}</span>
+                              <span className="text-sm text-secondary leading-snug">{p.title}</span>
                               {p.mustDo && (
                                 <span className="shrink-0 text-[10px] text-amber-400/80 border border-amber-500/20 rounded px-1 py-0.5 mt-0.5">must do</span>
                               )}
@@ -457,10 +457,10 @@ export default function ProblemList({
                                     <GFGIcon size={20} />
                                   </a>
                                 )}
-                                <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-neutral-500 hover:text-neutral-400")}>
+                                <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
                                   <RotateCcw size={15} />
                                 </button>
-                                <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-neutral-500 hover:text-neutral-400")}>
+                                <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
                                   <StickyNote size={15} />
                                 </button>
                               </div>
@@ -472,7 +472,7 @@ export default function ProblemList({
                             className="hidden md:grid items-center gap-x-4"
                             style={{ gridTemplateColumns: "minmax(0,2fr) minmax(0,100px) 72px 72px minmax(0,1fr)" }}
                           >
-                            <span className="text-sm text-neutral-300 leading-snug min-w-0 truncate">{p.title}</span>
+                            <span className="text-sm text-secondary leading-snug min-w-0 truncate">{p.title}</span>
 
                             {/* Companies */}
                             <div className="flex items-center justify-center gap-1.5">
@@ -511,10 +511,10 @@ export default function ProblemList({
                                   <GFGIcon size={20} />
                                 </a>
                               )}
-                              <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-neutral-500 hover:text-neutral-400")}>
+                              <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
                                 <RotateCcw size={15} />
                               </button>
-                              <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-neutral-500 hover:text-neutral-400")}>
+                              <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
                                 <StickyNote size={15} />
                               </button>
                             </div>

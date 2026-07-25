@@ -49,11 +49,11 @@ export default function UserAvatar({ image, name, size = 32, className, textSize
     <div
       style={style}
       className={cn(
-        `bg-neutral-800 ${rounded} flex items-center justify-center shrink-0`,
+        `bg-border ${rounded} flex items-center justify-center shrink-0`,
         className,
       )}
     >
-      <span className={cn("font-bold text-neutral-200", textSize ?? "text-[10px]")} style={{ fontSize: size * 0.35 }}>
+      <span className={cn("font-bold text-primary", textSize ?? "text-[10px]")} style={{ fontSize: size * 0.35 }}>
         {initials}
       </span>
     </div>

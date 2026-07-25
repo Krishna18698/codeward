@@ -94,12 +94,12 @@ export default async function DashboardPage() {
     <div className="max-w-5xl space-y-6 animate-fade-up">
 
         {/* ── Hero banner ── */}
-        <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-white/3 p-6">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {/* Avatar */}
               {isLocalAvatar(userImage) ? (
-                <div className={`w-13 h-13 rounded-full border-2 border-emerald-500/30 flex items-center justify-center shrink-0 ${getAvatarMeta(userImage).bg}`}>
+                <div className={`w-13 h-13 rounded-full border-2 border-accent/30 flex items-center justify-center shrink-0 ${getAvatarMeta(userImage).bg}`}>
                   <span className="text-2xl">{getAvatarMeta(userImage).emoji}</span>
                 </div>
               ) : userImage ? (
@@ -109,20 +109,20 @@ export default async function DashboardPage() {
                   width={52}
                   height={52}
                   referrerPolicy="no-referrer"
-                  className="rounded-full border-2 border-emerald-500/30 shrink-0"
+                  className="rounded-full border-2 border-accent/30 shrink-0"
                 />
               ) : (
-                <div className="w-13 h-13 rounded-full border-2 border-emerald-500/30 bg-neutral-800 flex items-center justify-center text-white font-bold text-lg shrink-0">
+                <div className="w-13 h-13 rounded-full border-2 border-accent/30 bg-border flex items-center justify-center text-primary font-bold text-lg shrink-0">
                   {firstName[0]}
                 </div>
               )}
 
               <div>
-                <p className="text-xs text-neutral-500 mb-0.5">{greeting}</p>
-                <h1 className="text-xl font-semibold tracking-heading text-white">{firstName} 👋</h1>
+                <p className="text-xs text-muted mb-0.5">{greeting}</p>
+                <h1 className="text-xl font-semibold tracking-heading text-primary">{firstName} 👋</h1>
                 {user.targetCompany && (
-                  <p className="text-xs text-neutral-500 mt-0.5">
-                    Targeting <span className="text-emerald-400 font-medium">{user.targetCompany}</span>
+                  <p className="text-xs text-muted mt-0.5">
+                    Targeting <span className="text-accent font-medium">{user.targetCompany}</span>
                     {user.experienceLevel && <span> · {user.experienceLevel.charAt(0) + user.experienceLevel.slice(1).toLowerCase()}</span>}
                   </p>
                 )}
@@ -134,32 +134,32 @@ export default async function DashboardPage() {
               <div className="relative">
                 <Ring pct={overallPct} size={64} stroke={5} />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-bold text-white">{overallPct}%</span>
+                  <span className="text-sm font-bold text-primary">{overallPct}%</span>
                 </div>
               </div>
-              <span className="text-[10px] text-neutral-500">overall</span>
+              <span className="text-[10px] text-muted">overall</span>
             </div>
           </div>
 
           {/* Mini progress bar */}
           <div className="mt-4">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-neutral-500">Total progress</span>
-              <span className="text-xs text-neutral-500">{doneCount} / {totalTracked} problems</span>
+              <span className="text-xs text-muted">Total progress</span>
+              <span className="text-xs text-muted">{doneCount} / {totalTracked} problems</span>
             </div>
-            <div className="h-1.5 rounded-full bg-neutral-800 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-border overflow-hidden">
               <div
-                className="h-full rounded-full bg-emerald-500 transition-all duration-1000"
+                className="h-full rounded-full bg-accent-fill transition-all duration-1000"
                 style={{ width: `${overallPct}%` }}
               />
             </div>
           </div>
 
           {/* Inline stats — folded in from the old Solved/Sheets stat cards */}
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 border-t border-neutral-800/60 pt-3 text-xs text-neutral-400">
-            <span><span className="font-semibold text-white">{doneCount}</span> solved</span>
-            <span><span className="font-semibold text-white">{sheets.length}</span> sheets</span>
-            <span><span className="font-semibold text-white">{sheets.filter((s) => !s.isPreset).length}</span> custom</span>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-3 text-xs text-secondary">
+            <span><span className="font-semibold text-primary">{doneCount}</span> solved</span>
+            <span><span className="font-semibold text-primary">{sheets.length}</span> sheets</span>
+            <span><span className="font-semibold text-primary">{sheets.filter((s) => !s.isPreset).length}</span> custom</span>
           </div>
         </div>
 
@@ -169,19 +169,19 @@ export default async function DashboardPage() {
             {continueItem && (
               <Link
                 href={`/dashboard/dsa?sheet=${continueItem.problem.sheetId}`}
-                className="group flex items-center gap-3 rounded-2xl border border-emerald-500/25 bg-emerald-500/6 p-4 hover:border-emerald-500/40 transition-colors"
+                className="group flex items-center gap-3 rounded-2xl border border-accent/25 bg-accent/6 p-4 hover:border-accent/40 transition-colors"
               >
-                <div className="rounded-xl bg-emerald-500/15 p-2.5 shrink-0">
-                  <Play size={16} className="text-emerald-400" />
+                <div className="rounded-xl bg-accent/15 p-2.5 shrink-0">
+                  <Play size={16} className="text-accent" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-mono text-[11px] text-emerald-400">Continue where you left off</p>
-                  <p className="text-sm font-medium text-white truncate group-hover:text-emerald-300 transition-colors">
+                  <p className="font-mono text-[11px] text-accent">Continue where you left off</p>
+                  <p className="text-sm font-medium text-primary truncate group-hover:text-accent-hover transition-colors">
                     {continueItem.problem.title}
                   </p>
-                  <p className="text-[11px] text-neutral-500">{timeAgo(continueItem.updatedAt)}</p>
+                  <p className="text-[11px] text-muted">{timeAgo(continueItem.updatedAt)}</p>
                 </div>
-                <ArrowRight size={14} className="text-neutral-700 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
+                <ArrowRight size={14} className="text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
               </Link>
             )}
 
@@ -196,13 +196,13 @@ export default async function DashboardPage() {
                     <Link
                       key={r.problem.id}
                       href={`/dashboard/dsa?sheet=${r.problem.sheetId}`}
-                      className="block text-xs text-neutral-300 hover:text-white truncate transition-colors"
+                      className="block text-xs text-secondary hover:text-primary truncate transition-colors"
                     >
                       • {r.problem.title}
                     </Link>
                   ))}
                   {reviseList.length > 3 && (
-                    <p className="text-[11px] text-neutral-500 pt-0.5">+{reviseList.length - 3} more flagged</p>
+                    <p className="text-[11px] text-muted pt-0.5">+{reviseList.length - 3} more flagged</p>
                   )}
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default async function DashboardPage() {
 
         {/* ── Practice modes (compact row) ── */}
         <div>
-          <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">Practice</h2>
+          <h2 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Practice</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
             {[
               { href: "/dashboard/dsa",           icon: Code2,           label: "DSA Sheets",    sub: `${doneCount} solved`,             accent: "emerald" },
@@ -226,15 +226,15 @@ export default async function DashboardPage() {
               <Link
                 key={m.href}
                 href={m.href}
-                className="group flex flex-col items-center gap-2 rounded-xl border border-neutral-800 bg-white/3 p-3 text-center hover:border-neutral-700 hover:bg-white/5 transition-colors animate-fade-up"
+                className="group flex flex-col items-center gap-2 rounded-xl border border-border bg-surface p-3 text-center hover:border-border hover:bg-elevated transition-colors animate-fade-up"
                 style={{ animationDelay: `${i * 40}ms` }}
               >
-                <div className={`rounded-lg p-2 ${m.accent === "emerald" ? "bg-emerald-500/10" : "bg-rose-500/10"}`}>
-                  <m.icon size={15} className={m.accent === "emerald" ? "text-emerald-400" : "text-rose-400"} />
+                <div className={`rounded-lg p-2 ${m.accent === "emerald" ? "bg-accent/10" : "bg-rose-500/10"}`}>
+                  <m.icon size={15} className={m.accent === "emerald" ? "text-accent" : "text-rose-400"} />
                 </div>
                 <div>
-                  <p className="text-[12px] font-semibold leading-tight text-white">{m.label}</p>
-                  <p className="mt-0.5 font-mono text-[10px] text-neutral-500">{m.sub}</p>
+                  <p className="text-[12px] font-semibold leading-tight text-primary">{m.label}</p>
+                  <p className="mt-0.5 font-mono text-[10px] text-muted">{m.sub}</p>
                 </div>
               </Link>
             ))}
@@ -244,21 +244,21 @@ export default async function DashboardPage() {
         {/* ── Sheets grid ── */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Your Sheets</h2>
-            <Link href="/dashboard/dsa" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors">View all →</Link>
+            <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Your Sheets</h2>
+            <Link href="/dashboard/dsa" className="text-xs text-accent hover:text-accent-hover transition-colors">View all →</Link>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             {/* AI build card */}
-            <div className="rounded-2xl border border-dashed border-emerald-500/25 bg-emerald-500/5 p-5 flex flex-col gap-2.5 hover:border-emerald-500/50 hover:bg-emerald-500/8 transition-all duration-200 group">
+            <div className="rounded-2xl border border-dashed border-accent/25 bg-accent/5 p-5 flex flex-col gap-2.5 hover:border-accent/50 hover:bg-accent/8 transition-all duration-200 group">
               <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-emerald-400" />
-                <p className="text-sm font-semibold text-white">Build a custom sheet</p>
+                <Sparkles size={16} className="text-accent" />
+                <p className="text-sm font-semibold text-primary">Build a custom sheet</p>
               </div>
-              <p className="text-xs text-neutral-500 leading-relaxed">
+              <p className="text-xs text-muted leading-relaxed">
                 Tell the AI mentor your target company, timeline, or weak patterns and it&apos;ll generate a personalized sheet.
               </p>
-              <Link href="/dashboard/mentor" className="inline-flex items-center gap-1 self-start text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors mt-0.5 group-hover:gap-2">
+              <Link href="/dashboard/mentor" className="inline-flex items-center gap-1 self-start text-xs font-medium text-accent hover:text-accent-hover transition-colors mt-0.5 group-hover:gap-2">
                 Ask the mentor <ArrowRight size={11} />
               </Link>
             </div>
@@ -273,35 +273,35 @@ export default async function DashboardPage() {
                 <Link
                   key={sheet.id}
                   href={`/dashboard/dsa?sheet=${sheet.id}`}
-                  className="group rounded-2xl border border-neutral-800 bg-neutral-900/50 p-5 hover:border-neutral-600 hover:bg-neutral-900/80 transition-all duration-200 animate-fade-up"
+                  className="group rounded-2xl border border-border bg-surface p-5 hover:border-border hover:bg-surface transition-all duration-200 animate-fade-up"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">
+                      <p className="text-sm font-semibold text-primary group-hover:text-accent-hover transition-colors">
                         {sheet.name}
                       </p>
-                      <p className="text-[11px] text-neutral-500 mt-0.5">
+                      <p className="text-[11px] text-muted mt-0.5">
                         {sheet.isPreset ? "Preset" : "Custom"} · {total} problems
                       </p>
                     </div>
                     <div className="relative">
                       <Ring pct={pct} size={40} stroke={3.5} />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-[10px] font-bold text-white">{pct}%</span>
+                        <span className="text-[10px] font-bold text-primary">{pct}%</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="h-1 rounded-full bg-neutral-800 overflow-hidden mb-2">
+                  <div className="h-1 rounded-full bg-border overflow-hidden mb-2">
                     <div
-                      className="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                      className="h-full rounded-full bg-accent-fill transition-all duration-700"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-neutral-500">{done}/{total} solved</span>
-                    <ArrowRight size={12} className="text-neutral-700 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                    <span className="text-xs text-muted">{done}/{total} solved</span>
+                    <ArrowRight size={12} className="text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </Link>
               );
@@ -315,26 +315,26 @@ export default async function DashboardPage() {
         {topPatterns.length > 0 ? (
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <TrendingUp size={14} className="text-neutral-500" />
-              <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Pattern Breakdown</h2>
+              <TrendingUp size={14} className="text-muted" />
+              <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Pattern Breakdown</h2>
             </div>
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 divide-y divide-neutral-800/60">
+            <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
               {topPatterns.map(([pattern, { done, total }]) => {
                 const pct = total > 0 ? Math.round((done / total) * 100) : 0;
                 return (
-                  <div key={pattern} className="flex items-center gap-4 px-5 py-3 group hover:bg-neutral-800/20 transition-colors">
-                    <span className="w-44 text-xs text-neutral-400 capitalize group-hover:text-neutral-300 transition-colors">
+                  <div key={pattern} className="flex items-center gap-4 px-5 py-3 group hover:bg-border transition-colors">
+                    <span className="w-44 text-xs text-secondary capitalize group-hover:text-secondary transition-colors">
                       {pattern.replace(/_/g, " ").toLowerCase()}
                     </span>
-                    <div className="flex-1 h-1.5 rounded-full bg-neutral-800 overflow-hidden">
+                    <div className="flex-1 h-1.5 rounded-full bg-border overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                        className="h-full rounded-full bg-accent-fill transition-all duration-700"
                         style={{ width: `${pct}%` }}
                       />
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-neutral-500 w-10 text-right">{done}/{total}</span>
-                      <span className={`text-[10px] font-medium w-8 text-right ${pct === 100 ? "text-emerald-400" : "text-neutral-500"}`}>
+                      <span className="text-xs text-muted w-10 text-right">{done}/{total}</span>
+                      <span className={`text-[10px] font-medium w-8 text-right ${pct === 100 ? "text-accent" : "text-muted"}`}>
                         {pct}%
                       </span>
                     </div>
@@ -344,11 +344,11 @@ export default async function DashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-neutral-800 px-5 py-12 text-center">
-            <Code2 size={24} className="text-neutral-700 mx-auto mb-3" />
-            <p className="text-neutral-500 text-sm font-medium">No progress yet</p>
-            <p className="text-neutral-500 text-xs mt-1">Start solving problems to see your pattern breakdown here.</p>
-            <Link href="/dashboard/dsa" className="inline-flex items-center gap-1 mt-4 text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-medium">
+          <div className="rounded-2xl border border-dashed border-border px-5 py-12 text-center">
+            <Code2 size={24} className="text-muted mx-auto mb-3" />
+            <p className="text-muted text-sm font-medium">No progress yet</p>
+            <p className="text-muted text-xs mt-1">Start solving problems to see your pattern breakdown here.</p>
+            <Link href="/dashboard/dsa" className="inline-flex items-center gap-1 mt-4 text-xs text-accent hover:text-accent-hover transition-colors font-medium">
               Go to DSA Sheets <ArrowRight size={11} />
             </Link>
           </div>
@@ -359,24 +359,24 @@ export default async function DashboardPage() {
         {recent.length > 0 && (
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <History size={14} className="text-neutral-500" />
-              <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Recent Activity</h2>
+              <History size={14} className="text-muted" />
+              <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Recent Activity</h2>
             </div>
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/50 divide-y divide-neutral-800/60">
+            <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
               {recent.map((r) => (
                 <Link
                   key={r.problem.id + r.updatedAt.toISOString()}
                   href={`/dashboard/dsa?sheet=${r.problem.sheetId}`}
-                  className="flex items-center gap-3 px-5 py-2.5 hover:bg-neutral-800/20 transition-colors group"
+                  className="flex items-center gap-3 px-5 py-2.5 hover:bg-border transition-colors group"
                 >
                   <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${
-                    r.status === "DONE" ? "bg-emerald-400" : r.status === "SOLVING" ? "bg-amber-400" : "bg-neutral-600"
+                    r.status === "DONE" ? "bg-accent-hover" : r.status === "SOLVING" ? "bg-amber-400" : "bg-neutral-600"
                   }`} />
-                  <span className="text-xs text-neutral-300 truncate group-hover:text-white transition-colors flex-1">
+                  <span className="text-xs text-secondary truncate group-hover:text-primary transition-colors flex-1">
                     {r.problem.title}
                   </span>
-                  <span className="font-mono text-[10px] text-neutral-600 shrink-0">{statusLabel[r.status] ?? r.status}</span>
-                  <span className="text-[10px] text-neutral-500 shrink-0 w-20 text-right">{timeAgo(r.updatedAt)}</span>
+                  <span className="font-mono text-[10px] text-muted shrink-0">{statusLabel[r.status] ?? r.status}</span>
+                  <span className="text-[10px] text-muted shrink-0 w-20 text-right">{timeAgo(r.updatedAt)}</span>
                 </Link>
               ))}
             </div>

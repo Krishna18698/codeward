@@ -15,22 +15,22 @@ export default async function DeepDivesPage() {
     <div className="space-y-6 animate-fade-up">
       {/* Header */}
       <div>
-        <p className="font-mono text-[13px] text-emerald-400 mb-2">Deep Dives</p>
-        <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-white">
+        <p className="font-mono text-[13px] text-accent mb-2">Deep Dives</p>
+        <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary">
           The topics every senior loop covers.
         </h1>
-        <p className="text-sm text-neutral-400 mt-1 max-w-xl">
+        <p className="text-sm text-secondary mt-1 max-w-xl">
           Long-form deep dives — failure modes, trade-offs, and the interview traps that
           surface-level guides skip.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[11px]">
-          <span className="rounded-full border border-neutral-800 px-2.5 py-1 text-neutral-400">
+          <span className="rounded-full border border-border px-2.5 py-1 text-secondary">
             {DEEP_DIVES.length} topics
           </span>
-          <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-emerald-400">
+          <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-accent">
             all free
           </span>
-          <span className="rounded-full border border-neutral-800 px-2.5 py-1 text-neutral-400">
+          <span className="rounded-full border border-border px-2.5 py-1 text-secondary">
             ~{avgMin} min avg
           </span>
         </div>
@@ -39,20 +39,20 @@ export default async function DeepDivesPage() {
       {/* Start here — featured card */}
       <Link
         href={`/dashboard/deep-dives/${featured.slug}`}
-        className="block rounded-2xl border border-emerald-500/25 bg-emerald-500/6 p-5 hover:border-emerald-500/40 transition-colors group"
+        className="block rounded-2xl border border-accent/25 bg-accent/6 p-5 hover:border-accent/40 transition-colors group"
       >
-        <p className="font-mono text-[13px] text-emerald-400 mb-2">Start here</p>
+        <p className="font-mono text-[13px] text-accent mb-2">Start here</p>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="text-base font-semibold text-white group-hover:text-emerald-300 transition-colors">
+            <h2 className="text-base font-semibold text-primary group-hover:text-accent-hover transition-colors">
               {featured.title}
             </h2>
-            <p className="text-sm text-neutral-400 mt-1 max-w-2xl">{featured.hook}</p>
-            <p className="mt-2 font-mono text-[11px] text-neutral-500">
+            <p className="text-sm text-secondary mt-1 max-w-2xl">{featured.hook}</p>
+            <p className="mt-2 font-mono text-[11px] text-muted">
               {featured.tags.join(" · ")} · ~{featured.minutes} min
             </p>
           </div>
-          <span className="shrink-0 text-sm font-medium text-emerald-400">Read →</span>
+          <span className="shrink-0 text-sm font-medium text-accent">Read →</span>
         </div>
       </Link>
 
@@ -62,18 +62,18 @@ export default async function DeepDivesPage() {
           <Link
             key={d.slug}
             href={`/dashboard/deep-dives/${d.slug}`}
-            className="flex flex-col rounded-2xl border border-neutral-800 bg-white/3 p-5 hover:border-neutral-700 hover:bg-white/5 transition-colors group animate-fade-up"
+            className="flex flex-col rounded-2xl border border-border bg-surface p-5 hover:border-border hover:bg-elevated transition-colors group animate-fade-up"
             style={{ animationDelay: `${i * 40}ms` }}
           >
             <div className="flex items-start justify-between gap-2">
-              <h2 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">
+              <h2 className="text-sm font-semibold text-primary group-hover:text-accent-hover transition-colors">
                 {d.title}
               </h2>
               <ReadBadge slug={d.slug} />
             </div>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {d.tags.map((t) => (
-                <span key={t} className="rounded-full border border-neutral-800 px-2 py-0.5 font-mono text-[10px] text-neutral-500">
+                <span key={t} className="rounded-full border border-border px-2 py-0.5 font-mono text-[10px] text-muted">
                   {t}
                 </span>
               ))}
@@ -83,10 +83,10 @@ export default async function DeepDivesPage() {
                 </span>
               )}
             </div>
-            <p className="mt-2 text-xs text-neutral-400 leading-relaxed flex-1">{d.hook}</p>
-            <div className="mt-3 flex items-center justify-between font-mono text-[11px] text-neutral-500">
+            <p className="mt-2 text-xs text-secondary leading-relaxed flex-1">{d.hook}</p>
+            <div className="mt-3 flex items-center justify-between font-mono text-[11px] text-muted">
               <span>~{d.minutes} min</span>
-              <span className="text-emerald-400">Read →</span>
+              <span className="text-accent">Read →</span>
             </div>
           </Link>
         ))}

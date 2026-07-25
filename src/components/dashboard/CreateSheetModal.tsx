@@ -72,19 +72,19 @@ export default function CreateSheetModal({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-2xl border border-neutral-700 bg-surface shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="absolute inset-0 bg-canvas/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-surface shadow-2xl flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="px-6 pt-5 pb-4 border-b border-neutral-800 shrink-0">
-          <h2 className="text-base font-semibold text-white mb-0.5">Create New Sheet</h2>
-          <p className="text-xs text-neutral-500">Name your sheet and optionally add problems to start.</p>
+        <div className="px-6 pt-5 pb-4 border-b border-border shrink-0">
+          <h2 className="text-base font-semibold text-primary mb-0.5">Create New Sheet</h2>
+          <p className="text-xs text-muted">Name your sheet and optionally add problems to start.</p>
         </div>
 
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5 min-h-0">
           {/* Sheet name */}
           <div>
-            <label className="text-xs text-neutral-400 font-medium mb-1.5 block">Sheet name</label>
+            <label className="text-xs text-secondary font-medium mb-1.5 block">Sheet name</label>
             <input
               ref={inputRef}
               type="text"
@@ -92,37 +92,37 @@ export default function CreateSheetModal({ onClose }: Props) {
               onChange={(e) => { setName(e.target.value); setError(""); }}
               onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
               placeholder="e.g. Google Prep, Amazon Grind…"
-              className="w-full bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-emerald-500/60 transition"
+              className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm text-primary placeholder:text-muted focus:outline-none focus:border-accent/60 transition"
             />
             {error && <p className="text-xs text-red-400 mt-1.5">{error}</p>}
           </div>
 
           {/* Problem picker */}
           <div>
-            <label className="text-xs text-neutral-400 font-medium mb-1.5 block">
+            <label className="text-xs text-secondary font-medium mb-1.5 block">
               Add problems{" "}
-              <span className="text-neutral-500 font-normal">(optional — search across all sheets)</span>
+              <span className="text-muted font-normal">(optional — search across all sheets)</span>
             </label>
             <ProblemPicker selected={selected} onToggle={toggleProblem} />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-neutral-800 flex items-center justify-between shrink-0">
-          <span className="text-xs text-neutral-500">
+        <div className="px-6 py-4 border-t border-border flex items-center justify-between shrink-0">
+          <span className="text-xs text-muted">
             {selected.length > 0 ? `${selected.length} problem${selected.length > 1 ? "s" : ""} selected` : ""}
           </span>
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm text-neutral-400 hover:text-white rounded-lg border border-neutral-700 hover:border-neutral-600 transition"
+              className="px-4 py-2 text-sm text-secondary hover:text-primary rounded-lg border border-border hover:border-border transition"
             >
               Cancel
             </button>
             <button
               onClick={handleCreate}
               disabled={loading || !name.trim()}
-              className="px-4 py-2 text-sm font-medium bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-lg transition"
+              className="px-4 py-2 text-sm font-medium bg-accent-fill hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-black rounded-lg transition"
             >
               {loading
                 ? selected.length > 0 ? "Creating & adding…" : "Creating…"

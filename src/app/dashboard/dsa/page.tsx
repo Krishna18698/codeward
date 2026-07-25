@@ -93,21 +93,21 @@ export default async function DSAPage({ searchParams }: Props) {
         {/* Header + view toggle */}
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-white truncate">
+            <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary truncate">
               {showBank ? "Problem Bank" : "DSA Sheets"}
             </h1>
-            <p className="hidden md:block text-neutral-500 text-sm mt-1">
+            <p className="hidden md:block text-muted text-sm mt-1">
               {showBank
                 ? "300 curated problems from top product companies. Add any to your custom sheets."
                 : "Track your progress across patterns and problems."}
             </p>
           </div>
 
-          <div className="flex items-center shrink-0 rounded-xl border border-neutral-800 bg-neutral-900/50 p-1">
+          <div className="flex items-center shrink-0 rounded-xl border border-border bg-surface p-1">
             <Link
               href="/dashboard/dsa"
               className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                !showBank ? "bg-emerald-500/15 text-emerald-400" : "text-neutral-500 hover:text-neutral-300"
+                !showBank ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
               }`}
             >
               My Sheets
@@ -115,7 +115,7 @@ export default async function DSAPage({ searchParams }: Props) {
             <Link
               href="/dashboard/dsa?view=bank"
               className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                showBank ? "bg-emerald-500/15 text-emerald-400" : "text-neutral-500 hover:text-neutral-300"
+                showBank ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
               }`}
             >
               Problem Bank
@@ -130,17 +130,17 @@ export default async function DSAPage({ searchParams }: Props) {
           <>
             {/* Start here — first-time users with zero solves */}
             {showStartHere && blind75 && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-emerald-500/25 bg-emerald-500/6 p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-accent/25 bg-accent/6 p-5">
                 <div>
-                  <p className="font-mono text-[13px] text-emerald-400 mb-1">Start here</p>
-                  <p className="text-sm font-semibold text-white">New? Begin with Blind 75.</p>
-                  <p className="text-xs text-neutral-400 mt-0.5">
+                  <p className="font-mono text-[13px] text-accent mb-1">Start here</p>
+                  <p className="text-sm font-semibold text-primary">New? Begin with Blind 75.</p>
+                  <p className="text-xs text-secondary mt-0.5">
                     75 problems covering every pattern that matters. Finish these before touching anything else.
                   </p>
                 </div>
                 <Link
                   href={`/dashboard/dsa?sheet=${blind75.id}`}
-                  className="shrink-0 self-start sm:self-center rounded-lg bg-emerald-500 text-black text-xs font-semibold px-3.5 py-2 hover:bg-emerald-400 transition-colors"
+                  className="shrink-0 self-start sm:self-center rounded-lg bg-accent-fill text-black text-xs font-semibold px-3.5 py-2 hover:bg-accent-hover transition-colors"
                 >
                   Open Blind 75 →
                 </Link>
@@ -153,14 +153,14 @@ export default async function DSAPage({ searchParams }: Props) {
                 {clientSheets.map((s) => (
                   <div key={s.id} className={`rounded-xl px-3.5 py-1.5 text-sm border whitespace-nowrap ${
                     s.id === defaultSheetId
-                      ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                      : "border-neutral-800 text-neutral-400"
+                      ? "bg-accent/15 text-accent border-accent/30"
+                      : "border-border text-secondary"
                   }`}>
                     {s.name}
                     <span className="ml-2 text-[11px] opacity-50">{s.problemCount}</span>
                   </div>
                 ))}
-                <div className="rounded-xl border border-dashed border-emerald-500/25 px-3.5 py-1.5 text-sm text-emerald-500/60">
+                <div className="rounded-xl border border-dashed border-accent/25 px-3.5 py-1.5 text-sm text-accent/60">
                   + New sheet
                 </div>
               </div>
@@ -170,9 +170,9 @@ export default async function DSAPage({ searchParams }: Props) {
 
             {/* Stats bar + problem list — fully client-driven, reacts to tab clicks */}
             {tabSheets.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-neutral-800 px-5 py-16 text-center">
-                <p className="text-neutral-400 text-sm font-medium mb-1">No sheets yet</p>
-                <p className="text-neutral-500 text-xs">Create a sheet above to get started.</p>
+              <div className="rounded-2xl border border-dashed border-border px-5 py-16 text-center">
+                <p className="text-secondary text-sm font-medium mb-1">No sheets yet</p>
+                <p className="text-muted text-xs">Create a sheet above to get started.</p>
               </div>
             ) : (
               <SheetContent

@@ -19,7 +19,7 @@ export default function ContactPage() {
       <MarketingSection title="Email">
         <p>
           Write to{" "}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+          <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium text-accent hover:text-accent-hover transition-colors">
             {CONTACT_EMAIL}
           </a>
           . I read everything, though replies can take a few days.
@@ -27,7 +27,7 @@ export default function ContactPage() {
       </MarketingSection>
 
       <MarketingSection title="Good things to send">
-        <ul className="list-disc ml-5 space-y-1.5 text-neutral-300">
+        <ul className="list-disc ml-5 space-y-1.5 text-secondary">
           <li>A bug or something that looks wrong in an exercise, review, or grade</li>
           <li>An exercise you&rsquo;d love to see — a specific bug class, design problem, or topic</li>
           <li>Feedback on the AI grading: where it was too harsh, too lenient, or plainly wrong</li>

@@ -25,21 +25,21 @@ export default function FloatingMentor() {
       {open && (
         <div
           className={cn(
-            "w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-neutral-700/60 bg-surface shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden",
+            "w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-border bg-surface shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden",
             "animate-scale-in origin-bottom-right",
             minimised ? "h-auto" : "h-[520px]",
           )}
         >
           {/* Panel header */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-800 bg-neutral-900/60 shrink-0">
-            <Sparkles size={13} className="text-emerald-400" />
-            <span className="text-sm font-medium text-white flex-1">AI Mentor</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface shrink-0">
+            <Sparkles size={13} className="text-accent" />
+            <span className="text-sm font-medium text-primary flex-1">AI Mentor</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-accent-hover" />
             <button
               onClick={() => setMinimised((v) => !v)}
               title={minimised ? "Expand" : "Minimise"}
               aria-label={minimised ? "Expand AI Mentor" : "Minimise AI Mentor"}
-              className="ml-2 text-neutral-500 hover:text-neutral-300 transition-colors"
+              className="ml-2 text-muted hover:text-secondary transition-colors"
             >
               <Minus size={14} />
             </button>
@@ -47,7 +47,7 @@ export default function FloatingMentor() {
               onClick={() => { setOpen(false); setMinimised(false); }}
               title="Close"
               aria-label="Close AI Mentor"
-              className="text-neutral-500 hover:text-neutral-300 transition-colors"
+              className="text-muted hover:text-secondary transition-colors"
             >
               <X size={14} />
             </button>
@@ -75,8 +75,8 @@ export default function FloatingMentor() {
           "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200",
           "border",
           open
-            ? "bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-neutral-200"
-            : "bg-emerald-500 border-emerald-400/50 text-black hover:bg-emerald-400",
+            ? "bg-border border-border text-secondary hover:text-primary"
+            : "bg-accent-fill border-accent/50 text-black hover:bg-accent-hover",
         )}
       >
         {open

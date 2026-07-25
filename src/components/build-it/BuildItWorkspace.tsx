@@ -14,7 +14,7 @@ import StageStepper from "./StageStepper";
 
 const CodeEditor = dynamic(() => import("@/components/ui/CodeEditor"), {
   ssr: false,
-  loading: () => <div className="p-4 font-mono text-xs text-neutral-500">Loading editor…</div>,
+  loading: () => <div className="p-4 font-mono text-xs text-muted">Loading editor…</div>,
 });
 
 type RunResult = { passed: boolean | null; output: string; creditsRemaining: number | null };
@@ -137,20 +137,20 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* ── Left: stage content + submission ── */}
         <div className="min-w-0 space-y-4">
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
-            <p className="font-mono text-[11px] text-emerald-400 mb-1">
+          <div className="rounded-2xl border border-border bg-surface p-5">
+            <p className="font-mono text-[11px] text-accent mb-1">
               Stage {activeStage.stage} · {activeStage.title}
             </p>
-            <p className="text-xs font-medium text-neutral-300 mb-2">{activeStage.constraintAdded}</p>
-            <p className="text-sm text-neutral-400 leading-relaxed mb-3">{activeStage.narrative}</p>
-            <p className="text-sm text-neutral-300 leading-relaxed">{activeStage.prompt}</p>
+            <p className="text-xs font-medium text-secondary mb-2">{activeStage.constraintAdded}</p>
+            <p className="text-sm text-secondary leading-relaxed mb-3">{activeStage.narrative}</p>
+            <p className="text-sm text-secondary leading-relaxed">{activeStage.prompt}</p>
 
             {activeStage.invariant && (
               <div className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/5 p-3">
                 <p className="font-mono text-[10px] uppercase tracking-wider text-rose-400 mb-1">
                   Stage {activeStage.stage} · make-or-break invariant
                 </p>
-                <p className="text-xs text-neutral-300 leading-relaxed">{activeStage.invariant}</p>
+                <p className="text-xs text-secondary leading-relaxed">{activeStage.invariant}</p>
               </div>
             )}
           </div>
@@ -166,8 +166,8 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                     className={cn(
                       "rounded px-2 py-0.5 font-mono text-[10px] transition-colors",
                       activeLanguage === l.value
-                        ? "bg-emerald-500/15 text-emerald-400"
-                        : "text-neutral-500 hover:text-neutral-300",
+                        ? "bg-accent/15 text-accent"
+                        : "text-muted hover:text-secondary",
                     )}
                   >
                     {l.label}
@@ -177,13 +177,13 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
             }
           >
             {/* Code / Tests sub-tabs + Run */}
-            <div className="flex items-center justify-between border-b border-neutral-800 bg-white/3 pl-1 pr-2">
+            <div className="flex items-center justify-between border-b border-border bg-surface pl-1 pr-2">
               <div className="flex">
                 <button
                   onClick={() => setCodeTab("code")}
                   className={cn(
                     "px-3 py-2 font-mono text-xs transition-colors border-b-2",
-                    codeTab === "code" ? "text-white border-emerald-400" : "text-neutral-500 border-transparent hover:text-neutral-300",
+                    codeTab === "code" ? "text-primary border-accent" : "text-muted border-transparent hover:text-secondary",
                   )}
                 >
                   Code
@@ -193,7 +193,7 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                     onClick={() => setCodeTab("tests")}
                     className={cn(
                       "px-3 py-2 font-mono text-xs transition-colors border-b-2",
-                      codeTab === "tests" ? "text-white border-emerald-400" : "text-neutral-500 border-transparent hover:text-neutral-300",
+                      codeTab === "tests" ? "text-primary border-accent" : "text-muted border-transparent hover:text-secondary",
                     )}
                   >
                     Tests
@@ -204,7 +204,7 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                 <button
                   onClick={runTests}
                   disabled={running}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-neutral-700 px-2.5 py-1 font-mono text-[10px] text-neutral-300 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 font-mono text-[10px] text-secondary hover:border-accent/50 hover:text-accent transition-colors disabled:opacity-50"
                 >
                   {running ? <Loader2 size={11} className="animate-spin" /> : <Play size={11} />}
                   {running ? "Running…" : "Run Tests"}
@@ -236,25 +236,25 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
           {runResult && (
             <div className={cn(
               "rounded-2xl border bg-surface overflow-hidden",
-              runResult.passed === true ? "border-emerald-500/30" : runResult.passed === false ? "border-rose-500/30" : "border-neutral-800",
+              runResult.passed === true ? "border-accent/30" : runResult.passed === false ? "border-rose-500/30" : "border-border",
             )}>
-              <div className="flex items-center justify-between gap-2 border-b border-neutral-800 bg-white/3 px-3 py-2">
+              <div className="flex items-center justify-between gap-2 border-b border-border bg-surface px-3 py-2">
                 <div className="flex items-center gap-2">
-                  <Terminal size={12} className={runResult.passed === true ? "text-emerald-400" : runResult.passed === false ? "text-rose-400" : "text-neutral-400"} />
-                  <span className="font-mono text-[11px] text-neutral-400">
+                  <Terminal size={12} className={runResult.passed === true ? "text-accent" : runResult.passed === false ? "text-rose-400" : "text-secondary"} />
+                  <span className="font-mono text-[11px] text-secondary">
                     {runResult.passed === true ? "tests passed" : runResult.passed === false ? "tests failed" : "run output"}
                   </span>
                 </div>
                 {runResult.creditsRemaining !== null && (
-                  <span className="font-mono text-[10px] text-neutral-600">{runResult.creditsRemaining} runs left today</span>
+                  <span className="font-mono text-[10px] text-muted">{runResult.creditsRemaining} runs left today</span>
                 )}
               </div>
-              <pre className="max-h-56 overflow-auto p-4 font-mono text-[11.5px] leading-5 text-neutral-300 whitespace-pre-wrap">{runResult.output || "(no output)"}</pre>
+              <pre className="max-h-56 overflow-auto p-4 font-mono text-[11.5px] leading-5 text-secondary whitespace-pre-wrap">{runResult.output || "(no output)"}</pre>
             </div>
           )}
 
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-4">
-            <p className="font-mono text-[11px] text-neutral-500 mb-2">
+          <div className="rounded-2xl border border-border bg-surface p-4">
+            <p className="font-mono text-[11px] text-muted mb-2">
               Your reasoning {activeStage.invariant && <span className="text-rose-400">— argue the invariant explicitly</span>}
             </p>
             <textarea
@@ -267,15 +267,15 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                   ? "State the invariant in your own words, then walk through a concrete concurrent scenario and explain why your design can't violate it."
                   : "Explain how your design satisfies this stage's new constraint."
               }
-              className="w-full resize-y rounded-xl border border-neutral-700/60 bg-surface px-3 py-2.5 text-sm text-neutral-200 placeholder:text-neutral-600 leading-relaxed disabled:opacity-60"
+              className="w-full resize-y rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-primary placeholder:text-muted leading-relaxed disabled:opacity-60"
             />
             <div className="mt-3 flex items-center justify-between gap-3">
-              <p className="text-[11px] text-neutral-500">Graded by meaning — the mechanism matters, not the syntax.</p>
+              <p className="text-[11px] text-muted">Graded by meaning — the mechanism matters, not the syntax.</p>
               {!result && (
                 <button
                   onClick={submit}
                   disabled={grading}
-                  className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-black hover:bg-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 rounded-lg bg-accent-fill px-4 py-2 text-xs font-semibold text-black hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {grading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
                   {grading ? "Grading…" : "Submit stage"}
@@ -288,38 +288,38 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
         {/* ── Right: result / attempts ── */}
         <div className="space-y-4">
           {result ? (
-            <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5 space-y-4">
+            <div className="rounded-2xl border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0">
                   <Ring pct={result.score} size={64} stroke={5} color={result.score >= 70 ? "#34d399" : result.score >= 40 ? "#fbbf24" : "#fb7185"} />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-mono text-sm font-bold text-white">{result.score}</span>
+                    <span className="font-mono text-sm font-bold text-primary">{result.score}</span>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">Stage {result.stage} graded</p>
-                  <p className="font-mono text-[11px] text-neutral-500 mt-0.5">weighted rubric · /100</p>
+                  <p className="text-sm font-semibold text-primary">Stage {result.stage} graded</p>
+                  <p className="font-mono text-[11px] text-muted mt-0.5">weighted rubric · /100</p>
                 </div>
               </div>
 
               {result.invariantHolds !== null && (
                 <div className={cn(
                   "flex items-center gap-2 rounded-xl border px-3 py-2",
-                  result.invariantHolds ? "border-emerald-500/25 bg-emerald-500/5" : "border-rose-500/25 bg-rose-500/5",
+                  result.invariantHolds ? "border-accent/25 bg-accent/5" : "border-rose-500/25 bg-rose-500/5",
                 )}>
                   {result.invariantHolds ? (
-                    <Check size={13} className="text-emerald-400 shrink-0" strokeWidth={3} />
+                    <Check size={13} className="text-accent shrink-0" strokeWidth={3} />
                   ) : (
                     <XIcon size={13} className="text-rose-400 shrink-0" strokeWidth={3} />
                   )}
-                  <span className={cn("text-xs font-medium", result.invariantHolds ? "text-emerald-400" : "text-rose-400")}>
+                  <span className={cn("text-xs font-medium", result.invariantHolds ? "text-accent" : "text-rose-400")}>
                     Invariant {result.invariantHolds ? "held" : "not established"}
                   </span>
                 </div>
               )}
 
               {result.feedback && (
-                <p className="text-xs text-neutral-300 leading-relaxed border-t border-neutral-800 pt-3">{result.feedback}</p>
+                <p className="text-xs text-secondary leading-relaxed border-t border-border pt-3">{result.feedback}</p>
               )}
 
               <div className="space-y-2">
@@ -328,32 +328,32 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                     key={c.id}
                     className={cn(
                       "rounded-lg border px-2.5 py-1.5",
-                      c.met ? "border-emerald-500/25 bg-emerald-500/5" : "border-rose-500/25 bg-rose-500/5",
+                      c.met ? "border-accent/25 bg-accent/5" : "border-rose-500/25 bg-rose-500/5",
                     )}
                   >
                     <div className="flex items-center gap-1.5">
                       {c.met ? (
-                        <Check size={10} className="text-emerald-400 shrink-0" strokeWidth={3} />
+                        <Check size={10} className="text-accent shrink-0" strokeWidth={3} />
                       ) : (
                         <XIcon size={10} className="text-rose-400 shrink-0" strokeWidth={3} />
                       )}
-                      <span className="text-[11px] text-neutral-300 leading-snug">{c.description}</span>
+                      <span className="text-[11px] text-secondary leading-snug">{c.description}</span>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-3">
-                <p className="font-mono text-[10px] text-emerald-400 mb-1">Canonical approach</p>
-                <p className="text-xs text-neutral-300 leading-relaxed">{result.canonicalApproach}</p>
+              <div className="rounded-xl border border-accent/25 bg-accent/5 p-3">
+                <p className="font-mono text-[10px] text-accent mb-1">Canonical approach</p>
+                <p className="text-xs text-secondary leading-relaxed">{result.canonicalApproach}</p>
               </div>
 
               {result.commonPitfalls.length > 0 && (
                 <div>
-                  <p className="font-mono text-[10px] text-neutral-500 mb-1.5">Common pitfalls</p>
+                  <p className="font-mono text-[10px] text-muted mb-1.5">Common pitfalls</p>
                   <ul className="space-y-1">
                     {result.commonPitfalls.map((p, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-[11px] text-neutral-500">
+                      <li key={i} className="flex items-start gap-1.5 text-[11px] text-muted">
                         <AlertTriangle size={10} className="mt-0.5 shrink-0 text-amber-400/70" /> {p}
                       </li>
                     ))}
@@ -364,16 +364,16 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
               {activeStageNum < problem.stages.length && (
                 <button
                   onClick={continueToNext}
-                  className="w-full rounded-lg bg-emerald-500/15 border border-emerald-500/30 px-4 py-2 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/25 transition-colors"
+                  className="w-full rounded-lg bg-accent/15 border border-accent/30 px-4 py-2 text-xs font-semibold text-accent hover:bg-accent/25 transition-colors"
                 >
                   Continue to Stage {activeStageNum + 1} →
                 </button>
               )}
             </div>
           ) : (
-            <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
-              <p className="font-mono text-[11px] text-neutral-500 mb-2">How it works</p>
-              <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc ml-4">
+            <div className="rounded-2xl border border-border bg-surface p-5">
+              <p className="font-mono text-[11px] text-muted mb-2">How it works</p>
+              <ul className="space-y-2 text-xs text-secondary leading-relaxed list-disc ml-4">
                 <li>Write your approach (interfaces/pseudocode — not compiled) and explain how it satisfies this stage&rsquo;s new constraint.</li>
                 <li>Stage 3 asks you to state and defend a correctness invariant — that&rsquo;s the senior filter.</li>
                 <li>Submitting unlocks the next stage regardless of score, so you can see the whole problem evolve.</li>
@@ -382,17 +382,17 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
           )}
 
           {previousAttempts.filter((a) => a.stage === activeStageNum).length > 0 && (
-            <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
-              <p className="font-mono text-[11px] text-neutral-500 mb-3">Previous attempts · Stage {activeStageNum}</p>
+            <div className="rounded-2xl border border-border bg-surface p-5">
+              <p className="font-mono text-[11px] text-muted mb-3">Previous attempts · Stage {activeStageNum}</p>
               <div className="space-y-2">
                 {previousAttempts
                   .filter((a) => a.stage === activeStageNum)
                   .map((a) => (
                     <div key={a.id} className="flex items-center justify-between text-xs">
-                      <span className="text-neutral-400">
+                      <span className="text-secondary">
                         {new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </span>
-                      <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-emerald-400" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
+                      <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
                         {a.score}/100
                       </span>
                     </div>

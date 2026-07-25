@@ -24,7 +24,7 @@ function severityChip(severity: number) {
       ? "border-rose-500/40 bg-rose-500/10 text-rose-400"
       : severity === 3
         ? "border-amber-500/40 bg-amber-500/10 text-amber-400"
-        : "border-neutral-700 bg-white/5 text-neutral-400";
+        : "border-border bg-elevated text-secondary";
   return (
     <span className={cn("rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold border", cls)}>
       S{severity}
@@ -37,25 +37,25 @@ function BugCard({ bug, caught }: { bug: GradedBug; caught: boolean }) {
     <div
       className={cn(
         "rounded-xl border p-3",
-        caught ? "border-emerald-500/25 bg-emerald-500/5" : "border-rose-500/25 bg-rose-500/5",
+        caught ? "border-accent/25 bg-accent/5" : "border-rose-500/25 bg-rose-500/5",
       )}
     >
       <div className="flex items-center gap-2 mb-1.5">
         {severityChip(bug.severity)}
-        <span className="font-mono text-[10px] text-neutral-500">{bug.category}</span>
+        <span className="font-mono text-[10px] text-muted">{bug.category}</span>
         <span
           className={cn(
             "ml-auto inline-flex items-center gap-1 font-mono text-[10px]",
-            caught ? "text-emerald-400" : "text-rose-400",
+            caught ? "text-accent" : "text-rose-400",
           )}
         >
           {caught ? <Check size={10} strokeWidth={3} /> : <XIcon size={10} strokeWidth={3} />}
           {caught ? "caught" : "missed"}
         </span>
       </div>
-      <p className="text-xs text-neutral-300 leading-relaxed">{bug.description}</p>
+      <p className="text-xs text-secondary leading-relaxed">{bug.description}</p>
       {caught && bug.evidence && (
-        <p className="mt-1.5 text-[11px] text-neutral-500 italic">You wrote: &ldquo;{bug.evidence}&rdquo;</p>
+        <p className="mt-1.5 text-[11px] text-muted italic">You wrote: &ldquo;{bug.evidence}&rdquo;</p>
       )}
     </div>
   );
@@ -150,7 +150,7 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
       <div className="min-w-0">
         <WindowFrame label={`code-review · ${file.name}`}>
           {/* File tabs */}
-          <div className="flex items-center border-b border-neutral-800 bg-white/3 px-2">
+          <div className="flex items-center border-b border-border bg-surface px-2">
             {files.map((f, i) => (
               <button
                 key={f.name}
@@ -158,14 +158,14 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
                 className={cn(
                   "px-3 py-2 font-mono text-xs transition-colors border-b-2",
                   i === activeFile
-                    ? "text-white border-emerald-400"
-                    : "text-neutral-500 border-transparent hover:text-neutral-300",
+                    ? "text-primary border-accent"
+                    : "text-muted border-transparent hover:text-secondary",
                 )}
               >
                 {f.name}
               </button>
             ))}
-            <span className="ml-auto pr-2 font-mono text-[10px] text-neutral-600">
+            <span className="ml-auto pr-2 font-mono text-[10px] text-muted">
               {bugCount} planted issues · click a line to comment
             </span>
           </div>
@@ -183,25 +183,25 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
                     onClick={() => !result && openEditor(key)}
                     className={cn(
                       "group grid grid-cols-[3ch_1fr] gap-3 rounded px-2",
-                      !result && "cursor-pointer hover:bg-white/4",
-                      comment && "bg-emerald-500/5",
+                      !result && "cursor-pointer hover:bg-primary/5",
+                      comment && "bg-accent/5",
                     )}
                   >
-                    <span className="select-none text-right text-neutral-600 relative">
+                    <span className="select-none text-right text-muted relative">
                       {!result && (
                         <MessageSquarePlus
                           size={11}
-                          className="absolute -left-1 top-1.5 opacity-0 group-hover:opacity-100 text-emerald-400 transition-opacity"
+                          className="absolute -left-1 top-1.5 opacity-0 group-hover:opacity-100 text-accent transition-opacity"
                         />
                       )}
                       {ln}
                     </span>
-                    <code className="text-neutral-300 whitespace-pre" dangerouslySetInnerHTML={{ __html: highlightTs(line) || " " }} />
+                    <code className="text-secondary whitespace-pre" dangerouslySetInnerHTML={{ __html: highlightTs(line) || " " }} />
                   </div>
 
                   {/* inline comment / editor */}
                   {isOpen ? (
-                    <div className="my-1 ml-[3ch] rounded-lg border border-emerald-500/30 bg-surface p-2">
+                    <div className="my-1 ml-[3ch] rounded-lg border border-accent/30 bg-surface p-2">
                       <textarea
                         autoFocus
                         value={draft}
@@ -212,21 +212,21 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
                         }}
                         rows={2}
                         placeholder="What's wrong with this line? (⌘/Ctrl+Enter to save)"
-                        className="w-full resize-none rounded-md border border-neutral-700/60 bg-black/40 px-2 py-1.5 font-sans text-xs text-neutral-200 placeholder:text-neutral-600"
+                        className="w-full resize-none rounded-md border border-border bg-canvas/40 px-2 py-1.5 font-sans text-xs text-primary placeholder:text-muted"
                       />
                       <div className="mt-1.5 flex justify-end gap-2">
-                        <button onClick={() => { setOpenLine(null); setDraft(""); }} className="rounded px-2 py-1 text-[11px] text-neutral-500 hover:text-neutral-300">Cancel</button>
-                        <button onClick={() => saveComment(key)} className="rounded bg-emerald-500 px-2.5 py-1 text-[11px] font-semibold text-black hover:bg-emerald-400">Save</button>
+                        <button onClick={() => { setOpenLine(null); setDraft(""); }} className="rounded px-2 py-1 text-[11px] text-muted hover:text-secondary">Cancel</button>
+                        <button onClick={() => saveComment(key)} className="rounded bg-accent-fill px-2.5 py-1 text-[11px] font-semibold text-black hover:bg-accent-hover">Save</button>
                       </div>
                     </div>
                   ) : comment ? (
-                    <div className="my-1 ml-[3ch] flex items-start gap-2 rounded-lg border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1.5">
-                      <MessageSquarePlus size={11} className="mt-0.5 shrink-0 text-emerald-400" />
-                      <p className="flex-1 font-sans text-xs text-neutral-300">{comment}</p>
+                    <div className="my-1 ml-[3ch] flex items-start gap-2 rounded-lg border border-accent/25 bg-accent/5 px-2.5 py-1.5">
+                      <MessageSquarePlus size={11} className="mt-0.5 shrink-0 text-accent" />
+                      <p className="flex-1 font-sans text-xs text-secondary">{comment}</p>
                       {!result && (
                         <span className="flex shrink-0 gap-1">
-                          <button onClick={() => openEditor(key)} className="text-[10px] text-neutral-500 hover:text-neutral-300">edit</button>
-                          <button onClick={() => deleteComment(key)} aria-label="Delete comment" className="text-neutral-600 hover:text-rose-400"><Trash2 size={11} /></button>
+                          <button onClick={() => openEditor(key)} className="text-[10px] text-muted hover:text-secondary">edit</button>
+                          <button onClick={() => deleteComment(key)} aria-label="Delete comment" className="text-muted hover:text-rose-400"><Trash2 size={11} /></button>
                         </span>
                       )}
                     </div>
@@ -238,9 +238,9 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
         </WindowFrame>
 
         {/* Summary + submit */}
-        <div className="mt-4 rounded-2xl border border-neutral-800 bg-white/3 p-4">
-          <p className="font-mono text-[11px] text-neutral-500 mb-2">
-            Overall notes <span className="text-neutral-600">(optional)</span>
+        <div className="mt-4 rounded-2xl border border-border bg-surface p-4">
+          <p className="font-mono text-[11px] text-muted mb-2">
+            Overall notes <span className="text-muted">(optional)</span>
           </p>
           <textarea
             value={summary}
@@ -248,10 +248,10 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
             rows={2}
             disabled={grading || !!result}
             placeholder="Anything not tied to a single line — architecture, missing tests, general concerns."
-            className="w-full resize-y rounded-xl border border-neutral-700/60 bg-surface px-3 py-2.5 text-sm text-neutral-200 placeholder:text-neutral-600 leading-relaxed disabled:opacity-60"
+            className="w-full resize-y rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-primary placeholder:text-muted leading-relaxed disabled:opacity-60"
           />
           <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="text-[11px] text-neutral-500">
+            <p className="text-[11px] text-muted">
               {commentCount > 0
                 ? `${commentCount} line comment${commentCount > 1 ? "s" : ""} · graded by meaning`
                 : "Click lines above to leave comments"}
@@ -260,7 +260,7 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
               <button
                 onClick={submit}
                 disabled={grading || (commentCount === 0 && summary.trim().length < 30)}
-                className="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-semibold text-black hover:bg-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 rounded-lg bg-accent-fill px-4 py-2 text-xs font-semibold text-black hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {grading ? <Loader2 size={13} className="animate-spin" /> : <Send size={13} />}
                 {grading ? "Grading…" : "Submit review"}
@@ -273,26 +273,26 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
       {/* ── Results / attempts rail ── */}
       <div className="space-y-4">
         {result ? (
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
+          <div className="rounded-2xl border border-border bg-surface p-5">
             <div className="flex items-center gap-4">
               <div className="relative shrink-0">
                 <Ring pct={result.score} size={64} stroke={5} color={result.score >= 70 ? "#34d399" : result.score >= 40 ? "#fbbf24" : "#fb7185"} />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-mono text-sm font-bold text-white">{result.score}</span>
+                  <span className="font-mono text-sm font-bold text-primary">{result.score}</span>
                 </div>
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-primary">
                   {result.caught.length}/{result.caught.length + result.missed.length} issues caught
                 </p>
-                <p className="font-mono text-[11px] text-neutral-500 mt-0.5">
+                <p className="font-mono text-[11px] text-muted mt-0.5">
                   severity-weighted · /100
                 </p>
               </div>
             </div>
 
             {result.feedback && (
-              <p className="mt-4 text-xs text-neutral-300 leading-relaxed border-t border-neutral-800 pt-3">
+              <p className="mt-4 text-xs text-secondary leading-relaxed border-t border-border pt-3">
                 {result.feedback}
               </p>
             )}
@@ -305,7 +305,7 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
                   onClick={() => setFilter(f)}
                   className={cn(
                     "rounded-lg px-2.5 py-1 font-mono text-[11px] transition-colors",
-                    filter === f ? "bg-white/6 text-white" : "text-neutral-500 hover:text-neutral-300",
+                    filter === f ? "bg-primary/6 text-primary" : "text-muted hover:text-secondary",
                   )}
                 >
                   {f === "all" ? "All" : f === "caught" ? `Caught (${result.caught.length})` : `Missed (${result.missed.length})`}
@@ -320,9 +320,9 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
-            <p className="font-mono text-[11px] text-neutral-500 mb-2">How it works</p>
-            <ul className="space-y-2 text-xs text-neutral-400 leading-relaxed list-disc ml-4">
+          <div className="rounded-2xl border border-border bg-surface p-5">
+            <p className="font-mono text-[11px] text-muted mb-2">How it works</p>
+            <ul className="space-y-2 text-xs text-secondary leading-relaxed list-disc ml-4">
               <li>Read the diff like a real PR — correctness first, then security, performance, API design.</li>
               <li>Write your findings below it. Specificity counts; vague gestures don&rsquo;t.</li>
               <li>The AI matches your review against the planted-bug list and scores by severity weight.</li>
@@ -331,15 +331,15 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
         )}
 
         {previousAttempts.length > 0 && (
-          <div className="rounded-2xl border border-neutral-800 bg-white/3 p-5">
-            <p className="font-mono text-[11px] text-neutral-500 mb-3">Previous attempts</p>
+          <div className="rounded-2xl border border-border bg-surface p-5">
+            <p className="font-mono text-[11px] text-muted mb-3">Previous attempts</p>
             <div className="space-y-2">
               {previousAttempts.map((a) => (
                 <div key={a.id} className="flex items-center justify-between text-xs">
-                  <span className="text-neutral-400">
+                  <span className="text-secondary">
                     {new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
-                  <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-emerald-400" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
+                  <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
                     {a.score}/100
                   </span>
                 </div>

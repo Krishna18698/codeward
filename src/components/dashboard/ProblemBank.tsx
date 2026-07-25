@@ -28,7 +28,7 @@ type UserSheet = { id: string; name: string };
 type Props = { userSheets: UserSheet[] };
 
 const DIFF_COLOR: Record<string, string> = {
-  EASY:   "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+  EASY:   "text-accent bg-accent/10 border-accent/20",
   MEDIUM: "text-amber-400  bg-amber-500/10  border-amber-500/20",
   HARD:   "text-red-400    bg-red-500/10    border-red-500/20",
 };
@@ -178,20 +178,20 @@ export default function ProblemBank({ userSheets }: Props) {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 items-center">
         <div className="relative flex-1 min-w-48">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             type="text"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search problems…"
-            className="w-full pl-8 pr-3 py-2 bg-neutral-900 border border-neutral-800 rounded-xl text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-emerald-500/50"
+            className="w-full pl-8 pr-3 py-2 bg-surface border border-border rounded-xl text-sm text-primary placeholder:text-muted focus:outline-none focus:border-accent/50"
           />
         </div>
 
         <select
           value={diff}
           onChange={(e) => setDiff(e.target.value)}
-          className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-300 focus:outline-none focus:border-emerald-500/50"
+          className="bg-surface border border-border rounded-xl px-3 py-2 text-sm text-secondary focus:outline-none focus:border-accent/50"
         >
           <option value="ALL">All difficulties</option>
           <option value="EASY">Easy</option>
@@ -203,7 +203,7 @@ export default function ProblemBank({ userSheets }: Props) {
           <select
             value={comp}
             onChange={(e) => setComp(e.target.value)}
-            className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-300 focus:outline-none focus:border-emerald-500/50"
+            className="bg-surface border border-border rounded-xl px-3 py-2 text-sm text-secondary focus:outline-none focus:border-accent/50"
           >
             <option value="ALL">All companies</option>
             {bankCompanies.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -215,14 +215,14 @@ export default function ProblemBank({ userSheets }: Props) {
           className={`px-3 py-2 rounded-xl text-sm border transition ${
             mustDo
               ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-              : "border-neutral-800 text-neutral-500 hover:text-neutral-300"
+              : "border-border text-muted hover:text-secondary"
           }`}
         >
           ★ Must Do
         </button>
 
         {!patternsLoading && (
-          <span className="text-xs text-neutral-500 ml-auto">{totalProblems} problems</span>
+          <span className="text-xs text-muted ml-auto">{totalProblems} problems</span>
         )}
       </div>
 
@@ -230,17 +230,17 @@ export default function ProblemBank({ userSheets }: Props) {
       {patternsLoading ? (
         <div className="space-y-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-neutral-800 bg-neutral-900/50 px-4 py-3 animate-pulse">
+            <div key={i} className="rounded-xl border border-border bg-surface px-4 py-3 animate-pulse">
               <div className="flex items-center justify-between">
-                <div className="h-3 w-28 rounded bg-neutral-700/60" />
-                <div className="h-3 w-8 rounded bg-neutral-800" />
+                <div className="h-3 w-28 rounded bg-elevated" />
+                <div className="h-3 w-8 rounded bg-border" />
               </div>
             </div>
           ))}
         </div>
       ) : bankPatterns.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-neutral-800 py-16 text-center">
-          <p className="text-neutral-500 text-sm">No problems match your filters.</p>
+        <div className="rounded-2xl border border-dashed border-border py-16 text-center">
+          <p className="text-muted text-sm">No problems match your filters.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -250,50 +250,50 @@ export default function ProblemBank({ userSheets }: Props) {
             const isLoading = loadingPattern === bp.pattern;
 
             return (
-              <div key={bp.pattern} className="rounded-xl border border-neutral-800 bg-neutral-900/50 overflow-hidden">
+              <div key={bp.pattern} className="rounded-xl border border-border bg-surface overflow-hidden">
                 {/* Pattern header */}
                 <button
                   onClick={() => togglePattern(bp.pattern)}
                   aria-expanded={isExpanded}
-                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-neutral-800/40 transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-border transition-colors"
                 >
                   <div className="flex-1 min-w-0 text-left">
                     <div className="flex items-center gap-3">
-                      <span className="text-xs font-medium text-neutral-300 capitalize">
+                      <span className="text-xs font-medium text-secondary capitalize">
                         {patternLabel(bp.pattern)}
                       </span>
-                      <span className="text-[10px] text-neutral-500">{bp.total}</span>
+                      <span className="text-[10px] text-muted">{bp.total}</span>
                     </div>
                     {PATTERN_DESCRIPTIONS[bp.pattern] && (
-                      <p className="text-[11px] text-neutral-500 mt-0.5 leading-snug">
+                      <p className="text-[11px] text-muted mt-0.5 leading-snug">
                         {PATTERN_DESCRIPTIONS[bp.pattern]}
                       </p>
                     )}
                   </div>
                   <ChevronRight
                     size={14}
-                    className={cn("text-neutral-500 transition-transform duration-200", isExpanded && "rotate-90")}
+                    className={cn("text-muted transition-transform duration-200", isExpanded && "rotate-90")}
                   />
                 </button>
 
                 {/* Problems */}
                 {isExpanded && (
-                  <div className="divide-y divide-neutral-800/60 border-t border-neutral-800/60">
+                  <div className="divide-y divide-border border-t border-border">
                     {isLoading ? (
                       Array.from({ length: 3 }).map((_, i) => (
                         <div key={i} className="flex items-center gap-3 px-4 py-3 animate-pulse">
-                          <div className="w-7 h-3 rounded bg-neutral-800 shrink-0" />
-                          <div className="flex-1 h-3 rounded bg-neutral-700/60" />
-                          <div className="w-12 h-3 rounded bg-neutral-800 shrink-0" />
+                          <div className="w-7 h-3 rounded bg-border shrink-0" />
+                          <div className="flex-1 h-3 rounded bg-elevated" />
+                          <div className="w-12 h-3 rounded bg-border shrink-0" />
                         </div>
                       ))
                     ) : probs.length === 0 ? (
-                      <div className="px-4 py-4 text-center text-xs text-neutral-500">No problems found.</div>
+                      <div className="px-4 py-4 text-center text-xs text-muted">No problems found.</div>
                     ) : (
                       probs.map((p) => (
-                        <div key={p.id} className="flex items-start gap-3 px-4 py-2.5 hover:bg-neutral-800/30 transition-colors">
+                        <div key={p.id} className="flex items-start gap-3 px-4 py-2.5 hover:bg-border transition-colors">
                           {/* Order number */}
-                          <span className="text-sm font-semibold text-neutral-500 font-mono w-7 shrink-0 text-center self-center">{p.order}</span>
+                          <span className="text-sm font-semibold text-muted font-mono w-7 shrink-0 text-center self-center">{p.order}</span>
 
                           {/* Content: 2-line mobile / 1-line desktop */}
                           <div className="flex-1 min-w-0">
@@ -301,7 +301,7 @@ export default function ProblemBank({ userSheets }: Props) {
                             {/* Mobile 2-line */}
                             <div className="md:hidden space-y-1">
                               <div className="flex items-start justify-between gap-2">
-                                <span className="text-sm text-neutral-200 leading-snug">{p.title}</span>
+                                <span className="text-sm text-primary leading-snug">{p.title}</span>
                                 {p.mustDo && (
                                   <span className="shrink-0 text-[10px] text-amber-400/70 border border-amber-500/20 rounded px-1 py-0.5 mt-0.5">must do</span>
                                 )}
@@ -339,7 +339,7 @@ export default function ProblemBank({ userSheets }: Props) {
                               className="hidden md:grid items-center gap-x-4"
                               style={{ gridTemplateColumns: "minmax(0,2fr) minmax(0,100px) 72px 72px minmax(0,1fr)" }}
                             >
-                              <span className="text-sm text-neutral-200 leading-snug min-w-0 truncate">{p.title}</span>
+                              <span className="text-sm text-primary leading-snug min-w-0 truncate">{p.title}</span>
 
                               {/* Companies */}
                               <div className="flex items-center justify-center gap-1.5">
@@ -386,15 +386,15 @@ export default function ProblemBank({ userSheets }: Props) {
                           {/* Add to sheet */}
                           <div className="shrink-0 self-center">
                             {userSheets.length === 0 ? null : added[p.id] ? (
-                              <span className="flex items-center gap-1 text-[11px] text-emerald-400 border border-emerald-500/20 rounded-lg px-2 py-1">
+                              <span className="flex items-center gap-1 text-[11px] text-accent border border-accent/20 rounded-lg px-2 py-1">
                                 <Check size={10} /> Added
                               </span>
                             ) : adding === p.id ? (
-                              <span className="text-[11px] text-neutral-500 border border-neutral-800 rounded-lg px-2 py-1">Adding…</span>
+                              <span className="text-[11px] text-muted border border-border rounded-lg px-2 py-1">Adding…</span>
                             ) : userSheets.length === 1 ? (
                               <button
                                 onClick={() => addToSheet(p.id, userSheets[0].id)}
-                                className="flex items-center gap-1 text-[11px] text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 hover:border-emerald-500/60 rounded-lg px-2 py-1 transition"
+                                className="flex items-center gap-1 text-[11px] text-accent hover:text-accent-hover border border-accent/30 hover:border-accent/60 rounded-lg px-2 py-1 transition"
                               >
                                 <Plus size={10} /> Add
                               </button>
@@ -402,17 +402,17 @@ export default function ProblemBank({ userSheets }: Props) {
                               <div className="relative">
                                 <button
                                   onClick={() => setDropdownOpen(dropdownOpen === p.id ? null : p.id)}
-                                  className="flex items-center gap-1 text-[11px] text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 hover:border-emerald-500/60 rounded-lg px-2 py-1 transition"
+                                  className="flex items-center gap-1 text-[11px] text-accent hover:text-accent-hover border border-accent/30 hover:border-accent/60 rounded-lg px-2 py-1 transition"
                                 >
                                   <Plus size={10} /> Add
                                 </button>
                                 {dropdownOpen === p.id && (
-                                  <div className="absolute right-0 top-7 z-20 w-44 rounded-xl border border-neutral-700 bg-surface shadow-xl py-1">
+                                  <div className="absolute right-0 top-7 z-20 w-44 rounded-xl border border-border bg-surface shadow-xl py-1">
                                     {userSheets.map((s) => (
                                       <button
                                         key={s.id}
                                         onClick={() => addToSheet(p.id, s.id)}
-                                        className="w-full text-left px-3 py-2 text-xs text-neutral-300 hover:bg-neutral-800 transition truncate"
+                                        className="w-full text-left px-3 py-2 text-xs text-secondary hover:bg-border transition truncate"
                                       >
                                         {s.name}
                                       </button>

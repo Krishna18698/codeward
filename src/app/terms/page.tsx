@@ -31,7 +31,7 @@ export default function TermsPage() {
 
       <MarketingSection title="Acceptable use">
         <p>Please don&rsquo;t:</p>
-        <ul className="list-disc ml-5 space-y-1.5 text-neutral-300">
+        <ul className="list-disc ml-5 space-y-1.5 text-secondary">
           <li>Attempt to attack, overload, scrape, or reverse-engineer the service or its infrastructure</li>
           <li>Abuse the code-execution feature to run malicious code, mine, exfiltrate data, or exhaust resources</li>
           <li>Try to extract answer keys, rubrics, or other graded ground-truth content</li>
@@ -83,7 +83,7 @@ export default function TermsPage() {
       <MarketingSection title="Contact">
         <p>
           Questions about these terms? Reach us via the{" "}
-          <a href="/contact" className="font-medium text-emerald-400 hover:text-emerald-300 transition-colors">contact page</a>.
+          <a href="/contact" className="font-medium text-accent hover:text-accent-hover transition-colors">contact page</a>.
         </p>
       </MarketingSection>
     </MarketingPage>

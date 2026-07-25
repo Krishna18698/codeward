@@ -7,7 +7,7 @@ const ArticleMarkdown = lazy(() => import("./ArticleMarkdown"));
 
 export default function ArticleBody({ body }: { body: string }) {
   return (
-    <Suspense fallback={<div className="whitespace-pre-wrap text-[15px] leading-7 text-neutral-300">{body}</div>}>
+    <Suspense fallback={<div className="whitespace-pre-wrap text-[15px] leading-7 text-secondary">{body}</div>}>
       <ArticleMarkdown body={body} />
     </Suspense>
   );

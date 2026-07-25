@@ -9,7 +9,7 @@ import HeroShowcase from "@/components/landing/HeroShowcase";
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
   return (
-    <p className={`font-mono text-[13px] uppercase tracking-wide text-emerald-400 mb-4 ${center ? "text-center" : ""}`}>
+    <p className={`font-mono text-[13px] uppercase tracking-wide text-accent mb-4 ${center ? "text-center" : ""}`}>
       {n} — {label}
     </p>
   );
@@ -19,24 +19,24 @@ function SectionMarker({ n, label, center }: { n: string; label: string; center?
 function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
-      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/5 px-2.5 py-1.5 font-mono text-[8px] tracking-tight text-emerald-400 sm:gap-1.5 sm:px-4 sm:text-[12px] sm:tracking-normal">
-        <span className="h-1.5 w-1.5 shrink-0 animate-dot-pulse rounded-full bg-emerald-400" />
+      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1 rounded-full border border-accent/25 bg-accent/5 px-2.5 py-1.5 font-mono text-[8px] tracking-tight text-accent sm:gap-1.5 sm:px-4 sm:text-[12px] sm:tracking-normal">
+        <span className="h-1.5 w-1.5 shrink-0 animate-dot-pulse rounded-full bg-accent-hover" />
         <span className="whitespace-nowrap">
           DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Build It &middot; Deep Dives
         </span>
       </div>
 
       <h1
-        className="animate-fade-up max-w-3xl text-3xl font-semibold tracking-heading leading-tight text-white sm:text-5xl md:text-6xl"
+        className="animate-fade-up max-w-3xl text-3xl font-semibold tracking-heading leading-tight text-primary sm:text-5xl md:text-6xl"
         style={{ animationDelay: "80ms" }}
       >
         Master
         <br />
-        <span className="text-emerald-400"><RotatingWord /></span>
+        <span className="text-accent"><RotatingWord /></span>
       </h1>
 
       <p
-        className="animate-fade-up mt-6 max-w-xl text-lg text-neutral-400 leading-relaxed"
+        className="animate-fade-up mt-6 max-w-xl text-lg text-secondary leading-relaxed"
         style={{ animationDelay: "160ms" }}
       >
         DSA sheets, system design, code review, live debugging, staged low-level
@@ -51,19 +51,19 @@ function Hero() {
       >
         <Link
           href="/register"
-          className="rounded-xl bg-emerald-500 px-7 py-3.5 text-sm font-semibold text-black hover:bg-emerald-400 transition-colors"
+          className="rounded-xl bg-accent-fill px-7 py-3.5 text-sm font-semibold text-black hover:bg-accent-hover transition-colors"
         >
           Start for free
         </Link>
         <Link
           href="/login"
-          className="rounded-xl border border-neutral-800 px-7 py-3.5 text-sm font-medium text-neutral-300 hover:border-neutral-600 hover:text-white transition-colors"
+          className="rounded-xl border border-border px-7 py-3.5 text-sm font-medium text-secondary hover:border-border hover:text-primary transition-colors"
         >
           Sign in
         </Link>
       </div>
 
-      <p className="animate-fade-up mt-5 font-mono text-xs text-neutral-500" style={{ animationDelay: "300ms" }}>
+      <p className="animate-fade-up mt-5 font-mono text-xs text-muted" style={{ animationDelay: "300ms" }}>
         No credit card required
       </p>
     </section>
@@ -93,9 +93,9 @@ function LogoStrip() {
   const track = [...COMPANIES, ...COMPANIES];
   return (
     <section className="py-10 px-6">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-[12px] border border-neutral-800 bg-white/2">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-[12px] border border-border bg-surface">
         <div className="flex flex-col sm:flex-row sm:items-center">
-          <p className="hidden shrink-0 px-5 font-mono text-[11px] uppercase tracking-widest text-neutral-500 sm:block sm:py-6">
+          <p className="hidden shrink-0 px-5 font-mono text-[11px] uppercase tracking-widest text-muted sm:block sm:py-6">
             Problems asked in real interviews at
           </p>
           {/* fade the seam where the label meets the scroll */}
@@ -117,7 +117,7 @@ function LogoStrip() {
                     height={18}
                     className="h-[18px] w-[18px] rounded-sm opacity-80"
                   />
-                  <span className="text-sm font-semibold text-neutral-400">{c.name}</span>
+                  <span className="text-sm font-semibold text-secondary">{c.name}</span>
                 </span>
               ))}
             </div>
@@ -199,10 +199,10 @@ function PracticeModes() {
   return (
     <section className="py-16 px-6">
       <div className="mx-auto max-w-6xl">
-        <p className="text-center font-mono text-[13px] uppercase tracking-wide text-emerald-400 mb-4">
+        <p className="text-center font-mono text-[13px] uppercase tracking-wide text-accent mb-4">
           The Platform
         </p>
-        <h2 className="text-center text-3xl font-semibold tracking-heading text-white mb-16">
+        <h2 className="text-center text-3xl font-semibold tracking-heading text-primary mb-16">
           Seven ways to actually get ready
         </h2>
 
@@ -216,9 +216,9 @@ function PracticeModes() {
               >
                 <div className="flex-1">
                   <SectionMarker n={m.n} label={m.marker} />
-                  <h3 className="text-2xl font-semibold tracking-heading text-white leading-tight mb-3">{m.title}</h3>
-                  <p className="text-neutral-400 leading-relaxed mb-5 max-w-md">{m.copy}</p>
-                  <Link href={m.href} className="text-sm font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+                  <h3 className="text-2xl font-semibold tracking-heading text-primary leading-tight mb-3">{m.title}</h3>
+                  <p className="text-secondary leading-relaxed mb-5 max-w-md">{m.copy}</p>
+                  <Link href={m.href} className="text-sm font-medium text-accent hover:text-accent-hover transition-colors">
                     {m.cta}
                   </Link>
                 </div>
@@ -264,20 +264,20 @@ function FAQ() {
     <section className="py-20 px-6">
       <div className="mx-auto max-w-2xl">
         <SectionMarker n="08" label="FAQ" />
-        <h2 className="text-3xl font-semibold tracking-heading text-white mb-8">
+        <h2 className="text-3xl font-semibold tracking-heading text-primary mb-8">
           Questions worth answering honestly.
         </h2>
-        <div className="divide-y divide-neutral-800">
+        <div className="divide-y divide-border">
           {faqs.map((f) => (
             <details key={f.q} className="group py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 select-none [&::-webkit-details-marker]:hidden">
-                <span className="text-sm font-medium text-white leading-snug">{f.q}</span>
-                <span className="w-[18px] shrink-0 text-center font-mono text-base text-neutral-600 transition-colors duration-150 group-open:text-emerald-400">
+                <span className="text-sm font-medium text-primary leading-snug">{f.q}</span>
+                <span className="w-[18px] shrink-0 text-center font-mono text-base text-muted transition-colors duration-150 group-open:text-accent">
                   <span className="group-open:hidden">+</span>
                   <span className="hidden group-open:inline">&minus;</span>
                 </span>
               </summary>
-              <p className="mt-3 text-sm text-neutral-400 leading-relaxed">{f.a}</p>
+              <p className="mt-3 text-sm text-secondary leading-relaxed">{f.a}</p>
             </details>
           ))}
         </div>
@@ -291,7 +291,7 @@ function FAQ() {
 
 export default function Home() {
   return (
-    <div className="min-h-dvh bg-canvas text-neutral-100">
+    <div className="min-h-dvh bg-canvas text-primary">
       <SiteNav />
 
       {/* Permanent top glow + a smaller cursor-following glow — scoped to the
