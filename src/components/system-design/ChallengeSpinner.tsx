@@ -141,8 +141,8 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
       <div className="rounded-2xl border border-border bg-surface overflow-hidden">
         {/* Trigger row */}
         <div className="flex items-center gap-3 px-4 py-3">
-          <div className="w-7 h-7 rounded-lg bg-rose-500/15 border border-rose-500/30 flex items-center justify-center shrink-0">
-            <Shuffle size={13} className="text-rose-400" />
+          <div className="w-7 h-7 rounded-lg bg-spin/15 border border-spin/30 flex items-center justify-center shrink-0">
+            <Shuffle size={13} className="text-spin" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-primary leading-none">Challenge Spinner</p>
@@ -155,7 +155,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
               "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all shrink-0",
               spinning
                 ? "bg-border text-muted cursor-not-allowed"
-                : "bg-rose-500/15 border border-rose-500/40 text-rose-300 hover:bg-rose-500/25",
+                : "bg-spin/15 border border-spin/40 text-spin hover:bg-spin/25",
             )}
           >
             <Shuffle size={11} className={spinning ? "animate-spin" : ""} />
@@ -167,7 +167,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
         {spinning && (
           <div className="px-4 pb-3 flex items-center gap-2">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-spin animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
             ))}
           </div>
         )}
@@ -231,8 +231,8 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-border">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-rose-500/15 border border-rose-500/30 flex items-center justify-center">
-            <Shuffle size={13} className="text-rose-400" />
+          <div className="w-7 h-7 rounded-lg bg-spin/15 border border-spin/30 flex items-center justify-center">
+            <Shuffle size={13} className="text-spin" />
           </div>
           <div>
             <p className="text-sm font-semibold text-primary">Challenge Spinner</p>
@@ -246,7 +246,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-150 whitespace-nowrap shrink-0",
             spinning
               ? "bg-border text-muted cursor-not-allowed"
-              : "bg-rose-500/15 border border-rose-500/40 text-rose-300 hover:bg-rose-500/25 hover:border-rose-500/60",
+              : "bg-spin/15 border border-spin/40 text-spin hover:bg-spin/25 hover:border-spin/60",
           )}
         >
           <Shuffle size={12} className={spinning ? "animate-spin" : ""} />
@@ -257,8 +257,8 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
       {/* Empty state */}
       {!challenge && !spinning && (
         <div className="px-5 py-7 text-center">
-          <div className="w-11 h-11 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-3">
-            <Zap size={18} className="text-rose-400" />
+          <div className="w-11 h-11 rounded-xl bg-spin/10 border border-spin/20 flex items-center justify-center mx-auto mb-3">
+            <Zap size={18} className="text-spin" />
           </div>
           <p className="text-sm font-medium text-secondary">Ready for a random challenge?</p>
           <p className="text-xs text-muted mt-1 max-w-xs mx-auto">
@@ -274,7 +274,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-2 h-2 rounded-full bg-rose-400 animate-bounce"
+                className="w-2 h-2 rounded-full bg-spin animate-bounce"
                 style={{ animationDelay: `${i * 0.15}s` }}
               />
             ))}

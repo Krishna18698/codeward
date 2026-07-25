@@ -23,6 +23,8 @@
   --color-accent-dim:    rgba(52, 211, 153, 0.12);
   --color-accent-hover:  #6ee7b7;
 
+  --color-spin:          #a78bfa;   /* challenge-spinner accent (violet-400) */
+
   --color-success:       #34d399;
   --color-warning:       #fbbf24;
   --color-danger:        #fb7185;
@@ -63,6 +65,8 @@
   --color-accent-dim:    rgba(5, 150, 105, 0.10);
   --color-accent-hover:  #065f46;
 
+  --color-spin:          #7c3aed;   /* violet-600 — deeper for white */
+
   --color-success:       #047857;
   --color-warning:       #b45309;
   --color-danger:        #dc2626;
@@ -90,6 +94,7 @@
   --color-accent-fill:   var(--color-accent-fill);
   --color-accent-dim:    var(--color-accent-dim);
   --color-accent-hover:  var(--color-accent-hover);
+  --color-spin:          var(--color-spin);
   --color-success:       var(--color-success);
   --color-warning:       var(--color-warning);
   --color-danger:        var(--color-danger);
