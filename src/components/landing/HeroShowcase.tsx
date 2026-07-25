@@ -7,8 +7,8 @@ import { highlightTs } from "@/lib/highlightTs";
 // emerald backlight. Content is illustrative (marketing).
 
 const modes: { label: string; count?: string; active?: boolean }[] = [
-  { label: "DSA Sheets", count: "300+" },
-  { label: "System Design" },
+  { label: "DSA Sheets", count: "300" },
+  { label: "System Design", count: "33" },
   { label: "Code Review", count: "15", active: true },
   { label: "Bug Hunt", count: "9" },
   { label: "Build It", count: "5" },
@@ -86,7 +86,7 @@ export default function HeroShowcase() {
                 <div className="h-1 overflow-hidden rounded-full bg-neutral-800">
                   <div className="h-full w-[45%] rounded-full bg-emerald-500" />
                 </div>
-                <p className="mt-1.5 font-mono text-[10px] text-neutral-600">19 of 42 done</p>
+                <p className="mt-1.5 font-mono text-[10px] text-neutral-600">168 of 375 done</p>
               </div>
               <div className="mt-auto flex items-center gap-2 pt-6">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-800 font-mono text-[10px] text-neutral-400">A</span>
