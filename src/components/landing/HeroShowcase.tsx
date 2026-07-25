@@ -39,7 +39,7 @@ export default function HeroShowcase() {
         {/* Emerald backlight around the ENTIRE card — a blurred emerald shape
             slightly larger than the card, so the glow bleeds out on all sides.
             isolate on the wrapper keeps this -z-10 layer in front of the page. */}
-        <div aria-hidden className="pointer-events-none absolute -inset-6 -z-10 rounded-[36px] bg-emerald-500/25 blur-3xl" />
+        <div aria-hidden className="theme-glow pointer-events-none absolute -inset-6 -z-10 rounded-[36px] bg-emerald-500/25 blur-3xl" />
 
         <div className="overflow-hidden rounded-sm border border-neutral-800 bg-black shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]">
           {/* Title bar */}
