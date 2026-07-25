@@ -77,6 +77,36 @@
   --dot-color:           rgba(0, 0, 0, 0.05);   /* dark dots on the light page */
 
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+
+  /* Accent palette deepened for white — Tailwind's default -300, -400 and -500
+     shades are tuned for dark surfaces and wash out on a light page. These are
+     var-backed, so overriding them reaches every text, bg and border utility.
+     The pinned-dark surfaces (mockups, code panes) reset these back via
+     .keep-dark-colors so their light-on-dark colors survive. */
+  --color-rose-100:#e11d48;--color-rose-200:#e11d48;--color-rose-300:#e11d48;--color-rose-400:#e11d48;--color-rose-500:#e11d48;
+  --color-amber-300:#b45309;--color-amber-400:#b45309;--color-amber-500:#d97706;
+  --color-emerald-100:#047857;--color-emerald-200:#047857;--color-emerald-300:#047857;--color-emerald-400:#047857;--color-emerald-500:#059669;
+  --color-red-300:#dc2626;--color-red-400:#dc2626;--color-red-500:#dc2626;
+  --color-violet-300:#7c3aed;--color-violet-400:#7c3aed;--color-violet-500:#7c3aed;
+  --color-sky-300:#0369a1;--color-sky-400:#0369a1;--color-sky-500:#0369a1;
+  --color-blue-300:#2563eb;--color-blue-400:#2563eb;--color-blue-500:#2563eb;
+  --color-orange-300:#c2410c;--color-orange-400:#c2410c;--color-orange-500:#c2410c;
+  --color-teal-400:#0f766e;--color-teal-500:#0f766e;
+}
+
+/* Pinned-dark surfaces reset the deepened accent palette back to Tailwind's
+   defaults, so their light-on-dark syntax/badge colors stay readable even
+   though the page is in light theme. */
+.code-surface, .keep-dark-colors {
+  --color-rose-100:#ffe4e6;--color-rose-200:#fecdd3;--color-rose-300:#fda4af;--color-rose-400:#fb7185;--color-rose-500:#f43f5e;
+  --color-amber-300:#fcd34d;--color-amber-400:#fbbf24;--color-amber-500:#f59e0b;
+  --color-emerald-100:#d1fae5;--color-emerald-200:#a7f3d0;--color-emerald-300:#6ee7b7;--color-emerald-400:#34d399;--color-emerald-500:#10b981;
+  --color-red-300:#fca5a5;--color-red-400:#f87171;--color-red-500:#ef4444;
+  --color-violet-300:#c4b5fd;--color-violet-400:#a78bfa;--color-violet-500:#8b5cf6;
+  --color-sky-300:#7dd3fc;--color-sky-400:#38bdf8;--color-sky-500:#0ea5e9;
+  --color-blue-300:#93c5fd;--color-blue-400:#60a5fa;--color-blue-500:#3b82f6;
+  --color-orange-300:#fdba74;--color-orange-400:#fb923c;--color-orange-500:#f97316;
+  --color-teal-400:#2dd4bf;--color-teal-500:#14b8a6;
 }
 
 /* Decorative emerald glows are tuned for a black canvas; hide them in light so

@@ -5,7 +5,7 @@ import { WindowFrame } from "@/components/ui/WindowFrame";
  *  matching the hero showcase. (twMerge overrides WindowFrame's rounded-xl/bg-surface.) */
 export function BrowserFrame({ url, children }: { url: string; children: React.ReactNode }) {
   return (
-    <WindowFrame label={url} bodyClassName="p-4" className="rounded-sm border-neutral-800 bg-black">
+    <WindowFrame label={url} bodyClassName="p-4" className="keep-dark-colors rounded-sm border-neutral-800 bg-black">
       {children}
     </WindowFrame>
   );
