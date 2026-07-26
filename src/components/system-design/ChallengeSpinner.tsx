@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Shuffle, Zap, Users, Globe, Clock, AlertTriangle, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -109,10 +109,26 @@ function generateChallenge(): Challenge {
   };
 }
 
+// ── Shared challenge state ───────────────────────────────────────────────────
+// The page mounts two spinner instances — a compact one for narrow widths
+// (xl:hidden) and the full rail for wide (hidden xl:block). They must share the
+// spun challenge, or crossing the xl breakpoint swaps to the sibling instance
+// and the result appears to vanish. A tiny module-level store keeps both in sync
+// (both stay mounted; CSS only hides one).
+let sharedChallenge: Challenge | null = null;
+const challengeListeners = new Set<() => void>();
+function setSharedChallenge(c: Challenge) {
+  sharedChallenge = c;
+  challengeListeners.forEach((l) => l());
+}
+function subscribeChallenge(listener: () => void) {
+  challengeListeners.add(listener);
+  return () => { challengeListeners.delete(listener); };
+}
+
 export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
-  const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const challenge = useSyncExternalStore(subscribeChallenge, () => sharedChallenge, () => null);
   const [spinning,  setSpinning]  = useState(false);
-  const [revealed,  setRevealed]  = useState(false);
   const [copied,    setCopied]    = useState(false);
 
   const copyPrompt = () => {
@@ -127,11 +143,9 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
   const spin = () => {
     if (spinning) return;
     setSpinning(true);
-    setRevealed(false);
     setTimeout(() => {
-      setChallenge(generateChallenge());
+      setSharedChallenge(generateChallenge());
       setSpinning(false);
-      setRevealed(true);
     }, 700);
   };
 
@@ -173,7 +187,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
         )}
 
         {/* Compact result — all four sections */}
-        {challenge && revealed && (
+        {challenge && !spinning && (
           <div className="border-t border-border px-4 py-3 space-y-2.5 animate-fade-up">
             {/* Problem */}
             <p className="text-sm font-bold text-primary">Design a {challenge.problem}</p>
@@ -284,7 +298,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
       )}
 
       {/* Result */}
-      {challenge && revealed && (
+      {challenge && !spinning && (
         <div className={cn("px-5 py-5 space-y-4 animate-fade-up")}>
           <div>
             <p className="text-[10px] uppercase tracking-widest text-muted mb-1.5">Problem</p>
