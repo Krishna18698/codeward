@@ -2,7 +2,7 @@
 import { useState, useRef, useLayoutEffect } from "react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import {
   Code2, Network, Sparkles, LogOut, Loader2, BookOpen, GitPullRequest, Bug, Blocks,
   type LucideIcon,
@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/cn";
 import UserAvatar from "@/components/ui/UserAvatar";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import type { NavUser } from "@/components/dashboard/DashboardShell";
 
 // Home is the Codeward logo itself (links to /dashboard) — no separate Home item.
 const nav = [
@@ -46,10 +47,8 @@ function HamburgerIcon({ open }: { open: boolean }) {
   );
 }
 
-export default function TopNav() {
+export default function TopNav({ user }: { user: NavUser }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
-  const user = session?.user;
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Full text+icon nav vs. hamburger is decided by actually measuring whether
