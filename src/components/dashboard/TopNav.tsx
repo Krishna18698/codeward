@@ -68,14 +68,14 @@ export default function TopNav() {
   const logoRef = useRef<HTMLAnchorElement>(null);
   const navMeasureRef = useRef<HTMLDivElement>(null);
   const rightMeasureRef = useRef<HTMLDivElement>(null);
-  // null = "not measured yet". Defaulting this to true/false would mean the
-  // server-rendered HTML (which has no idea what the real viewport width is)
-  // always paints one fixed guess, and on a fresh page load/reload that
-  // guess renders and is visible to the user for a moment BEFORE hydration
-  // + the layout effect below can correct it — a real, visible flash of the
-  // wrong nav state on narrow screens. Rendering neither nav nor hamburger
-  // while null (see the render below) trades that flash for a brief blank
-  // gap in that slot instead, which is far less jarring.
+  // null = "not measured yet". The render treats null like `true` (see
+  // `fits !== false` below): the full nav is shown optimistically on the
+  // server and first client paint, and only collapses to the hamburger once
+  // the layout effect measures that it genuinely doesn't fit. This keeps the
+  // common (wide) case flash-free on reload — the nav is present in the SSR
+  // HTML, so there's no blank gap that fills in after hydration. On a narrow
+  // viewport the full nav paints briefly (clipped by the slot's overflow-hidden)
+  // before collapsing, which is an acceptable trade for no flicker on desktop.
   const [fits, setFits] = useState<boolean | null>(null);
 
   useLayoutEffect(() => {
@@ -126,7 +126,7 @@ export default function TopNav() {
         {/* Nav slot — sized by flexbox from whatever's left; holds the full
             nav only when it actually fits (measured, not guessed). */}
         <div className="flex min-w-0 flex-1 items-center justify-end overflow-hidden">
-          {fits === true && (
+          {fits !== false && (
             <nav className="flex items-center gap-1">
               {nav.map(({ label, href, icon }) => {
                 const active = pathname === href || pathname.startsWith(href);
@@ -271,7 +271,7 @@ export default function TopNav() {
 
           {/* User + sign out — hidden in hamburger mode, since Profile and
               Sign out already live as text entries in that dropdown. */}
-          {fits === true && (
+          {fits !== false && (
             <>
               <span className="mx-1 hidden h-5 w-px bg-border sm:block" />
               {user && (
