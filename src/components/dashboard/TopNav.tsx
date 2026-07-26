@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState } from "react";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -24,6 +24,14 @@ const nav = [
 ];
 
 const NAV_LINK_CLASS = "flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs whitespace-nowrap";
+
+// Full nav vs. hamburger is a pure CSS breakpoint (measured once: the full nav
+// needs ~1092px of row, so it shows at >=1120px and collapses below). Doing it
+// in CSS rather than a post-hydration JS measurement means the correct nav is in
+// the server-rendered HTML and painted on the first frame — no blank gap on
+// desktop reload, and no full-nav-then-hamburger flash on mobile reload.
+const SHOW_FULL = "min-[1120px]:flex";     // full nav / desktop profile group
+const HIDE_FULL = "min-[1120px]:hidden";   // hamburger
 
 /** Swaps the nav icon for a same-size spinner while the route loads — instant
  *  click feedback with zero layout shift. Must live inside the <Link>. */
@@ -51,67 +59,11 @@ export default function TopNav({ user }: { user: NavUser }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Full text+icon nav vs. hamburger is decided by actually measuring whether
-  // the nav's natural width fits the space available.
-  //
-  // Critically, the "available space" must NOT depend on which of {hamburger}
-  // vs {profile + sign-out} is currently rendered — that would make the
-  // measurement depend on its own prior output (hamburger appears -> shrinks
-  // available space -> triggers a re-check -> ...), which is what caused the
-  // flicker: rapid, self-inflicted true/false flips during a resize drag.
-  // So we measure against row/logo/right-group widths that never change
-  // because of `fits` itself — the right-group figure always comes from an
-  // off-screen clone of its widest (profile+sign-out) form, never the live
-  // toggling DOM.
-  const rowRef = useRef<HTMLDivElement>(null);
-  const logoRef = useRef<HTMLAnchorElement>(null);
-  const navMeasureRef = useRef<HTMLDivElement>(null);
-  const rightMeasureRef = useRef<HTMLDivElement>(null);
-  // null = "not measured yet". The render treats null like `true` (see
-  // `fits !== false` below): the full nav is shown optimistically on the
-  // server and first client paint, and only collapses to the hamburger once
-  // the layout effect measures that it genuinely doesn't fit. This keeps the
-  // common (wide) case flash-free on reload — the nav is present in the SSR
-  // HTML, so there's no blank gap that fills in after hydration. On a narrow
-  // viewport the full nav paints briefly (clipped by the slot's overflow-hidden)
-  // before collapsing, which is an acceptable trade for no flicker on desktop.
-  const [fits, setFits] = useState<boolean | null>(null);
-
-  useLayoutEffect(() => {
-    const row = rowRef.current;
-    const logo = logoRef.current;
-    const navMeasure = navMeasureRef.current;
-    const rightMeasure = rightMeasureRef.current;
-    if (!row || !logo || !navMeasure || !rightMeasure) return;
-    const check = () => {
-      // clientWidth includes the row's own padding (px-4/md:px-6), which
-      // isn't space the flex children can use — has to be subtracted, or
-      // "available" is overestimated by the full padding amount and the
-      // first nav item gets clipped instead of the row ever flipping to
-      // the hamburger. Measuring padding/gap live instead of assuming a
-      // fixed px value keeps this correct if either class ever changes.
-      const rowStyle = getComputedStyle(row);
-      const paddingX = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight);
-      const gap = parseFloat(rowStyle.columnGap || rowStyle.gap) || 0;
-      const contentWidth = row.clientWidth - paddingX;
-      const available = contentWidth - logo.offsetWidth - rightMeasure.offsetWidth - gap * 2;
-      setFits(navMeasure.scrollWidth <= available);
-    };
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(row);
-    ro.observe(logo);
-    ro.observe(navMeasure);
-    ro.observe(rightMeasure);
-    return () => ro.disconnect();
-  }, []);
-
   return (
     <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-canvas/85 backdrop-blur-[20px]">
-      <div ref={rowRef} className="flex h-14 w-full items-center gap-3 px-4 md:px-6">
+      <div className="flex h-14 w-full items-center gap-3 px-4 md:px-6">
         {/* Brand (also the Home link) — far left */}
         <Link
-          ref={logoRef}
           href="/dashboard"
           aria-label="Codeward home"
           className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight text-primary"
@@ -122,185 +74,132 @@ export default function TopNav({ user }: { user: NavUser }) {
           </span>
         </Link>
 
-        {/* Nav slot — sized by flexbox from whatever's left; holds the full
-            nav only when it actually fits (measured, not guessed). */}
-        <div className="flex min-w-0 flex-1 items-center justify-end overflow-hidden">
-          {fits !== false && (
-            <nav className="flex items-center gap-1">
-              {nav.map(({ label, href, icon }) => {
-                const active = pathname === href || pathname.startsWith(href);
-                return (
+        {/* Full nav — shown only at >=1120px (CSS). Hidden below, so it never
+            paints on mobile. */}
+        <nav className={cn("hidden min-w-0 flex-1 items-center justify-end gap-1", SHOW_FULL)}>
+          {nav.map(({ label, href, icon }) => {
+            const active = pathname === href || pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  NAV_LINK_CLASS,
+                  "transition-colors duration-150",
+                  active
+                    ? "text-primary bg-primary/6"
+                    : "text-secondary hover:text-primary hover:bg-primary/5",
+                )}
+              >
+                <NavIcon icon={icon} />
+                {label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Right-fixed group. ml-auto pushes it right on mobile (where the
+            flex-1 nav above is hidden); on desktop the nav's flex-1 already
+            fills the gap, so ml-auto is a no-op. */}
+        <div className="ml-auto flex shrink-0 items-center gap-1.5">
+          {/* Theme toggle — always visible. */}
+          <ThemeToggle className="border-0" />
+
+          {/* Desktop: profile + sign out */}
+          <div className={cn("hidden items-center gap-1.5", SHOW_FULL)}>
+            <span className="mx-1 hidden h-5 w-px bg-border sm:block" />
+            <Link
+              href="/dashboard/profile"
+              aria-label="Profile"
+              aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors duration-150",
+                pathname.startsWith("/dashboard/profile") ? "bg-primary/6" : "hover:bg-primary/5",
+              )}
+            >
+              <UserAvatar image={user.image} name={user.name} size={26} />
+              <span className="max-w-[120px] truncate text-xs font-medium text-secondary">
+                {user.name ?? "Profile"}
+              </span>
+            </Link>
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              title="Sign out"
+              aria-label="Sign out"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-primary/5 hover:text-primary"
+            >
+              <LogOut size={15} />
+            </button>
+          </div>
+
+          {/* Mobile: hamburger + dropdown (below the breakpoint). The dropdown
+              anchors to the button's own edge via this relative wrapper. */}
+          <div className={cn("relative", HIDE_FULL)}>
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-secondary transition-colors hover:bg-primary/5 hover:text-primary"
+            >
+              <HamburgerIcon open={menuOpen} />
+            </button>
+
+            {menuOpen && (
+              <>
+                <button
+                  aria-label="Close menu"
+                  onClick={() => setMenuOpen(false)}
+                  className="fixed inset-0 z-40"
+                />
+                <nav className="absolute right-0 top-[calc(100%+8px)] z-40 w-56 overflow-hidden rounded-[8px] border border-border bg-elevated py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
+                  {nav.map(({ label, href }) => {
+                    const active = pathname === href || pathname.startsWith(href);
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setMenuOpen(false)}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "block px-4 py-3 text-sm transition-colors duration-150",
+                          active
+                            ? "text-primary bg-primary/6"
+                            : "text-secondary hover:text-primary hover:bg-primary/5",
+                        )}
+                      >
+                        {label}
+                      </Link>
+                    );
+                  })}
+
+                  <div className="my-1.5 h-px bg-border" />
                   <Link
-                    key={href}
-                    href={href}
-                    aria-current={active ? "page" : undefined}
+                    href="/dashboard/profile"
+                    onClick={() => setMenuOpen(false)}
+                    aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
                     className={cn(
-                      NAV_LINK_CLASS,
-                      "transition-colors duration-150",
-                      active
+                      "block px-4 py-3 text-sm transition-colors duration-150",
+                      pathname.startsWith("/dashboard/profile")
                         ? "text-primary bg-primary/6"
                         : "text-secondary hover:text-primary hover:bg-primary/5",
                     )}
                   >
-                    <NavIcon icon={icon} />
-                    {label}
+                    Profile
                   </Link>
-                );
-              })}
-            </nav>
-          )}
-        </div>
-
-        {/* Off-screen clone of the nav at its natural (unshrunk) width — used
-            purely to measure whether the real nav above would fit. */}
-        <div
-          ref={navMeasureRef}
-          aria-hidden
-          className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex items-center gap-1"
-        >
-          {nav.map(({ label, href, icon: Icon }) => (
-            <span key={href} className={NAV_LINK_CLASS}>
-              <Icon size={13} className="shrink-0" />
-              {label}
-            </span>
-          ))}
-        </div>
-
-        {/* Off-screen clone of the profile+sign-out group (its widest form) —
-            used to compute available nav space independent of which control
-            (this vs. the hamburger) is actually visible right now. */}
-        <div
-          ref={rightMeasureRef}
-          aria-hidden
-          className="pointer-events-none invisible absolute left-0 top-0 -z-10 flex items-center gap-1.5"
-        >
-          {/* stand-in for the always-visible theme toggle */}
-          <span className="h-8 w-8" />
-          <span className="mx-1 h-5 w-px bg-border" />
-          {user && (
-            <span className="flex items-center gap-2 rounded-lg px-1.5 py-1">
-              <UserAvatar image={user.image} name={user.name} size={26} />
-              <span className="max-w-[120px] truncate text-xs font-medium">{user.name ?? "Profile"}</span>
-            </span>
-          )}
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg">
-            <LogOut size={15} />
-          </span>
-        </div>
-
-        {/* Right-fixed group */}
-        <div className="flex shrink-0 items-center gap-1.5">
-          {/* Theme toggle — always visible in both fits states. */}
-          <ThemeToggle className="border-0" />
-
-          {/* Hamburger + its dropdown share a relative wrapper so the panel
-              anchors exactly to the button's own edge, not a guessed offset
-              from the header. */}
-          {fits === false && (
-            <div className="relative">
-              <button
-                onClick={() => setMenuOpen((v) => !v)}
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={menuOpen}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-secondary transition-colors hover:bg-primary/5 hover:text-primary"
-              >
-                <HamburgerIcon open={menuOpen} />
-              </button>
-
-              {menuOpen && (
-                <>
                   <button
-                    aria-label="Close menu"
-                    onClick={() => setMenuOpen(false)}
-                    className="fixed inset-0 z-40"
-                  />
-                  <nav className="absolute right-0 top-[calc(100%+8px)] z-40 w-56 overflow-hidden rounded-[8px] border border-border bg-elevated py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
-                    {nav.map(({ label, href }) => {
-                      const active = pathname === href || pathname.startsWith(href);
-                      return (
-                        <Link
-                          key={href}
-                          href={href}
-                          onClick={() => setMenuOpen(false)}
-                          aria-current={active ? "page" : undefined}
-                          className={cn(
-                            "block px-4 py-3 text-sm transition-colors duration-150",
-                            active
-                              ? "text-primary bg-primary/6"
-                              : "text-secondary hover:text-primary hover:bg-primary/5",
-                          )}
-                        >
-                          {label}
-                        </Link>
-                      );
-                    })}
-
-                    {user && (
-                      <>
-                        <div className="my-1.5 h-px bg-border" />
-                        <Link
-                          href="/dashboard/profile"
-                          onClick={() => setMenuOpen(false)}
-                          aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
-                          className={cn(
-                            "block px-4 py-3 text-sm transition-colors duration-150",
-                            pathname.startsWith("/dashboard/profile")
-                              ? "text-primary bg-primary/6"
-                              : "text-secondary hover:text-primary hover:bg-primary/5",
-                          )}
-                        >
-                          Profile
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setMenuOpen(false);
-                            signOut({ callbackUrl: "/" });
-                          }}
-                          className="block w-full px-4 py-3 text-left text-sm text-secondary transition-colors duration-150 hover:bg-primary/5 hover:text-primary"
-                        >
-                          Sign out
-                        </button>
-                      </>
-                    )}
-                  </nav>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* User + sign out — hidden in hamburger mode, since Profile and
-              Sign out already live as text entries in that dropdown. */}
-          {fits !== false && (
-            <>
-              <span className="mx-1 hidden h-5 w-px bg-border sm:block" />
-              {user && (
-                <Link
-                  href="/dashboard/profile"
-                  aria-label="Profile"
-                  aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
-                  className={cn(
-                    "flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors duration-150",
-                    pathname.startsWith("/dashboard/profile")
-                      ? "bg-primary/6"
-                      : "hover:bg-primary/5",
-                  )}
-                >
-                  <UserAvatar image={user.image} name={user.name} size={26} />
-                  <span className="max-w-[120px] truncate text-xs font-medium text-secondary">
-                    {user.name ?? "Profile"}
-                  </span>
-                </Link>
-              )}
-              <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                title="Sign out"
-                aria-label="Sign out"
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-muted transition-colors hover:bg-primary/5 hover:text-primary"
-              >
-                <LogOut size={15} />
-              </button>
-            </>
-          )}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      signOut({ callbackUrl: "/" });
+                    }}
+                    className="block w-full px-4 py-3 text-left text-sm text-secondary transition-colors duration-150 hover:bg-primary/5 hover:text-primary"
+                  >
+                    Sign out
+                  </button>
+                </nav>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>
