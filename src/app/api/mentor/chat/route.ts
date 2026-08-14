@@ -7,6 +7,7 @@ import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { retrieveContext } from "@/lib/rag";
 import Groq from "groq-sdk";
+import { GROQ_MODEL } from "@/lib/groq";
 import { chatLimiter } from "@/lib/ratelimit";
 
 export async function POST(req: Request) {
@@ -120,7 +121,7 @@ Help them think through the design — ask clarifying questions first, then guid
     async start(controller) {
       try {
         const groqStream = await groq.chat.completions.create({
-          model: "llama-3.3-70b-versatile",
+          model: GROQ_MODEL,
           max_tokens: 1500,
           messages: [{ role: "system", content: systemPrompt }, ...messages],
           stream: true,

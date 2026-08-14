@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
+import { GROQ_MODEL } from "@/lib/groq";
 import { chatLimiter } from "@/lib/ratelimit";
 
 export type EvalType = "code" | "system-design";
@@ -133,7 +134,7 @@ Evaluate this answer using the evaluate_solution tool.`;
   const groq = new Groq({ apiKey });
 
   const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: GROQ_MODEL,
     temperature: 0.2,
     max_tokens: 1500,
     messages: [

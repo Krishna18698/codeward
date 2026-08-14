@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
+import { GROQ_MODEL } from "@/lib/groq";
 import type { ProblemPattern, Difficulty } from "@prisma/client";
 import { sheetLimiter } from "@/lib/ratelimit";
 import { GFG_URL_MAP } from "@/lib/gfg-url-map";
@@ -54,7 +55,7 @@ For a company-specific sheet (e.g. Google, Meta, Amazon), cover the patterns the
 Always use the create_sheet tool to output the sheet. Do not just describe it — call the tool.`;
 
   const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: GROQ_MODEL,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: message },

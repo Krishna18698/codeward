@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
+import { GROQ_MODEL } from "@/lib/groq";
 import type { ProblemPattern, Difficulty } from "@prisma/client";
 import { GFG_URL_MAP } from "@/lib/gfg-url-map";
 import { chatLimiter } from "@/lib/ratelimit";
@@ -60,7 +61,7 @@ Generate 10-15 NEW problems that are NOT already in that list. Cover different p
 Always use the add_problems tool. Do not repeat any existing problems.`;
 
   const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: GROQ_MODEL,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: message },

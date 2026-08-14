@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Groq from "groq-sdk";
+import { GROQ_MODEL } from "@/lib/groq";
 import { chatLimiter } from "@/lib/ratelimit";
 import { getExerciseWithBugs } from "@/content/code-reviews";
 
@@ -88,7 +89,7 @@ export async function POST(req: Request) {
   async function gradeOnce(): Promise<ParsedGrade | null> {
     try {
       const completion = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: GROQ_MODEL,
         temperature: 0.1,
         max_tokens: 1500,
         messages: [
