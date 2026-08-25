@@ -79,7 +79,8 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - Privacy documents exactly what's collected and every third-party processor (Google, Groq, Voyage AI, JDoodle, Neon, Upstash, Vercel); Terms covers acceptable use, the code-execution sandbox, and the no-warranty stance
 
 ### Polish
-- Dashboard top nav: brand/logo doubles as the Home link (no separate "Home" item), pinned far left, with all section links, the user menu, and sign-out grouped on the right
+- **Light & dark mode**: a theme toggle in the nav (`next-themes`), defaulting to dark and persisted per browser with no flash on load. Colours flow through a CSS-variable token layer (`bg-canvas`, `text-primary`, `text-accent`, …) that flips on `data-theme`; the emerald brand deepens on white, code editors/panes stay dark in both themes, and the accent palette is deepened in light so badges/tags don't wash out
+- Dashboard top nav: brand/logo doubles as the Home link (no separate "Home" item), pinned far left, with all section links, the user menu, and sign-out grouped on the right. Full-nav-vs-hamburger is a pure CSS breakpoint and the user is fetched server-side, so nothing flickers in on reload
 - Instant navigation feedback (spinner swap on sidebar links and sheet tabs) with zero layout shift — no route-level skeletons
 - Toasts confirm every mutation (sheet create/delete, add problems, status/revise toggles); optimistic UI reverts and reports failures instead of silently diverging
 - Accessible by default: keyboard-visible focus rings, `aria-current`/`aria-expanded`/`aria-label` on interactive controls, `prefers-reduced-motion` respected (including the landing page's logo marquee)
@@ -99,7 +100,7 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 | Database | Neon PostgreSQL (serverless, `ap-southeast-1`) |
 | ORM | Prisma 7 |
 | Vector search | pgvector + Voyage AI embeddings |
-| LLM | Groq (`llama-3.3-70b-versatile`) |
+| LLM | Groq (`openai/gpt-oss-120b`, set in one `GROQ_MODEL` constant) |
 | Code execution | JDoodle Compiler API (C#, Python, Kotlin, Node) |
 | Code editor | CodeMirror 6 (lazy-loaded) |
 | Rate limiting | Upstash Redis |
