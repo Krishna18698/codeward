@@ -1,9 +1,21 @@
 "use client";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { Sparkles, X, Minus } from "lucide-react";
 import { cn } from "@/lib/cn";
-import MentorChat from "./MentorChat";
+
+// The chat pulls in react-markdown + the remark/rehype stack (~100–200 KB). The
+// floating mentor sits on every dashboard page but is closed by default, so we
+// lazy-load the chat and only fetch that chunk when the panel is first opened.
+const MentorChat = dynamic(() => import("./MentorChat"), {
+  ssr: false,
+  loading: () => (
+    <div className="grid h-[calc(520px-49px)] place-items-center font-mono text-xs text-muted">
+      Loading mentor…
+    </div>
+  ),
+});
 
 export default function FloatingMentor() {
   const pathname  = usePathname();

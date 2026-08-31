@@ -63,7 +63,7 @@ export default async function DeepDivesPage() {
             key={d.slug}
             href={`/dashboard/deep-dives/${d.slug}`}
             className="flex flex-col rounded-2xl border border-border bg-surface p-5 hover:border-border hover:bg-elevated transition-colors group animate-fade-up"
-            style={{ animationDelay: `${i * 40}ms` }}
+            style={{ animationDelay: `${Math.min(i, 6) * 40}ms` }}
           >
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-sm font-semibold text-primary group-hover:text-accent-hover transition-colors">
