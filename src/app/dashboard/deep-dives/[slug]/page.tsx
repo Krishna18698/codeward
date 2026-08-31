@@ -5,6 +5,8 @@ import { getSessionUserId } from "@/lib/auth";
 import { DEEP_DIVES, getDeepDive } from "@/content/deep-dives";
 import { MarkRead } from "@/components/deep-dives/ReadBadge";
 import DeepDiveReader from "@/components/deep-dives/DeepDiveReader";
+import ArticleMarkdown from "@/components/deep-dives/ArticleMarkdown";
+import SectionToc from "@/components/deep-dives/SectionToc";
 import { splitSections } from "@/lib/deepDiveSections";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -21,6 +23,9 @@ export default async function DeepDivePage({ params }: Props) {
   const prev = index > 0 ? DEEP_DIVES[index - 1] : null;
   const next = index < DEEP_DIVES.length - 1 ? DEEP_DIVES[index + 1] : null;
   const sections = splitSections(dive.body);
+  // Render each section's markdown on the SERVER (content is static + authored),
+  // so react-markdown never ships to the client; pass the nodes into the reader.
+  const rendered = sections.map((s) => ({ title: s.title, body: <ArticleMarkdown body={s.content} /> }));
 
   return (
     <div className="flex gap-10 animate-fade-up">
@@ -55,7 +60,7 @@ export default async function DeepDivePage({ params }: Props) {
         <div className="mt-8 border-t border-border pt-8">
           <DeepDiveReader
             slug={slug}
-            sections={sections}
+            sections={rendered}
             prerequisites={dive.prerequisites}
             afterThis={dive.afterThis}
             suggestedFirstPass={dive.suggestedFirstPass}
@@ -86,26 +91,11 @@ export default async function DeepDivePage({ params }: Props) {
         </div>
       </article>
 
-      {/* Topic rail — desktop only */}
+      {/* Section nav (scroll-spy) — desktop only. In-context "on this page"
+          navigation; switching articles is handled by the back link + prev/next. */}
       <aside className="hidden xl:block w-56 shrink-0">
         <div className="sticky top-20">
-          <p className="font-mono text-[11px] text-muted mb-3">{DEEP_DIVES.length} topics</p>
-          <nav className="space-y-1">
-            {DEEP_DIVES.map((d) => (
-              <Link
-                key={d.slug}
-                href={`/dashboard/deep-dives/${d.slug}`}
-                aria-current={d.slug === slug ? "page" : undefined}
-                className={`block rounded-lg px-2.5 py-1.5 text-xs transition-colors ${
-                  d.slug === slug
-                    ? "bg-primary/6 text-primary"
-                    : "text-muted hover:text-secondary hover:bg-primary/5"
-                }`}
-              >
-                {d.title}
-              </Link>
-            ))}
-          </nav>
+          <SectionToc titles={sections.map((s) => s.title)} />
         </div>
       </aside>
     </div>

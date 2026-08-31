@@ -1,14 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { useState, useEffect, type ReactNode } from "react";
+import { Check, ChevronDown, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/cn";
-import ArticleMarkdown from "./ArticleMarkdown";
-import type { DeepDiveSection } from "@/lib/deepDiveSections";
 import type { DeepDiveReference } from "@/content/deep-dives";
+
+export type RenderedSection = { title: string; body: ReactNode };
 
 type Props = {
   slug: string;
-  sections: DeepDiveSection[];
+  sections: RenderedSection[];
   prerequisites?: string;
   afterThis?: string;
   suggestedFirstPass?: string;
@@ -18,7 +18,9 @@ type Props = {
 export default function DeepDiveReader({ slug, sections, prerequisites, afterThis, suggestedFirstPass, references }: Props) {
   const storageKey = `dd:progress:${slug}`;
   const [done, setDone] = useState<Set<number>>(new Set());
-  const [open, setOpen] = useState<Set<number>>(new Set([0]));
+  // Default every section open — a continuous reading flow that the sticky
+  // section nav (scroll-spy) can track. Collapse-all is available below.
+  const [open, setOpen] = useState<Set<number>>(() => new Set(sections.map((_, i) => i)));
 
   // Hydrate persisted per-section progress once on mount. Starts empty so the
   // server render and first client render match; localStorage is client-only.
@@ -49,6 +51,8 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
       return next;
     });
   };
+  const allOpen = open.size === sections.length;
+  const toggleAll = () => setOpen(allOpen ? new Set() : new Set(sections.map((_, i) => i)));
 
   const completed = done.size;
   const pct = sections.length ? Math.round((completed / sections.length) * 100) : 0;
@@ -80,11 +84,20 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
         </div>
       )}
 
-      {/* Progress */}
+      {/* Progress + expand/collapse all */}
       <div className="mb-5">
         <div className="mb-1.5 flex items-center justify-between">
           <span className="font-mono text-[11px] uppercase tracking-widest text-muted">Progress</span>
-          <span className="font-mono text-[11px] text-muted">{completed}/{sections.length} complete</span>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-[11px] text-muted">{completed}/{sections.length} complete</span>
+            <button
+              onClick={toggleAll}
+              className="inline-flex items-center gap-1 font-mono text-[11px] text-muted transition-colors hover:text-secondary"
+            >
+              {allOpen ? <ChevronsDownUp size={12} /> : <ChevronsUpDown size={12} />}
+              {allOpen ? "Collapse all" : "Expand all"}
+            </button>
+          </div>
         </div>
         <div className="h-1 overflow-hidden rounded-full bg-border">
           <div className="h-full rounded-full bg-accent-fill transition-all duration-500" style={{ width: `${pct}%` }} />
@@ -97,7 +110,7 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
           const isOpen = open.has(i);
           const isDone = done.has(i);
           return (
-            <div key={i}>
+            <div key={i} id={`dd-section-${i}`} className="scroll-mt-20">
               <button onClick={() => toggleOpen(i)} className="group flex w-full items-center gap-3 py-4 text-left">
                 <span className={cn(
                   "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
@@ -105,17 +118,17 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
                 )}>
                   {isDone ? <Check size={12} strokeWidth={3} /> : String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="flex-1 text-sm font-medium text-primary group-hover:text-primary">{s.title}</span>
+                <span className="flex-1 text-sm font-medium text-primary">{s.title}</span>
                 <ChevronDown size={14} className={cn("shrink-0 text-muted transition-transform", isOpen && "rotate-180")} />
               </button>
               {isOpen && (
                 <div className="pb-6 pl-9">
-                  <ArticleMarkdown body={s.content} />
+                  {s.body}
                   <button
                     onClick={() => toggleDone(i)}
                     className={cn(
                       "mt-3 inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs transition-colors",
-                      isDone ? "border-accent/30 bg-accent/10 text-accent" : "border-border text-secondary hover:border-border hover:text-primary",
+                      isDone ? "border-accent/30 bg-accent/10 text-accent" : "border-border text-secondary hover:text-primary",
                     )}
                   >
                     <Check size={12} strokeWidth={3} /> {isDone ? "Completed" : "Mark section complete"}

@@ -1,8 +1,11 @@
-"use client";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
 
-/** Article-scale markdown renderer (larger prose than the chat's MarkdownMessage). */
+/** Article-scale markdown renderer (larger prose than the chat's MarkdownMessage).
+ *  Deliberately a SERVER component: deep-dive content is static and authored, so
+ *  rendering it on the server keeps react-markdown + the remark/rehype stack out
+ *  of the client bundle. Rendered output is passed down into the (client)
+ *  DeepDiveReader as React nodes. */
 export default function ArticleMarkdown({ body }: { body: string }) {
   return (
     <ReactMarkdown
