@@ -34,7 +34,14 @@ export default async function CodeReviewExercisePage({ params }: Props) {
       </Link>
 
       <div>
-        <p className="font-mono text-[13px] text-accent mb-2">PR · {meta.slug}</p>
+        <div className="mb-2 flex items-center gap-2">
+          <p className="font-mono text-[13px] text-accent">PR · {meta.slug}</p>
+          <span className={`rounded-full border px-2 py-0.5 font-mono text-[10px] ${
+            meta.difficulty === "Easy" ? "border-accent/30 bg-accent/10 text-accent"
+            : meta.difficulty === "Medium" ? "border-amber-500/30 bg-amber-500/10 text-amber-400"
+            : "border-rose-500/30 bg-rose-500/10 text-rose-400"
+          }`}>{meta.difficulty}</span>
+        </div>
         <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary">{meta.title}</h1>
         <p className="text-sm text-secondary mt-2 max-w-2xl leading-relaxed">{meta.brief}</p>
         <p className="mt-2 font-mono text-[11px] text-muted">
