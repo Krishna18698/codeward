@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { CODE_REVIEWS_META } from "@/content/code-reviews";
 import ModeCatalog, { type CatalogItem, type CatalogFilter, type BadgeTone } from "@/components/dashboard/ModeCatalog";
 
-const DIFF_TONE = { Easy: "accent", Medium: "amber", Hard: "rose" } as const;
 const MASTERED = 70;
 
 type Props = { searchParams: Promise<{ status?: string }> };
@@ -39,10 +38,9 @@ export default async function CodeReviewPage({ searchParams }: Props) {
     return {
       href: `/dashboard/code-review/${ex.slug}`,
       title: ex.title,
-      badges: [
-        { label: ex.difficulty, tone: DIFF_TONE[ex.difficulty] },
-        ...(best !== null ? [{ label: `best ${best}/100`, tone: (best >= MASTERED ? "accent" : "amber") as BadgeTone }] : []),
-      ],
+      badges: best !== null
+        ? [{ label: `best ${best}/100`, tone: (best >= MASTERED ? "accent" : "amber") as BadgeTone }]
+        : [],
       brief: ex.brief,
       meta: `${ex.language} · ~${ex.minutes} min · ${ex.bugCount} planted issues${stat ? ` · ${stat._count._all} attempt${stat._count._all > 1 ? "s" : ""}` : ""}`,
       cta: best !== null ? "Review again →" : "Start reviewing →",

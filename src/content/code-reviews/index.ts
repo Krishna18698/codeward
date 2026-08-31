@@ -38,19 +38,8 @@ const EXERCISES: CodeReviewExercise[] = [
   pricingCacheV2,
 ];
 
-/** Difficulty is DERIVED from the planted-bug set (count + top severity) rather
- *  than authored — more bugs and higher-severity bugs make a review harder to
- *  fully catch. Computed server-side here; only the label ships to the client. */
-function deriveDifficulty(bugs: CodeReviewExercise["bugs"]): "Easy" | "Medium" | "Hard" {
-  const maxSev = bugs.reduce((m, b) => Math.max(m, b.severity), 0);
-  const score = bugs.length + maxSev;
-  if (bugs.length >= 6 || maxSev >= 5 || score >= 11) return "Hard";
-  if (bugs.length <= 4 && maxSev <= 3) return "Easy";
-  return "Medium";
-}
-
 function toMeta({ bugs, ...rest }: CodeReviewExercise): ExerciseMeta {
-  return { ...rest, bugCount: bugs.length, difficulty: deriveDifficulty(bugs) };
+  return { ...rest, bugCount: bugs.length };
 }
 
 /** Client-safe catalog — no bug descriptions, just the count. All playable. */
