@@ -41,7 +41,7 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - The AI grades it as a **structured, line-anchored diff review** — findings tagged root-cause / side-effect and fixed / partial / missed / introduced, with counts and senior-reviewer feedback — then reveals the canonical fix and the tempting wrong turns it ruled out
 
 ### Build It (low-level design)
-- **5 staged LLD problems**: thread-safe wallet, inventory reservation service, durable background job queue, idempotent payment processor, notification delivery service
+- **11 staged LLD problems** spanning concurrency, distributed systems, payments, and API design: thread-safe wallet, inventory reservation service, durable background job queue, idempotent payment processor, notification delivery service, token-bucket rate limiter, thread-safe LRU cache with TTL, consistent hashing ring, circuit breaker, Splitwise expense settlement, and cursor-based pagination
 - Each evolves across **4 stages**, every stage adding one constraint that breaks the previous design; stage 3 is the "make-or-break" — proving a correctness invariant holds under concurrency
 - Three languages per problem: **C#, Python, Kotlin**
 - **Real code execution**: a Code / Tests split with a "Run Tests" button that runs your code against per-language test harnesses via the JDoodle Compiler API — guarded by a shared daily budget (server-side counter) and a per-user rate limit, with graceful fallback to LLM-only grading when the budget is spent
@@ -95,7 +95,7 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 |-------|-----------|
 | Framework | Next.js 16.2 (App Router, Server Components, Turbopack, React Compiler) |
 | Language | TypeScript 5 |
-| Styling | Tailwind CSS v4 (Inter + JetBrains Mono) |
+| Styling | Tailwind CSS v4 (Geist + Geist Mono) |
 | Auth | NextAuth.js v4 (JWT sessions) |
 | Database | Neon PostgreSQL (serverless, `ap-southeast-1`) |
 | ORM | Prisma 7 |
@@ -235,7 +235,7 @@ src/
 ├── content/                     # Content-as-code (meta/ground-truth split)
 │   ├── code-reviews/            # 15 planted-bug PRs
 │   ├── bug-hunts/               # 9 debugging exercises
-│   ├── build-it/                # 5 staged LLD problems + test harnesses
+│   ├── build-it/                # 11 staged LLD problems + test harnesses
 │   └── deep-dives/              # 13 long-form articles
 ├── components/
 │   ├── dashboard/               # Sheet UI, mentor chat, modals, sidebar
