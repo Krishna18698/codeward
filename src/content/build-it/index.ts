@@ -4,6 +4,12 @@ import { inventoryReservationService } from "./inventory-reservation-service";
 import { durableBackgroundJobQueue } from "./durable-background-job-queue";
 import { idempotentPaymentProcessor } from "./idempotent-payment-processor";
 import { notificationDeliveryService } from "./notification-delivery-service";
+import { tokenBucketRateLimiter } from "./token-bucket-rate-limiter";
+import { threadSafeLruCache } from "./thread-safe-lru-cache";
+import { consistentHashingRing } from "./consistent-hashing-ring";
+import { circuitBreaker } from "./circuit-breaker";
+import { splitwiseExpenseSettlement } from "./splitwise-expense-settlement";
+import { cursorPaginationService } from "./cursor-pagination-service";
 
 export type { BuildItProblemMeta, BuildItStageMeta, BuildItSkeleton } from "./types";
 export type { BuildItLanguage } from "./languages";
@@ -18,6 +24,12 @@ const PROBLEMS: BuildItProblem[] = [
   durableBackgroundJobQueue,
   idempotentPaymentProcessor,
   notificationDeliveryService,
+  tokenBucketRateLimiter,
+  threadSafeLruCache,
+  consistentHashingRing,
+  circuitBreaker,
+  splitwiseExpenseSettlement,
+  cursorPaginationService,
 ];
 
 function toStageMeta(s: BuildItStage) {
@@ -37,7 +49,7 @@ function toMeta(p: BuildItProblem): BuildItProblemMeta {
   return { ...p, stages: p.stages.map(toStageMeta) };
 }
 
-/** Client-safe catalog — no rubric/canonical answer/pitfalls at any stage. All 5 fully free. */
+/** Client-safe catalog — no rubric/canonical answer/pitfalls at any stage. All fully free. */
 export const BUILD_IT_META: BuildItProblemMeta[] = PROBLEMS.map(toMeta);
 
 export function getBuildItMeta(slug: string): BuildItProblemMeta | undefined {
