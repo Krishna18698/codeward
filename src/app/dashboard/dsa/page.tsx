@@ -18,6 +18,33 @@ export default async function DSAPage({ searchParams }: Props) {
   const { sheet: sheetId, view } = await searchParams;
   const showBank = view === "bank";
 
+  // Loads a sheet's problems + statuses + notes in one parallel batch.
+  const loadSheet = (sid: string) =>
+    Promise.all([
+      prisma.problem.findMany({
+        where: { sheetId: sid },
+        select: {
+          id: true, title: true, difficulty: true,
+          pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true,
+          order: true, companies: true,
+          statuses: { where: { userId }, select: { status: true, toRevise: true } },
+        },
+        orderBy: [{ mustDo: "desc" }, { order: "asc" }],
+      }),
+      prisma.userProblemStatus.findMany({
+        where: { userId, problem: { sheetId: sid } },
+        select: { status: true },
+      }),
+      prisma.userNote.findMany({
+        where: { userId, problem: { sheetId: sid }, problemId: { not: null } },
+        select: { problemId: true, content: true },
+      }),
+    ]);
+
+  // If the sheet is already known from the URL, start its data load NOW so it
+  // overlaps the sheet-list query instead of waiting for it (kills the waterfall).
+  const knownSheetLoad = sheetId && !showBank ? loadSheet(sheetId) : null;
+
   const [sheets, doneTotal] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
@@ -50,29 +77,15 @@ export default async function DSAPage({ searchParams }: Props) {
   const blind75 = tabSheets.find((s) => /blind\s*75/i.test(s.name));
   const showStartHere = !showBank && doneTotal === 0 && !!blind75;
 
-  // Pre-fetch initial sheet data server-side to avoid client-side loading skeleton
-  const [initialProblems, initialAllStatuses, initialNotesList] = defaultSheetId && !showBank
-    ? await Promise.all([
-        prisma.problem.findMany({
-          where: { sheetId: defaultSheetId },
-          select: {
-            id: true, title: true, difficulty: true,
-            pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true,
-            order: true, companies: true,
-            statuses: { where: { userId }, select: { status: true, toRevise: true } },
-          },
-          orderBy: [{ mustDo: "desc" }, { order: "asc" }],
-        }),
-        prisma.userProblemStatus.findMany({
-          where: { userId, problem: { sheetId: defaultSheetId } },
-          select: { status: true },
-        }),
-        prisma.userNote.findMany({
-          where: { userId, problem: { sheetId: defaultSheetId }, problemId: { not: null } },
-          select: { problemId: true, content: true },
-        }),
-      ])
-    : [[], [], []];
+  // Pre-fetch initial sheet data server-side to avoid a client-side loading skeleton.
+  // Reuse the already-in-flight load when the sheet came from the URL; otherwise
+  // load the default sheet (only knowable after the sheet-list query resolves).
+  const [initialProblems, initialAllStatuses, initialNotesList] =
+    knownSheetLoad
+      ? await knownSheetLoad
+      : defaultSheetId && !showBank
+        ? await loadSheet(defaultSheetId)
+        : [[], [], []];
 
   const initialSheetData = initialProblems.length > 0 ? {
     problems: initialProblems,

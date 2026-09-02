@@ -13,6 +13,19 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+  experimental: {
+    // Keep visited mode tabs in the client router cache briefly, so switching
+    // back to a recently-viewed tab is instant instead of re-fetching.
+    staleTimes: { dynamic: 30, static: 180 },
+    // Tree-shake the CodeMirror barrels so only the pieces the editor uses ship
+    // (lucide-react is already in Next's default optimize list).
+    optimizePackageImports: [
+      "@codemirror/view",
+      "@codemirror/state",
+      "@codemirror/language",
+      "@codemirror/commands",
+    ],
+  },
   // Dev-only: allow tunnel/LAN origins to load /_next/* assets when testing
   // on other devices. Ignored entirely in production builds.
   allowedDevOrigins: ["192.168.0.6", "dodge-subarctic-snap.ngrok-free.dev"],

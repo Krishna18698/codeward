@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Code2, Network, Sparkles, TrendingUp, BookOpen, ArrowRight, GitPullRequest, Bug, Blocks, RotateCcw, History, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getSystemDesignQuestions } from "@/lib/staticContent";
 import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
 import { Ring } from "@/components/ui/Ring";
 import { CODE_REVIEWS_META } from "@/content/code-reviews";
@@ -31,7 +32,8 @@ async function getDashboardData(userId: string) {
       where: { userId },
       select: { status: true, problem: { select: { sheetId: true, pattern: true } } },
     }),
-    prisma.systemDesignQuestion.count(),
+    // Cached (near-static) — avoids a per-load count query to Singapore
+    getSystemDesignQuestions().then((qs) => qs.length),
     // Recent activity + continue-where-left-off (most recently touched first)
     prisma.userProblemStatus.findMany({
       where: { userId },
