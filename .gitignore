@@ -52,3 +52,6 @@ next-env.d.ts
 
 # Playwright MCP scratch output
 .playwright-mcp/
+
+# Local interview reference doc (not part of the app)
+Codeward-Interview-Prep.docx
