@@ -186,6 +186,17 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
           }
         />
 
+        {isLogin && (
+          <div className="-mt-1 flex justify-end">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-muted hover:text-accent transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        )}
+
         {errors.root?.message && (
           <p className="text-xs text-red-400 rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2">
             {errors.root.message}

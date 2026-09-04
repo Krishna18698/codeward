@@ -30,3 +30,7 @@ export const sheetLimiter = make(5, "1 h");
 // 8 code executions per hour per user — a per-user cap so a single user can't
 // drain the shared daily JDoodle budget (the global cap lives in execBudget.ts).
 export const execLimiter = make(8, "1 h");
+
+// 4 password-reset requests per hour per IP — enough for a genuine retry,
+// tight enough that the endpoint can't be used to spam an inbox.
+export const passwordResetLimiter = make(4, "1 h");

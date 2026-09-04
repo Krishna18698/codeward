@@ -243,7 +243,7 @@ const faqs = [
   },
   {
     q: "What's actually on the platform?",
-    a: "Seven modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 300-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, 15 Code Review exercises with planted bugs and AI grading, 9 Bug Hunt debugging exercises, 5 staged Build It low-level-design problems in C#/Python/Kotlin, and 13 long-form Deep Dives on distributed systems. Everything is free.",
+    a: "Seven modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 300-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, 15 Code Review exercises with planted bugs and AI grading, 9 Bug Hunt debugging exercises, 11 staged Build It low-level-design problems in C#/Python/Kotlin, and 13 long-form Deep Dives on distributed systems. Everything is free.",
   },
   {
     q: "How is the AI mentor different from just using ChatGPT?",
