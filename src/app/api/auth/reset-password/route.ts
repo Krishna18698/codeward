@@ -42,7 +42,13 @@ export async function POST(req: Request) {
     );
   }
 
-  const user = await prisma.user.findUnique({ where: { email: normalized }, select: { id: true } });
+  // Same case-insensitive resolution as the forgot endpoint, preferring the
+  // account that has a password (the one the reset applies to).
+  const candidates = await prisma.user.findMany({
+    where: { email: { equals: normalized, mode: "insensitive" } },
+    select: { id: true, password: true },
+  });
+  const user = candidates.find((u) => u.password) ?? null;
   if (!user) {
     return NextResponse.json({ error: "This reset link is invalid." }, { status: 400 });
   }

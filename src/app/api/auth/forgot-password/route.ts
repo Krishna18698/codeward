@@ -31,18 +31,26 @@ export async function POST(req: Request) {
   }
 
   const normalized = email.toLowerCase().trim();
-  const user = await prisma.user.findUnique({
-    where: { email: normalized },
-    select: { id: true, password: true },
+
+  // Case-INSENSITIVE lookup: stored emails aren't guaranteed lowercase (older
+  // rows, OAuth-created rows), and Postgres's unique index is case-sensitive,
+  // so an exact match would silently miss the account and send nothing.
+  // Where several rows differ only by case, prefer the one that actually has a
+  // password — that's the only account a reset can apply to.
+  const candidates = await prisma.user.findMany({
+    where: { email: { equals: normalized, mode: "insensitive" } },
+    select: { id: true, email: true, password: true },
   });
+  const user = candidates.find((u) => u.password) ?? null;
 
   // Only credentials accounts can reset a password — a Google-only user has no
   // password to change and should keep signing in with Google.
-  if (user?.password) {
-    const token = await createPasswordResetToken(normalized);
+  if (user?.password && user.email) {
+    // Use the STORED email so the link and the token identifier agree.
+    const token = await createPasswordResetToken(user.email);
     const base = process.env.NEXTAUTH_URL ?? new URL(req.url).origin;
-    const resetUrl = `${base}/reset-password?token=${token}&email=${encodeURIComponent(normalized)}`;
-    await sendPasswordResetEmail(normalized, resetUrl);
+    const resetUrl = `${base}/reset-password?token=${token}&email=${encodeURIComponent(user.email)}`;
+    await sendPasswordResetEmail(user.email, resetUrl);
   }
 
   return NextResponse.json(GENERIC);
