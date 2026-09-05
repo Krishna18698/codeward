@@ -1,16 +1,23 @@
-import { Resend } from "resend";
+// Transactional email via Brevo (https://brevo.com).
+//
+// Brevo is used instead of a domain-based sender because it verifies a single
+// SENDER ADDRESS rather than a whole domain — so this works without owning a
+// custom domain. Sent over Brevo's REST API directly; no SDK dependency.
+//
+// Everything the app sends goes through sendPasswordResetEmail below, so
+// swapping providers later (e.g. Resend once a domain is verified) is a change
+// to this one file.
 
-// Optional, like the other third-party integrations (JDoodle, Upstash): if the
-// key isn't set the app still runs — sending is skipped and, in development,
-// the reset link is logged so the flow is testable without an email provider.
-const apiKey = process.env.RESEND_API_KEY;
-const resend = apiKey ? new Resend(apiKey) : null;
+const apiKey = process.env.BREVO_API_KEY;
 
-/** Resend's shared sender works with no verified domain, so this has a sane
- *  default; set EMAIL_FROM once you've verified your own domain. */
-const FROM = process.env.EMAIL_FROM ?? "Codeward <onboarding@resend.dev>";
+/** Must be an address verified in Brevo under Senders, Domains & Dedicated IPs. */
+const FROM_EMAIL = process.env.EMAIL_FROM ?? "";
+const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Codeward";
 
-export const emailConfigured = Boolean(resend);
+const BREVO_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
+
+/** Both the key and a verified sender address are required to actually send. */
+export const emailConfigured = Boolean(apiKey && FROM_EMAIL);
 
 function resetEmailHtml(resetUrl: string) {
   return `<!doctype html>
@@ -40,35 +47,47 @@ function resetEmailHtml(resetUrl: string) {
 </html>`;
 }
 
-/** Sends the reset email. Returns true if it was actually dispatched.
- *  Never throws — a mail failure must not leak account existence to the caller. */
+/** Sends the reset email. Returns true only if Brevo accepted it.
+ *  Never throws — a mail failure must not change what the caller tells the
+ *  user, or it would leak whether an account exists. */
 export async function sendPasswordResetEmail(to: string, resetUrl: string): Promise<boolean> {
-  if (!resend) {
+  if (!emailConfigured) {
     if (process.env.NODE_ENV !== "production") {
-      console.log(`[email] RESEND_API_KEY not set — reset link for ${to}: ${resetUrl}`);
+      const missing = !apiKey ? "BREVO_API_KEY" : "EMAIL_FROM";
+      console.log(`[email] ${missing} not set — reset link for ${to}: ${resetUrl}`);
     }
     return false;
   }
+
   try {
-    // The Resend SDK RESOLVES with { data, error } on a rejected send rather
-    // than throwing, so the error field has to be checked explicitly — a
-    // try/catch alone would report a failed send as a success.
-    const { data, error } = await resend.emails.send({
-      from: FROM,
-      to,
-      subject: "Reset your Codeward password",
-      html: resetEmailHtml(resetUrl),
+    const res = await fetch(BREVO_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "api-key": apiKey as string,
+        "content-type": "application/json",
+        accept: "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: FROM_NAME, email: FROM_EMAIL },
+        to: [{ email: to }],
+        subject: "Reset your Codeward password",
+        htmlContent: resetEmailHtml(resetUrl),
+      }),
     });
-    if (error) {
-      console.error("[email] Resend rejected the password reset:", error);
+
+    if (!res.ok) {
+      // Brevo returns a JSON body with { code, message } on failure — surface it,
+      // otherwise a misconfigured sender fails silently in production.
+      console.error(`[email] Brevo rejected the password reset (${res.status}):`, await res.text());
       return false;
     }
+
     if (process.env.NODE_ENV !== "production") {
-      console.log(`[email] password reset sent to ${to} (id: ${data?.id})`);
+      const { messageId } = (await res.json()) as { messageId?: string };
+      console.log(`[email] password reset sent to ${to} (messageId: ${messageId})`);
     }
     return true;
   } catch (err) {
-    // Network/transport failure (the SDK does still throw for these).
     console.error("[email] failed to send password reset:", err);
     return false;
   }
