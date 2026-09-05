@@ -33,7 +33,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Name too long" }, { status: 400 });
   }
 
-  const existing = await prisma.user.findUnique({ where: { email: email.toLowerCase().trim() } });
+  // Case-INSENSITIVE duplicate check: new rows are always stored lowercase, but
+  // a legacy row may not be, and Postgres's unique index is case-sensitive — an
+  // exact match would let a second account be created for the same address.
+  const existing = await prisma.user.findFirst({
+    where: { email: { equals: email.toLowerCase().trim(), mode: "insensitive" } },
+    select: { id: true },
+  });
   if (existing) {
     return NextResponse.json({ error: "Email already in use" }, { status: 409 });
   }

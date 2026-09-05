@@ -50,9 +50,15 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+        // Case-INSENSITIVE lookup. Postgres's unique index on email is
+        // case-sensitive, so an exact match means someone who registered as
+        // foo@x.com but types Foo@x.com is told their credentials are invalid.
+        // Where rows differ only by case, prefer the one that has a password —
+        // that's the only one this provider can authenticate.
+        const matches = await prisma.user.findMany({
+          where: { email: { equals: credentials.email.toLowerCase().trim(), mode: "insensitive" } },
         });
+        const user = matches.find((u) => u.password) ?? null;
 
         if (!user?.password) return null;
 
