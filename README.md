@@ -55,6 +55,8 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 
 ### Auth & Onboarding
 - Google OAuth (one-click) and email/password (bcrypt, 12 rounds)
+- **Password reset**: a "Forgot password?" link on the login card emails a single-use reset link. Tokens are SHA-256 hashed, expire in 1 hour, and are consumed on use; Google-only accounts are skipped (nothing to reset). Delivered via Brevo, which verifies a single sender address — so it needs no custom domain
+- Email lookups on sign-in, registration and reset are **case-insensitive** — Postgres's unique index on `email` is case-sensitive, so an exact match would let the same address end up with two accounts (and would silently fail to find one on login/reset)
 - Onboarding flow capturing experience level and target company
 - Profile page laid out as a sticky identity/stats card (avatar, experience level, target company, attempt/sheet counts) alongside an editable profile form with a selectable avatar
 
@@ -81,7 +83,8 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 ### Polish
 - **Light & dark mode**: a theme toggle in the nav (`next-themes`), defaulting to dark and persisted per browser with no flash on load. Colours flow through a CSS-variable token layer (`bg-canvas`, `text-primary`, `text-accent`, …) that flips on `data-theme`; the emerald brand deepens on white, code editors/panes stay dark in both themes, and the accent palette is deepened in light so badges/tags don't wash out
 - Dashboard top nav: brand/logo doubles as the Home link (no separate "Home" item), pinned far left, with all section links, the user menu, and sign-out grouped on the right. Full-nav-vs-hamburger is a pure CSS breakpoint and the user is fetched server-side, so nothing flickers in on reload
-- Instant navigation feedback (spinner swap on sidebar links and sheet tabs) with zero layout shift — no route-level skeletons
+- **Instant tab switching**: every dashboard route has a `loading.tsx` skeleton, so a tab click paints straight away instead of blocking on that page's queries; content streams in behind `<Suspense>`, and the client router cache (`staleTimes`) makes returning to a recent tab instant. Sidebar links and sheet tabs also swap in a spinner, with zero layout shift
+- **Branded 404s**: a global not-found page, plus an in-app one that renders *inside* the dashboard shell — so a stale exercise or article link keeps the nav and offers a way back, instead of Next's unstyled default
 - Toasts confirm every mutation (sheet create/delete, add problems, status/revise toggles); optimistic UI reverts and reports failures instead of silently diverging
 - Accessible by default: keyboard-visible focus rings, `aria-current`/`aria-expanded`/`aria-label` on interactive controls, `prefers-reduced-motion` respected (including the landing page's logo marquee)
 - WCAG AA-compliant secondary text contrast
@@ -103,6 +106,7 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 | LLM | Groq (`openai/gpt-oss-120b`, set in one `GROQ_MODEL` constant) |
 | Code execution | JDoodle Compiler API (C#, Python, Kotlin, Node) |
 | Code editor | CodeMirror 6 (lazy-loaded) |
+| Transactional email | Brevo (password-reset links; verifies a single sender address, so no custom domain required) |
 | Rate limiting | Upstash Redis |
 | Analytics | Vercel Analytics |
 | Hosting | Vercel (functions pinned to `sin1` to co-locate with the database) |
@@ -151,6 +155,8 @@ Then fill in `.env.local`:
 | `INGEST_SECRET` | ✅ | Protects `/api/mentor/ingest` — any strong random string |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Optional | Rate limiting + the shared Build It code-execution budget (skipped in dev if unset) |
 | `JDOODLE_CLIENT_ID` / `JDOODLE_CLIENT_SECRET` | Optional | Build It "Run Tests" code execution — the button is hidden and grading stays LLM-only if unset |
+| `BREVO_API_KEY` | Optional | Password-reset emails. Unset, the flow still works end to end but sends nothing — in dev the reset link is logged to the console instead |
+| `EMAIL_FROM` / `EMAIL_FROM_NAME` | Optional | Sender address (must exactly match one verified in Brevo) and display name |
 
 ### 3. Enable pgvector on Neon
 
@@ -275,6 +281,7 @@ prisma/
 - Rate limiting (Upstash) on mentor chat, eval, sheet generation, add-to-sheet, code execution, and sign-up
 - Security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, etc.) set in `next.config.ts`
 - Groq-calling routes set `maxDuration` so slow grading/streaming finishes instead of hitting the default function timeout
+- **Password reset is enumeration-safe**: `/api/auth/forgot-password` returns an identical response whether or not the account exists, so it can't be used to discover which emails are registered. Reset tokens are stored **hashed** (SHA-256, so a database leak can't be replayed as a reset), are single-use, expire in 1 hour, and the endpoint is IP rate-limited
 - Passwords hashed with bcrypt (12 rounds); sheet queries scoped to preset or owning user
 
 ---
