@@ -50,14 +50,25 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
     return false;
   }
   try {
-    await resend.emails.send({
+    // The Resend SDK RESOLVES with { data, error } on a rejected send rather
+    // than throwing, so the error field has to be checked explicitly — a
+    // try/catch alone would report a failed send as a success.
+    const { data, error } = await resend.emails.send({
       from: FROM,
       to,
       subject: "Reset your Codeward password",
       html: resetEmailHtml(resetUrl),
     });
+    if (error) {
+      console.error("[email] Resend rejected the password reset:", error);
+      return false;
+    }
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`[email] password reset sent to ${to} (id: ${data?.id})`);
+    }
     return true;
   } catch (err) {
+    // Network/transport failure (the SDK does still throw for these).
     console.error("[email] failed to send password reset:", err);
     return false;
   }
