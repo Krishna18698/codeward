@@ -17,6 +17,9 @@ export default async function DSAPage({ searchParams }: Props) {
 
   const { sheet: sheetId, view } = await searchParams;
   const showBank = view === "bank";
+  // A condensed "night before the interview" cut — the must-do problems of the
+  // selected sheet. A VIEW, not a new sheet, so progress carries over.
+  const lastMinute = view === "lastminute";
 
   // Loads a sheet's problems + statuses + notes in one parallel batch.
   const loadSheet = (sid: string) =>
@@ -75,7 +78,7 @@ export default async function DSAPage({ searchParams }: Props) {
   // "Start here" card — only for users who haven't solved anything yet.
   // Self-dismisses on the first solve; silently absent if the sheet is renamed.
   const blind75 = tabSheets.find((s) => /blind\s*75/i.test(s.name));
-  const showStartHere = !showBank && doneTotal === 0 && !!blind75;
+  const showStartHere = !showBank && !lastMinute && doneTotal === 0 && !!blind75;
 
   // Pre-fetch initial sheet data server-side to avoid a client-side loading skeleton.
   // Reuse the already-in-flight load when the sheet came from the URL; otherwise
@@ -107,23 +110,33 @@ export default async function DSAPage({ searchParams }: Props) {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary truncate">
-              {showBank ? "Problem Bank" : "DSA Sheets"}
+              {showBank ? "Problem Bank" : lastMinute ? "Last Minute" : "DSA Sheets"}
             </h1>
             <p className="hidden md:block text-muted text-sm mt-1">
               {showBank
                 ? "300 curated problems from top product companies. Add any to your custom sheets."
-                : "Track your progress across patterns and problems."}
+                : lastMinute
+                  ? "The must-do cut of this sheet — what to revise when the interview is tomorrow."
+                  : "Track your progress across patterns and problems."}
             </p>
           </div>
 
           <div className="flex items-center shrink-0 rounded-xl border border-border bg-surface p-1">
             <Link
-              href="/dashboard/dsa"
+              href={sheetId ? `/dashboard/dsa?sheet=${sheetId}` : "/dashboard/dsa"}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                !showBank ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
+                !showBank && !lastMinute ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
               }`}
             >
               My Sheets
+            </Link>
+            <Link
+              href={sheetId ? `/dashboard/dsa?sheet=${sheetId}&view=lastminute` : "/dashboard/dsa?view=lastminute"}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
+                lastMinute ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
+              }`}
+            >
+              Last Minute
             </Link>
             <Link
               href="/dashboard/dsa?view=bank"
@@ -189,12 +202,13 @@ export default async function DSAPage({ searchParams }: Props) {
               </div>
             ) : (
               <SheetContent
-                key={defaultSheetId}
+                key={`${defaultSheetId}-${lastMinute ? "lm" : "all"}`}
                 sheets={clientSheets}
                 defaultSheetId={defaultSheetId}
                 userId={userId}
                 initialData={initialSheetData}
                 initialNotes={initialNotesMap}
+                lastMinute={lastMinute}
               />
             )}
           </>

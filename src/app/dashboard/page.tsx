@@ -2,7 +2,7 @@ import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Code2, Network, Sparkles, TrendingUp, BookOpen, ArrowRight, GitPullRequest, Bug, Blocks, RotateCcw, History, Play } from "lucide-react";
+import { Code2, Sparkles, TrendingUp, ArrowRight, RotateCcw, History, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSystemDesignQuestions } from "@/lib/staticContent";
 import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
@@ -11,6 +11,9 @@ import { CODE_REVIEWS_META } from "@/content/code-reviews";
 import { BUG_HUNTS_META } from "@/content/bug-hunts";
 import { BUILD_IT_META } from "@/content/build-it";
 import { DEEP_DIVES } from "@/content/deep-dives";
+import { PRACTICE_MODES } from "@/content/modes";
+import { pickNextStep } from "@/lib/nextStep";
+import NextStep from "@/components/dashboard/NextStep";
 
 function timeAgo(date: Date): string {
   const s = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -22,7 +25,7 @@ function timeAgo(date: Date): string {
 }
 
 async function getDashboardData(userId: string) {
-  const [sheets, statuses, sdTotal, recent, reviseList] = await Promise.all([
+  const [sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -51,15 +54,19 @@ async function getDashboardData(userId: string) {
       orderBy: { updatedAt: "desc" },
       select: { problem: { select: { id: true, title: true, sheetId: true } } },
     }),
+    // Has this user tried each graded mode? Only presence matters, so count.
+    prisma.reviewAttempt.count({ where: { userId } }),
+    prisma.bugHuntAttempt.count({ where: { userId } }),
+    prisma.buildItAttempt.count({ where: { userId } }),
   ]);
-  return { sheets, statuses, sdTotal, recent, reviseList };
+  return { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts };
 }
 
 export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [user, { sheets, statuses, sdTotal, recent, reviseList }] = await Promise.all([
+  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts }] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, image: true, targetCompany: true, experienceLevel: true },
@@ -86,6 +93,25 @@ export default async function DashboardPage() {
   const topPatterns = Object.entries(patternMap)
     .sort((a, b) => b[1].total - a[1].total)
     .slice(0, 5);
+
+  const nextStep = pickNextStep({
+    doneCount,
+    reviewAttempts,
+    bugHuntAttempts,
+    buildItAttempts,
+    reviseCount: reviseList.length,
+    blind75SheetId: sheets.find((s) => /blind\s*75/i.test(s.name))?.id,
+  });
+
+  const modeSub: Record<string, string> = {
+    "/dashboard/dsa": `${doneCount} solved`,
+    "/dashboard/system-design": `${sdTotal} qs`,
+    "/dashboard/code-review": `${CODE_REVIEWS_META.length} PRs`,
+    "/dashboard/bug-hunt": `${BUG_HUNTS_META.length} bugs`,
+    "/dashboard/build-it": `${BUILD_IT_META.length} builds`,
+    "/dashboard/deep-dives": `${DEEP_DIVES.length} topics`,
+    "/dashboard/mentor": "Always on",
+  };
 
   const firstName = user.name?.split(" ")[0] ?? "there";
   const greeting  = new Date().getHours() < 12 ? "Good morning" : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
@@ -151,8 +177,8 @@ export default async function DashboardPage() {
             </div>
             <div className="h-1.5 rounded-full bg-border overflow-hidden">
               <div
-                className="h-full rounded-full bg-accent-fill transition-all duration-1000"
-                style={{ width: `${overallPct}%` }}
+                className="h-full w-full origin-left bg-accent-fill transition-transform duration-1000"
+                style={{ transform: `scaleX(${overallPct / 100})` }}
               />
             </div>
           </div>
@@ -212,19 +238,14 @@ export default async function DashboardPage() {
           </div>
         )}
 
+        {/* ── The one recommended next action ── */}
+        <NextStep step={nextStep} />
+
         {/* ── Practice modes (compact row) ── */}
         <div>
           <h2 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Practice</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
-            {[
-              { href: "/dashboard/dsa",           icon: Code2,           label: "DSA Sheets",    sub: `${doneCount} solved`,             accent: "emerald" },
-              { href: "/dashboard/system-design", icon: Network,         label: "System Design", sub: `${sdTotal} qs`,                   accent: "rose" },
-              { href: "/dashboard/code-review",   icon: GitPullRequest,  label: "Code Review",   sub: `${CODE_REVIEWS_META.length} PRs`, accent: "emerald" },
-              { href: "/dashboard/bug-hunt",      icon: Bug,             label: "Bug Hunt",      sub: `${BUG_HUNTS_META.length} bugs`,   accent: "rose" },
-              { href: "/dashboard/build-it",      icon: Blocks,          label: "Build It",      sub: `${BUILD_IT_META.length} builds`,  accent: "emerald" },
-              { href: "/dashboard/deep-dives",    icon: BookOpen,        label: "Deep Dives",    sub: `${DEEP_DIVES.length} topics`,     accent: "rose" },
-              { href: "/dashboard/mentor",        icon: Sparkles,        label: "AI Mentor",     sub: "Always on",                       accent: "emerald" },
-            ].map((m, i) => (
+            {PRACTICE_MODES.map((m, i) => (
               <Link
                 key={m.href}
                 href={m.href}
@@ -236,7 +257,7 @@ export default async function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-[12px] font-semibold leading-tight text-primary">{m.label}</p>
-                  <p className="mt-0.5 font-mono text-[10px] text-muted">{m.sub}</p>
+                  <p className="mt-0.5 font-mono text-[10px] text-muted">{modeSub[m.href]}</p>
                 </div>
               </Link>
             ))}
@@ -297,8 +318,8 @@ export default async function DashboardPage() {
 
                   <div className="h-1 rounded-full bg-border overflow-hidden mb-2">
                     <div
-                      className="h-full rounded-full bg-accent-fill transition-all duration-700"
-                      style={{ width: `${pct}%` }}
+                      className="h-full w-full origin-left bg-accent-fill transition-transform duration-700"
+                      style={{ transform: `scaleX(${pct / 100})` }}
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -330,8 +351,8 @@ export default async function DashboardPage() {
                     </span>
                     <div className="flex-1 h-1.5 rounded-full bg-border overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-accent-fill transition-all duration-700"
-                        style={{ width: `${pct}%` }}
+                        className="h-full w-full origin-left bg-accent-fill transition-transform duration-700"
+                        style={{ transform: `scaleX(${pct / 100})` }}
                       />
                     </div>
                     <div className="flex items-center gap-2 shrink-0">

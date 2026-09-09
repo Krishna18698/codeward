@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
+import { PATTERNS, patternRank, patternLabel } from "@/content/patterns";
 
 type Problem = {
   id: string; title: string;
@@ -33,37 +34,6 @@ const DIFF_COLOR: Record<string, string> = {
   HARD:   "text-red-400    bg-red-500/10    border-red-500/20",
 };
 
-const patternLabel = (p: string) => p.replace(/_/g, " ").toLowerCase();
-
-const PATTERN_DESCRIPTIONS: Record<string, string> = {
-  ARRAYS:               "Fundamental collection of elements stored at contiguous memory locations.",
-  STRINGS:              "Sequence of characters with pattern matching and manipulation techniques.",
-  LINKED_LIST:          "Sequential node chain where each node points to the next in memory.",
-  TREES:                "Hierarchical structures with parent-child relationships and recursive traversals.",
-  GRAPHS:               "Networks of vertices and edges solved with BFS, DFS, union-find, and shortest paths.",
-  DYNAMIC_PROGRAMMING:  "Break problems into overlapping subproblems and cache results to avoid recomputation.",
-  BACKTRACKING:         "Explore all possibilities by building candidates and abandoning those that fail constraints.",
-  BINARY_SEARCH:        "Eliminate half the search space each step by comparing against a sorted midpoint.",
-  SLIDING_WINDOW:       "Maintain a window over a sequence and expand or shrink it to satisfy a condition.",
-  TWO_POINTERS:         "Use two indices moving towards or away from each other to cut redundant comparisons.",
-  STACK_QUEUE:          "LIFO and FIFO structures for state tracking, parsing, and monotonic sequences.",
-  HEAP:                 "Priority queue built on a complete binary tree for efficient min/max extraction.",
-  TRIE:                 "Prefix tree enabling fast string search, autocomplete, and dictionary operations.",
-  MATH:                 "Number theory and combinatorics to derive O(1) or O(√n) solutions.",
-  BIT_MANIPULATION:     "Use bitwise operators to solve problems with constant space and fast bit tricks.",
-  OTHER:                "Problems that combine multiple patterns or require unique problem-specific approaches.",
-};
-
-// Patterns ordered by interview importance / learning progression — most important first.
-const PATTERN_ORDER = [
-  "ARRAYS", "STRINGS", "TWO_POINTERS", "SLIDING_WINDOW", "BINARY_SEARCH",
-  "LINKED_LIST", "STACK_QUEUE", "TREES", "GRAPHS", "HEAP",
-  "DYNAMIC_PROGRAMMING", "BACKTRACKING", "TRIE", "BIT_MANIPULATION", "MATH", "OTHER",
-];
-const patternRank = (p: string) => {
-  const i = PATTERN_ORDER.indexOf(p);
-  return i === -1 ? PATTERN_ORDER.length : i;
-};
 
 export default function ProblemBank({ userSheets }: Props) {
   const [q, setQ]               = useState("");
@@ -264,9 +234,15 @@ export default function ProblemBank({ userSheets }: Props) {
                       </span>
                       <span className="text-[10px] text-muted">{bp.total}</span>
                     </div>
-                    {PATTERN_DESCRIPTIONS[bp.pattern] && (
+                    {PATTERNS[bp.pattern]?.cue && (
+                      <p className="mt-1 text-[11px] leading-snug text-accent/85">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-accent/60">Spot it — </span>
+                        {PATTERNS[bp.pattern].cue}
+                      </p>
+                    )}
+                    {PATTERNS[bp.pattern]?.description && (
                       <p className="text-[11px] text-muted mt-0.5 leading-snug">
-                        {PATTERN_DESCRIPTIONS[bp.pattern]}
+                        {PATTERNS[bp.pattern].description}
                       </p>
                     )}
                   </div>

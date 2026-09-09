@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
+import { PATTERNS, patternRank } from "@/content/patterns";
 
 type ProblemWithStatus = {
   id: string;
@@ -25,8 +26,10 @@ type Props = {
   userId: string;
   sheetId: string;
   initialNotes: Record<string, string>;
-  onStatusChange?: (prev: ProblemStatus, next: ProblemStatus) => void;
+  onStatusChange?: (prev: ProblemStatus, next: ProblemStatus, difficulty: Difficulty) => void;
   onAddProblems?: () => void;
+  /** Last-Minute view: only the must-do problems of this sheet. */
+  mustDoOnly?: boolean;
 };
 
 const COMPANY_DOMAINS: Record<string, string> = {
@@ -54,35 +57,6 @@ const difficultyColor: Record<Difficulty, string> = {
   HARD: "text-red-400",
 };
 
-const PATTERN_DESCRIPTIONS: Partial<Record<string, string>> = {
-  ARRAYS:               "Fundamental collection of elements stored at contiguous memory locations.",
-  STRINGS:              "Sequence of characters with pattern matching and manipulation techniques.",
-  LINKED_LIST:          "Sequential node chain where each node points to the next in memory.",
-  TREES:                "Hierarchical structures with parent-child relationships and recursive traversals.",
-  GRAPHS:               "Networks of vertices and edges solved with BFS, DFS, union-find, and shortest paths.",
-  DYNAMIC_PROGRAMMING:  "Break problems into overlapping subproblems and cache results to avoid recomputation.",
-  BACKTRACKING:         "Explore all possibilities by building candidates and abandoning those that fail constraints.",
-  BINARY_SEARCH:        "Eliminate half the search space each step by comparing against a sorted midpoint.",
-  SLIDING_WINDOW:       "Maintain a window over a sequence and expand or shrink it to satisfy a condition.",
-  TWO_POINTERS:         "Use two indices moving towards or away from each other to cut redundant comparisons.",
-  STACK_QUEUE:          "LIFO and FIFO structures for state tracking, parsing, and monotonic sequences.",
-  HEAP:                 "Priority queue built on a complete binary tree for efficient min/max extraction.",
-  TRIE:                 "Prefix tree enabling fast string search, autocomplete, and dictionary operations.",
-  MATH:                 "Number theory and combinatorics to derive O(1) or O(√n) solutions.",
-  BIT_MANIPULATION:     "Use bitwise operators to solve problems with constant space and fast bit tricks.",
-  OTHER:                "Problems that combine multiple patterns or require unique problem-specific approaches.",
-};
-
-// Patterns ordered by interview importance / learning progression — most important first.
-const PATTERN_ORDER = [
-  "ARRAYS", "STRINGS", "TWO_POINTERS", "SLIDING_WINDOW", "BINARY_SEARCH",
-  "LINKED_LIST", "STACK_QUEUE", "TREES", "GRAPHS", "HEAP",
-  "DYNAMIC_PROGRAMMING", "BACKTRACKING", "TRIE", "BIT_MANIPULATION", "MATH", "OTHER",
-];
-const patternRank = (p: string) => {
-  const i = PATTERN_ORDER.indexOf(p);
-  return i === -1 ? PATTERN_ORDER.length : i;
-};
 
 const statusTitle: Record<ProblemStatus, string> = {
   TODO: "Mark as Done",
@@ -164,7 +138,7 @@ function InlineNote({
 }
 
 export default function ProblemList({
-  grouped, userId, sheetId, initialNotes, onStatusChange, onAddProblems,
+  grouped, userId, sheetId, initialNotes, onStatusChange, onAddProblems, mustDoOnly = false,
 }: Props) {
   const [allProblems, setAllProblems] = useState<ProblemWithStatus[]>(() =>
     Object.values(grouped).flat()
@@ -195,6 +169,11 @@ export default function ProblemList({
   const notes = initialNotes;
   const [openNoteId, setOpenNoteId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  // Which problem is mid-celebration. The status button is the SAME DOM node
+  // across re-renders, so a permanently-applied class would only ever animate
+  // once — the class has to be absent for a frame before it can replay. Clearing
+  // this in onAnimationEnd gives us that.
+  const [poppingId, setPoppingId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [diffFilter, setDiffFilter] = useState("ALL");
   const [compFilter, setCompFilter] = useState("ALL");
@@ -235,18 +214,21 @@ export default function ProblemList({
           for (const p of fresh) m[p.id] = p.statuses[0]?.toRevise ?? false;
           return m;
         });
-        setAllProblems(fresh);
+        setAllProblems(mustDoOnly ? fresh.filter((p) => p.mustDo) : fresh);
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [diffFilter, compFilter, sheetId]);
+  }, [diffFilter, compFilter, sheetId, mustDoOnly]);
 
 
   const toggleDone = async (problemId: string) => {
     const current = statuses[problemId] ?? "TODO";
     const next: ProblemStatus = current === "DONE" ? "TODO" : "DONE";
+    const difficulty = allProblems.find((p) => p.id === problemId)?.difficulty ?? "EASY";
     setStatuses((prev) => ({ ...prev, [problemId]: next }));
-    onStatusChange?.(current, next);
+    onStatusChange?.(current, next, difficulty);
+    // Celebrate solving, never un-solving.
+    if (next === "DONE") setPoppingId(problemId);
     try {
       const res = await fetch("/api/dsa/status", {
         method: "POST",
@@ -257,7 +239,8 @@ export default function ProblemList({
     } catch {
       // Revert the optimistic update so the UI never lies about saved state
       setStatuses((prev) => ({ ...prev, [problemId]: current }));
-      onStatusChange?.(next, current);
+      onStatusChange?.(next, current, difficulty);
+      setPoppingId((id) => (id === problemId ? null : id));
       toast.error("Couldn't save — status reverted.");
     }
   };
@@ -372,17 +355,23 @@ export default function ProblemList({
                   </span>
                   <span className="text-[10px] text-muted">{groupDone}/{problems.length}</span>
                 </div>
-                {PATTERN_DESCRIPTIONS[pattern] && (
+                {PATTERNS[pattern]?.cue && (
+                  <p className="mt-1 text-[11px] leading-snug text-accent/85">
+                    <span className="font-mono text-[10px] uppercase tracking-wider text-accent/60">Spot it — </span>
+                    {PATTERNS[pattern].cue}
+                  </p>
+                )}
+                {PATTERNS[pattern]?.description && (
                   <p className="text-[11px] text-muted mt-0.5 leading-snug">
-                    {PATTERN_DESCRIPTIONS[pattern]}
+                    {PATTERNS[pattern].description}
                   </p>
                 )}
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-20 h-1 rounded-full bg-border overflow-hidden">
                   <div
-                    className="h-full rounded-full bg-accent-fill transition-all duration-500"
-                    style={{ width: `${Math.round((groupDone / problems.length) * 100)}%` }}
+                    className="h-full w-full origin-left bg-accent-fill transition-transform duration-500"
+                    style={{ transform: `scaleX(${problems.length ? groupDone / problems.length : 0})` }}
                   />
                 </div>
                 <ChevronRight
@@ -412,11 +401,13 @@ export default function ProblemList({
                         <button
                           onClick={() => toggleDone(p.id)}
                           title={statusTitle[status]}
+                          onAnimationEnd={() => setPoppingId((id) => (id === p.id ? null : id))}
                           className={cn(
-                            "shrink-0 self-center w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-150",
+                            "shrink-0 self-center w-6 h-6 rounded-full border flex items-center justify-center transition-colors duration-150",
                             status === "DONE"    && "border-accent/60 bg-accent/10",
                             status === "SOLVING" && "border-amber-500/60 bg-amber-500/10",
                             status === "TODO"    && "border-border hover:border-border",
+                            poppingId === p.id && "animate-solve-pop",
                           )}
                         >
                           <StatusIcon status={status} />

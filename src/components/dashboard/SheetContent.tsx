@@ -31,6 +31,8 @@ type Props = {
   userId: string;
   initialData?: ApiResponse | null;
   initialNotes?: Record<string, string>;
+  /** Last-Minute view — the must-do cut of this sheet, for the night before. */
+  lastMinute?: boolean;
 };
 
 function StatsSkeleton() {
@@ -76,7 +78,7 @@ function ProblemsSkeleton() {
   );
 }
 
-export default function SheetContent({ sheets, defaultSheetId, userId, initialData, initialNotes }: Props) {
+export default function SheetContent({ sheets, defaultSheetId, userId, initialData, initialNotes, lastMinute = false }: Props) {
   const activeSheetId = defaultSheetId;
 
   // Track which sheetId was pre-fetched so we skip the first fetch for it
@@ -86,6 +88,8 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
   const [notes, setNotes]       = useState<Record<string, string>>(initialNotes ?? {});
   const [loading, setLoading]   = useState(initialData ? false : !!activeSheetId);
   const [liveDone, setLiveDone] = useState<number | null>(null);
+  // Per-difficulty deltas layered over the base counts computed from `data`.
+  const [diffDelta, setDiffDelta] = useState<Record<string, number>>({});
   const [showAddProblems, setShowAddProblems] = useState(false);
 
   useEffect(() => {
@@ -101,6 +105,7 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
     setLoading(true);
     setData(null);
     setLiveDone(null);
+    setDiffDelta({});
     /* eslint-enable react-hooks/set-state-in-effect */
     Promise.all([
       fetch(`/api/dsa/problems?sheetId=${activeSheetId}&skip=0&take=1000`).then((r) => r.json() as Promise<ApiResponse>),
@@ -118,28 +123,56 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
   }, [activeSheetId]);
 
   // Called by ProblemList whenever user toggles a status — keeps the bar in sync
-  const handleStatusChange = (prev: ProblemStatus, next: ProblemStatus) => {
+  const handleStatusChange = (prev: ProblemStatus, next: ProblemStatus, difficulty?: Difficulty) => {
     if (prev === next) return;
-    setLiveDone((d) => {
-      const base = d ?? data?.doneCount ?? 0;
-      return base + (next === "DONE" ? 1 : 0) - (prev === "DONE" ? 1 : 0);
-    });
+    const delta = (next === "DONE" ? 1 : 0) - (prev === "DONE" ? 1 : 0);
+    setLiveDone((d) => (d ?? data?.doneCount ?? 0) + delta);
+    if (difficulty && delta !== 0) {
+      setDiffDelta((m) => ({ ...m, [difficulty]: (m[difficulty] ?? 0) + delta }));
+    }
   };
 
   const activeSheet = sheets.find((s) => s.id === activeSheetId);
 
   if (!activeSheet && !loading) return null;
 
-  const total     = data?.total     ?? 0;
-  const doneCount = liveDone ?? data?.doneCount ?? 0;
+  // Last Minute is a filtered VIEW of this sheet, not a separate sheet — the
+  // rows are the same Problem ids, so progress carries over for free.
+  const visible = lastMinute
+    ? (data?.problems ?? []).filter((p) => p.mustDo)
+    : (data?.problems ?? []);
+
+  const liveDelta = Object.values(diffDelta).reduce((a, b) => a + b, 0);
+  const visibleDone = visible.filter((p) => p.statuses?.[0]?.status === "DONE").length;
+
+  const total     = lastMinute ? visible.length : (data?.total ?? 0);
+  const doneCount = lastMinute
+    ? Math.max(0, visibleDone + liveDelta)
+    : (liveDone ?? data?.doneCount ?? 0);
   const pct       = total > 0 ? Math.round((doneCount / total) * 100) : 0;
 
+  // Easy/Medium/Hard split — a single bar hides that someone has done 60 easies
+  // and no hards. Computed client-side; difficulty is already on every problem.
+  const DIFFS: Difficulty[] = ["EASY", "MEDIUM", "HARD"];
+  const byDiff: Record<string, { done: number; total: number }> = {
+    EASY: { done: 0, total: 0 }, MEDIUM: { done: 0, total: 0 }, HARD: { done: 0, total: 0 },
+  };
+  for (const p of visible) {
+    const b = byDiff[p.difficulty];
+    if (!b) continue;
+    b.total++;
+    if (p.statuses?.[0]?.status === "DONE") b.done++;
+  }
+  for (const d of DIFFS) byDiff[d].done = Math.max(0, byDiff[d].done + (diffDelta[d] ?? 0));
+
+  const diffStyle: Record<string, string> = {
+    EASY: "text-accent", MEDIUM: "text-amber-400", HARD: "text-red-400",
+  };
+
   const grouped: Record<string, ProblemWithStatus[]> = {};
-  if (data) {
-    for (const p of data.problems) {
-      if (!grouped[p.pattern]) grouped[p.pattern] = [];
-      grouped[p.pattern].push(p);
-    }
+  for (const p of visible) {
+    if (!grouped[p.pattern]) grouped[p.pattern] = [];
+    grouped[p.pattern].push(p);
   }
 
   return (
@@ -156,8 +189,8 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
           </div>
           <div className="h-1.5 rounded-full bg-border overflow-hidden">
             <div
-              className="h-full rounded-full bg-accent-fill transition-all duration-700"
-              style={{ width: `${pct}%` }}
+              className="h-full w-full origin-left bg-accent-fill transition-transform duration-700"
+              style={{ transform: `scaleX(${pct / 100})` }}
             />
           </div>
           {/* Counts row */}
@@ -171,6 +204,14 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
               <Circle size={13} className="text-muted" />
               <span className="text-sm font-semibold text-primary">{total - doneCount}</span>
               <span className="text-xs text-muted">to do</span>
+            </div>
+            <div className="ml-auto flex items-center gap-3 font-mono text-[11px]">
+              {DIFFS.map((d) => (
+                <span key={d} className={diffStyle[d]}>
+                  {d.charAt(0) + d.slice(1).toLowerCase()}{" "}
+                  <span className="text-muted">{byDiff[d].done}/{byDiff[d].total}</span>
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -187,6 +228,7 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
           initialNotes={notes}
           onStatusChange={handleStatusChange}
           onAddProblems={activeSheet && !activeSheet.isPreset ? () => setShowAddProblems(true) : undefined}
+          mustDoOnly={lastMinute}
         />
       ) : activeSheet ? (
         <div className="rounded-2xl border border-dashed border-border px-5 py-16 text-center">
