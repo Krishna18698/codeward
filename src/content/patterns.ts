@@ -232,84 +232,113 @@ export const patternLabel = (p: string) => {
 
 /** Topics — the level above patterns.
  *
- *  A topic is where problems LIVE; a pattern is how you SOLVE them. Because the
- *  enum holds no structure names, no topic can contain a member with its own
- *  name — the "Arrays > arrays" nesting is structurally impossible.
+ *  A topic is a DATA STRUCTURE or paradigm; a pattern is a technique you apply
+ *  to it. Two-pointer and sliding window are things you do to an ARRAY, so they
+ *  belong under Array — not as a top-level topic of their own, which is what
+ *  made our sheet read differently from every pattern sheet out there.
+ *
+ *  Because the enum holds no structure names, no topic can contain a member
+ *  with its own name.
  */
 export type Topic = { key: string; label: string; blurb: string; patterns: string[] };
 
 export const TOPICS: Topic[] = [
   {
-    key: "ARRAYS", label: "Arrays & Hashing",
-    blurb: "Scanning, counting and precomputing over a flat sequence.",
-    patterns: ["HASH_MAP", "PREFIX_SUM", "SORTING", "CYCLIC_SORT", "SIMULATION", "MATRIX_TRAVERSAL"],
+    key: "ARRAY", label: "Array",
+    blurb: "Fundamental collection of elements stored at contiguous memory locations.",
+    patterns: ["TWO_POINTERS", "SLIDING_WINDOW", "SLIDING_WINDOW_MAX", "PREFIX_SUM", "SORTING", "CYCLIC_SORT", "SIMULATION", "MATRIX_TRAVERSAL"],
   },
   {
     key: "STRINGS", label: "Strings",
-    blurb: "Building, matching and validating character sequences.",
+    blurb: "Sequence of characters and common string manipulation patterns.",
     patterns: ["STRING_PARSING", "STRING_MATCHING"],
   },
   {
-    key: "POINTERS", label: "Two Pointers & Sliding Window",
-    blurb: "Two indices doing the work of a nested loop.",
-    patterns: ["TWO_POINTERS", "SLIDING_WINDOW", "SLIDING_WINDOW_MAX"],
+    key: "HASHMAP", label: "HashMap",
+    blurb: "Key-value pairs for O(1) average lookups, counting and de-duplication.",
+    patterns: ["HASH_MAP"],
   },
   {
     key: "SEARCH", label: "Binary Search",
-    blurb: "Halving the search space — over an array, or over the answer.",
+    blurb: "Efficient search that halves the interval — over an array or an answer range.",
     patterns: ["BINARY_SEARCH"],
   },
   {
-    key: "STACKS", label: "Stacks & Queues",
-    blurb: "Order-sensitive state held on a stack instead of a second pass.",
+    key: "STACK", label: "Stack & Queue",
+    blurb: "LIFO and FIFO structures for nesting, spans and order-sensitive state.",
     patterns: ["STACK", "MONOTONIC_STACK", "QUEUE_DEQUE"],
   },
   {
-    key: "LISTS", label: "Linked Lists",
-    blurb: "Pointer rewiring on a structure you can only walk forwards.",
+    key: "LISTS", label: "Linked List",
+    blurb: "Linear structure whose elements are not stored contiguously.",
     patterns: ["FAST_SLOW_POINTERS", "LINKED_LIST_REVERSAL"],
   },
   {
-    key: "TREES", label: "Trees & Tries",
-    blurb: "Recursion down, results combined on the way back up.",
-    patterns: ["TREE_DFS", "TREE_BFS", "BST", "TRIE"],
+    key: "TREES", label: "Binary Tree",
+    blurb: "Hierarchical structure with a root value and subtrees of children.",
+    patterns: ["TREE_DFS", "TREE_BFS", "BST"],
   },
   {
-    key: "GRAPHS", label: "Graphs",
-    blurb: "Reachability, ordering and cost across a network of nodes.",
+    key: "TRIE", label: "Trie",
+    blurb: "Tree keyed by character, for storing and retrieving strings by prefix.",
+    patterns: ["TRIE"],
+  },
+  {
+    key: "GRAPHS", label: "Graph",
+    blurb: "Non-linear structure of nodes and edges — reachability, ordering and cost.",
     patterns: ["GRAPH_DFS", "GRAPH_BFS", "TOPOLOGICAL_SORT", "UNION_FIND", "SHORTEST_PATH"],
   },
   {
-    key: "HEAPS", label: "Heaps",
-    blurb: "Keeping the extreme to hand without sorting everything.",
+    key: "HEAP", label: "Heap",
+    blurb: "Priority queue for efficient retrieval of the highest or lowest element.",
     patterns: ["HEAP", "TWO_HEAPS", "K_WAY_MERGE"],
   },
   {
-    key: "GREEDY", label: "Intervals & Greedy",
-    blurb: "Sorting by the right key, then taking the best option each step.",
-    patterns: ["INTERVALS", "GREEDY"],
+    key: "RECURSION", label: "Recursion",
+    blurb: "Breaking a problem into smaller, self-similar subproblems.",
+    patterns: ["DIVIDE_CONQUER"],
   },
   {
-    key: "RECURSION", label: "Recursion & Backtracking",
-    blurb: "Exhaustive search, and splitting a problem in half.",
-    patterns: ["BACKTRACKING", "DIVIDE_CONQUER"],
+    key: "BACKTRACKING", label: "Backtracking",
+    blurb: "Building solutions incrementally and abandoning those that fail.",
+    patterns: ["BACKTRACKING"],
+  },
+  {
+    key: "GREEDY", label: "Greedy",
+    blurb: "Making the locally optimal choice at each step.",
+    patterns: ["GREEDY", "INTERVALS"],
   },
   {
     key: "DP", label: "Dynamic Programming",
-    blurb: "Overlapping subproblems, cached.",
+    blurb: "Breaking problems into overlapping subproblems and storing their solutions.",
     patterns: ["DP_1D", "DP_2D", "DP_KNAPSACK", "GAME_THEORY"],
   },
   {
-    key: "MATH", label: "Math & Bits",
-    blurb: "Arithmetic reasoning where no data structure is needed.",
-    patterns: ["BIT_MANIPULATION", "MATH"],
+    key: "BITS", label: "Bit Manipulation",
+    blurb: "Operating on data at the bit level.",
+    patterns: ["BIT_MANIPULATION"],
   },
   {
-    key: "DESIGN", label: "Design & Advanced",
-    blurb: "Composing structures so every operation hits its time bound.",
+    key: "MATH", label: "Math",
+    blurb: "Number theory, geometry and closed-form reasoning.",
+    patterns: ["MATH"],
+  },
+  {
+    key: "DESIGN", label: "Design",
+    blurb: "Composing structures so every required operation hits its time bound.",
     patterns: ["DESIGN", "SEGMENT_TREE", "FENWICK_TREE"],
   },
 ];
 
-export const topicOf = (pattern: string): Topic =>
-  TOPICS.find((t) => t.patterns.includes(pattern)) ?? TOPICS[TOPICS.length - 1];
+/** Patterns not listed in any topic above.
+ *
+ *  This exists because the sheet silently DROPPED such patterns — a stale
+ *  database enum made a 75-problem sheet render as one problem, with no error.
+ *  Anything unmapped now surfaces here instead of disappearing. */
+export const unmappedPatterns = (present: string[]) => {
+  const mapped = new Set(TOPICS.flatMap((t) => t.patterns));
+  return present.filter((p) => !mapped.has(p));
+};
+
+export const topicOf = (pattern: string): Topic | undefined =>
+  TOPICS.find((t) => t.patterns.includes(pattern));

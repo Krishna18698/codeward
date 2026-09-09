@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
-import { PATTERNS, TOPICS, patternLabel } from "@/content/patterns";
+import { PATTERNS, TOPICS, patternLabel, unmappedPatterns } from "@/content/patterns";
 
 type ProblemWithStatus = {
   id: string;
@@ -337,6 +337,28 @@ export default function ProblemList({
       {/* Two levels: topic, then the patterns inside it. Sixteen flat pattern
           cards gave no sense of shape — two-pointer and sliding-window are
           array techniques, not siblings of "graphs". */}
+      {/* Any pattern the topic map doesn't cover — rendered rather than dropped.
+          Silently skipping these is what turned a 75-problem sheet into one
+          problem when the database enum was out of step with the code. */}
+      {(() => {
+        const orphans = unmappedPatterns(Object.keys(filteredGrouped));
+        if (orphans.length === 0) return null;
+        const probs = orphans.flatMap((p) => filteredGrouped[p]);
+        return (
+          <section className="pt-8 first:pt-2">
+            <div className="flex items-baseline justify-between gap-3">
+              <h3 className="text-2xl font-semibold tracking-heading text-amber-400">Uncategorised</h3>
+              <span className="shrink-0 text-xs text-muted">{probs.length} problems</span>
+            </div>
+            <p className="mt-2.5 text-sm text-secondary">
+              These carry a pattern this build doesn&apos;t know about — usually a database
+              that hasn&apos;t been migrated yet. They are listed so nothing is hidden.
+            </p>
+            <p className="mt-1 font-mono text-[11px] text-amber-400/80">{orphans.join(", ")}</p>
+          </section>
+        );
+      })()}
+
       {TOPICS.map((topic) => {
         const topicPatterns = topic.patterns.filter((p) => filteredGrouped[p]?.length);
         if (topicPatterns.length === 0) return null;
