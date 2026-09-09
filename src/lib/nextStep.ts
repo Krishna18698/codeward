@@ -2,6 +2,7 @@ import { CODE_REVIEWS_META } from "@/content/code-reviews";
 import { BUG_HUNTS_META } from "@/content/bug-hunts";
 import { BUILD_IT_META } from "@/content/build-it";
 import { DEEP_DIVES } from "@/content/deep-dives";
+import type { MethodStage } from "@/content/method";
 
 /** What the dashboard knows about how far along someone is. */
 export type Progress = {
@@ -14,6 +15,9 @@ export type Progress = {
 };
 
 export type NextStep = {
+  /** Which stage of the stated method this action belongs to. Lets the method
+   *  strip highlight where the user actually is instead of being static copy. */
+  stage: MethodStage;
   /** Small mono eyebrow — names the stage, not the mode. */
   eyebrow: string;
   title: string;
@@ -31,6 +35,7 @@ export type NextStep = {
 export function pickNextStep(p: Progress): NextStep {
   if (p.doneCount === 0) {
     return {
+      stage: "RECOGNISE",
       eyebrow: "Start here",
       title: "Begin with Blind 75.",
       body: "75 problems covering every pattern that matters. Get through these before touching anything else.",
@@ -41,6 +46,7 @@ export function pickNextStep(p: Progress): NextStep {
 
   if (p.doneCount < 25) {
     return {
+      stage: "PRACTISE",
       eyebrow: "Keep going",
       title: `${p.doneCount} down — build the base first.`,
       body: "Patterns only click once you've seen each of them a few times. Push to 25 before branching out.",
@@ -51,6 +57,7 @@ export function pickNextStep(p: Progress): NextStep {
 
   if (p.reviewAttempts === 0) {
     return {
+      stage: "PRACTISE",
       eyebrow: "Next up",
       title: "Now read code you didn't write.",
       body: `You've got the base. Senior loops test review, not just solving — ${CODE_REVIEWS_META.length} PRs with planted bugs, graded against the real bug list.`,
@@ -61,6 +68,7 @@ export function pickNextStep(p: Progress): NextStep {
 
   if (p.bugHuntAttempts === 0) {
     return {
+      stage: "PRACTISE",
       eyebrow: "Next up",
       title: "Debug something broken.",
       body: `Failing tests and real logs. Find the root cause, not the symptom — ${BUG_HUNTS_META.length} to work through.`,
@@ -71,6 +79,7 @@ export function pickNextStep(p: Progress): NextStep {
 
   if (p.buildItAttempts === 0) {
     return {
+      stage: "PRACTISE",
       eyebrow: "Next up",
       title: "Design something that survives a constraint.",
       body: "Four stages, each adding a constraint that breaks your last design. Stage 3 is where the concurrency invariant bites.",
@@ -81,6 +90,7 @@ export function pickNextStep(p: Progress): NextStep {
 
   if (p.reviseCount > 0) {
     return {
+      stage: "REVISE",
       eyebrow: "Close the loop",
       title: `${p.reviseCount} problem${p.reviseCount === 1 ? "" : "s"} flagged to revise.`,
       body: "Spaced repetition is what makes patterns stick. Clear the queue before adding new problems.",
@@ -90,6 +100,7 @@ export function pickNextStep(p: Progress): NextStep {
   }
 
   return {
+    stage: "RECOGNISE",
     eyebrow: "Go deeper",
     title: "Read the theory behind the loops.",
     body: `${DEEP_DIVES.length} long-form deep dives on the distributed-systems topics senior interviews circle back to.`,

@@ -27,7 +27,7 @@ function timeAgo(date: Date): string {
 }
 
 async function getDashboardData(userId: string) {
-  const [sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts] = await Promise.all([
+  const [sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts, diffTotals] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -35,7 +35,7 @@ async function getDashboardData(userId: string) {
     }),
     prisma.userProblemStatus.findMany({
       where: { userId },
-      select: { status: true, problem: { select: { sheetId: true, pattern: true } } },
+      select: { status: true, problem: { select: { sheetId: true, pattern: true, difficulty: true } } },
     }),
     // Cached (near-static) — avoids a per-load count query to Singapore
     getSystemDesignQuestions().then((qs) => qs.length),
@@ -60,15 +60,23 @@ async function getDashboardData(userId: string) {
     prisma.reviewAttempt.count({ where: { userId } }),
     prisma.bugHuntAttempt.count({ where: { userId } }),
     prisma.buildItAttempt.count({ where: { userId } }),
+    // Per-difficulty denominators across the preset sheets. Can't come from
+    // `statuses` — that only holds problems the user has touched, so untouched
+    // Hards would silently vanish from the total.
+    prisma.problem.groupBy({
+      by: ["difficulty"],
+      where: { sheet: { isPreset: true } },
+      _count: { _all: true },
+    }),
   ]);
-  return { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts };
+  return { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts, diffTotals };
 }
 
 export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts }, activity] = await Promise.all([
+  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts, diffTotals }, activity] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, image: true, targetCompany: true, experienceLevel: true },
@@ -84,6 +92,28 @@ export default async function DashboardPage() {
   const doneCount    = statuses.filter((s) => s.status === "DONE").length;
   const totalTracked = sheets.filter((s) => s.isPreset).reduce((sum, s) => sum + s._count.problems, 0);
   const overallPct   = totalTracked > 0 ? Math.round((doneCount / totalTracked) * 100) : 0;
+
+  // Easy/Medium/Hard split — one bar hides someone who has done 60 easies and
+  // no hards. Totals come from the grouped count over preset sheets; done comes
+  // from the statuses we already have, filtered to those same sheets so the two
+  // halves of each fraction are drawn from the same population.
+  const presetIds = new Set(sheets.filter((s) => s.isPreset).map((s) => s.id));
+  const DIFFS = ["EASY", "MEDIUM", "HARD"] as const;
+  const byDiff: Record<string, { done: number; total: number }> = {
+    EASY: { done: 0, total: 0 }, MEDIUM: { done: 0, total: 0 }, HARD: { done: 0, total: 0 },
+  };
+  for (const g of diffTotals) {
+    const b = byDiff[g.difficulty];
+    if (b) b.total = g._count._all;
+  }
+  for (const s of statuses) {
+    if (s.status !== "DONE" || !presetIds.has(s.problem.sheetId)) continue;
+    const b = byDiff[s.problem.difficulty];
+    if (b) b.done++;
+  }
+  const diffStyle: Record<string, string> = {
+    EASY: "text-accent", MEDIUM: "text-amber-400", HARD: "text-red-400",
+  };
 
   // Pattern breakdown
   const patternMap: Record<string, { done: number; total: number }> = {};
@@ -187,10 +217,18 @@ export default async function DashboardPage() {
           </div>
 
           {/* Inline stats — folded in from the old Solved/Sheets stat cards */}
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-3 text-xs text-secondary">
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 border-t border-border pt-3 text-xs text-secondary">
             <span><span className="font-semibold text-primary">{doneCount}</span> solved</span>
             <span><span className="font-semibold text-primary">{sheets.length}</span> sheets</span>
             <span><span className="font-semibold text-primary">{sheets.filter((s) => !s.isPreset).length}</span> custom</span>
+            <span className="flex items-center gap-3 font-mono text-[11px] sm:ml-auto">
+              {DIFFS.map((d) => (
+                <span key={d} className={diffStyle[d]}>
+                  {d.charAt(0) + d.slice(1).toLowerCase()}{" "}
+                  <span className="text-muted">{byDiff[d].done}/{byDiff[d].total}</span>
+                </span>
+              ))}
+            </span>
           </div>
         </div>
 
