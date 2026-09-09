@@ -174,6 +174,30 @@ npx prisma migrate deploy
 
 > Use `migrate deploy` (not `migrate dev`). Neon's serverless Postgres doesn't support the shadow database that `migrate dev` requires with the `vector` column type.
 
+> **Point local development at a Neon branch, not at production.**
+>
+> If `DATABASE_URL` in `.env.local` is the same string Vercel uses, then
+> `migrate deploy` run locally migrates **production**, immediately. That is how
+> a `ProblemPattern` enum change took the live site down: the database moved to
+> the new values while the deployed build still expected the old ones, and every
+> page reading a problem returned `Value 'HASH_MAP' not found in enum`.
+>
+> Create a branch in the Neon console (Branches → New branch off `main`) and put
+> **that** connection string in `.env.local`. Neon branches are copy-on-write, so
+> a dev branch is near-instant and costs almost nothing.
+>
+> Even with separate databases, a schema change still has an order:
+>
+> 1. Migrate + seed the **dev** branch, verify the app locally.
+> 2. Merge and let Vercel deploy the code.
+> 3. Migrate **production** last.
+>
+> Or make the change backwards-compatible — add the new enum values, deploy code
+> that accepts both, migrate the data, then drop the old values in a later
+> release. Then the order stops mattering. A destructive change (dropping an enum
+> type, renaming a column) is a breaking change to whatever is already running,
+> and needs the sequence above.
+
 ### 5. Seed the preset sheets
 
 Populates Blind 75, Striver's SDE Sheet, NeetCode 150, and the Top 300 FAANG bank.
