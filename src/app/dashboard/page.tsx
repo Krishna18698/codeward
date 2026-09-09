@@ -2,7 +2,7 @@ import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Code2, Sparkles, ArrowRight, RotateCcw, Play } from "lucide-react";
+import { Code2, Sparkles, ArrowRight, Flag, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSystemDesignQuestions } from "@/lib/staticContent";
 import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
@@ -291,7 +291,7 @@ export default async function DashboardPage() {
             {reviseList.length > 0 && (
               <div className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <RotateCcw size={14} className="text-amber-400" />
+                  <Flag size={14} className="fill-current text-amber-400" />
                   <p className="font-mono text-[11px] text-amber-400">Revision queue · {reviseList.length}</p>
                 </div>
                 <div className="space-y-1">

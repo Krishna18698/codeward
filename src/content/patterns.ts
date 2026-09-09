@@ -94,3 +94,33 @@ export const patternRank = (p: string) => {
 
 /** "SLIDING_WINDOW" -> "sliding window" */
 export const patternLabel = (p: string) => p.replace(/_/g, " ").toLowerCase();
+
+/** Topics — the level above patterns.
+ *
+ *  Sixteen flat pattern accordions gave no sense of shape: "two pointers" and
+ *  "sliding window" are both array techniques, but sat as siblings of "graphs".
+ *  Grouping by the data structure, with the techniques nested underneath, is how
+ *  a syllabus actually reads — you learn arrays, and two-pointer is a thing you
+ *  do to them.
+ *
+ *  Every pattern key must appear in exactly one topic, or problems using it
+ *  would silently disappear from the list. `topicOf` is the check.
+ */
+export type Topic = { key: string; label: string; patterns: string[] };
+
+export const TOPICS: Topic[] = [
+  { key: "ARRAYS",   label: "Arrays",              patterns: ["ARRAYS", "TWO_POINTERS", "SLIDING_WINDOW", "BINARY_SEARCH"] },
+  { key: "STRINGS",  label: "Strings",             patterns: ["STRINGS"] },
+  { key: "LISTS",    label: "Linked Lists",        patterns: ["LINKED_LIST"] },
+  { key: "STACKS",   label: "Stacks & Queues",     patterns: ["STACK_QUEUE"] },
+  { key: "TREES",    label: "Trees & Heaps",       patterns: ["TREES", "HEAP", "TRIE"] },
+  { key: "GRAPHS",   label: "Graphs",              patterns: ["GRAPHS"] },
+  { key: "DP",       label: "Dynamic Programming", patterns: ["DYNAMIC_PROGRAMMING", "BACKTRACKING"] },
+  { key: "MATH",     label: "Math & Bits",         patterns: ["MATH", "BIT_MANIPULATION", "OTHER"] },
+];
+
+/** Which topic a pattern belongs to. Falls back to the last topic ("Math &
+ *  Bits", which owns OTHER) so an unmapped pattern is still rendered rather
+ *  than vanishing from the sheet. */
+export const topicOf = (pattern: string): Topic =>
+  TOPICS.find((t) => t.patterns.includes(pattern)) ?? TOPICS[TOPICS.length - 1];

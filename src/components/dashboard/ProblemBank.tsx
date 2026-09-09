@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
-import { PATTERNS, patternRank, patternLabel } from "@/content/patterns";
+import { PATTERNS, patternRank, patternLabel, TOPICS } from "@/content/patterns";
 
 type Problem = {
   id: string; title: string;
@@ -214,7 +214,25 @@ export default function ProblemBank({ userSheets }: Props) {
         </div>
       ) : (
         <div className="space-y-2">
-          {bankPatterns.map((bp) => {
+          {/* Same two-level shape as the sheets: topic, then the patterns
+              inside it. The bank is 300 problems — a flat list of 16 pattern
+              cards gave no way to see which area you were browsing. */}
+          {TOPICS.map((topic) => {
+            const inTopic = bankPatterns.filter((bp) => topic.patterns.includes(bp.pattern));
+            if (inTopic.length === 0) return null;
+            const topicTotal = inTopic.reduce((sum, bp) => sum + bp.total, 0);
+
+            return (
+              <section key={topic.key} className="space-y-2 pt-3 first:pt-0">
+                <div className="flex items-end justify-between gap-3">
+                  <h3 className="text-base font-semibold tracking-heading text-primary">{topic.label}</h3>
+                  <span className="shrink-0 font-mono text-[11px] text-muted">
+                    {topicTotal} problem{topicTotal === 1 ? "" : "s"}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+          {inTopic.map((bp) => {
             const isExpanded = expandedPattern === bp.pattern;
             const probs = patternProblems[bp.pattern] ?? [];
             const isLoading = loadingPattern === bp.pattern;
@@ -404,6 +422,10 @@ export default function ProblemBank({ userSheets }: Props) {
                   </div>
                 )}
               </div>
+            );
+          })}
+                </div>
+              </section>
             );
           })}
         </div>

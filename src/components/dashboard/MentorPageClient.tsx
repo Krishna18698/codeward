@@ -267,10 +267,11 @@ export default function MentorPageClient({ initialConversations }: Props) {
     // Negative margins cancel the shell's padding so the chat runs full-bleed.
     // They must track that padding exactly — the shell is px-10 at md, not p-8.
     <div className="-m-4 md:-mx-10 md:-my-8 flex h-[calc(100svh-57px)] flex-col overflow-hidden min-[1120px]:h-svh">
-      {/* Mentor carries the same page header as every other mode. No subtitle
-          or chips here — the chat needs the vertical space more than the prose. */}
-      <div className="shrink-0 px-4 pt-4 md:px-10 md:pt-6">
-        <PageHeader eyebrow="AI Mentor" title="Ask anything," titleAccent="get a plan." />
+      {/* Mentor carries the same header as every other mode, but compact: one
+          line, no eyebrow, no subtitle. The full-height version pushed the
+          conversation into a third of the screen and left the top-right empty. */}
+      <div className="shrink-0 border-b border-border px-4 py-3 md:px-10">
+        <PageHeader compact title="Ask anything," titleAccent="get a plan." />
       </div>
 
       <div className="flex min-h-0 flex-1 overflow-hidden">

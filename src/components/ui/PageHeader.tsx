@@ -46,7 +46,9 @@ export default function PageHeader({
           {title}
           {titleAccent && (
             <>
-              <br className="hidden md:block" />{" "}
+              {/* Compact keeps both halves on one line — the line break is what
+                  makes the full header a tall band, which a chat can't spare. */}
+              {!compact && <br className="hidden md:block" />}{" "}
               <span className="text-accent">{titleAccent}</span>
             </>
           )}

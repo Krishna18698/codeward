@@ -1,12 +1,12 @@
 "use client";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { ChevronRight, Check, Circle, StickyNote, X, RotateCcw, Search } from "lucide-react";
+import { ChevronRight, Check, Circle, StickyNote, X, Flag, Search } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
-import { PATTERNS, patternRank } from "@/content/patterns";
+import { PATTERNS, TOPICS } from "@/content/patterns";
 
 type ProblemWithStatus = {
   id: string;
@@ -275,8 +275,6 @@ export default function ProblemList({
       )
     : liveGrouped;
 
-  const patterns = Object.keys(filteredGrouped).sort((a, b) => patternRank(a) - patternRank(b));
-
   return (
     <div className="space-y-3">
       {/* Search */}
@@ -333,10 +331,39 @@ export default function ProblemList({
       </div>
 
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-muted uppercase tracking-wider">Pattern Distribution</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">By topic</h3>
       </div>
 
-      {patterns.map((pattern) => {
+      {/* Two levels: topic, then the patterns inside it. Sixteen flat pattern
+          cards gave no sense of shape — two-pointer and sliding-window are
+          array techniques, not siblings of "graphs". */}
+      {TOPICS.map((topic) => {
+        const topicPatterns = topic.patterns.filter((p) => filteredGrouped[p]?.length);
+        if (topicPatterns.length === 0) return null;
+
+        const topicProblems = topicPatterns.flatMap((p) => filteredGrouped[p]);
+        const topicDone = topicProblems.filter((p) => statuses[p.id] === "DONE").length;
+
+        return (
+          <section key={topic.key} className="space-y-2 pt-3 first:pt-0">
+            <div className="flex items-end justify-between gap-3">
+              <h3 className="text-base font-semibold tracking-heading text-primary">{topic.label}</h3>
+              <span className="shrink-0 font-mono text-[11px] text-muted">
+                {topicProblems.length} problem{topicProblems.length === 1 ? "" : "s"}
+              </span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-border">
+                <div
+                  className="h-full w-full origin-left rounded-full bg-accent-fill transition-transform duration-700"
+                  style={{ transform: `scaleX(${topicProblems.length ? topicDone / topicProblems.length : 0})` }}
+                />
+              </div>
+              <span className="shrink-0 font-mono text-[11px] text-muted">{topicDone}/{topicProblems.length}</span>
+            </div>
+
+            <div className="space-y-2">
+      {topicPatterns.map((pattern) => {
         const problems = filteredGrouped[pattern];
         const groupDone = problems.filter((p) => statuses[p.id] === "DONE").length;
         const isCollapsed = collapsed[pattern] !== false;
@@ -449,7 +476,7 @@ export default function ProblemList({
                                   </a>
                                 )}
                                 <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
-                                  <RotateCcw size={15} />
+                                  <Flag size={15} className={isRevising ? "fill-current" : ""} />
                                 </button>
                                 <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
                                   <StickyNote size={15} />
@@ -503,7 +530,7 @@ export default function ProblemList({
                                 </a>
                               )}
                               <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
-                                <RotateCcw size={15} />
+                                <Flag size={15} className={isRevising ? "fill-current" : ""} />
                               </button>
                               <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
                                 <StickyNote size={15} />
@@ -531,6 +558,10 @@ export default function ProblemList({
               </div>
             )}
           </div>
+        );
+      })}
+            </div>
+          </section>
         );
       })}
 
