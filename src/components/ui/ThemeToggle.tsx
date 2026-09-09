@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "lucide";
+import Morph from "./Morph";
 
 /** Light/dark toggle. Uses a mounted guard so the icon only renders after
  *  hydration — the server can't know the persisted theme, so rendering either
@@ -26,8 +27,10 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       title={mounted ? `Switch to ${isLight ? "dark" : "light"} mode` : undefined}
       className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-secondary transition-colors hover:text-primary hover:border-border-accent ${className}`}
     >
-      {/* Keep the box stable before mount; swap the glyph once we know the theme. */}
-      {mounted && isLight ? <Moon size={15} /> : <Sun size={15} />}
+      {/* Keep the box stable before mount; morph the glyph once we know the
+          theme. Sun and moon are the same toggle, so the rays folding into a
+          crescent reads as one control changing state rather than two icons. */}
+      <Morph icon={mounted && isLight ? Moon : Sun} size={15} label="" aria-hidden />
     </button>
   );
 }

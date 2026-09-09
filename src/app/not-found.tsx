@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Sparkles, ArrowLeft, LayoutDashboard } from "lucide-react";
+import Logo from "@/components/ui/Logo";
+import { ArrowLeft, LayoutDashboard } from "lucide-react";
 
 /** Global 404 — replaces Next's unstyled built-in default so a bad URL still
  *  looks like Codeward (theme tokens, branding) and always offers a way out. */
@@ -9,7 +10,7 @@ export default function NotFound() {
       {/* Brand */}
       <Link href="/" className="mb-10 flex items-center gap-2.5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-accent/30 bg-accent/15">
-          <Sparkles size={16} className="text-accent" />
+          <Logo size={16} className="text-accent" />
         </div>
         <span className="text-base font-bold tracking-tight">
           Code<span className="text-accent">ward</span>

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Logo from "@/components/ui/Logo";
 import { Sparkles, Target, Brain, TrendingUp } from "lucide-react";
 
 const features = [
@@ -31,7 +32,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         {/* Brand */}
         <div className="relative flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center">
-            <Sparkles size={16} className="text-accent" />
+            <Logo size={16} className="text-accent" />
           </div>
           <span className="text-base font-bold tracking-tight text-primary">
             Code<span className="text-accent">ward</span>

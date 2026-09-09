@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
+import Logo from "@/components/ui/Logo";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Lock, Sparkles, Eye, EyeOff, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Lock, Eye, EyeOff, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -59,7 +60,7 @@ export default function ResetPasswordForm({ token, email }: { token?: string; em
     <div className="w-full max-w-sm">
       <div className="flex items-center gap-2.5 mb-10">
         <div className="w-8 h-8 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center">
-          <Sparkles size={14} className="text-accent" />
+          <Logo size={14} className="text-accent" />
         </div>
         <span className="text-sm font-bold text-primary">
           Code<span className="text-accent">ward</span>

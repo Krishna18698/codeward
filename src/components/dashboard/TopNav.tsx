@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Logo from "@/components/ui/Logo";
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -68,7 +69,7 @@ export default function TopNav({ user }: { user: NavUser }) {
           aria-label="Codeward home"
           className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight text-primary"
         >
-          <Sparkles size={19} className="text-accent" />
+          <Logo size={19} className="text-accent" />
           <span>
             Code<span className="text-accent">ward</span>
           </span>

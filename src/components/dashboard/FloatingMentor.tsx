@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { Sparkles, X, Minus } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { X as MorphX, Sparkles as MorphSparkles } from "lucide";
+import Morph from "@/components/ui/Morph";
 
 // The chat pulls in react-markdown + the remark/rehype stack (~100–200 KB). The
 // floating mentor sits on every dashboard page but is closed by default, so we
@@ -95,10 +97,9 @@ export default function FloatingMentor() {
           !open && "animate-fb-attention",
         )}
       >
-        {open
-          ? <X size={18} />
-          : <Sparkles size={18} />
-        }
+        {/* The button is one control with two states, so the glyph morphs
+            between them rather than snapping. */}
+        <Morph icon={open ? MorphX : MorphSparkles} size={18} aria-hidden />
       </button>
     </div>
   );

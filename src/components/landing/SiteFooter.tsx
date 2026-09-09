@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import Logo from "@/components/ui/Logo";
 
 const footerCols = [
   {
@@ -41,7 +41,7 @@ export default function SiteFooter() {
         {/* Brand */}
         <div>
           <Link href="/" className="flex items-center gap-1.5 text-sm font-bold text-primary">
-            <Sparkles size={14} className="text-accent" />
+            <Logo size={14} className="text-accent" />
             Code<span className="text-accent">ward</span>
           </Link>
           <p className="mt-3 text-sm text-muted max-w-xs leading-relaxed">

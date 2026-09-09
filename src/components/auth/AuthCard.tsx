@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Logo from "@/components/ui/Logo";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -7,7 +8,9 @@ import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Mail, Lock, User, Sparkles, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Eye as MorphEye, EyeOff as MorphEyeOff } from "lucide";
+import Morph from "@/components/ui/Morph";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/cn";
@@ -98,7 +101,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
       {/* Mobile-only brand */}
       <div className="flex items-center gap-2 mb-8 lg:hidden">
         <div className="w-8 h-8 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center">
-          <Sparkles size={14} className="text-accent" />
+          <Logo size={14} className="text-accent" />
         </div>
         <span className="text-sm font-bold text-primary">
           Code<span className="text-accent">ward</span>
@@ -181,7 +184,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
               className="p-1.5 text-muted hover:text-secondary transition-colors"
               tabIndex={-1}
             >
-              {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+              <Morph icon={showPassword ? MorphEyeOff : MorphEye} size={14} aria-hidden />
             </button>
           }
         />

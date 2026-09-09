@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, type ReactNode } from "react";
-import { Check, ChevronDown, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
+import { ChevronsDownUp as MorphCollapse, ChevronsUpDown as MorphExpand } from "lucide";
+import Morph from "@/components/ui/Morph";
 import { cn } from "@/lib/cn";
 import type { DeepDiveReference } from "@/content/deep-dives";
 
@@ -94,7 +96,7 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
               onClick={toggleAll}
               className="inline-flex items-center gap-1 font-mono text-[11px] text-muted transition-colors hover:text-secondary"
             >
-              {allOpen ? <ChevronsDownUp size={12} /> : <ChevronsUpDown size={12} />}
+              <Morph icon={allOpen ? MorphCollapse : MorphExpand} size={12} aria-hidden />
               {allOpen ? "Collapse all" : "Expand all"}
             </button>
           </div>

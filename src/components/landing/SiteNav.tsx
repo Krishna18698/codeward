@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import Logo from "@/components/ui/Logo";
+
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 /** Fixed marketing top-nav — shared by the landing page and the About / Contact
@@ -9,7 +10,7 @@ export default function SiteNav() {
     <nav className="fixed top-0 inset-x-0 z-50 border-b border-border bg-canvas/85 backdrop-blur-[20px]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-1.5 text-lg font-bold tracking-tight text-primary">
-          <Sparkles size={16} className="text-accent" />
+          <Logo size={16} className="text-accent" />
           Code<span className="text-accent">ward</span>
         </Link>
         <div className="flex items-center gap-3">
