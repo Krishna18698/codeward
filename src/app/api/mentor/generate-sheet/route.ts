@@ -128,7 +128,7 @@ Always use the create_sheet tool to output the sheet. Do not just describe it â€
             : "MEDIUM",
           pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern)
             ? (p.pattern as ProblemPattern)
-            : "HASHING",
+            : "HASH_MAP",
           mustDo: p.mustDo,
           order: i + 1,
           leetcodeUrl: p.leetcodeUrl || null,

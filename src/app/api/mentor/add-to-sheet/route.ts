@@ -116,7 +116,7 @@ Always use the add_problems tool. Do not repeat any existing problems.`;
           title: p.title,
           description: p.description,
           difficulty: VALID_DIFFICULTIES.includes(p.difficulty as Difficulty) ? (p.difficulty as Difficulty) : "MEDIUM",
-          pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern) ? (p.pattern as ProblemPattern) : "HASHING",
+          pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern) ? (p.pattern as ProblemPattern) : "HASH_MAP",
           mustDo: p.mustDo,
           order: currentCount + i + 1,
           leetcodeUrl: p.leetcodeUrl || null,

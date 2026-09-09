@@ -145,20 +145,25 @@ enum Difficulty {
 }
 
 enum ProblemPattern {
-  // Technique-level, not structural. "ARRAYS" was never a pattern — it's where
-  // the problem lives, not how you solve it. Every value here names a method.
-  HASHING
+  // Technique-level. Vocabulary taken from the 41-pattern LeetCode taxonomy
+  // (github.com/Automedon/ultimate-leetcode-patterns), plus SHORTEST_PATH,
+  // which that list has no value for and we have 6 problems needing.
+  HASH_MAP
   PREFIX_SUM
-  KADANE
   SORTING
   CYCLIC_SORT
-  MATRIX
+  SIMULATION
+  MATRIX_TRAVERSAL
+  STRING_PARSING
+  STRING_MATCHING
   TWO_POINTERS
-  FAST_SLOW_POINTERS
   SLIDING_WINDOW
-  MONOTONIC_STACK
-  STACK_SIMULATION
+  SLIDING_WINDOW_MAX
   BINARY_SEARCH
+  STACK
+  MONOTONIC_STACK
+  QUEUE_DEQUE
+  FAST_SLOW_POINTERS
   LINKED_LIST_REVERSAL
   TREE_DFS
   TREE_BFS
@@ -166,19 +171,25 @@ enum ProblemPattern {
   TRIE
   GRAPH_DFS
   GRAPH_BFS
-  UNION_FIND
   TOPOLOGICAL_SORT
+  UNION_FIND
   SHORTEST_PATH
-  TOP_K_HEAP
+  HEAP
+  TWO_HEAPS
+  K_WAY_MERGE
   INTERVALS
   GREEDY
   BACKTRACKING
+  DIVIDE_CONQUER
   DP_1D
   DP_2D
-  DIVIDE_CONQUER
+  DP_KNAPSACK
+  GAME_THEORY
   BIT_MANIPULATION
   MATH
   DESIGN
+  SEGMENT_TREE
+  FENWICK_TREE
 }
 
 model Sheet {
