@@ -15,6 +15,9 @@ export default function DashboardShell({ user, children }: { user: NavUser; chil
   const mainRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
+  // Routes that own the whole viewport rather than sitting in the page column.
+  const fullBleed = pathname.startsWith("/dashboard/mentor");
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       history.scrollRestoration = "manual";
@@ -33,13 +36,23 @@ export default function DashboardShell({ user, children }: { user: NavUser; chil
       <div className="flex min-w-0 flex-1 flex-col">
         <TopNav user={user} />
 
-        <main ref={mainRef} className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
-          {/* Was max-w-6xl, which left ~352px of empty gutter at 1440 and made
-              every page look sparser than the content warranted. The extra width
-              is absorbed by PageWithRail rather than by longer lines of text. */}
-          <div className="mx-auto w-full max-w-[1440px] p-4 md:px-10 md:py-8">
-            {children}
-          </div>
+        <main
+          ref={mainRef}
+          className={fullBleed ? "min-h-0 flex-1 overflow-hidden" : "flex-1 overflow-y-auto"}
+          style={fullBleed ? undefined : { scrollbarGutter: "stable" }}
+        >
+          {/* Full-bleed routes get the raw main element. They used to cancel the
+              container with negative margins, which can undo the padding but NOT
+              the max-w centering — so on any screen wider than 1440 every border
+              stopped short of the edge. Opting out is the only correct fix.
+
+              Otherwise: was max-w-6xl, which left ~352px of empty gutter at 1440.
+              The extra width is absorbed by PageWithRail, not by longer lines. */}
+          {fullBleed ? children : (
+            <div className="mx-auto w-full max-w-[1440px] p-4 md:px-10 md:py-8">
+              {children}
+            </div>
+          )}
         </main>
       </div>
 

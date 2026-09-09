@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
-import { PATTERNS, patternRank, patternLabel, TOPICS } from "@/content/patterns";
+import { PATTERNS, patternRank, patternLabel, TOPICS, PRIMARY_LABEL } from "@/content/patterns";
 
 type Problem = {
   id: string; title: string;
@@ -223,51 +223,56 @@ export default function ProblemBank({ userSheets }: Props) {
             const topicTotal = inTopic.reduce((sum, bp) => sum + bp.total, 0);
 
             return (
-              <section key={topic.key} className="space-y-2 pt-3 first:pt-0">
-                <div className="flex items-end justify-between gap-3">
-                  <h3 className="text-base font-semibold tracking-heading text-primary">{topic.label}</h3>
-                  <span className="shrink-0 font-mono text-[11px] text-muted">
+              <section key={topic.key} className="pt-8 first:pt-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="text-2xl font-semibold tracking-heading text-primary">{topic.label}</h3>
+                  <span className="shrink-0 text-xs text-muted">
                     {topicTotal} problem{topicTotal === 1 ? "" : "s"}
                   </span>
                 </div>
 
-                <div className="space-y-2">
+                <p className="mt-2.5 text-sm text-secondary">{topic.blurb}</p>
+
+                <div className="mt-4 space-y-2.5">
           {inTopic.map((bp) => {
             const isExpanded = expandedPattern === bp.pattern;
             const probs = patternProblems[bp.pattern] ?? [];
             const isLoading = loadingPattern === bp.pattern;
 
             return (
-              <div key={bp.pattern} className="rounded-xl border border-border bg-surface overflow-hidden">
+              <div key={bp.pattern} className="overflow-hidden rounded-xl border border-border bg-surface">
                 {/* Pattern header */}
                 <button
                   onClick={() => togglePattern(bp.pattern)}
                   aria-expanded={isExpanded}
-                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-border transition-colors"
+                  className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-elevated"
                 >
-                  <div className="flex-1 min-w-0 text-left">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-medium text-secondary capitalize">
-                        {patternLabel(bp.pattern)}
-                      </span>
-                      <span className="text-[10px] text-muted">{bp.total}</span>
-                    </div>
+                  <span
+                    className={cn(
+                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors",
+                      isExpanded ? "border-accent/40 bg-accent/10 text-accent" : "border-border text-muted",
+                    )}
+                  >
+                    <ChevronRight
+                      size={15}
+                      className={cn("transition-transform duration-200", isExpanded && "rotate-90")}
+                    />
+                  </span>
+
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[15px] font-semibold capitalize text-primary">
+                      {bp.pattern === topic.primary ? PRIMARY_LABEL : patternLabel(bp.pattern)}
+                    </span>
                     {PATTERNS[bp.pattern]?.cue && (
-                      <p className="mt-1 text-[11px] leading-snug text-accent/85">
-                        <span className="font-mono text-[10px] uppercase tracking-wider text-accent/60">Spot it — </span>
+                      <span className="mt-0.5 block text-[13px] leading-snug text-muted">
                         {PATTERNS[bp.pattern].cue}
-                      </p>
+                      </span>
                     )}
-                    {PATTERNS[bp.pattern]?.description && (
-                      <p className="text-[11px] text-muted mt-0.5 leading-snug">
-                        {PATTERNS[bp.pattern].description}
-                      </p>
-                    )}
-                  </div>
-                  <ChevronRight
-                    size={14}
-                    className={cn("text-muted transition-transform duration-200", isExpanded && "rotate-90")}
-                  />
+                  </span>
+
+                  <span className="shrink-0 rounded-full border border-border px-3 py-1.5 font-mono text-[11px] tabular-nums text-muted">
+                    {bp.total}
+                  </span>
                 </button>
 
                 {/* Problems */}

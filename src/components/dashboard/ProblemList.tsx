@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
-import { PATTERNS, TOPICS } from "@/content/patterns";
+import { PATTERNS, TOPICS, PRIMARY_LABEL, patternLabel } from "@/content/patterns";
 
 type ProblemWithStatus = {
   id: string;
@@ -345,24 +345,29 @@ export default function ProblemList({
         const topicDone = topicProblems.filter((p) => statuses[p.id] === "DONE").length;
 
         return (
-          <section key={topic.key} className="space-y-2 pt-3 first:pt-0">
-            <div className="flex items-end justify-between gap-3">
-              <h3 className="text-base font-semibold tracking-heading text-primary">{topic.label}</h3>
-              <span className="shrink-0 font-mono text-[11px] text-muted">
+          <section key={topic.key} className="pt-8 first:pt-2">
+            <div className="flex items-baseline justify-between gap-3">
+              <h3 className="text-2xl font-semibold tracking-heading text-primary">{topic.label}</h3>
+              <span className="shrink-0 text-xs text-muted">
                 {topicProblems.length} problem{topicProblems.length === 1 ? "" : "s"}
               </span>
             </div>
-            <div className="flex items-center gap-2.5">
-              <div className="h-1 flex-1 overflow-hidden rounded-full bg-border">
+
+            {/* Bar sits left with the fraction beside it, not stretched across
+                the row — the number is what you read, the bar is the glance. */}
+            <div className="mt-2 flex items-center gap-3">
+              <div className="h-1 w-full max-w-[320px] overflow-hidden rounded-full bg-border">
                 <div
                   className="h-full w-full origin-left rounded-full bg-accent-fill transition-transform duration-700"
                   style={{ transform: `scaleX(${topicProblems.length ? topicDone / topicProblems.length : 0})` }}
                 />
               </div>
-              <span className="shrink-0 font-mono text-[11px] text-muted">{topicDone}/{topicProblems.length}</span>
+              <span className="shrink-0 text-xs text-muted">{topicDone} / {topicProblems.length}</span>
             </div>
 
-            <div className="space-y-2">
+            <p className="mt-2.5 text-sm text-secondary">{topic.blurb}</p>
+
+            <div className="mt-4 space-y-2.5">
       {topicPatterns.map((pattern) => {
         const problems = filteredGrouped[pattern];
         const groupDone = problems.filter((p) => statuses[p.id] === "DONE").length;
@@ -373,42 +378,48 @@ export default function ProblemList({
             <button
               onClick={() => setCollapsed((prev) => ({ ...prev, [pattern]: prev[pattern] === false }))}
               aria-expanded={!isCollapsed}
-              className="w-full flex items-center justify-between px-4 py-3 hover:bg-border transition-colors"
+              className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-elevated"
             >
-              <div className="flex-1 min-w-0 text-left">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-secondary capitalize font-medium">
-                    {pattern.replace(/_/g, " ").toLowerCase()}
-                  </span>
-                  <span className="text-[10px] text-muted">{groupDone}/{problems.length}</span>
-                </div>
-                {PATTERNS[pattern]?.cue && (
-                  <p className="mt-1 text-[11px] leading-snug text-accent/85">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-accent/60">Spot it — </span>
-                    {PATTERNS[pattern].cue}
-                  </p>
+              {/* Chevron in its own tile on the left — the affordance reads as a
+                  control rather than a stray glyph at the end of the row. */}
+              <span
+                className={cn(
+                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors",
+                  isCollapsed
+                    ? "border-border text-muted"
+                    : "border-accent/40 bg-accent/10 text-accent",
                 )}
-                {PATTERNS[pattern]?.description && (
-                  <p className="text-[11px] text-muted mt-0.5 leading-snug">
-                    {PATTERNS[pattern].description}
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-20 h-1 rounded-full bg-border overflow-hidden">
-                  <div
-                    className="h-full w-full origin-left bg-accent-fill transition-transform duration-500"
-                    style={{ transform: `scaleX(${problems.length ? groupDone / problems.length : 0})` }}
-                  />
-                </div>
+              >
                 <ChevronRight
-                  size={14}
-                  className={cn(
-                    "text-muted transition-transform duration-200",
-                    !isCollapsed && "rotate-90",
-                  )}
+                  size={15}
+                  className={cn("transition-transform duration-200", !isCollapsed && "rotate-90")}
                 />
-              </div>
+              </span>
+
+              <span className="min-w-0 flex-1">
+                <span className="block text-[15px] font-semibold capitalize text-primary">
+                  {pattern === topic.primary ? PRIMARY_LABEL : patternLabel(pattern)}
+                </span>
+                {/* The cue only. The definitional description said what the
+                    pattern IS; the cue says how to spot it, which is the whole
+                    point of filing problems this way. */}
+                {PATTERNS[pattern]?.cue && (
+                  <span className="mt-0.5 block text-[13px] leading-snug text-muted">
+                    {PATTERNS[pattern].cue}
+                  </span>
+                )}
+              </span>
+
+              <span
+                className={cn(
+                  "shrink-0 rounded-full border px-3 py-1.5 font-mono text-[11px] tabular-nums",
+                  groupDone === problems.length
+                    ? "border-accent/40 bg-accent/10 text-accent"
+                    : "border-border text-muted",
+                )}
+              >
+                {groupDone}/{problems.length}
+              </span>
             </button>
 
             {!isCollapsed && (

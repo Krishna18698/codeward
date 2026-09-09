@@ -106,17 +106,76 @@ export const patternLabel = (p: string) => p.replace(/_/g, " ").toLowerCase();
  *  Every pattern key must appear in exactly one topic, or problems using it
  *  would silently disappear from the list. `topicOf` is the check.
  */
-export type Topic = { key: string; label: string; patterns: string[] };
+export type Topic = {
+  key: string;
+  label: string;
+  blurb: string;
+  /** The structural bucket that IS this topic — ARRAYS inside "Arrays".
+   *
+   *  `ProblemPattern` mixes two different things: structures (ARRAYS, TREES,
+   *  GRAPHS…) and techniques (TWO_POINTERS, SLIDING_WINDOW…). 59% of problems
+   *  carry a structure, so grouping alone renders "Arrays > arrays". Naming the
+   *  structural member lets it be labelled for what it is — the problems in this
+   *  topic not filed under a specific technique — instead of repeating the topic.
+   *
+   *  The real fix is technique-level tags on those 366 problems; this stops the
+   *  UI lying about what we have in the meantime. */
+  primary: string;
+  patterns: string[];
+};
+
+/** Label for a topic's structural bucket. */
+export const PRIMARY_LABEL = "Core problems";
 
 export const TOPICS: Topic[] = [
-  { key: "ARRAYS",   label: "Arrays",              patterns: ["ARRAYS", "TWO_POINTERS", "SLIDING_WINDOW", "BINARY_SEARCH"] },
-  { key: "STRINGS",  label: "Strings",             patterns: ["STRINGS"] },
-  { key: "LISTS",    label: "Linked Lists",        patterns: ["LINKED_LIST"] },
-  { key: "STACKS",   label: "Stacks & Queues",     patterns: ["STACK_QUEUE"] },
-  { key: "TREES",    label: "Trees & Heaps",       patterns: ["TREES", "HEAP", "TRIE"] },
-  { key: "GRAPHS",   label: "Graphs",              patterns: ["GRAPHS"] },
-  { key: "DP",       label: "Dynamic Programming", patterns: ["DYNAMIC_PROGRAMMING", "BACKTRACKING"] },
-  { key: "MATH",     label: "Math & Bits",         patterns: ["MATH", "BIT_MANIPULATION", "OTHER"] },
+  {
+    key: "ARRAYS", label: "Arrays",
+    blurb: "Fundamental collection of elements stored at contiguous memory locations.",
+    primary: "ARRAYS",
+    patterns: ["ARRAYS", "TWO_POINTERS", "SLIDING_WINDOW", "BINARY_SEARCH"],
+  },
+  {
+    key: "STRINGS", label: "Strings",
+    blurb: "Sequence of characters and the manipulation patterns that come with them.",
+    primary: "STRINGS",
+    patterns: ["STRINGS"],
+  },
+  {
+    key: "LISTS", label: "Linked Lists",
+    blurb: "Sequential node chains you can only walk forwards — pointer rewiring and cycle detection.",
+    primary: "LINKED_LIST",
+    patterns: ["LINKED_LIST"],
+  },
+  {
+    key: "STACKS", label: "Stacks & Queues",
+    blurb: "LIFO and FIFO structures for state tracking, parsing and monotonic sequences.",
+    primary: "STACK_QUEUE",
+    patterns: ["STACK_QUEUE"],
+  },
+  {
+    key: "TREES", label: "Trees & Heaps",
+    blurb: "Hierarchical structures solved by traversal, plus the priority queues that order them.",
+    primary: "TREES",
+    patterns: ["TREES", "HEAP", "TRIE"],
+  },
+  {
+    key: "GRAPHS", label: "Graphs",
+    blurb: "Networks of vertices and edges solved with BFS, DFS, union-find and shortest paths.",
+    primary: "GRAPHS",
+    patterns: ["GRAPHS"],
+  },
+  {
+    key: "DP", label: "Dynamic Programming",
+    blurb: "Overlapping subproblems worth caching, and the exhaustive search underneath them.",
+    primary: "DYNAMIC_PROGRAMMING",
+    patterns: ["DYNAMIC_PROGRAMMING", "BACKTRACKING"],
+  },
+  {
+    key: "MATH", label: "Math & Bits",
+    blurb: "Number theory and bitwise tricks that turn a loop into a constant-time operation.",
+    primary: "MATH",
+    patterns: ["MATH", "BIT_MANIPULATION", "OTHER"],
+  },
 ];
 
 /** Which topic a pattern belongs to. Falls back to the last topic ("Math &

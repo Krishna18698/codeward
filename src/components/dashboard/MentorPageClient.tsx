@@ -264,9 +264,10 @@ export default function MentorPageClient({ initialConversations }: Props) {
   // 57px = TopNav's h-14 (56px) + its 1px bottom border — md:h-screen used
   // to ignore that and overflow the viewport by exactly 57px.
   return (
-    // Negative margins cancel the shell's padding so the chat runs full-bleed.
-    // They must track that padding exactly — the shell is px-10 at md, not p-8.
-    <div className="-m-4 md:-mx-10 md:-my-8 flex h-[calc(100svh-57px)] flex-col overflow-hidden min-[1120px]:h-svh">
+    // The shell gives this route the raw <main>, so the panel just fills it —
+    // no negative margins to keep in sync with the shell's padding, and no
+    // hard-coded 57px header height to go stale when the nav changes.
+    <div className="flex h-full flex-col overflow-hidden">
       {/* Mentor carries the same header as every other mode, but compact: one
           line, no eyebrow, no subtitle. The full-height version pushed the
           conversation into a third of the screen and left the top-right empty. */}
