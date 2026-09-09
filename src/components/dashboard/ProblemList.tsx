@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
-import { PATTERNS, TOPICS, PRIMARY_LABEL, patternLabel } from "@/content/patterns";
+import { PATTERNS, TOPICS, patternLabel } from "@/content/patterns";
 
 type ProblemWithStatus = {
   id: string;
@@ -398,7 +398,7 @@ export default function ProblemList({
 
               <span className="min-w-0 flex-1">
                 <span className="block text-[15px] font-semibold capitalize text-primary">
-                  {pattern === topic.primary ? PRIMARY_LABEL : patternLabel(pattern)}
+                  {patternLabel(pattern)}
                 </span>
                 {/* The cue only. The definitional description said what the
                     pattern IS; the cue says how to spot it, which is the whole

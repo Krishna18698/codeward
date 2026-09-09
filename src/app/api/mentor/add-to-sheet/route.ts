@@ -11,12 +11,9 @@ import { GROQ_MODEL } from "@/lib/groq";
 import type { ProblemPattern, Difficulty } from "@prisma/client";
 import { GFG_URL_MAP } from "@/lib/gfg-url-map";
 import { chatLimiter } from "@/lib/ratelimit";
+import { PATTERN_ORDER } from "@/content/patterns";
 
-const VALID_PATTERNS: ProblemPattern[] = [
-  "ARRAYS","STRINGS","LINKED_LIST","TREES","GRAPHS","DYNAMIC_PROGRAMMING",
-  "BACKTRACKING","BINARY_SEARCH","SLIDING_WINDOW","TWO_POINTERS",
-  "STACK_QUEUE","HEAP","TRIE","MATH","BIT_MANIPULATION","OTHER",
-];
+const VALID_PATTERNS = PATTERN_ORDER as ProblemPattern[];
 const VALID_DIFFICULTIES: Difficulty[] = ["EASY","MEDIUM","HARD"];
 
 function gfgFor(leetcodeUrl: string | undefined): string | null {
@@ -119,7 +116,7 @@ Always use the add_problems tool. Do not repeat any existing problems.`;
           title: p.title,
           description: p.description,
           difficulty: VALID_DIFFICULTIES.includes(p.difficulty as Difficulty) ? (p.difficulty as Difficulty) : "MEDIUM",
-          pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern) ? (p.pattern as ProblemPattern) : "OTHER",
+          pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern) ? (p.pattern as ProblemPattern) : "HASHING",
           mustDo: p.mustDo,
           order: currentCount + i + 1,
           leetcodeUrl: p.leetcodeUrl || null,

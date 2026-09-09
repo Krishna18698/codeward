@@ -11,6 +11,7 @@ import { GROQ_MODEL } from "@/lib/groq";
 import type { ProblemPattern, Difficulty } from "@prisma/client";
 import { sheetLimiter } from "@/lib/ratelimit";
 import { GFG_URL_MAP } from "@/lib/gfg-url-map";
+import { PATTERN_ORDER } from "@/content/patterns";
 
 function gfgFor(leetcodeUrl: string | undefined): string | null {
   if (!leetcodeUrl) return null;
@@ -20,11 +21,7 @@ function gfgFor(leetcodeUrl: string | undefined): string | null {
   return GFG_URL_MAP[normalized] ?? GFG_URL_MAP[leetcodeUrl] ?? null;
 }
 
-const VALID_PATTERNS: ProblemPattern[] = [
-  "ARRAYS","STRINGS","LINKED_LIST","TREES","GRAPHS","DYNAMIC_PROGRAMMING",
-  "BACKTRACKING","BINARY_SEARCH","SLIDING_WINDOW","TWO_POINTERS",
-  "STACK_QUEUE","HEAP","TRIE","MATH","BIT_MANIPULATION","OTHER",
-];
+const VALID_PATTERNS = PATTERN_ORDER as ProblemPattern[];
 const VALID_DIFFICULTIES: Difficulty[] = ["EASY","MEDIUM","HARD"];
 
 export async function POST(req: Request) {
@@ -131,7 +128,7 @@ Always use the create_sheet tool to output the sheet. Do not just describe it â€
             : "MEDIUM",
           pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern)
             ? (p.pattern as ProblemPattern)
-            : "OTHER",
+            : "HASHING",
           mustDo: p.mustDo,
           order: i + 1,
           leetcodeUrl: p.leetcodeUrl || null,

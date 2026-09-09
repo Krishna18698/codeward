@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
-import { PATTERNS, patternRank, patternLabel, TOPICS, PRIMARY_LABEL } from "@/content/patterns";
+import { PATTERNS, patternRank, patternLabel, TOPICS } from "@/content/patterns";
 
 type Problem = {
   id: string; title: string;
@@ -261,7 +261,7 @@ export default function ProblemBank({ userSheets }: Props) {
 
                   <span className="min-w-0 flex-1">
                     <span className="block text-[15px] font-semibold capitalize text-primary">
-                      {bp.pattern === topic.primary ? PRIMARY_LABEL : patternLabel(bp.pattern)}
+                      {patternLabel(bp.pattern)}
                     </span>
                     {PATTERNS[bp.pattern]?.cue && (
                       <span className="mt-0.5 block text-[13px] leading-snug text-muted">

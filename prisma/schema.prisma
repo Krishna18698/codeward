@@ -145,22 +145,40 @@ enum Difficulty {
 }
 
 enum ProblemPattern {
-  ARRAYS
-  STRINGS
-  LINKED_LIST
-  TREES
-  GRAPHS
-  DYNAMIC_PROGRAMMING
-  BACKTRACKING
-  BINARY_SEARCH
-  SLIDING_WINDOW
+  // Technique-level, not structural. "ARRAYS" was never a pattern — it's where
+  // the problem lives, not how you solve it. Every value here names a method.
+  HASHING
+  PREFIX_SUM
+  KADANE
+  SORTING
+  CYCLIC_SORT
+  MATRIX
   TWO_POINTERS
-  STACK_QUEUE
-  HEAP
+  FAST_SLOW_POINTERS
+  SLIDING_WINDOW
+  MONOTONIC_STACK
+  STACK_SIMULATION
+  BINARY_SEARCH
+  LINKED_LIST_REVERSAL
+  TREE_DFS
+  TREE_BFS
+  BST
   TRIE
-  MATH
+  GRAPH_DFS
+  GRAPH_BFS
+  UNION_FIND
+  TOPOLOGICAL_SORT
+  SHORTEST_PATH
+  TOP_K_HEAP
+  INTERVALS
+  GREEDY
+  BACKTRACKING
+  DP_1D
+  DP_2D
+  DIVIDE_CONQUER
   BIT_MANIPULATION
-  OTHER
+  MATH
+  DESIGN
 }
 
 model Sheet {
