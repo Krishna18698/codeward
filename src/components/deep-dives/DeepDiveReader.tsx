@@ -100,7 +100,7 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
           </div>
         </div>
         <div className="h-1 overflow-hidden rounded-full bg-border">
-          <div className="h-full rounded-full bg-accent-fill transition-all duration-500" style={{ width: `${pct}%` }} />
+          <div className="h-full w-full origin-left bg-accent-fill transition-transform duration-500" style={{ transform: `scaleX(${pct / 100})` }} />
         </div>
       </div>
 

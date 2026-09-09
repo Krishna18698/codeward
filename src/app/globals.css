@@ -200,12 +200,6 @@ body {
   to   { transform: translateX(-50%); }
 }
 
-/* A soft emerald glow sweeping along a 1px divider line. */
-@keyframes shimmer-line {
-  0%   { background-position: -200% 0px; }
-  100% { background-position: 200% 0px; }
-}
-
 /* A steady "live" status dot — breathes between full and dim opacity. */
 @keyframes dot-pulse {
   0%, 100% { opacity: 1; }
@@ -226,6 +220,22 @@ body {
   to { transform: translateX(100%); }
 }
 
+/* The reward beat when a problem is marked done — a quick overshoot and settle.
+   Transform-only so it composites; never animate width/height for this. */
+@keyframes solve-pop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+
+/* The divider's glow sweep. Previously this animated background-position, which
+   is NOT composited — it repainted a gradient on the main thread every frame,
+   forever, on three landing-page instances. Now a transform on a pseudo-element. */
+@keyframes divider-sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+
 /* ─── Animation utility classes ───────────────────────────────────────────── */
 .animate-fade-in    { animation: var(--animate-fade-in); }
 .animate-fade-up    { animation: var(--animate-fade-up); }
@@ -235,6 +245,7 @@ body {
 .animate-marquee    { animation: marquee 32s linear infinite; }
 .animate-dot-pulse  { animation: dot-pulse 2s ease-in-out infinite; }
 .animate-float      { animation: float 3s ease-in-out infinite; }
+.animate-solve-pop  { animation: solve-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 
 /* Loading skeleton block — an elevated base with a sweeping shimmer band.
    Shape/size come from Tailwind utilities on the element (h-*, w-*, rounded-*). */
@@ -260,15 +271,27 @@ body {
    on the element regardless of specificity (unlayered always wins over
    @layer utilities). Callers control spacing entirely via Tailwind classes. */
 .section-divider {
+  position: relative;
+  overflow: hidden;
   height: 1px;
   background: linear-gradient(90deg,
     rgba(52, 211, 153, 0)    0%,
-    rgba(52, 211, 153, 0.06) 20%,
-    rgba(52, 211, 153, 0.35) 50%,
-    rgba(52, 211, 153, 0.06) 80%,
+    rgba(52, 211, 153, 0.10) 50%,
     rgba(52, 211, 153, 0)    100%
-  ) 0 0 / 200% 100%;
-  animation: shimmer-line 4s ease-in-out infinite;
+  );
+}
+.section-divider::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  will-change: transform;
+  background: linear-gradient(90deg,
+    rgba(52, 211, 153, 0)    0%,
+    rgba(52, 211, 153, 0.45) 50%,
+    rgba(52, 211, 153, 0)    100%
+  );
+  animation: divider-sweep 4s ease-in-out infinite;
 }
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────────── */
@@ -318,6 +341,26 @@ textarea.chat-textarea:focus-visible {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    /* Without this, elements using style={{ animationDelay }} with fill-mode
+       `both` stay at opacity 0 for the whole delay even though the animation
+       itself is instant — staggered cards appeared blank. */
+    animation-delay: 0.01ms !important;
   }
 }
+
+/* ─── Mobile motion budget ────────────────────────────────────────────────────
+   Continuous decorative motion is the main battery and jank cost on phones.
+   These two are ambient, not informative, so below `sm` they hold a static
+   frame: the divider keeps its gradient line, the hero mockup keeps its
+   position. The marquee stays (it's a composited transform and it carries
+   content), but is promoted explicitly rather than relying on auto-layering. */
+@media (max-width: 639px) {
+  .section-divider::after,
+  .animate-float {
+    animation: none;
+  }
+}
+
+.animate-marquee { will-change: transform; }
+.skeleton::after { will-change: transform; }
 
