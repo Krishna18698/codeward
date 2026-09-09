@@ -21,11 +21,28 @@ export async function POST(req: Request) {
   }
 
   const validStatus = status as ProblemStatus;
+
+  // Read the prior status so the activity log records a SOLVE only on the
+  // transition into DONE — re-toggling the same problem must not inflate the
+  // heatmap, and un-solving must not log anything.
+  const existing = await prisma.userProblemStatus.findUnique({
+    where: { userId_problemId: { userId, problemId } },
+    select: { status: true },
+  });
+
   await prisma.userProblemStatus.upsert({
     where: { userId_problemId: { userId, problemId } },
     create: { userId, problemId, status: validStatus },
     update: { status: validStatus },
   });
+
+  if (validStatus === "DONE" && existing?.status !== "DONE") {
+    // Best-effort: the heatmap is not worth failing a solve over, and a deploy
+    // can land before the ActivityEvent migration has been applied.
+    await prisma.activityEvent
+      .create({ data: { userId, type: "DSA_SOLVE" } })
+      .catch(() => {});
+  }
 
   return NextResponse.json({ success: true });
 }

@@ -29,6 +29,7 @@ model User {
   reviewAttempts      ReviewAttempt[]
   bugHuntAttempts     BugHuntAttempt[]
   buildItAttempts     BuildItAttempt[]
+  activityEvents      ActivityEvent[]
 }
 
 // ─── Code Review practice mode ─────────────────────────────────────────────
@@ -244,6 +245,29 @@ model SystemDesignQuestion {
 }
 
 // ─── Notes ────────────────────────────────────────────────────────────────
+
+/// Append-only activity log, purely for the dashboard heatmap.
+///
+/// It exists because UserProblemStatus can't answer "what did I do on March 3rd":
+/// it holds ONE mutable row per (user, problem) with a single `updatedAt`, which
+/// is overwritten by any touch — including a toRevise toggle that isn't a solve.
+/// So solve history was never recorded and cannot be backfilled.
+///
+/// Only DSA solves are written here. The three attempt tables are already
+/// append-only with their own createdAt, so the heatmap unions them in rather
+/// than duplicating those events.
+model ActivityEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  /// "DSA_SOLVE" for now. A plain string, not an enum, so adding a kind later
+  /// stays a code change rather than an ALTER TYPE on a live database.
+  type      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
 
 model UserNote {
   id          String   @id @default(cuid())

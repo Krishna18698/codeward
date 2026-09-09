@@ -14,6 +14,8 @@ import { DEEP_DIVES } from "@/content/deep-dives";
 import { PRACTICE_MODES } from "@/content/modes";
 import { pickNextStep } from "@/lib/nextStep";
 import NextStep from "@/components/dashboard/NextStep";
+import ActivityHeatmap from "@/components/dashboard/ActivityHeatmap";
+import { getActivity } from "@/lib/activity";
 
 function timeAgo(date: Date): string {
   const s = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -66,12 +68,13 @@ export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts }] = await Promise.all([
+  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts }, activity] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, image: true, targetCompany: true, experienceLevel: true },
     }),
     getDashboardData(userId),
+    getActivity(userId),
   ]);
   if (!user) redirect("/login");
 
@@ -263,6 +266,9 @@ export default async function DashboardPage() {
             ))}
           </div>
         </div>
+
+        {/* ── Consistency ── */}
+        <ActivityHeatmap data={activity} />
 
         {/* ── Sheets grid ── */}
         <div>
