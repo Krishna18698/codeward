@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 
 /** Article-scale markdown renderer (larger prose than the chat's MarkdownMessage).
  *  Deliberately a SERVER component: deep-dive content is static and authored, so
@@ -9,6 +10,7 @@ import rehypeSanitize from "rehype-sanitize";
 export default function ArticleMarkdown({ body }: { body: string }) {
   return (
     <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
       rehypePlugins={[rehypeSanitize]}
       components={{
         h2: ({ children }) => (
@@ -39,6 +41,23 @@ export default function ArticleMarkdown({ body }: { body: string }) {
           </blockquote>
         ),
         hr: () => <hr className="border-border my-8" />,
+        // GFM tables. The wrapper scrolls on its own so a wide comparison
+        // matrix never makes the article column scroll sideways on a phone.
+        table: ({ children }) => (
+          <div className="mb-5 overflow-x-auto rounded-xl border border-border">
+            <table className="w-full border-collapse text-left text-[14px]">{children}</table>
+          </div>
+        ),
+        thead: ({ children }) => <thead className="bg-elevated">{children}</thead>,
+        tr: ({ children }) => <tr className="border-b border-border last:border-0">{children}</tr>,
+        th: ({ children }) => (
+          <th className="whitespace-nowrap px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">
+            {children}
+          </th>
+        ),
+        td: ({ children }) => (
+          <td className="px-3 py-2 align-top leading-6 text-secondary">{children}</td>
+        ),
       }}
     >
       {body}

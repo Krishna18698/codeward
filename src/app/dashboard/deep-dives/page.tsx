@@ -1,15 +1,39 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/auth";
-import { DEEP_DIVES } from "@/content/deep-dives";
+import { DEEP_DIVES, categoryOf, CATEGORY_LABEL, type DeepDiveCategory } from "@/content/deep-dives";
 import ReadBadge from "@/components/deep-dives/ReadBadge";
 
-export default async function DeepDivesPage() {
+type Props = { searchParams: Promise<{ topic?: string }> };
+
+/** A filter over one catalogue, not a separate mode — see the note on
+ *  DeepDiveCategory. Driven by a search param so the page stays a server
+ *  component, matching the `?view=` pattern already used on the DSA page. */
+export default async function DeepDivesPage({ searchParams }: Props) {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [featured, ...rest] = DEEP_DIVES;
-  const avgMin = Math.round(DEEP_DIVES.reduce((s, d) => s + d.minutes, 0) / DEEP_DIVES.length);
+  const { topic } = await searchParams;
+  const active: DeepDiveCategory | null =
+    topic === "core-cs" ? "CORE_CS" : topic === "systems" ? "SYSTEMS" : null;
+
+  const dives = active ? DEEP_DIVES.filter((d) => categoryOf(d) === active) : DEEP_DIVES;
+  const [featured, ...rest] = dives;
+  const avgMin = Math.round(dives.reduce((s, d) => s + d.minutes, 0) / dives.length);
+
+  const filters: { href: string; label: string; on: boolean }[] = [
+    { href: "/dashboard/deep-dives", label: `All ${DEEP_DIVES.length}`, on: active === null },
+    {
+      href: "/dashboard/deep-dives?topic=systems",
+      label: CATEGORY_LABEL.SYSTEMS,
+      on: active === "SYSTEMS",
+    },
+    {
+      href: "/dashboard/deep-dives?topic=core-cs",
+      label: CATEGORY_LABEL.CORE_CS,
+      on: active === "CORE_CS",
+    },
+  ];
 
   return (
     <div className="space-y-6 animate-fade-up">
@@ -21,16 +45,25 @@ export default async function DeepDivesPage() {
         </h1>
         <p className="text-sm text-secondary mt-1 max-w-xl">
           Long-form deep dives — failure modes, trade-offs, and the interview traps that
-          surface-level guides skip.
+          surface-level guides skip. Core CS here means the applied version: why a query
+          got slower, not what a B-tree is.
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[11px]">
-          <span className="rounded-full border border-border px-2.5 py-1 text-secondary">
-            {DEEP_DIVES.length} topics
-          </span>
-          <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-accent">
-            all free
-          </span>
-          <span className="rounded-full border border-border px-2.5 py-1 text-secondary">
+
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          {filters.map((f) => (
+            <Link
+              key={f.href}
+              href={f.href}
+              className={`rounded-full border px-2.5 py-1 font-mono text-[11px] transition-colors ${
+                f.on
+                  ? "border-accent/40 bg-accent/12 text-accent"
+                  : "border-border text-secondary hover:text-primary"
+              }`}
+            >
+              {f.label}
+            </Link>
+          ))}
+          <span className="rounded-full border border-border px-2.5 py-1 font-mono text-[11px] text-secondary">
             ~{avgMin} min avg
           </span>
         </div>
@@ -41,7 +74,9 @@ export default async function DeepDivesPage() {
         href={`/dashboard/deep-dives/${featured.slug}`}
         className="block rounded-2xl border border-accent/25 bg-accent/6 p-5 hover:border-accent/40 transition-colors group"
       >
-        <p className="font-mono text-[13px] text-accent mb-2">Start here</p>
+        <p className="font-mono text-[13px] text-accent mb-2">
+          Start here{active ? ` · ${CATEGORY_LABEL[active]}` : ""}
+        </p>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="min-w-0">
             <h2 className="text-base font-semibold text-primary group-hover:text-accent-hover transition-colors">

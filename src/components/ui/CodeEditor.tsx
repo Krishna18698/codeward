@@ -37,7 +37,7 @@ function languageExtension(language: EditorLanguage): Extension {
 const appTheme = EditorView.theme(
   {
     "&": { backgroundColor: "transparent", color: "#e5e5e5", fontSize: "12.5px" },
-    ".cm-scroller": { fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, monospace", lineHeight: "1.6" },
+    ".cm-scroller": { fontFamily: "var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, monospace", lineHeight: "1.6" },
     ".cm-content": { caretColor: "#34d399", padding: "10px 0" },
     ".cm-gutters": { backgroundColor: "transparent", color: "#525252", border: "none" },
     ".cm-lineNumbers .cm-gutterElement": { padding: "0 12px 0 12px", minWidth: "2ch" },

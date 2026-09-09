@@ -11,8 +11,27 @@ import { raftConsensus } from "./raft-consensus";
 import { chatAtScale } from "./chat-at-scale";
 import { pushNotifications } from "./push-notifications";
 import { matchingEngine } from "./matching-engine";
+import { databaseIndexes } from "./database-indexes";
+import { transactionIsolation } from "./transaction-isolation";
+import { deadlock } from "./deadlock";
+import { connectionPoolsAndQueueing } from "./connection-pools-and-queueing";
+import { memoryAndTheOomKill } from "./memory-and-the-oom-kill";
 
 export type DeepDiveReference = { label: string; url?: string };
+
+/** Two families of topic, not two products.
+ *
+ *  Core CS (OS, DBMS, networking) gets a filter rather than an eighth practice
+ *  mode: it belongs to the same "Recognise" stage as the systems dives, and a
+ *  new top-level mode would re-open the "seven modes, no order" problem the
+ *  dashboard's next-step card exists to solve. Every entry is written applied —
+ *  "why did this query get slower", not "define a B-tree". */
+export type DeepDiveCategory = "SYSTEMS" | "CORE_CS";
+
+export const CATEGORY_LABEL: Record<DeepDiveCategory, string> = {
+  SYSTEMS: "Distributed Systems",
+  CORE_CS: "Core CS",
+};
 
 export type DeepDive = {
   slug: string;
@@ -22,6 +41,8 @@ export type DeepDive = {
   minutes: number;
   body: string;
   // ── Optional structured metadata (rendered when present) ──
+  /** Which family this belongs to. Absent means SYSTEMS — the original set. */
+  category?: DeepDiveCategory;
   /** Seniority framing chip, e.g. "Senior IC". */
   level?: string;
   /** What to know first. */
@@ -49,8 +70,19 @@ export const DEEP_DIVES: DeepDive[] = [
   chatAtScale,
   pushNotifications,
   matchingEngine,
+  // ── Core CS ──
+  databaseIndexes,
+  transactionIsolation,
+  deadlock,
+  connectionPoolsAndQueueing,
+  memoryAndTheOomKill,
 ];
 
 export function getDeepDive(slug: string): DeepDive | undefined {
   return DEEP_DIVES.find((d) => d.slug === slug);
 }
+
+/** Category with the default applied — use this, never `d.category` directly. */
+export const categoryOf = (d: DeepDive): DeepDiveCategory => d.category ?? "SYSTEMS";
+
+export const deepDivesByCategory = (c: DeepDiveCategory) => DEEP_DIVES.filter((d) => categoryOf(d) === c);

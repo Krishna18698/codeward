@@ -65,7 +65,7 @@ async function getDashboardData(userId: string) {
     // Hards would silently vanish from the total.
     prisma.problem.groupBy({
       by: ["difficulty"],
-      where: { sheet: { isPreset: true } },
+      where: { sheet: { isPreset: true, source: { not: "TOP300" } } },
       _count: { _all: true },
     }),
   ]);
@@ -89,15 +89,24 @@ export default async function DashboardPage() {
   const continueItem = recent[0] ?? null;
   const statusLabel: Record<string, string> = { DONE: "Solved", SOLVING: "Started", TODO: "Marked to do" };
 
+  // The Top 300 bank is a catalogue you pull problems FROM — the DSA page
+  // already keeps it out of the sheet tabs for that reason. Counting its 300
+  // rows as a denominator here made everyone look permanently stuck at 1%, so
+  // "total progress" tracks the curated sheets only.
+  const trackedSheets = sheets.filter((s) => s.isPreset && s.source !== "TOP300");
+  const trackedIds    = new Set(trackedSheets.map((s) => s.id));
+
+  // Every solve, anywhere — the headline "solved" stat and what pickNextStep
+  // reasons about. Deliberately broader than the progress ratio below.
   const doneCount    = statuses.filter((s) => s.status === "DONE").length;
-  const totalTracked = sheets.filter((s) => s.isPreset).reduce((sum, s) => sum + s._count.problems, 0);
-  const overallPct   = totalTracked > 0 ? Math.round((doneCount / totalTracked) * 100) : 0;
+  const trackedDone  = statuses.filter((s) => s.status === "DONE" && trackedIds.has(s.problem.sheetId)).length;
+  const totalTracked = trackedSheets.reduce((sum, s) => sum + s._count.problems, 0);
+  const overallPct   = totalTracked > 0 ? Math.round((trackedDone / totalTracked) * 100) : 0;
 
   // Easy/Medium/Hard split — one bar hides someone who has done 60 easies and
   // no hards. Totals come from the grouped count over preset sheets; done comes
   // from the statuses we already have, filtered to those same sheets so the two
   // halves of each fraction are drawn from the same population.
-  const presetIds = new Set(sheets.filter((s) => s.isPreset).map((s) => s.id));
   const DIFFS = ["EASY", "MEDIUM", "HARD"] as const;
   const byDiff: Record<string, { done: number; total: number }> = {
     EASY: { done: 0, total: 0 }, MEDIUM: { done: 0, total: 0 }, HARD: { done: 0, total: 0 },
@@ -107,7 +116,7 @@ export default async function DashboardPage() {
     if (b) b.total = g._count._all;
   }
   for (const s of statuses) {
-    if (s.status !== "DONE" || !presetIds.has(s.problem.sheetId)) continue;
+    if (s.status !== "DONE" || !trackedIds.has(s.problem.sheetId)) continue;
     const b = byDiff[s.problem.difficulty];
     if (b) b.done++;
   }
@@ -206,7 +215,7 @@ export default async function DashboardPage() {
           <div className="mt-4">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-xs text-muted">Total progress</span>
-              <span className="text-xs text-muted">{doneCount} / {totalTracked} problems</span>
+              <span className="text-xs text-muted">{trackedDone} / {totalTracked} problems</span>
             </div>
             <div className="h-1.5 rounded-full bg-border overflow-hidden">
               <div
