@@ -26,13 +26,16 @@ function Hero() {
         </span>
       </div>
 
-      <h1
-        className="animate-fade-up max-w-3xl text-3xl font-semibold tracking-heading leading-tight text-primary sm:text-5xl md:text-6xl"
-        style={{ animationDelay: "80ms" }}
-      >
-        Master
-        <br />
-        <span className="text-accent"><RotatingWord /></span>
+      {/* Each line rises from behind its own mask rather than fading up as one
+          block — the two-beat entrance reads more editorial, and it's still a
+          plain transform, so it composites. */}
+      <h1 className="max-w-3xl text-3xl font-semibold tracking-heading leading-tight text-primary sm:text-5xl md:text-6xl">
+        <span className="rise-mask">
+          <span className="animate-rise-in" style={{ animationDelay: "80ms" }}>Master</span>
+        </span>
+        <span className="rise-mask text-accent">
+          <span className="animate-rise-in" style={{ animationDelay: "180ms" }}><RotatingWord /></span>
+        </span>
       </h1>
 
       <p

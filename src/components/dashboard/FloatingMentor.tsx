@@ -89,6 +89,10 @@ export default function FloatingMentor() {
           open
             ? "bg-border border-border text-secondary hover:text-primary"
             : "bg-accent-fill border-accent/50 text-black hover:bg-accent-hover",
+          // A short shrug three times, then it stops — the mentor is easy to
+          // miss sitting perfectly still. Only while closed, so it never
+          // wiggles the control someone is actively using.
+          !open && "animate-fb-attention",
         )}
       >
         {open

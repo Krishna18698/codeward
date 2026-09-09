@@ -228,6 +228,33 @@ body {
   100% { transform: scale(1); }
 }
 
+/* Heatmap columns easing in — a short scale-up wave across the grid. Applied
+   per COLUMN (26 elements), never per cell (186): the wave still reads, at a
+   seventh of the animated node count. Below `sm` it's dropped entirely. */
+@keyframes cell-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Editorial headline entrance — the line rises from behind its own mask.
+   Needs a parent with overflow:hidden (.rise-mask) or it just slides. */
+@keyframes rise-in {
+  from { transform: translateY(110%); }
+  to   { transform: translateY(0); }
+}
+
+/* The mentor button asking to be noticed. Mostly idle on purpose: the wiggle
+   occupies the last ~15% of the cycle, so a 6s duration means a short shrug
+   every 6 seconds. Paired with animation-iteration-count so it stops after a
+   few tries instead of fidgeting forever. */
+@keyframes fb-attention {
+  0%, 84%   { transform: rotate(0deg); }
+  88%       { transform: rotate(-12deg); }
+  92%       { transform: rotate(9deg); }
+  96%       { transform: rotate(-4deg); }
+  100%      { transform: rotate(0deg); }
+}
+
 /* The divider's glow sweep. Previously this animated background-position, which
    is NOT composited — it repainted a gradient on the main thread every frame,
    forever, on three landing-page instances. Now a transform on a pseudo-element. */
@@ -246,6 +273,21 @@ body {
 .animate-dot-pulse  { animation: dot-pulse 2s ease-in-out infinite; }
 .animate-float      { animation: float 3s ease-in-out infinite; }
 .animate-solve-pop  { animation: solve-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-cell-pop   { animation: cell-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-rise-in    { display: block; animation: rise-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+/* Three shrugs, then it leaves you alone. */
+.animate-fb-attention { animation: fb-attention 6s ease-in-out 3s 3; }
+
+/* Clips a rising line to its own box. Block-level so the mask matches the text
+   metrics rather than collapsing. The padding/negative-margin pair gives
+   descenders (g, y, p) room to render without the clip eating them, while
+   costing nothing in layout. */
+.rise-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
 
 /* Loading skeleton block — an elevated base with a sweeping shimmer band.
    Shape/size come from Tailwind utilities on the element (h-*, w-*, rounded-*). */
@@ -357,6 +399,13 @@ textarea.chat-textarea:focus-visible {
 @media (max-width: 639px) {
   .section-divider::after,
   .animate-float {
+    animation: none;
+  }
+
+  /* The heatmap wave and the mentor shrug are one-shot, not continuous, but
+     they're also pure decoration — on a phone the grid just appears. */
+  .animate-cell-pop,
+  .animate-fb-attention {
     animation: none;
   }
 }

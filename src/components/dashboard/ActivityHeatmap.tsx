@@ -3,9 +3,10 @@ import { dayKey, type ActivityData } from "@/lib/activity";
 
 /** ~26 weeks of activity. Server component — no state, no client JS.
  *
- *  Motion note: the container fades in once. The ~180 cells are deliberately
- *  NOT staggered individually — that many simultaneous animations is exactly
- *  the kind of thing that stutters on a phone. */
+ *  Motion note: the entrance wave is staggered per COLUMN, not per cell — 26
+ *  animated nodes instead of 186. The wave still reads left-to-right, at a
+ *  seventh of the cost, and `.animate-cell-pop` is dropped entirely below `sm`
+ *  so a phone just paints the finished grid. */
 export default function ActivityHeatmap({ data, weeks = 26 }: { data: ActivityData; weeks?: number }) {
   // Build columns of 7, ending on today, starting from the most recent Sunday
   // going back `weeks` weeks so rows line up as weekdays.
@@ -61,7 +62,11 @@ export default function ActivityHeatmap({ data, weeks = 26 }: { data: ActivityDa
             const first = new Date(col[0].key);
             const showMonth = first.getDate() <= 7;
             return (
-              <div key={ci} className="flex flex-col gap-[3px]">
+              <div
+                key={ci}
+                className="flex flex-col gap-[3px] animate-cell-pop"
+                style={{ animationDelay: `${ci * 18}ms` }}
+              >
                 <span className="h-3 font-mono text-[9px] leading-3 text-muted">
                   {showMonth ? monthFmt.format(first) : ""}
                 </span>
