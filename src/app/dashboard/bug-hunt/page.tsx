@@ -52,6 +52,7 @@ export default async function BugHuntPage({ searchParams }: Props) {
         { label: ex.category, tone: CATEGORY_TONE[ex.category] ?? "muted" },
         ...(best !== null ? [{ label: `best ${best}/100`, tone: (best >= MASTERED ? "accent" : "amber") as BadgeTone }] : []),
       ],
+      status: statusOf(ex.slug),
       brief: ex.brief,
       meta: `${ex.language} · ~${ex.minutes} min${stat ? ` · ${stat._count._all} attempt${stat._count._all > 1 ? "s" : ""}` : ""}`,
       cta: best !== null ? "Try again →" : "Start debugging →",
@@ -84,7 +85,8 @@ export default async function BugHuntPage({ searchParams }: Props) {
       <PreloadCodeEditor />
       <ModeCatalog
         eyebrow="Bug Hunt"
-        title="Diagnose the failure."
+        title="Diagnose"
+        titleAccent="the failure."
         subtitle="Broken code, failing tests, real log excerpts. Find the root cause — not the symptom — write your diagnosis, and the AI grades it, then reveals the canonical fix."
         statChips={[`${BUG_HUNTS_META.length} exercises`, "all free", "AI-graded"]}
         progress={{ done, total: BUG_HUNTS_META.length, label: "mastered" }}

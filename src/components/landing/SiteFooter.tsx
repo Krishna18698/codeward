@@ -42,7 +42,7 @@ export default function SiteFooter() {
         <div>
           <Link href="/" className="flex items-center gap-1.5 text-sm font-bold text-primary">
             <Logo size={14} className="text-accent" />
-            Code<span className="text-accent">ward</span>
+            <span>Code<span className="text-accent">ward</span></span>
           </Link>
           <p className="mt-3 text-sm text-muted max-w-xs leading-relaxed">
             Production-shaped interview prep — DSA, system design, code review, debugging, and a mentor that knows where you stand.

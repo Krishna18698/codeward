@@ -5,6 +5,8 @@ import SiteNav from "@/components/landing/SiteNav";
 import SiteFooter from "@/components/landing/SiteFooter";
 import HeroGlow from "@/components/landing/HeroGlow";
 import HeroShowcase from "@/components/landing/HeroShowcase";
+import { METHOD } from "@/content/method";
+import { RecogniseFragment, PractiseFragment, ReviseFragment } from "@/components/landing/MethodFragments";
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
@@ -290,6 +292,68 @@ function FAQ() {
 }
 
 
+
+/* ─── The method ────────────────────────────────────────────────────────────
+   Seven modes with no stated order left a new user guessing. The dashboard's
+   next-step card answers "what now?"; this answers "what is the shape of the
+   whole thing?" — with real product surfaces rather than three icons.
+
+   Stage copy comes from @/content/method, the same source the in-app method
+   strip reads, so the landing page and the product cannot drift apart. */
+const METHOD_FRAGMENTS = [RecogniseFragment, PractiseFragment, ReviseFragment];
+
+const METHOD_HEADLINES = [
+  "Learn the pattern, not the problem.",
+  "Work the sequence in order.",
+  "Revise what you actually got wrong.",
+];
+
+function Method() {
+  return (
+    <section className="py-16 px-6">
+      <div className="mx-auto max-w-6xl">
+        <p className="text-center font-mono text-[13px] uppercase tracking-wide text-accent mb-4">
+          How it works
+        </p>
+        <h2 className="text-center text-3xl font-semibold tracking-heading text-primary mb-4">
+          Three habits, <span className="text-accent">repeated</span>
+        </h2>
+        <p className="mx-auto mb-16 max-w-xl text-center text-secondary leading-relaxed">
+          There is no trick to this. Every mode on the platform exists to make one of
+          these three habits easier to keep.
+        </p>
+
+        <div className="section-divider mb-20" />
+
+        <div className="space-y-20">
+          {METHOD.map((stage, i) => {
+            const Fragment = METHOD_FRAGMENTS[i];
+            return (
+              <div key={stage.id}>
+                <div
+                  className={`flex flex-col gap-8 md:items-center md:gap-12 ${i % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"}`}
+                >
+                  <div className="flex-1">
+                    <SectionMarker n={`${i + 1}.0`} label={stage.label} />
+                    <h3 className="mb-3 text-2xl font-semibold leading-tight tracking-heading text-primary">
+                      {METHOD_HEADLINES[i]}
+                    </h3>
+                    <p className="max-w-md leading-relaxed text-secondary">{stage.blurb}</p>
+                  </div>
+                  <div className="w-full min-w-0 flex-1">
+                    <Fragment />
+                  </div>
+                </div>
+                {i < METHOD.length - 1 && <div className="section-divider mt-20" />}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Page ──────────────────────────────────────────────────────────────── */
 
 export default function Home() {
@@ -311,6 +375,7 @@ export default function Home() {
       <LogoStrip />
 
       <PracticeModes />
+      <Method />
       <FAQ />
       <SiteFooter />
     </div>

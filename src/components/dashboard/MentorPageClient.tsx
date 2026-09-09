@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Sparkles, Plus, Trash2, MessageSquare, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/cn";
+import PageHeader from "@/components/ui/PageHeader";
 import MentorChat, { type Message } from "@/components/dashboard/MentorChat";
 
 type ConversationSummary = {
@@ -194,7 +195,9 @@ export default function MentorPageClient({ initialConversations }: Props) {
   const activeConvTitle = conversations.find((c) => c.id === activeId)?.title ?? "New conversation";
 
   const chatPanel = (
-    <div className="flex flex-col h-full min-w-0">
+    // w-full matters: this is a flex ITEM inside the row below, and without it
+    // the panel sizes to its content and leaves most of the column empty.
+    <div className="flex w-full flex-col h-full min-w-0">
       {/* Chat header — always visible */}
       <div className="flex items-center gap-3 px-5 md:px-8 py-4 border-b border-border shrink-0 bg-canvas/80 backdrop-blur-sm">
         {/* Mobile back button */}
@@ -261,21 +264,31 @@ export default function MentorPageClient({ initialConversations }: Props) {
   // 57px = TopNav's h-14 (56px) + its 1px bottom border — md:h-screen used
   // to ignore that and overflow the viewport by exactly 57px.
   return (
-    <div className="-m-4 md:-m-8 h-[calc(100svh-57px)] flex overflow-hidden">
-      {/* Sidebar — always visible on desktop, toggled on mobile */}
-      <div className={cn(
-        "w-full md:w-64 md:flex shrink-0 flex-col",
-        showList ? "flex" : "hidden md:flex"
-      )}>
-        {sidebar}
+    // Negative margins cancel the shell's padding so the chat runs full-bleed.
+    // They must track that padding exactly — the shell is px-10 at md, not p-8.
+    <div className="-m-4 md:-mx-10 md:-my-8 flex h-[calc(100svh-57px)] flex-col overflow-hidden min-[1120px]:h-svh">
+      {/* Mentor carries the same page header as every other mode. No subtitle
+          or chips here — the chat needs the vertical space more than the prose. */}
+      <div className="shrink-0 px-4 pt-4 md:px-10 md:pt-6">
+        <PageHeader eyebrow="AI Mentor" title="Ask anything," titleAccent="get a plan." />
       </div>
 
-      {/* Chat panel — always visible on desktop, shown when !showList on mobile */}
-      <div className={cn(
-        "flex-1 min-w-0",
-        showList ? "hidden md:flex" : "flex"
-      )}>
-        {chatPanel}
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* Sidebar — always visible on desktop, toggled on mobile */}
+        <div className={cn(
+          "w-full md:w-64 md:flex shrink-0 flex-col",
+          showList ? "flex" : "hidden md:flex"
+        )}>
+          {sidebar}
+        </div>
+
+        {/* Chat panel — always visible on desktop, shown when !showList on mobile */}
+        <div className={cn(
+          "flex-1 min-w-0",
+          showList ? "hidden md:flex" : "flex"
+        )}>
+          {chatPanel}
+        </div>
       </div>
     </div>
   );

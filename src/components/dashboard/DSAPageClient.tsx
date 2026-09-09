@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import CreateSheetModal from "./CreateSheetModal";
 
-type Sheet = { id: string; name: string; isPreset: boolean; problemCount: number };
+type Sheet = { id: string; name: string; isPreset: boolean; problemCount: number; solvedCount: number };
 
 type Props = {
   sheets: Sheet[];
@@ -55,28 +55,50 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
 
   return (
     <>
-      {/* Sheet tabs row */}
-      <div className="flex gap-2 flex-wrap items-center">
-        {sheets.map((s) => {
+      {/* Sheet selector — cards, not pills. A tab that only carried a total
+          made choosing a sheet and seeing your progress in it two separate
+          glances; the numbered card answers both at once. */}
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {sheets.map((s, i) => {
           const isActive  = s.id === activeSheetId;
           const isCustom  = !s.isPreset;
           const isLoading = isPending && pendingSheetId === s.id;
+          const pct = s.problemCount > 0 ? (s.solvedCount / s.problemCount) * 100 : 0;
 
           return (
-            <div key={s.id} className="relative flex items-center group">
+            <div key={s.id} className="relative group">
               <button
                 onClick={() => navigate(s.id)}
-                className={`rounded-xl px-3.5 py-1.5 text-sm transition-all duration-150 border whitespace-nowrap ${
+                aria-current={isActive ? "true" : undefined}
+                className={`w-full rounded-xl border p-3 text-left transition-colors ${
                   isActive
-                    ? "bg-accent/15 text-accent border-accent/30"
-                    : "border-border text-secondary hover:border-border hover:text-primary hover:bg-border"
-                } ${isCustom ? "pr-8" : ""} ${isPending && !isLoading ? "opacity-60" : ""}`}
+                    ? "border-accent/40 bg-accent/10"
+                    : "border-border bg-surface hover:border-border-accent hover:bg-elevated"
+                } ${isCustom ? "pr-9" : ""} ${isPending && !isLoading ? "opacity-60" : ""}`}
               >
-                {s.name}
-                <span className="ml-2 text-[11px] opacity-50 inline-flex items-center">
-                  {isLoading
-                    ? <Loader2 size={11} className="animate-spin text-accent" />
-                    : s.problemCount}
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-bold ${
+                      isActive ? "bg-accent text-black" : "border border-border text-muted"
+                    }`}
+                  >
+                    {isLoading ? <Loader2 size={11} className="animate-spin" /> : i + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className={`block truncate text-sm font-medium ${isActive ? "text-accent" : "text-primary"}`}>
+                      {s.name}
+                    </span>
+                    <span className="block font-mono text-[11px] text-muted">
+                      {s.solvedCount} / {s.problemCount} solved
+                    </span>
+                  </span>
+                </div>
+
+                <span className="mt-2.5 block h-1 overflow-hidden rounded-full bg-border">
+                  <span
+                    className="block h-full w-full origin-left rounded-full bg-accent-fill transition-transform duration-700"
+                    style={{ transform: `scaleX(${pct / 100})` }}
+                  />
                 </span>
               </button>
 
@@ -87,7 +109,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                   onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(s.id); }}
                   title="Delete sheet"
                   aria-label={`Delete sheet ${s.name}`}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-lg text-muted hover:text-red-400 hover:bg-red-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition"
+                  className="absolute right-2 top-2.5 flex h-6 w-6 items-center justify-center rounded-lg text-muted opacity-100 transition hover:bg-red-500/10 hover:text-red-400 md:opacity-0 md:group-hover:opacity-100"
                 >
                   ×
                 </button>
@@ -99,7 +121,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
         {/* New Sheet */}
         <button
           onClick={() => setShowCreate(true)}
-          className="rounded-xl border border-dashed border-accent/25 px-3.5 py-1.5 text-sm text-accent/60 hover:text-accent hover:border-accent/50 transition-colors"
+          className="flex min-h-[76px] items-center justify-center rounded-xl border border-dashed border-accent/25 p-3 text-sm text-accent/60 transition-colors hover:border-accent/50 hover:text-accent"
         >
           + New sheet
         </button>

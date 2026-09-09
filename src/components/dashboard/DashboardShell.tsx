@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import TopNav from "@/components/dashboard/TopNav";
+import NavRail from "@/components/dashboard/NavRail";
 import OnboardingModal from "@/components/dashboard/OnboardingModal";
 import FloatingMentor from "@/components/dashboard/FloatingMentor";
 
@@ -25,14 +26,22 @@ export default function DashboardShell({ user, children }: { user: NavUser; chil
   }, [pathname]);
 
   return (
-    <div className="flex h-dvh flex-col bg-canvas text-primary overflow-hidden">
-      <TopNav user={user} />
+    // Row at >=1120px (rail beside the content), column below (bar above it).
+    <div className="flex h-dvh bg-canvas text-primary overflow-hidden">
+      <NavRail user={user} />
 
-      <main ref={mainRef} className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
-        <div className="mx-auto w-full max-w-6xl p-4 md:p-8">
-          {children}
-        </div>
-      </main>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <TopNav user={user} />
+
+        <main ref={mainRef} className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
+          {/* Was max-w-6xl, which left ~352px of empty gutter at 1440 and made
+              every page look sparser than the content warranted. The extra width
+              is absorbed by PageWithRail rather than by longer lines of text. */}
+          <div className="mx-auto w-full max-w-[1440px] p-4 md:px-10 md:py-8">
+            {children}
+          </div>
+        </main>
+      </div>
 
       {/* Floating AI Mentor */}
       <FloatingMentor />

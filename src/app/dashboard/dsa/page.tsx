@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import ProblemBank from "@/components/dashboard/ProblemBank";
 import DSAPageClient from "@/components/dashboard/DSAPageClient";
 import SheetContent from "@/components/dashboard/SheetContent";
+import PageHeader from "@/components/ui/PageHeader";
 
 type Props = { searchParams: Promise<{ sheet?: string; view?: string }> };
 
@@ -48,14 +49,24 @@ export default async function DSAPage({ searchParams }: Props) {
   // overlaps the sheet-list query instead of waiting for it (kills the waterfall).
   const knownSheetLoad = sheetId && !showBank ? loadSheet(sheetId) : null;
 
-  const [sheets, doneTotal] = await Promise.all([
+  const [sheets, doneTotal, doneBySheet] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
       orderBy: [{ isPreset: "desc" }, { createdAt: "asc" }],
     }),
     prisma.userProblemStatus.count({ where: { userId, status: "DONE" } }),
+    // Per-sheet solved counts, so a sheet tab can show "12 / 75 solved" without
+    // a query per sheet. Grouped from the Problem side because Prisma can't
+    // group UserProblemStatus by a field on its relation.
+    prisma.problem.groupBy({
+      by: ["sheetId"],
+      where: { statuses: { some: { userId, status: "DONE" } } },
+      _count: { _all: true },
+    }),
   ]);
+
+  const solvedIn = new Map(doneBySheet.map((g) => [g.sheetId, g._count._all]));
 
   // Custom sheets for the "add to sheet" dropdown in ProblemBank
   const userSheets = sheets
@@ -71,6 +82,7 @@ export default async function DSAPage({ searchParams }: Props) {
     name: s.name,
     isPreset: s.isPreset,
     problemCount: s._count.problems,
+    solvedCount: solvedIn.get(s.id) ?? 0,
   }));
 
   const defaultSheetId = sheetId ?? tabSheets[0]?.id;
@@ -107,21 +119,19 @@ export default async function DSAPage({ searchParams }: Props) {
     <div className="flex gap-8 h-full">
       <div className="flex-1 min-w-0 space-y-5 animate-fade-up">
         {/* Header + view toggle */}
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary truncate">
-              {showBank ? "Problem Bank" : lastMinute ? "Last Minute" : "DSA Sheets"}
-            </h1>
-            <p className="hidden md:block text-muted text-sm mt-1">
-              {showBank
-                ? "300 curated problems from top product companies. Add any to your custom sheets."
-                : lastMinute
-                  ? "The must-do cut of this sheet — what to revise when the interview is tomorrow."
-                  : "Track your progress across patterns and problems."}
-            </p>
-          </div>
-
-          <div className="flex items-center shrink-0 rounded-xl border border-border bg-surface p-1">
+        <PageHeader
+          eyebrow={showBank ? "Problem Bank" : lastMinute ? "Last Minute" : "DSA Sheets"}
+          title={showBank ? "300 problems." : lastMinute ? "Tomorrow's the day." : "Solve by pattern,"}
+          titleAccent={showBank ? "Pick your own." : lastMinute ? "Revise these." : "not by list."}
+          subtitle={
+            showBank
+              ? "300 curated problems from top product companies. Add any to your custom sheets."
+              : lastMinute
+                ? "The must-do cut of this sheet — what to revise when the interview is tomorrow."
+                : "Every problem is filed under the pattern that solves it, with the cue that identifies it."
+          }
+          trailing={
+            <div className="flex items-center shrink-0 rounded-xl border border-border bg-surface p-1">
             <Link
               href={sheetId ? `/dashboard/dsa?sheet=${sheetId}` : "/dashboard/dsa"}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
@@ -146,8 +156,9 @@ export default async function DSAPage({ searchParams }: Props) {
             >
               Problem Bank
             </Link>
-          </div>
-        </div>
+            </div>
+          }
+        />
 
         {/* ── Problem Bank view ── */}
         {showBank ? (
@@ -174,19 +185,33 @@ export default async function DSAPage({ searchParams }: Props) {
             )}
 
             {/* Sheet tabs — handles delete + new sheet + add problems button */}
+            {/* Fallback mirrors the selector's card shape so the row doesn't
+                reflow when the client component hydrates. */}
             <Suspense fallback={
-              <div className="flex gap-2 flex-wrap items-center">
-                {clientSheets.map((s) => (
-                  <div key={s.id} className={`rounded-xl px-3.5 py-1.5 text-sm border whitespace-nowrap ${
-                    s.id === defaultSheetId
-                      ? "bg-accent/15 text-accent border-accent/30"
-                      : "border-border text-secondary"
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {clientSheets.map((s, i) => (
+                  <div key={s.id} className={`rounded-xl border p-3 ${
+                    s.id === defaultSheetId ? "border-accent/40 bg-accent/10" : "border-border bg-surface"
                   }`}>
-                    {s.name}
-                    <span className="ml-2 text-[11px] opacity-50">{s.problemCount}</span>
+                    <div className="flex items-center gap-2.5">
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-bold ${
+                        s.id === defaultSheetId ? "bg-accent text-black" : "border border-border text-muted"
+                      }`}>
+                        {i + 1}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className={`block truncate text-sm font-medium ${
+                          s.id === defaultSheetId ? "text-accent" : "text-primary"
+                        }`}>{s.name}</span>
+                        <span className="block font-mono text-[11px] text-muted">
+                          {s.solvedCount} / {s.problemCount} solved
+                        </span>
+                      </span>
+                    </div>
+                    <span className="mt-2.5 block h-1 rounded-full bg-border" />
                   </div>
                 ))}
-                <div className="rounded-xl border border-dashed border-accent/25 px-3.5 py-1.5 text-sm text-accent/60">
+                <div className="flex min-h-[76px] items-center justify-center rounded-xl border border-dashed border-accent/25 p-3 text-sm text-accent/60">
                   + New sheet
                 </div>
               </div>

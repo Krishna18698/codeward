@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { Ring } from "@/components/ui/Ring";
+import PageHeader from "@/components/ui/PageHeader";
 
 // Shared, presentational catalog shell for the graded practice modes
 // (Code Review / Bug Hunt / Build It). Server component — filtering is done by
@@ -17,6 +19,17 @@ const TONE: Record<BadgeTone, string> = {
   muted: "border-border text-muted",
 };
 
+/** Where the user is on this item. Drives the stripe, the chip and the dimming,
+ *  so a catalog visibly changes as it gets worked through — previously status
+ *  existed only as a filter, and the wall of cards looked identical forever. */
+export type CatalogStatus = "not-started" | "attempted" | "mastered";
+
+const STATUS: Record<CatalogStatus, { label: string; stripe: string; chip: string }> = {
+  "not-started": { label: "Not started", stripe: "bg-border",        chip: "border-border text-muted" },
+  attempted:     { label: "In progress", stripe: "bg-amber-400/70",  chip: "border-amber-500/30 bg-amber-500/10 text-amber-400" },
+  mastered:      { label: "Mastered",    stripe: "bg-accent",        chip: "border-accent/30 bg-accent/10 text-accent" },
+};
+
 export type CatalogBadge = { label: string; tone?: BadgeTone };
 
 export type CatalogItem = {
@@ -26,6 +39,7 @@ export type CatalogItem = {
   brief: string;
   meta: string;
   cta: string;
+  status?: CatalogStatus;
   /** Optional right-aligned element (e.g. Build It stage dots). */
   trailing?: React.ReactNode;
 };
@@ -35,6 +49,8 @@ export type CatalogFilter = { label: string; href: string; active: boolean };
 type Props = {
   eyebrow: string;
   title: string;
+  /** Second half of the title, in the accent colour. */
+  titleAccent?: string;
   subtitle: string;
   statChips: string[];
   progress: { done: number; total: number; label: string };
@@ -51,42 +67,30 @@ function Badge({ label, tone = "muted" }: CatalogBadge) {
 }
 
 export default function ModeCatalog({
-  eyebrow, title, subtitle, statChips, progress, filterRows, items, emptyText,
+  eyebrow, title, titleAccent, subtitle, statChips, progress, filterRows, items, emptyText,
 }: Props) {
   const pct = progress.total > 0 ? Math.round((progress.done / progress.total) * 100) : 0;
 
   return (
     <div className="space-y-6 animate-fade-up">
-      {/* Header: title/subtitle on the left, progress ring on the right */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="font-mono text-[13px] text-accent mb-2">{eyebrow}</p>
-          <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary">{title}</h1>
-          <p className="text-sm text-secondary mt-1 max-w-xl">{subtitle}</p>
-          <div className="mt-4 flex flex-wrap items-center gap-2 font-mono text-[11px]">
-            {statChips.map((c, i) => (
-              <span
-                key={c}
-                className={`rounded-full border px-2.5 py-1 ${
-                  i === 1 ? "border-accent/30 bg-accent/10 text-accent" : "border-border text-secondary"
-                }`}
-              >
-                {c}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="hidden shrink-0 flex-col items-center gap-1 sm:flex">
-          <div className="relative">
-            <Ring pct={pct} size={60} stroke={5} />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="font-mono text-xs font-bold text-primary">{progress.done}/{progress.total}</span>
+      <PageHeader
+        eyebrow={eyebrow}
+        title={title}
+        titleAccent={titleAccent}
+        subtitle={subtitle}
+        chips={statChips}
+        trailing={
+          <div className="flex flex-col items-center gap-1">
+            <div className="relative">
+              <Ring pct={pct} size={60} stroke={5} />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="font-mono text-xs font-bold text-primary">{progress.done}/{progress.total}</span>
+              </div>
             </div>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted">{progress.label}</span>
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-widest text-muted">{progress.label}</span>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filter chip rows (URL-param driven) */}
       {filterRows?.map((row, ri) => (
@@ -109,38 +113,57 @@ export default function ModeCatalog({
         </div>
       ))}
 
-      {/* Cards */}
+      {/* Cards — two-up from `sm`. A single column left ~400px of dead width to
+          the right of every brief; two columns close it and halve the scroll. */}
       {items.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border px-5 py-16 text-center">
           <p className="text-sm font-medium text-secondary">{emptyText ?? "Nothing matches that filter."}</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {items.map((it, i) => (
-            <Link
-              key={it.href}
-              href={it.href}
-              className="group block rounded-2xl border border-border bg-surface p-5 transition-colors hover:border-border-accent hover:bg-elevated animate-fade-up"
-              style={{ animationDelay: `${Math.min(i, 6) * 40}ms` }}
-            >
-              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-sm font-semibold text-primary transition-colors group-hover:text-accent-hover">
-                      {it.title}
-                    </h2>
-                    {it.badges?.map((b, bi) => <Badge key={bi} {...b} />)}
+        <div className="grid gap-3 sm:grid-cols-2">
+          {items.map((it, i) => {
+            const st = it.status ? STATUS[it.status] : null;
+            return (
+              <Link
+                key={it.href}
+                href={it.href}
+                className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface p-5 pl-6 transition-colors hover:border-border-accent hover:bg-elevated animate-fade-up ${
+                  it.status === "mastered" ? "opacity-75 hover:opacity-100" : ""
+                }`}
+                style={{ animationDelay: `${Math.min(i, 6) * 40}ms` }}
+              >
+                {/* Status as a stripe — readable at a glance across a grid,
+                    without spending a whole row on a badge. */}
+                {st && <span aria-hidden className={`absolute inset-y-0 left-0 w-[3px] ${st.stripe}`} />}
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-sm font-semibold text-primary transition-colors group-hover:text-accent-hover">
+                    {it.title}
+                  </h2>
+                  {it.badges?.map((b, bi) => <Badge key={bi} {...b} />)}
+                </div>
+
+                <p className="mt-1.5 text-xs leading-relaxed text-secondary">{it.brief}</p>
+
+                <p className="mt-2 font-mono text-[11px] text-muted">{it.meta}</p>
+
+                {/* Pinned to the bottom so cards in a row share a baseline even
+                    when their briefs differ in length. */}
+                <div className="mt-auto flex items-center justify-between gap-3 pt-4">
+                  <div className="flex min-w-0 items-center gap-2">
+                    {st && (
+                      <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] ${st.chip}`}>
+                        {it.status === "mastered" && <Check size={9} aria-hidden />}
+                        {st.label}
+                      </span>
+                    )}
+                    {it.trailing}
                   </div>
-                  <p className="mt-1.5 max-w-2xl text-xs leading-relaxed text-secondary">{it.brief}</p>
-                  <p className="mt-2 font-mono text-[11px] text-muted">{it.meta}</p>
+                  <span className="shrink-0 text-sm font-medium text-accent">{it.cta}</span>
                 </div>
-                <div className="flex shrink-0 items-center gap-3 sm:flex-col sm:items-end">
-                  {it.trailing}
-                  <span className="text-sm font-medium text-accent">{it.cta}</span>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

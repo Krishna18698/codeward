@@ -168,6 +168,9 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
   const diffStyle: Record<string, string> = {
     EASY: "text-accent", MEDIUM: "text-amber-400", HARD: "text-red-400",
   };
+  const diffBar: Record<string, string> = {
+    EASY: "bg-accent-fill", MEDIUM: "bg-amber-500", HARD: "bg-red-500",
+  };
 
   const grouped: Record<string, ProblemWithStatus[]> = {};
   for (const p of visible) {
@@ -205,14 +208,29 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
               <span className="text-sm font-semibold text-primary">{total - doneCount}</span>
               <span className="text-xs text-muted">to do</span>
             </div>
-            <div className="ml-auto flex items-center gap-3 font-mono text-[11px]">
-              {DIFFS.map((d) => (
-                <span key={d} className={diffStyle[d]}>
-                  {d.charAt(0) + d.slice(1).toLowerCase()}{" "}
-                  <span className="text-muted">{byDiff[d].done}/{byDiff[d].total}</span>
-                </span>
-              ))}
-            </div>
+          </div>
+
+          {/* Difficulty as bars, not a text row — a fraction tells you the
+              numbers, a bar tells you the shape without reading. */}
+          <div className="grid gap-2 pt-1 sm:grid-cols-3">
+            {DIFFS.map((d) => {
+              const b = byDiff[d];
+              const dpct = b.total > 0 ? (b.done / b.total) * 100 : 0;
+              return (
+                <div key={d}>
+                  <div className="mb-1 flex items-baseline justify-between font-mono text-[11px]">
+                    <span className={diffStyle[d]}>{d.charAt(0) + d.slice(1).toLowerCase()}</span>
+                    <span className="text-muted">{b.done}/{b.total}</span>
+                  </div>
+                  <div className="h-1 overflow-hidden rounded-full bg-border">
+                    <div
+                      className={`h-full w-full origin-left rounded-full transition-transform duration-700 ${diffBar[d]}`}
+                      style={{ transform: `scaleX(${dpct / 100})` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : null}

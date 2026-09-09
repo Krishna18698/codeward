@@ -11,7 +11,7 @@ export default function SiteNav() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-1.5 text-lg font-bold tracking-tight text-primary">
           <Logo size={16} className="text-accent" />
-          Code<span className="text-accent">ward</span>
+          <span>Code<span className="text-accent">ward</span></span>
         </Link>
         <div className="flex items-center gap-3">
           <ThemeToggle />

@@ -2,7 +2,7 @@ import { getSessionUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Code2, Sparkles, TrendingUp, ArrowRight, RotateCcw, History, Play } from "lucide-react";
+import { Code2, Sparkles, ArrowRight, RotateCcw, Play } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { getSystemDesignQuestions } from "@/lib/staticContent";
 import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
@@ -16,6 +16,8 @@ import { pickNextStep } from "@/lib/nextStep";
 import NextStep from "@/components/dashboard/NextStep";
 import ActivityHeatmap from "@/components/dashboard/ActivityHeatmap";
 import { getActivity } from "@/lib/activity";
+import SectionHeading from "@/components/ui/SectionHeading";
+import PageWithRail from "@/components/dashboard/PageWithRail";
 
 function timeAgo(date: Date): string {
   const s = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -123,6 +125,9 @@ export default async function DashboardPage() {
   const diffStyle: Record<string, string> = {
     EASY: "text-accent", MEDIUM: "text-amber-400", HARD: "text-red-400",
   };
+  const diffBar: Record<string, string> = {
+    EASY: "bg-accent-fill", MEDIUM: "bg-amber-500", HARD: "bg-red-500",
+  };
 
   // Pattern breakdown
   const patternMap: Record<string, { done: number; total: number }> = {};
@@ -160,8 +165,60 @@ export default async function DashboardPage() {
 
   const userImage = user.image;
 
+  // The rail: everything that answers "how am I doing?", kept out of the
+  // reading column so it stays visible instead of scrolling away.
+  const progressRail = (
+    <>
+      <div className="rounded-2xl border border-border bg-surface p-5">
+        <SectionHeading label="Progress" />
+        <div className="flex items-center gap-4">
+          <div className="relative shrink-0">
+            <Ring pct={overallPct} size={72} stroke={6} />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-sm font-bold text-primary">{overallPct}%</span>
+            </div>
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-primary">{trackedDone} / {totalTracked}</p>
+            <p className="text-xs text-muted">problems across the curated sheets</p>
+          </div>
+        </div>
+
+        <div className="mt-4 space-y-2.5">
+          {DIFFS.map((d) => {
+            const b = byDiff[d];
+            const dpct = b.total > 0 ? (b.done / b.total) * 100 : 0;
+            return (
+              <div key={d}>
+                <div className="mb-1 flex items-baseline justify-between font-mono text-[11px]">
+                  <span className={diffStyle[d]}>{d.charAt(0) + d.slice(1).toLowerCase()}</span>
+                  <span className="text-muted">{b.done}/{b.total}</span>
+                </div>
+                <div className="h-1 overflow-hidden rounded-full bg-border">
+                  <div
+                    className={`h-full w-full origin-left rounded-full transition-transform duration-700 ${diffBar[d]}`}
+                    style={{ transform: `scaleX(${dpct / 100})` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 border-t border-border pt-3 text-xs text-secondary">
+          <span><span className="font-semibold text-primary">{doneCount}</span> solved</span>
+          <span><span className="font-semibold text-primary">{sheets.length}</span> sheets</span>
+          <span><span className="font-semibold text-primary">{sheets.filter((s) => !s.isPreset).length}</span> custom</span>
+        </div>
+      </div>
+
+      <ActivityHeatmap data={activity} weeks={13} />
+    </>
+  );
+
   return (
-    <div className="max-w-5xl space-y-6 animate-fade-up">
+    <PageWithRail rail={progressRail}>
+      <div className="space-y-6 animate-fade-up">
 
         {/* ── Hero banner ── */}
         <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-6">
@@ -188,8 +245,12 @@ export default async function DashboardPage() {
               )}
 
               <div>
-                <p className="text-xs text-muted mb-0.5">{greeting}</p>
-                <h1 className="text-xl font-semibold tracking-heading text-primary">{firstName} 👋</h1>
+                <p className="mb-1 font-mono text-[11px] uppercase tracking-[0.16em] text-accent">{greeting}</p>
+                {/* Matches the PageHeader scale the seven modes use — the app's
+                    own home page was the last thing still set like a widget. */}
+                <h1 className="text-[26px] font-semibold leading-[1.05] tracking-heading text-primary md:text-[38px]">
+                  {firstName} 👋
+                </h1>
                 {user.targetCompany && (
                   <p className="text-xs text-muted mt-0.5">
                     Targeting <span className="text-accent font-medium">{user.targetCompany}</span>
@@ -199,45 +260,9 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            {/* Overall progress ring */}
-            <div className="shrink-0 flex flex-col items-center gap-1">
-              <div className="relative">
-                <Ring pct={overallPct} size={64} stroke={5} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-bold text-primary">{overallPct}%</span>
-                </div>
-              </div>
-              <span className="text-[10px] text-muted">overall</span>
-            </div>
-          </div>
-
-          {/* Mini progress bar */}
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-muted">Total progress</span>
-              <span className="text-xs text-muted">{trackedDone} / {totalTracked} problems</span>
-            </div>
-            <div className="h-1.5 rounded-full bg-border overflow-hidden">
-              <div
-                className="h-full w-full origin-left bg-accent-fill transition-transform duration-1000"
-                style={{ transform: `scaleX(${overallPct / 100})` }}
-              />
-            </div>
-          </div>
-
-          {/* Inline stats — folded in from the old Solved/Sheets stat cards */}
-          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 border-t border-border pt-3 text-xs text-secondary">
-            <span><span className="font-semibold text-primary">{doneCount}</span> solved</span>
-            <span><span className="font-semibold text-primary">{sheets.length}</span> sheets</span>
-            <span><span className="font-semibold text-primary">{sheets.filter((s) => !s.isPreset).length}</span> custom</span>
-            <span className="flex items-center gap-3 font-mono text-[11px] sm:ml-auto">
-              {DIFFS.map((d) => (
-                <span key={d} className={diffStyle[d]}>
-                  {d.charAt(0) + d.slice(1).toLowerCase()}{" "}
-                  <span className="text-muted">{byDiff[d].done}/{byDiff[d].total}</span>
-                </span>
-              ))}
-            </span>
+            {/* The ring, the total and the difficulty split all live in the
+                rail now — repeating them here would say the same thing twice
+                on the same screen. */}
           </div>
         </div>
 
@@ -293,7 +318,7 @@ export default async function DashboardPage() {
 
         {/* ── Practice modes (compact row) ── */}
         <div>
-          <h2 className="text-xs font-semibold text-muted uppercase tracking-wider mb-3">Practice</h2>
+          <SectionHeading label="Practice" title="Seven ways to" titleAccent="get ready." />
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
             {PRACTICE_MODES.map((m, i) => (
               <Link
@@ -314,15 +339,13 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* ── Consistency ── */}
-        <ActivityHeatmap data={activity} />
-
         {/* ── Sheets grid ── */}
         <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Your Sheets</h2>
-            <Link href="/dashboard/dsa" className="text-xs text-accent hover:text-accent-hover transition-colors">View all →</Link>
-          </div>
+          <SectionHeading
+            label="Your sheets"
+            title="Pick up where" titleAccent="you left off."
+            action={<Link href="/dashboard/dsa" className="text-xs text-accent transition-colors hover:text-accent-hover">View all →</Link>}
+          />
 
           <div className="grid gap-3 sm:grid-cols-2">
             {/* AI build card */}
@@ -390,10 +413,7 @@ export default async function DashboardPage() {
         <div className={topPatterns.length > 0 && recent.length > 0 ? "" : "lg:col-span-2"}>
         {topPatterns.length > 0 ? (
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <TrendingUp size={14} className="text-muted" />
-              <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Pattern Breakdown</h2>
-            </div>
+            <SectionHeading label="Pattern breakdown" title="Where you're" titleAccent="strongest." />
             <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
               {topPatterns.map(([pattern, { done, total }]) => {
                 const pct = total > 0 ? Math.round((done / total) * 100) : 0;
@@ -434,10 +454,7 @@ export default async function DashboardPage() {
         {/* ── Recent activity ── */}
         {recent.length > 0 && (
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <History size={14} className="text-muted" />
-              <h2 className="text-xs font-semibold text-muted uppercase tracking-wider">Recent Activity</h2>
-            </div>
+            <SectionHeading label="Recent activity" title="The last few" titleAccent="you touched." />
             <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
               {recent.map((r) => (
                 <Link
@@ -459,6 +476,7 @@ export default async function DashboardPage() {
           </div>
         )}
         </div>
-    </div>
+      </div>
+    </PageWithRail>
   );
 }

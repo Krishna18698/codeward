@@ -1,4 +1,5 @@
 import { getSessionUserId } from "@/lib/auth";
+import PageHeader from "@/components/ui/PageHeader";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -102,12 +103,12 @@ export default async function SystemDesignPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-heading text-primary">System Design</h1>
-        <p className="text-muted text-sm mt-1">
-          Practice system design from fundamentals to senior-level architecture.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="System Design"
+        title="Draw the box,"
+        titleAccent="defend the trade-off."
+        subtitle="Practice system design from fundamentals to senior-level architecture."
+      />
 
       {/* Compact challenge spinner — mobile/tablet only */}
       <div className="xl:hidden">

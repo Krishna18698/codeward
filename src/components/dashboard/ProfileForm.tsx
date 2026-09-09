@@ -79,8 +79,7 @@ export default function ProfileForm({ user }: { user: User }) {
   if (!editing) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted">Account details</p>
+        <div className="flex items-center justify-end">
           <button
             onClick={() => setEditing(true)}
             className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 text-xs text-secondary transition-colors hover:border-border hover:text-primary"
@@ -106,7 +105,6 @@ export default function ProfileForm({ user }: { user: User }) {
 
   return (
     <div className="space-y-5">
-      <p className="font-mono text-[11px] uppercase tracking-widest text-muted">Account details</p>
       <Input
         label="Display name"
         value={name}

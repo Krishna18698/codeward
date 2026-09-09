@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSessionUserId } from "@/lib/auth";
 import { DEEP_DIVES, categoryOf, CATEGORY_LABEL, type DeepDiveCategory } from "@/content/deep-dives";
 import ReadBadge from "@/components/deep-dives/ReadBadge";
+import PageHeader from "@/components/ui/PageHeader";
 
 type Props = { searchParams: Promise<{ topic?: string }> };
 
@@ -39,15 +40,12 @@ export default async function DeepDivesPage({ searchParams }: Props) {
     <div className="space-y-6 animate-fade-up">
       {/* Header */}
       <div>
-        <p className="font-mono text-[13px] text-accent mb-2">Deep Dives</p>
-        <h1 className="text-xl md:text-2xl font-semibold tracking-heading text-primary">
-          The topics every senior loop covers.
-        </h1>
-        <p className="text-sm text-secondary mt-1 max-w-xl">
-          Long-form deep dives — failure modes, trade-offs, and the interview traps that
-          surface-level guides skip. Core CS here means the applied version: why a query
-          got slower, not what a B-tree is.
-        </p>
+        <PageHeader
+          eyebrow="Deep Dives"
+          title="The topics every"
+          titleAccent="senior loop covers."
+          subtitle="Long-form deep dives — failure modes, trade-offs, and the interview traps that surface-level guides skip. Core CS here means the applied version: why a query got slower, not what a B-tree is."
+        />
 
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {filters.map((f) => (

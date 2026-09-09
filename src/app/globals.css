@@ -8,10 +8,15 @@
    text-muted, border-border, text-accent, bg-accent-fill, …) rather than
    hardcoded Tailwind colors — a hardcoded `text-white` won't switch. */
 :root {
-  --color-canvas:        #000000;
-  --color-surface:       #0a0a0a;
-  --color-elevated:      #141414;
-  --color-border:        #2a2a2a;
+  /* The dark ramp is lifted off pure black on purpose. On #000 every border
+     floats and cards read as pasted on; a near-black with a faint cool cast
+     gives each surface something to sit against. The four steps must stay in
+     order (canvas < surface < elevated < border) — raising canvas alone would
+     collide with surface and flatten every card in the app. */
+  --color-canvas:        #0a0b0d;
+  --color-surface:       #121316;
+  --color-elevated:      #1a1c20;
+  --color-border:        #2a2d33;
   --color-border-accent: rgba(52, 211, 153, 0.35);
 
   --color-primary:       #ededed;   /* primary text (replaces text-white) */
@@ -54,7 +59,9 @@
      and the UI reads crisp instead of flat. */
   --color-canvas:        #f4f5f7;
   --color-surface:       #ffffff;
-  --color-elevated:      #ffffff;
+  /* Was also #ffffff, which left hover:bg-elevated doing nothing on light.
+     A faint step keeps the same components readable in both themes. */
+  --color-elevated:      #f7f8fa;
   --color-border:        #e2e4e9;
   --color-border-accent: rgba(5, 150, 105, 0.30);
 

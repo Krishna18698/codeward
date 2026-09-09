@@ -41,6 +41,7 @@ export default async function CodeReviewPage({ searchParams }: Props) {
       badges: best !== null
         ? [{ label: `best ${best}/100`, tone: (best >= MASTERED ? "accent" : "amber") as BadgeTone }]
         : [],
+      status: statusOf(ex.slug),
       brief: ex.brief,
       meta: `${ex.language} · ~${ex.minutes} min · ${ex.bugCount} planted issues${stat ? ` · ${stat._count._all} attempt${stat._count._all > 1 ? "s" : ""}` : ""}`,
       cta: best !== null ? "Review again →" : "Start reviewing →",
@@ -56,7 +57,8 @@ export default async function CodeReviewPage({ searchParams }: Props) {
   return (
     <ModeCatalog
       eyebrow="Code Review"
-      title="Pick a PR to review."
+      title="Pick a PR"
+      titleAccent="to review."
       subtitle="Hand-authored diffs with planted bugs — the same class of issues a senior reviewer would catch. Write your review; the AI grades it against the ground-truth bug list."
       statChips={[`${CODE_REVIEWS_META.length} PRs`, "all free", "TypeScript", "AI-graded"]}
       progress={{ done, total: CODE_REVIEWS_META.length, label: "mastered" }}

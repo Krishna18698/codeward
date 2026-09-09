@@ -3,7 +3,7 @@ import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BUILD_IT_META } from "@/content/build-it";
 import PreloadCodeEditor from "@/components/ui/PreloadCodeEditor";
-import ModeCatalog, { type CatalogItem, type CatalogFilter, type BadgeTone } from "@/components/dashboard/ModeCatalog";
+import ModeCatalog, { type CatalogItem, type CatalogFilter, type BadgeTone, type CatalogStatus } from "@/components/dashboard/ModeCatalog";
 
 const CATEGORY_TONE: Record<string, BadgeTone> = {
   concurrency: "rose",
@@ -59,6 +59,9 @@ export default async function BuildItPage({ searchParams }: Props) {
       href: `/dashboard/build-it/${p.slug}`,
       title: p.title,
       badges: [{ label: p.category, tone: CATEGORY_TONE[p.category] ?? "muted" }],
+      // Build It names its states differently (stages complete, not a score),
+      // so map them onto the catalog's shared vocabulary.
+      status: (st === "complete" ? "mastered" : st === "in-progress" ? "attempted" : "not-started") as CatalogStatus,
       brief: p.brief,
       meta: `${p.stages.length} stages · ~${p.totalMinutes} min`,
       cta: st === "complete" ? "Review →" : st === "in-progress" ? "Continue →" : "Start designing →",
@@ -95,7 +98,8 @@ export default async function BuildItPage({ searchParams }: Props) {
       <PreloadCodeEditor />
       <ModeCatalog
         eyebrow="Build It"
-        title="Design it. Break it. Fix it."
+        title="Design it. Break it."
+        titleAccent="Fix it."
         subtitle="Five real low-level-design problems, each evolving across 4 stages as new constraints break your last design. Stage 3 always asks you to prove a correctness invariant holds under concurrency — that's the senior filter."
         statChips={[`${BUILD_IT_META.length} problems`, "all free", "4 stages each", "C# · Python · Kotlin"]}
         progress={{ done, total: BUILD_IT_META.length, label: "complete" }}

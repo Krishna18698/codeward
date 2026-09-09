@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 import type { NextStep as Step } from "@/lib/nextStep";
 import { METHOD, methodIndex } from "@/content/method";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 /** The stated method, with the user's current stage lit up.
  *
@@ -52,10 +53,10 @@ export default function NextStep({ step }: { step: Step }) {
 
   return (
     <section className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">The method</h2>
-          <p className="mt-1 text-xs text-secondary">{stage?.blurb}</p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <SectionHeading label="The method" />
+          <p className="-mt-1 text-xs text-secondary">{stage?.blurb}</p>
         </div>
         <MethodStrip active={step.stage} />
       </div>
