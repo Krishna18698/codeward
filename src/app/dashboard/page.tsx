@@ -16,6 +16,7 @@ import { pickNextStep } from "@/lib/nextStep";
 import NextStep from "@/components/dashboard/NextStep";
 import ActivityHeatmap from "@/components/dashboard/ActivityHeatmap";
 import { getActivity } from "@/lib/activity";
+import { getTrackedProgress } from "@/lib/progress";
 import SectionHeading from "@/components/ui/SectionHeading";
 import PageWithRail from "@/components/dashboard/PageWithRail";
 
@@ -29,7 +30,7 @@ function timeAgo(date: Date): string {
 }
 
 async function getDashboardData(userId: string) {
-  const [sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts, diffTotals] = await Promise.all([
+  const [sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -62,66 +63,44 @@ async function getDashboardData(userId: string) {
     prisma.reviewAttempt.count({ where: { userId } }),
     prisma.bugHuntAttempt.count({ where: { userId } }),
     prisma.buildItAttempt.count({ where: { userId } }),
-    // Per-difficulty denominators across the preset sheets. Can't come from
-    // `statuses` — that only holds problems the user has touched, so untouched
-    // Hards would silently vanish from the total.
-    prisma.problem.groupBy({
-      by: ["difficulty"],
-      where: { sheet: { isPreset: true, source: { not: "TOP300" } } },
-      _count: { _all: true },
-    }),
   ]);
-  return { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts, diffTotals };
+  return { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts };
 }
 
 export default async function DashboardPage() {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts, diffTotals }, activity] = await Promise.all([
+  const [user, { sheets, statuses, sdTotal, recent, reviseList, reviewAttempts, bugHuntAttempts, buildItAttempts }, activity, tracked] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: { name: true, image: true, targetCompany: true, experienceLevel: true },
     }),
     getDashboardData(userId),
     getActivity(userId),
+    getTrackedProgress(userId),
   ]);
   if (!user) redirect("/login");
 
   const continueItem = recent[0] ?? null;
   const statusLabel: Record<string, string> = { DONE: "Solved", SOLVING: "Started", TODO: "Marked to do" };
 
-  // The Top 300 bank is a catalogue you pull problems FROM — the DSA page
-  // already keeps it out of the sheet tabs for that reason. Counting its 300
-  // rows as a denominator here made everyone look permanently stuck at 1%, so
-  // "total progress" tracks the curated sheets only.
-  const trackedSheets = sheets.filter((s) => s.isPreset && s.source !== "TOP300");
-  const trackedIds    = new Set(trackedSheets.map((s) => s.id));
-
   // Every solve, anywhere — the headline "solved" stat and what pickNextStep
-  // reasons about. Deliberately broader than the progress ratio below.
-  const doneCount    = statuses.filter((s) => s.status === "DONE").length;
-  const trackedDone  = statuses.filter((s) => s.status === "DONE" && trackedIds.has(s.problem.sheetId)).length;
-  const totalTracked = trackedSheets.reduce((sum, s) => sum + s._count.problems, 0);
-  const overallPct   = totalTracked > 0 ? Math.round((trackedDone / totalTracked) * 100) : 0;
+  // reasons about. Counts rows, so the same problem solved in two sheets counts
+  // twice here; that is intentional for "how much have you done".
+  const doneCount = statuses.filter((s) => s.status === "DONE").length;
 
-  // Easy/Medium/Hard split — one bar hides someone who has done 60 easies and
-  // no hards. Totals come from the grouped count over preset sheets; done comes
-  // from the statuses we already have, filtered to those same sheets so the two
-  // halves of each fraction are drawn from the same population.
+  // The progress RATIO counts distinct problems instead (see @/lib/progress) —
+  // summing sheet sizes double-counted 86 problems and gave an unreachable
+  // denominator.
+  const trackedDone  = tracked.done;
+  const totalTracked = tracked.total;
+  const overallPct   = tracked.pct;
+
+  // Easy/Medium/Hard split over the same distinct-problem population as the
+  // ratio above, so the parts always add up to the whole.
   const DIFFS = ["EASY", "MEDIUM", "HARD"] as const;
-  const byDiff: Record<string, { done: number; total: number }> = {
-    EASY: { done: 0, total: 0 }, MEDIUM: { done: 0, total: 0 }, HARD: { done: 0, total: 0 },
-  };
-  for (const g of diffTotals) {
-    const b = byDiff[g.difficulty];
-    if (b) b.total = g._count._all;
-  }
-  for (const s of statuses) {
-    if (s.status !== "DONE" || !trackedIds.has(s.problem.sheetId)) continue;
-    const b = byDiff[s.problem.difficulty];
-    if (b) b.done++;
-  }
+  const byDiff = tracked.byDiff;
   const diffStyle: Record<string, string> = {
     EASY: "text-accent", MEDIUM: "text-amber-400", HARD: "text-red-400",
   };

@@ -4,6 +4,7 @@ import { Check, ChevronDown } from "lucide-react";
 import { ChevronsDownUp as MorphCollapse, ChevronsUpDown as MorphExpand } from "lucide";
 import Morph from "@/components/ui/Morph";
 import { cn } from "@/lib/cn";
+import Collapse from "@/components/ui/Collapse";
 import type { DeepDiveReference } from "@/content/deep-dives";
 
 export type RenderedSection = { title: string; body: ReactNode };
@@ -113,7 +114,12 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
           const isDone = done.has(i);
           return (
             <div key={i} id={`dd-section-${i}`} className="scroll-mt-20">
-              <button onClick={() => toggleOpen(i)} className="group flex w-full items-center gap-3 py-4 text-left">
+              <button
+                onClick={() => toggleOpen(i)}
+                aria-expanded={isOpen}
+                aria-controls={`dd-body-${i}`}
+                className="group flex w-full items-center gap-3 py-4 text-left"
+              >
                 <span className={cn(
                   "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border font-mono text-[10px]",
                   isDone ? "border-accent/40 bg-accent/10 text-accent" : "border-border text-muted",
@@ -121,9 +127,9 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
                   {isDone ? <Check size={12} strokeWidth={3} /> : String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="flex-1 text-sm font-medium text-primary">{s.title}</span>
-                <ChevronDown size={14} className={cn("shrink-0 text-muted transition-transform", isOpen && "rotate-180")} />
+                <ChevronDown size={14} className={cn("shrink-0 text-muted transition-transform duration-[--duration-content] ease-[--ease-out-soft]", isOpen && "rotate-180")} />
               </button>
-              {isOpen && (
+              <Collapse open={isOpen} id={`dd-body-${i}`}>
                 <div className="pb-6 pl-9">
                   {s.body}
                   <button
@@ -136,7 +142,7 @@ export default function DeepDiveReader({ slug, sections, prerequisites, afterThi
                     <Check size={12} strokeWidth={3} /> {isDone ? "Completed" : "Mark section complete"}
                   </button>
                 </div>
-              )}
+              </Collapse>
             </div>
           );
         })}

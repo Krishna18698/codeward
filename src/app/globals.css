@@ -33,6 +33,14 @@
   --color-success:       #34d399;
   --color-warning:       #fbbf24;
   --color-danger:        #fb7185;
+
+  /* Difficulty pairs — a foreground with a tinted ground to sit on. */
+  --color-easy:          #6ee7b7;
+  --color-easy-bg:       #142e23;
+  --color-medium:        #f8ce77;
+  --color-medium-bg:     #332a16;
+  --color-hard:          #fda4af;
+  --color-hard-bg:       #341c25;
   --color-subtle:        #333333;   /* scrollbar thumb, hairlines */
 
   /* Code surfaces stay dark in BOTH themes (GitHub-style) — deliberately NOT
@@ -79,6 +87,13 @@
   --color-success:       #047857;
   --color-warning:       #b45309;
   --color-danger:        #dc2626;
+
+  --color-easy:          #096540;
+  --color-easy-bg:       #e1f3e8;
+  --color-medium:        #7d4d06;
+  --color-medium-bg:     #fff0cf;
+  --color-hard:          #a82343;
+  --color-hard-bg:       #ffe6ed;
   --color-subtle:        #d4d4d4;
 
   --dot-color:           rgba(0, 0, 0, 0.05);   /* dark dots on the light page */
@@ -133,6 +148,12 @@
   --color-accent-fill:   var(--color-accent-fill);
   --color-accent-dim:    var(--color-accent-dim);
   --color-accent-hover:  var(--color-accent-hover);
+  --color-easy:          var(--color-easy);
+  --color-easy-bg:       var(--color-easy-bg);
+  --color-medium:        var(--color-medium);
+  --color-medium-bg:     var(--color-medium-bg);
+  --color-hard:          var(--color-hard);
+  --color-hard-bg:       var(--color-hard-bg);
   --color-spin:          var(--color-spin);
   --color-success:       var(--color-success);
   --color-warning:       var(--color-warning);
@@ -151,6 +172,24 @@
   --animate-slide-right: slide-right 0.25s ease both;
   --animate-msg-pop:     msg-pop 0.2s ease both;
   --animate-spin-slow:   spin 1.5s linear infinite;
+
+  /* ── Motion vocabulary ──────────────────────────────────────────────────
+     One set of easings and durations so every interaction agrees. Registered
+     here so Tailwind emits `ease-out-soft`, `duration-expand` etc. as real
+     utilities rather than each component inventing its own arbitrary value.
+
+     `out` decelerates into place (entrances, expansion); `exit` accelerates
+     away (collapse, dismissal) — an exit that decelerates reads as hesitant. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit:     cubic-bezier(0.4, 0, 1, 1);
+
+  --duration-feedback: 140ms;  /* hover, focus, colour change     */
+  --duration-press:    100ms;  /* active/pressed                  */
+  --duration-content:  200ms;  /* small reveal: opacity + 4-6px   */
+  --duration-expand:   260ms;  /* accordion opening               */
+  --duration-collapse: 200ms;  /* accordion closing — shorter     */
+  --duration-panel:    280ms;  /* notes, mentor panel             */
+  --duration-progress: 320ms;  /* bars and rings between values   */
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────── */
@@ -265,6 +304,13 @@ body {
 /* The divider's glow sweep. Previously this animated background-position, which
    is NOT composited — it repainted a gradient on the main thread every frame,
    forever, on three landing-page instances. Now a transform on a pseudo-element. */
+/* Panel dismissal — the mirror of scale-in, on the exit easing. A panel that
+   vanishes reads as a bug; one that recedes reads as dismissal. */
+@keyframes scale-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.96); }
+}
+
 @keyframes divider-sweep {
   from { transform: translateX(-100%); }
   to   { transform: translateX(100%); }
@@ -280,6 +326,7 @@ body {
 .animate-dot-pulse  { animation: dot-pulse 2s ease-in-out infinite; }
 .animate-float      { animation: float 3s ease-in-out infinite; }
 .animate-solve-pop  { animation: solve-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-scale-out  { animation: scale-out var(--duration-content) var(--ease-exit) both; }
 .animate-cell-pop   { animation: cell-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 .animate-rise-in    { display: block; animation: rise-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 /* Three shrugs, then it leaves you alone. */

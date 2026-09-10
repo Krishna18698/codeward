@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import ProfileForm from "@/components/dashboard/ProfileForm";
 import { isLocalAvatar, getAvatarMeta } from "@/lib/avatar";
 import { getActivity } from "@/lib/activity";
+import { getTrackedProgress } from "@/lib/progress";
 import ActivityHeatmap from "@/components/dashboard/ActivityHeatmap";
 import PageHeader from "@/components/ui/PageHeader";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -24,7 +25,7 @@ export default async function ProfilePage() {
 
   // Everything this page shows already existed — it just wasn't surfaced here.
   // One batch, same shape as the dashboard's, so the two pages can't disagree.
-  const [user, sheets, statuses, diffTotals, reviews, bugs, builds, sdNotes, activity] = await Promise.all([
+  const [user, reviews, bugs, builds, sdNotes, activity, tracked] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -33,55 +34,25 @@ export default async function ProfilePage() {
         _count: { select: { problemStatuses: true, customSheets: true } },
       },
     }),
-    prisma.sheet.findMany({
-      where: { OR: [{ isPreset: true }, { userId }] },
-      select: { id: true, isPreset: true, source: true, _count: { select: { problems: true } } },
-    }),
-    prisma.userProblemStatus.findMany({
-      where: { userId, status: "DONE" },
-      select: { problem: { select: { sheetId: true, difficulty: true } } },
-    }),
-    prisma.problem.groupBy({
-      by: ["difficulty"],
-      where: { sheet: { isPreset: true, source: { not: "TOP300" } } },
-      _count: { _all: true },
-    }),
     prisma.reviewAttempt.groupBy({ by: ["exerciseSlug"], where: { userId }, _max: { score: true } }),
     prisma.bugHuntAttempt.groupBy({ by: ["exerciseSlug"], where: { userId }, _max: { score: true } }),
     prisma.buildItAttempt.groupBy({ by: ["problemSlug", "stage"], where: { userId }, _max: { score: true } }),
     prisma.userNote.count({ where: { userId, sdQuestionId: { not: null } } }),
     getActivity(userId),
+    getTrackedProgress(userId),
   ]);
   if (!user) redirect("/login");
 
   const initials = (user.name ?? "?")
     .split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
-  // Same "tracked" population as the dashboard — the Top 300 bank is a
-  // catalogue, not a curriculum, so it stays out of the denominator.
-  const trackedIds = new Set(
-    sheets.filter((s) => s.isPreset && s.source !== "TOP300").map((s) => s.id),
-  );
-  const totalTracked = sheets
-    .filter((s) => trackedIds.has(s.id))
-    .reduce((sum, s) => sum + s._count.problems, 0);
-
+  // Distinct problems, from the same helper the dashboard uses — so the two
+  // pages cannot disagree about how far along you are.
+  const trackedDone  = tracked.done;
+  const totalTracked = tracked.total;
+  const overallPct   = tracked.pct;
   const DIFFS = ["EASY", "MEDIUM", "HARD"] as const;
-  const byDiff: Record<string, { done: number; total: number }> = {
-    EASY: { done: 0, total: 0 }, MEDIUM: { done: 0, total: 0 }, HARD: { done: 0, total: 0 },
-  };
-  for (const g of diffTotals) {
-    const b = byDiff[g.difficulty];
-    if (b) b.total = g._count._all;
-  }
-  let trackedDone = 0;
-  for (const s of statuses) {
-    if (!trackedIds.has(s.problem.sheetId)) continue;
-    trackedDone++;
-    const b = byDiff[s.problem.difficulty];
-    if (b) b.done++;
-  }
-  const overallPct = totalTracked > 0 ? Math.round((trackedDone / totalTracked) * 100) : 0;
+  const byDiff = tracked.byDiff;
 
   const diffStyle: Record<string, string> = {
     EASY: "text-accent", MEDIUM: "text-amber-400", HARD: "text-red-400",

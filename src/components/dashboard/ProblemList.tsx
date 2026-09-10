@@ -7,6 +7,7 @@ import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
 import { PATTERNS, TOPICS, patternLabel, unmappedPatterns } from "@/content/patterns";
+import Collapse from "@/components/ui/Collapse";
 
 type ProblemWithStatus = {
   id: string;
@@ -169,6 +170,11 @@ export default function ProblemList({
   const notes = initialNotes;
   const [openNoteId, setOpenNoteId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  // Two ids, not one. `openNoteId` drives the collapse; `mountedNoteId` lags it
+  // on close so the editor survives long enough to animate out. The editor
+  // autofocuses on mount, so it must NOT stay mounted for every row.
+  const [mountedNoteId, setMountedNoteId] = useState<string | null>(null);
+  const noteExitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Which problem is mid-celebration. The status button is the SAME DOM node
   // across re-renders, so a permanently-applied class would only ever animate
   // once — the class has to be absent for a frame before it can replay. Clearing
@@ -246,7 +252,23 @@ export default function ProblemList({
   };
 
   const toggleNote = (problemId: string) => {
-    setOpenNoteId((prev) => (prev === problemId ? null : problemId));
+    if (noteExitTimer.current) clearTimeout(noteExitTimer.current);
+
+    if (openNoteId === problemId) {
+      setOpenNoteId(null);
+      noteExitTimer.current = setTimeout(() => setMountedNoteId(null), 220);
+      // Restore focus to whichever trigger is actually on screen (each row has a
+      // desktop and a mobile copy). Without this, closing unmounts the focused
+      // textarea and focus falls to <body>, losing a keyboard user's place.
+      requestAnimationFrame(() => {
+        const btns = document.querySelectorAll<HTMLElement>(`[data-note-trigger="${problemId}"]`);
+        for (const b of btns) if (b.offsetParent !== null) { b.focus(); break; }
+      });
+      return;
+    }
+
+    setMountedNoteId(problemId);
+    setOpenNoteId(problemId);
   };
 
   const toggleRevise = async (problemId: string) => {
@@ -267,6 +289,9 @@ export default function ProblemList({
   };
 
 
+  const hasFilters = query.trim() !== "" || diffFilter !== "ALL" || compFilter !== "ALL";
+  const clearFilters = () => { setQuery(""); setDiffFilter("ALL"); setCompFilter("ALL"); };
+
   const filteredGrouped: Record<string, ProblemWithStatus[]> = query.trim()
     ? Object.fromEntries(
         (Object.entries(liveGrouped) as [string, ProblemWithStatus[]][])
@@ -274,6 +299,8 @@ export default function ProblemList({
           .filter(([, v]: [string, ProblemWithStatus[]]) => v.length > 0)
       )
     : liveGrouped;
+
+  const visibleCount = Object.values(filteredGrouped).reduce((n, v) => n + v.length, 0);
 
   return (
     <div className="space-y-3">
@@ -334,6 +361,31 @@ export default function ProblemList({
         <h3 className="text-xs font-semibold uppercase tracking-wider text-muted">By topic</h3>
       </div>
 
+      {/* No results vs an empty sheet are different situations. Previously a
+          filter that matched nothing rendered NOTHING — every topic section
+          returned null and the page just ended, which looks identical to a
+          sheet with no problems in it. */}
+      {visibleCount === 0 && (
+        <div className="rounded-2xl border border-dashed border-border px-5 py-14 text-center">
+          <p className="text-sm font-medium text-secondary">No problems match these filters.</p>
+          <p className="mt-1 text-xs text-muted">
+            {[
+              query.trim() && `search "${query.trim()}"`,
+              diffFilter !== "ALL" && diffFilter.toLowerCase(),
+              compFilter !== "ALL" && compFilter,
+            ].filter(Boolean).join(" · ") || "Try widening your filters."}
+          </p>
+          {hasFilters && (
+            <button
+              onClick={clearFilters}
+              className="mt-4 rounded-lg border border-border px-3 py-1.5 text-xs text-secondary transition-colors hover:border-border-accent hover:text-primary"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Two levels: topic, then the patterns inside it. Sixteen flat pattern
           cards gave no sense of shape — two-pointer and sliding-window are
           array techniques, not siblings of "graphs". */}
@@ -359,7 +411,7 @@ export default function ProblemList({
         );
       })()}
 
-      {TOPICS.map((topic) => {
+      {visibleCount > 0 && TOPICS.map((topic) => {
         const topicPatterns = topic.patterns.filter((p) => filteredGrouped[p]?.length);
         if (topicPatterns.length === 0) return null;
 
@@ -400,6 +452,7 @@ export default function ProblemList({
             <button
               onClick={() => setCollapsed((prev) => ({ ...prev, [pattern]: prev[pattern] === false }))}
               aria-expanded={!isCollapsed}
+              aria-controls={`pattern-${pattern}`}
               className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-elevated"
             >
               {/* Chevron in its own tile on the left — the affordance reads as a
@@ -414,7 +467,10 @@ export default function ProblemList({
               >
                 <ChevronRight
                   size={15}
-                  className={cn("transition-transform duration-200", !isCollapsed && "rotate-90")}
+                  className={cn(
+                    "transition-transform duration-[--duration-content] ease-[--ease-out-soft]",
+                    !isCollapsed && "rotate-90",
+                  )}
                 />
               </span>
 
@@ -444,14 +500,17 @@ export default function ProblemList({
               </span>
             </button>
 
-            {!isCollapsed && (
-              <div className="divide-y divide-border">
+            <Collapse open={!isCollapsed} id={`pattern-${pattern}`}>
+              <div className="divide-y divide-border border-t border-border">
                 {problems.map((p, idx) => {
                   const status = statuses[p.id] ?? "TODO";
                   const noteOpen = openNoteId === p.id;
+                  const notePresent = mountedNoteId === p.id;
                   const hasNote = !!(notes[p.id]?.trim());
                   const isRevising = revising[p.id] ?? false;
-                  const animDelay = `${idx * 20}ms`;
+                  // Capped at 5 rows / 100ms. Uncapped this ran idx*20ms, so a
+                  // 50-row group animated for a full second after every expand.
+                  const animDelay = `${Math.min(idx, 5) * 20}ms`;
 
                   return (
                     <div key={p.id} className="animate-fade-in" style={{ animationDelay: animDelay }}>
@@ -511,7 +570,7 @@ export default function ProblemList({
                                 <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
                                   <Flag size={15} className={isRevising ? "fill-current" : ""} />
                                 </button>
-                                <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
+                                <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
                                   <StickyNote size={15} />
                                 </button>
                               </div>
@@ -565,7 +624,7 @@ export default function ProblemList({
                               <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
                                 <Flag size={15} className={isRevising ? "fill-current" : ""} />
                               </button>
-                              <button onClick={() => toggleNote(p.id)} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
+                              <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
                                 <StickyNote size={15} />
                               </button>
                             </div>
@@ -574,22 +633,24 @@ export default function ProblemList({
                         </div>
                       </div>
 
-                      {/* Inline notes panel */}
-                      {noteOpen && (
-                        <InlineNote
-                          problemId={p.id}
-                          userId={userId}
-                          initialContent={notes[p.id] ?? ""}
-                          onClose={() => {
-                            setOpenNoteId(null);
-                          }}
-                        />
-                      )}
+                      {/* Inline notes panel. Mounted only while open (the
+                          editor autofocuses), but held for the collapse
+                          duration so it can animate out. */}
+                      <Collapse open={noteOpen} id={`note-${p.id}`}>
+                        {notePresent && (
+                          <InlineNote
+                            problemId={p.id}
+                            userId={userId}
+                            initialContent={notes[p.id] ?? ""}
+                            onClose={() => toggleNote(p.id)}
+                          />
+                        )}
+                      </Collapse>
                     </div>
                   );
                 })}
               </div>
-            )}
+            </Collapse>
           </div>
         );
       })}

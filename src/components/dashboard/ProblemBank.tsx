@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Search, Plus, Check, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
+import Collapse from "@/components/ui/Collapse";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
 import { GFGIcon } from "@/components/ui/GFGIcon";
 import { PATTERNS, patternRank, patternLabel, TOPICS } from "@/content/patterns";
@@ -245,6 +246,7 @@ export default function ProblemBank({ userSheets }: Props) {
                 <button
                   onClick={() => togglePattern(bp.pattern)}
                   aria-expanded={isExpanded}
+                  aria-controls={`bank-${bp.pattern}`}
                   className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-elevated"
                 >
                   <span
@@ -255,7 +257,7 @@ export default function ProblemBank({ userSheets }: Props) {
                   >
                     <ChevronRight
                       size={15}
-                      className={cn("transition-transform duration-200", isExpanded && "rotate-90")}
+                      className={cn("transition-transform duration-[--duration-content] ease-[--ease-out-soft]", isExpanded && "rotate-90")}
                     />
                   </span>
 
@@ -276,7 +278,7 @@ export default function ProblemBank({ userSheets }: Props) {
                 </button>
 
                 {/* Problems */}
-                {isExpanded && (
+                <Collapse open={isExpanded} id={`bank-${bp.pattern}`}>
                   <div className="divide-y divide-border border-t border-border">
                     {isLoading ? (
                       Array.from({ length: 3 }).map((_, i) => (
@@ -425,7 +427,7 @@ export default function ProblemBank({ userSheets }: Props) {
                       ))
                     )}
                   </div>
-                )}
+                </Collapse>
               </div>
             );
           })}
