@@ -226,6 +226,30 @@ body {
 .company-mark-invert { filter: invert(1); }
 [data-theme="light"] .company-mark-invert { filter: none; }
 
+/* One problem row, two arrangements.
+   Mobile stacks into two lines (title + must-do, then meta and actions);
+   desktop is the five-column table. Both come from the SAME five children —
+   previously each row shipped a mobile block and a desktop block and CSS hid
+   one, so every problem cost double the DOM at every viewport. */
+.problem-row-grid {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  grid-template-areas:
+    "title title must"
+    "comp  diff  act";
+  align-items: center;
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
+}
+@media (min-width: 768px) {
+  .problem-row-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 100px) 72px 72px minmax(0, 1fr);
+    grid-template-areas: "title comp must diff act";
+    column-gap: 1rem;
+    row-gap: 0;
+  }
+}
+
 /* Problem titles link out to the problem. On hover they take the accent colour
    and a soft glow rather than an underline — an underline on every row fought
    the dense list rhythm and made the sheet look like a wall of links. The glow

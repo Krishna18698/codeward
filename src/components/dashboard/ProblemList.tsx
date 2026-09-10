@@ -164,6 +164,11 @@ export default function ProblemList({
     return map;
   });
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  // Groups start collapsed, and Collapse keeps its children mounted so it has
+  // something to animate closed — which meant every row of every group was in
+  // the DOM at page load. Rows are now built the first time a group is opened
+  // and kept from then on, so the close animation still has content to run on.
+  const [everOpened, setEverOpened] = useState<Set<string>>(() => new Set());
   // Two ids, not one. `openNoteId` drives the collapse; `mountedNoteId` lags it
   // on close so the editor survives long enough to animate out. The editor
   // autofocuses on mount, so it must NOT stay mounted for every row.
@@ -465,7 +470,10 @@ export default function ProblemList({
         return (
           <div key={pattern} className="rounded-xl border border-border bg-surface overflow-hidden">
             <button
-              onClick={() => setCollapsed((prev) => ({ ...prev, [pattern]: prev[pattern] === false }))}
+              onClick={() => {
+                setCollapsed((prev) => ({ ...prev, [pattern]: prev[pattern] === false }));
+                if (isCollapsed) setEverOpened((prev) => (prev.has(pattern) ? prev : new Set(prev).add(pattern)));
+              }}
               aria-expanded={!isCollapsed}
               aria-controls={`pattern-${pattern}`}
               className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-elevated"
@@ -517,7 +525,7 @@ export default function ProblemList({
 
             <Collapse open={!isCollapsed} id={`pattern-${pattern}`}>
               <div className="divide-y divide-border border-t border-border">
-                {problems.map((p, idx) => {
+                {(everOpened.has(pattern) ? problems : []).map((p, idx) => {
                   const status = statuses[p.id] ?? "TODO";
                   const noteOpen = openNoteId === p.id;
                   const notePresent = mountedNoteId === p.id;
@@ -549,133 +557,80 @@ export default function ProblemList({
                           <StatusIcon status={status} />
                         </button>
 
-                        {/* Content: 2-line on mobile, 1-line on desktop */}
-                        <div className="flex-1 min-w-0">
-
-                          {/* ── Mobile: 2-line ── */}
-                          <div className="md:hidden space-y-1">
-                            <div className="flex items-start justify-between gap-2">
-                              {p.leetcodeUrl ? (
-                                <a
-                                  href={p.leetcodeUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="problem-title text-sm text-secondary leading-snug"
-                                >
-                                  {p.title}
-                                </a>
-                              ) : (
-                                <span className="text-sm text-secondary leading-snug">{p.title}</span>
-                              )}
-                              {p.mustDo && (
-                                <span className="shrink-0 text-[10px] text-amber-400/80 border border-amber-500/20 rounded px-1 py-0.5 mt-0.5">must do</span>
-                              )}
-                            </div>
-                            <div className="flex items-center">
-                              <div className="flex items-center gap-1 mr-2">
-                                {p.companies.slice(0, 3).map((c) => (
-                                  <span key={c} title={c} className="inline-flex opacity-70 hover:opacity-100 transition-opacity">
-                                    <CompanyLogo name={c} size={15} />
-                                  </span>
-                                ))}
-                              </div>
-                              <span className={cn("text-xs font-medium shrink-0", difficultyColor[p.difficulty])}>
-                                {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
-                              </span>
-                              <div className="flex-1 flex items-center justify-end gap-0.5">
-                                {p.leetcodeUrl && (
-                                  <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="p-1.5 rounded opacity-70 hover:opacity-100 transition-opacity">
-                                    <LeetCodeIcon size={20} />
-                                  </a>
-                                )}
-                                {p.gfgUrl && (
-                                  <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="p-1.5 rounded opacity-70 hover:opacity-100 transition-opacity">
-                                    <GFGIcon size={20} />
-                                  </a>
-                                )}
-                                {p.hint && (
-                                  <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("p-1.5 rounded transition-colors", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-muted hover:text-secondary")}>
-                                    <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
-                                  </button>
-                                )}
-                                <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
-                                  <Flag size={15} className={isRevising ? "fill-current" : ""} />
-                                </button>
-                                <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
-                                  <PenLine size={15} />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* ── Desktop: 5-column — title | companies | must-do | difficulty | links */}
-                          <div
-                            className="hidden md:grid items-center gap-x-4"
-                            style={{ gridTemplateColumns: "minmax(0,2fr) minmax(0,100px) 72px 72px minmax(0,1fr)" }}
-                          >
+                        {/* One row, one set of children.
+                            The mobile and desktop arrangements used to be two
+                            separately-written blocks, and BOTH shipped to the
+                            DOM at every viewport — 83 nodes per problem, 12,387
+                            on a 150-problem sheet, with CSS merely hiding one.
+                            These are the same five cells rearranged by
+                            grid-template-areas at md (see .problem-row-grid). */}
+                        <div className="problem-row-grid min-w-0 flex-1">
+                          <div style={{ gridArea: "title" }} className="flex min-w-0 items-center">
                             {p.leetcodeUrl ? (
                               <a
                                 href={p.leetcodeUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 title={`Solve "${p.title}" on LeetCode`}
-                                className="problem-title text-sm text-secondary leading-snug min-w-0 truncate"
+                                className="problem-title min-w-0 text-sm leading-snug text-secondary md:truncate"
                               >
                                 {p.title}
                               </a>
                             ) : (
-                              <span className="text-sm text-secondary leading-snug min-w-0 truncate">{p.title}</span>
+                              <span className="min-w-0 text-sm leading-snug text-secondary md:truncate">{p.title}</span>
                             )}
-
-                            {/* Companies */}
-                            <div className="flex items-center justify-center gap-1.5">
-                              {p.companies.slice(0, 3).map((c) => (
-                                <span key={c} title={c} className="inline-flex opacity-75 hover:opacity-100 transition-opacity">
-                                  <CompanyLogo name={c} size={16} />
-                                </span>
-                              ))}
-                            </div>
-
-                            {/* Must do */}
-                            <div className="flex items-center justify-center">
-                              {p.mustDo && (
-                                <span className="text-[10px] text-amber-400/80 border border-amber-500/20 rounded px-1.5 py-0.5">must do</span>
-                              )}
-                            </div>
-
-                            {/* Difficulty */}
-                            <div className="flex items-center justify-center">
-                              <span className={cn("text-xs font-medium", difficultyColor[p.difficulty])}>
-                                {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
-                              </span>
-                            </div>
-
-                            {/* Links */}
-                            <div className="flex items-center justify-end gap-1">
-                              {p.leetcodeUrl && (
-                                <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="p-2 rounded opacity-70 hover:opacity-100 transition-opacity">
-                                  <LeetCodeIcon size={20} />
-                                </a>
-                              )}
-                              {p.gfgUrl && (
-                                <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="p-2 rounded opacity-70 hover:opacity-100 transition-opacity">
-                                  <GFGIcon size={20} />
-                                </a>
-                              )}
-                              {p.hint && (
-                                <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("p-2 rounded transition-colors", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-muted hover:text-secondary")}>
-                                  <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
-                                </button>
-                              )}
-                              <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
-                                <Flag size={15} className={isRevising ? "fill-current" : ""} />
-                              </button>
-                              <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
-                                <PenLine size={15} />
-                              </button>
-                            </div>
                           </div>
 
+                          {/* Companies — 15px on mobile, 16px on desktop, sized
+                              in CSS so the mark is rendered once. */}
+                          <div
+                            style={{ gridArea: "comp" }}
+                            className="flex items-center gap-1 opacity-70 md:justify-center md:gap-1.5 md:opacity-75 [&_svg]:h-[15px] [&_svg]:w-[15px] md:[&_svg]:h-4 md:[&_svg]:w-4"
+                          >
+                            {p.companies.slice(0, 3).map((c) => (
+                              <span key={c} title={c} className="inline-flex transition-opacity hover:opacity-100">
+                                <CompanyLogo name={c} size={16} />
+                              </span>
+                            ))}
+                          </div>
+
+                          <div style={{ gridArea: "must" }} className="flex items-center justify-end md:justify-center">
+                            {p.mustDo && (
+                              <span className="shrink-0 rounded border border-amber-500/20 px-1 py-0.5 text-[10px] text-amber-400/80 md:px-1.5">
+                                must do
+                              </span>
+                            )}
+                          </div>
+
+                          <div style={{ gridArea: "diff" }} className="flex items-center md:justify-center">
+                            <span className={cn("shrink-0 text-xs font-medium", difficultyColor[p.difficulty])}>
+                              {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
+                            </span>
+                          </div>
+
+                          <div style={{ gridArea: "act" }} className="flex items-center justify-end gap-0.5 md:gap-1">
+                            {p.leetcodeUrl && (
+                              <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
+                                <LeetCodeIcon size={20} />
+                              </a>
+                            )}
+                            {p.gfgUrl && (
+                              <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
+                                <GFGIcon size={20} />
+                              </a>
+                            )}
+                            {p.hint && (
+                              <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("rounded p-1.5 transition-colors md:p-2", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-muted hover:text-secondary")}>
+                                <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
+                              </button>
+                            )}
+                            <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("rounded p-1.5 transition-colors md:p-2", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
+                              <Flag size={15} className={isRevising ? "fill-current" : ""} />
+                            </button>
+                            <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("rounded p-1.5 transition-colors md:p-2", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
+                              <PenLine size={15} />
+                            </button>
+                          </div>
                         </div>
                       </div>
 
