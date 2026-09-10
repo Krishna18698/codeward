@@ -578,7 +578,7 @@ export default function ProblemList({
                                   href={p.leetcodeUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-secondary leading-snug hover:text-primary hover:underline underline-offset-2 transition-colors"
+                                  className="problem-title text-sm text-secondary leading-snug"
                                 >
                                   {p.title}
                                 </a>
@@ -639,7 +639,7 @@ export default function ProblemList({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 title={`Solve "${p.title}" on LeetCode`}
-                                className="text-sm text-secondary leading-snug min-w-0 truncate hover:text-primary hover:underline underline-offset-2 transition-colors"
+                                className="problem-title text-sm text-secondary leading-snug min-w-0 truncate"
                               >
                                 {p.title}
                               </a>

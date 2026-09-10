@@ -214,6 +214,22 @@ body {
   box-sizing: border-box;
 }
 
+/* Problem titles link out to the problem. On hover they take the accent colour
+   and a soft glow rather than an underline — an underline on every row fought
+   the dense list rhythm and made the sheet look like a wall of links. The glow
+   is mixed from --color-accent, so it follows the theme instead of hardcoding
+   a green that would blow out on the light canvas. */
+.problem-title {
+  transition:
+    color var(--duration-feedback) var(--ease-out-soft),
+    text-shadow var(--duration-feedback) var(--ease-out-soft);
+}
+.problem-title:hover,
+.problem-title:focus-visible {
+  color: var(--color-accent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
 /* Code panes that render fixed light-on-dark syntax colors (highlightTs) must
    stay dark in both themes; this class pins their bg/text/border regardless of
    the active theme. The CodeMirror editor is dark by its own theme already. */

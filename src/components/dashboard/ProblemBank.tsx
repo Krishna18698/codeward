@@ -302,7 +302,11 @@ export default function ProblemBank({ userSheets }: Props) {
                             {/* Mobile 2-line */}
                             <div className="md:hidden space-y-1">
                               <div className="flex items-start justify-between gap-2">
-                                <span className="text-sm text-primary leading-snug">{p.title}</span>
+                                {p.leetcodeUrl ? (
+                                  <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" className="problem-title text-sm text-primary leading-snug">{p.title}</a>
+                                ) : (
+                                  <span className="text-sm text-primary leading-snug">{p.title}</span>
+                                )}
                                 {p.mustDo && (
                                   <span className="shrink-0 text-[10px] text-amber-400/70 border border-amber-500/20 rounded px-1 py-0.5 mt-0.5">must do</span>
                                 )}
@@ -340,7 +344,11 @@ export default function ProblemBank({ userSheets }: Props) {
                               className="hidden md:grid items-center gap-x-4"
                               style={{ gridTemplateColumns: "minmax(0,2fr) minmax(0,100px) 72px 72px minmax(0,1fr)" }}
                             >
-                              <span className="text-sm text-primary leading-snug min-w-0 truncate">{p.title}</span>
+                              {p.leetcodeUrl ? (
+                                <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title={`Solve "${p.title}" on LeetCode`} className="problem-title text-sm text-primary leading-snug min-w-0 truncate">{p.title}</a>
+                              ) : (
+                                <span className="text-sm text-primary leading-snug min-w-0 truncate">{p.title}</span>
+                              )}
 
                               {/* Companies */}
                               <div className="flex items-center justify-center gap-1.5">
