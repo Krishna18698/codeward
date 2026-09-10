@@ -216,6 +216,7 @@ model Problem {
   order       Int            @default(0)
   sheetId     String
   companies   String[]       @default([])
+  hint        String?        @db.Text
 
   sheet       Sheet               @relation(fields: [sheetId], references: [id], onDelete: Cascade)
   testCases   TestCase[]
@@ -245,6 +246,7 @@ model UserProblemStatus {
   problemId String
   status    ProblemStatus @default(TODO)
   toRevise  Boolean       @default(false)
+  usedHint  Boolean       @default(false)
   updatedAt DateTime      @updatedAt
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

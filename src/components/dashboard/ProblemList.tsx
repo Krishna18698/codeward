@@ -1,6 +1,6 @@
 "use client";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { ChevronRight, Check, Circle, StickyNote, X, Flag, Search } from "lucide-react";
+import { ChevronRight, Check, Circle, PenLine, X, Flag, Search, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { LeetCodeIcon } from "@/components/ui/LeetCodeIcon";
@@ -18,7 +18,8 @@ type ProblemWithStatus = {
   leetcodeUrl: string | null;
   gfgUrl: string | null;
   companies: string[];
-  statuses: { status: ProblemStatus; toRevise: boolean }[];
+  hint: string | null;
+  statuses: { status: ProblemStatus; toRevise: boolean; usedHint: boolean }[];
   [key: string]: unknown;
 };
 
@@ -114,7 +115,7 @@ function InlineNote({
       <div className="rounded-lg border border-border bg-canvas overflow-hidden">
         <div className="flex items-center justify-between px-3 py-1.5 border-b border-border">
           <span className="text-[11px] text-muted flex items-center gap-1.5">
-            <StickyNote size={11} />
+            <PenLine size={11} />
             Notes
           </span>
           <div className="flex items-center gap-3">
@@ -169,6 +170,17 @@ export default function ProblemList({
 
   const notes = initialNotes;
   const [openNoteId, setOpenNoteId] = useState<string | null>(null);
+  // Which problem's hint is revealed (one at a time). Hint text is plain and
+  // cheap, so unlike the note editor it can stay mounted inside Collapse — no
+  // lag/unmount dance needed.
+  const [openHintId, setOpenHintId] = useState<string | null>(null);
+  const [usedHint, setUsedHint] = useState<Record<string, boolean>>(() => {
+    const map: Record<string, boolean> = {};
+    for (const p of Object.values(grouped).flat()) {
+      map[p.id] = p.statuses[0]?.usedHint ?? false;
+    }
+    return map;
+  });
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   // Two ids, not one. `openNoteId` drives the collapse; `mountedNoteId` lags it
   // on close so the editor survives long enough to animate out. The editor
@@ -218,6 +230,11 @@ export default function ProblemList({
         setRevising(() => {
           const m: Record<string, boolean> = {};
           for (const p of fresh) m[p.id] = p.statuses[0]?.toRevise ?? false;
+          return m;
+        });
+        setUsedHint(() => {
+          const m: Record<string, boolean> = {};
+          for (const p of fresh) m[p.id] = p.statuses[0]?.usedHint ?? false;
           return m;
         });
         setAllProblems(mustDoOnly ? fresh.filter((p) => p.mustDo) : fresh);
@@ -288,6 +305,22 @@ export default function ProblemList({
     }
   };
 
+
+  const toggleHint = (problemId: string) => {
+    if (openHintId === problemId) { setOpenHintId(null); return; }
+    setOpenHintId(problemId);
+    // Revealing a hint is the "needed a hint" signal — auto-tracked, write-once.
+    // Fire-and-forget: the flag is advisory, so a failed write just isn't
+    // recorded; no error toast, no optimistic revert.
+    if (!usedHint[problemId]) {
+      setUsedHint((prev) => ({ ...prev, [problemId]: true }));
+      fetch("/api/dsa/hint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problemId }),
+      }).catch(() => {});
+    }
+  };
 
   const hasFilters = query.trim() !== "" || diffFilter !== "ALL" || compFilter !== "ALL";
   const clearFilters = () => { setQuery(""); setDiffFilter("ALL"); setCompFilter("ALL"); };
@@ -508,6 +541,8 @@ export default function ProblemList({
                   const notePresent = mountedNoteId === p.id;
                   const hasNote = !!(notes[p.id]?.trim());
                   const isRevising = revising[p.id] ?? false;
+                  const hintOpen = openHintId === p.id;
+                  const wasHinted = usedHint[p.id] ?? false;
                   // Capped at 5 rows / 100ms. Uncapped this ran idx*20ms, so a
                   // 50-row group animated for a full second after every expand.
                   const animDelay = `${Math.min(idx, 5) * 20}ms`;
@@ -567,11 +602,16 @@ export default function ProblemList({
                                     <GFGIcon size={20} />
                                   </a>
                                 )}
+                                {p.hint && (
+                                  <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("p-1.5 rounded transition-colors", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-muted hover:text-secondary")}>
+                                    <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
+                                  </button>
+                                )}
                                 <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-1.5 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
                                   <Flag size={15} className={isRevising ? "fill-current" : ""} />
                                 </button>
                                 <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-1.5 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
-                                  <StickyNote size={15} />
+                                  <PenLine size={15} />
                                 </button>
                               </div>
                             </div>
@@ -621,17 +661,35 @@ export default function ProblemList({
                                   <GFGIcon size={20} />
                                 </a>
                               )}
+                              {p.hint && (
+                                <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("p-2 rounded transition-colors", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-muted hover:text-secondary")}>
+                                  <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
+                                </button>
+                              )}
                               <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("p-2 rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
                                 <Flag size={15} className={isRevising ? "fill-current" : ""} />
                               </button>
                               <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("p-2 rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
-                                <StickyNote size={15} />
+                                <PenLine size={15} />
                               </button>
                             </div>
                           </div>
 
                         </div>
                       </div>
+
+                      {/* Hint panel. Plain text, so it stays mounted inside
+                          Collapse — no unmount dance. */}
+                      {p.hint && (
+                        <Collapse open={hintOpen} id={`hint-${p.id}`}>
+                          <div className="px-4 pb-3">
+                            <div className="flex items-start gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/5 px-3 py-2.5">
+                              <Lightbulb size={14} className="mt-0.5 shrink-0 text-yellow-400" />
+                              <p className="text-[13px] text-secondary leading-relaxed">{p.hint}</p>
+                            </div>
+                          </div>
+                        </Collapse>
+                      )}
 
                       {/* Inline notes panel. Mounted only while open (the
                           editor autofocuses), but held for the collapse

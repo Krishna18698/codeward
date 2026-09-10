@@ -30,8 +30,8 @@ export default async function DSAPage({ searchParams }: Props) {
         select: {
           id: true, title: true, difficulty: true,
           pattern: true, mustDo: true, leetcodeUrl: true, gfgUrl: true,
-          order: true, companies: true,
-          statuses: { where: { userId }, select: { status: true, toRevise: true } },
+          order: true, companies: true, hint: true,
+          statuses: { where: { userId }, select: { status: true, toRevise: true, usedHint: true } },
         },
         orderBy: [{ mustDo: "desc" }, { order: "asc" }],
       }),

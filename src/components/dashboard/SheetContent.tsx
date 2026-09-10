@@ -14,7 +14,8 @@ type ProblemWithStatus = {
   mustDo: boolean; leetcodeUrl: string | null; gfgUrl: string | null;
   companies: string[];
   order: number;
-  statuses: { status: ProblemStatus; toRevise: boolean }[];
+  hint: string | null;
+  statuses: { status: ProblemStatus; toRevise: boolean; usedHint: boolean }[];
   [key: string]: unknown;
 };
 
