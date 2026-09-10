@@ -73,7 +73,7 @@ export default async function DSAPage({ searchParams }: Props) {
     .filter((s) => !s.isPreset)
     .map((s) => ({ id: s.id, name: s.name }));
 
-  // Exclude the Top300 preset from the sheet tabs (it lives in Problem Bank)
+  // Exclude the bank preset from the sheet tabs (it lives in Problem Bank)
   const tabSheets = sheets.filter((s) => s.source !== "TOP300");
 
   // Shape passed to the client component (safe to serialize — no dates/enums that break)
@@ -121,11 +121,11 @@ export default async function DSAPage({ searchParams }: Props) {
         {/* Header + view toggle */}
         <PageHeader
           eyebrow={showBank ? "Problem Bank" : lastMinute ? "Last Minute" : "DSA Sheets"}
-          title={showBank ? "300 problems." : lastMinute ? "Tomorrow's the day." : "Solve by pattern,"}
+          title={showBank ? "500 problems." : lastMinute ? "Tomorrow's the day." : "Solve by pattern,"}
           titleAccent={showBank ? "Pick your own." : lastMinute ? "Revise these." : "not by list."}
           subtitle={
             showBank
-              ? "300 curated problems from top product companies. Add any to your custom sheets."
+              ? "500 curated problems from top product companies. Add any to your custom sheets."
               : lastMinute
                 ? "The must-do cut of this sheet — what to revise when the interview is tomorrow."
                 : "Every problem is filed under the pattern that solves it, with the cue that identifies it."

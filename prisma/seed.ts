@@ -627,16 +627,16 @@ async function main() {
   }
   console.log(`Seeded ${neet150.length} NeetCode 150 problems`);
 
-  // ── Top 300 FAANG Bank ────────────────────────────────────────────────────
-  const { TOP_300 } = await import("./top300");
+  // ── Top 500 FAANG Bank ────────────────────────────────────────────────────
+  const { TOP_500 } = await import("./top500");
 
-  const top300Sheet = await prisma.sheet.upsert({
+  const bankSheet = await prisma.sheet.upsert({
     where: { id: "preset-top300" },
-    create: { id: "preset-top300", name: "Top 300 · Industry Picks", source: "TOP300", isPreset: true },
-    update: { name: "Top 300 · Industry Picks" },
+    create: { id: "preset-top300", name: "Top 500 · Industry Picks", source: "TOP300", isPreset: true },
+    update: { name: "Top 500 · Industry Picks" },
   });
 
-  for (const p of TOP_300) {
+  for (const p of TOP_500) {
     await prisma.problem.upsert({
       where: { id: p.id },
       create: {
@@ -649,14 +649,14 @@ async function main() {
         gfgUrl: gfgFor(p.leetcodeUrl),
         mustDo: p.mustDo,
         order: p.order,
-        sheetId: top300Sheet.id,
+        sheetId: bankSheet.id,
         companies: COMPANY_MAP[p.title] ?? [],
       },
       update: { title: p.title, difficulty: p.difficulty, pattern: p.pattern, mustDo: p.mustDo, gfgUrl: gfgFor(p.leetcodeUrl), companies: COMPANY_MAP[p.title] ?? [] },
     });
   }
 
-  console.log(`Seeded ${TOP_300.length} Top 300 FAANG problems`);
+  console.log(`Seeded ${TOP_500.length} Top 500 FAANG problems`);
 
   // ── Patch custom-sheet problems with full descriptions and test cases ───────
   const customProblems = await prisma.problem.findMany({

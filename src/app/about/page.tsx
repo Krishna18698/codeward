@@ -19,7 +19,7 @@ function SectionEyebrow({ n, label }: { n: string; label: string }) {
 }
 
 const modeList = [
-  ["DSA Sheets", "Blind 75, Striver’s, NeetCode 150, and a 300-problem company-tagged bank, grouped by pattern."],
+  ["DSA Sheets", "Blind 75, Striver’s, NeetCode 150, and a 500-problem company-tagged bank, grouped by pattern."],
   ["System Design", "Curated questions by level, plus a challenge spinner that generates a fresh prompt to design against."],
   ["Code Review", "Real PRs with planted bugs; leave inline comments and get graded like a senior reviewer would."],
   ["Bug Hunt", "Broken codebases with failing tests and logs; fix the code and diagnose the root cause."],

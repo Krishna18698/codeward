@@ -7,7 +7,7 @@ import { highlightTs } from "@/lib/highlightTs";
 // emerald backlight. Content is illustrative (marketing).
 
 const modes: { label: string; count?: string; active?: boolean }[] = [
-  { label: "DSA Sheets", count: "300" },
+  { label: "DSA Sheets", count: "500" },
   { label: "System Design", count: "33" },
   { label: "Code Review", count: "15", active: true },
   { label: "Bug Hunt", count: "9" },

@@ -7,9 +7,9 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 ## Features
 
 ### DSA Sheets
-- **Preset sheets**: Blind 75, Striver's SDE Sheet, NeetCode 150, and a Top 300 FAANG problem bank
+- **Preset sheets**: Blind 75, Striver's SDE Sheet, NeetCode 150, and a Top 500 FAANG problem bank
 - **Custom sheets**: create your own and pull problems from any preset via search
-- **Problem Bank**: browse the Top 300 by pattern, difficulty, company, or "must do"
+- **Problem Bank**: browse the Top 500 by pattern, difficulty, company, or "must do"
 - **Pattern grouping**: problems grouped by algorithmic pattern (ordered by interview importance), collapsible, each with a one-line description
 - **Progress tracking**: per-sheet progress bar with solved / to-do counts
 - **Filters & flags**: difficulty and company filters, a "to revise" flag, and per-problem notes that persist
@@ -200,7 +200,7 @@ npx prisma migrate deploy
 
 ### 5. Seed the preset sheets
 
-Populates Blind 75, Striver's SDE Sheet, NeetCode 150, and the Top 300 FAANG bank.
+Populates Blind 75, Striver's SDE Sheet, NeetCode 150, and the Top 500 FAANG bank.
 
 ```bash
 npm run seed
@@ -237,7 +237,7 @@ src/
 │   ├── api/
 │   │   ├── auth/                # NextAuth handlers + registration
 │   │   ├── dsa/
-│   │   │   ├── bank/            # Top 300 problem bank
+│   │   │   ├── bank/            # Top 500 problem bank
 │   │   │   ├── bank-patterns/   # Pattern groups for the bank
 │   │   │   ├── problems/        # Sheet problems + cross-sheet search
 │   │   │   ├── sheets/          # Custom sheet CRUD + add-problem
@@ -289,7 +289,7 @@ prisma/
 ├── schema.prisma
 ├── seed.ts                      # Seeds all preset sheets
 ├── problem-content.ts           # Problem descriptions
-└── top300.ts                    # Top 300 FAANG bank
+└── top500.ts                    # Top 500 FAANG bank
 ```
 
 ---

@@ -216,7 +216,7 @@ export default function ProblemBank({ userSheets }: Props) {
       ) : (
         <div className="space-y-2">
           {/* Same two-level shape as the sheets: topic, then the patterns
-              inside it. The bank is 300 problems — a flat list of 16 pattern
+              inside it. The bank is 500 problems — a flat list of 40+ pattern
               cards gave no way to see which area you were browsing. */}
           {TOPICS.map((topic) => {
             const inTopic = bankPatterns.filter((bp) => topic.patterns.includes(bp.pattern));
