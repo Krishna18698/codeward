@@ -22,12 +22,16 @@ function SectionMarker({ n, label, center }: { n: string; label: string; center?
 function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-40 pb-28 px-6">
-      <div className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1 rounded-full border border-accent/25 bg-accent/5 px-2.5 py-1.5 font-mono text-[8px] tracking-tight text-accent sm:gap-1.5 sm:px-4 sm:text-[12px] sm:tracking-normal">
+      {/* The badge must never wrap, so its type is fluid instead: it scales with
+          the viewport below ~615px and pins at 12px above that. Wrapping or a
+          fixed 8px both broke — at 360px the fixed size ran 2px past the
+          viewport and put a scrollbar on the page. */}
+      <div
+        className="animate-fade-in mb-6 inline-flex max-w-full items-center gap-1 rounded-full border border-accent/25 bg-accent/5 px-2.5 py-1.5 font-mono tracking-tight text-accent sm:gap-1.5 sm:px-4 sm:tracking-normal"
+        style={{ fontSize: "clamp(5px, 1.9vw, 12px)" }}
+      >
         <span className="h-1.5 w-1.5 shrink-0 animate-dot-pulse rounded-full bg-accent-hover" />
-        {/* Allowed to wrap on the narrowest phones. Pinned to one line it was
-            2px wider than a 360px viewport, which put a horizontal scrollbar on
-            the whole landing page. */}
-        <span className="min-w-0 text-balance sm:whitespace-nowrap">
+        <span className="whitespace-nowrap">
           DSA &middot; System Design &middot; Code Review &middot; Bug Hunt &middot; Build It &middot; Deep Dives
         </span>
       </div>
