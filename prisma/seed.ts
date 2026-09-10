@@ -417,7 +417,11 @@ async function main() {
     const problem = await prisma.problem.upsert({
       where: { id: p.id },
       create: { id: p.id, title: p.title, description: p.description, difficulty: p.difficulty, pattern: p.pattern, leetcodeUrl: p.leetcodeUrl, gfgUrl: gfgFor(p.leetcodeUrl), mustDo: p.mustDo, order: p.order, sheetId: striversSheet.id, companies: COMPANY_MAP[p.title] ?? [] },
-      update: { title: p.title, difficulty: p.difficulty, pattern: p.pattern, mustDo: p.mustDo, gfgUrl: gfgFor(p.leetcodeUrl), companies: COMPANY_MAP[p.title] ?? [] },
+      // leetcodeUrl and description belong in the update too: when a slot is
+      // repointed at a different problem (a duplicate swapped out, a dead link
+      // replaced) the title changes but the row keeps its id, so omitting them
+      // left the row titled one problem and linked to another.
+      update: { title: p.title, description: p.description, difficulty: p.difficulty, pattern: p.pattern, mustDo: p.mustDo, leetcodeUrl: p.leetcodeUrl, gfgUrl: gfgFor(p.leetcodeUrl), companies: COMPANY_MAP[p.title] ?? [] },
     });
     for (let i = 0; i < p.testCases.length; i++) {
       await prisma.testCase.upsert({
@@ -615,7 +619,11 @@ async function main() {
     const problem = await prisma.problem.upsert({
       where: { id: p.id },
       create: { id: p.id, title: p.title, description: p.description, difficulty: p.difficulty, pattern: p.pattern, leetcodeUrl: p.leetcodeUrl, gfgUrl: gfgFor(p.leetcodeUrl), mustDo: p.mustDo, order: p.order, sheetId: neetSheet.id, companies: COMPANY_MAP[p.title] ?? [] },
-      update: { title: p.title, difficulty: p.difficulty, pattern: p.pattern, mustDo: p.mustDo, gfgUrl: gfgFor(p.leetcodeUrl), companies: COMPANY_MAP[p.title] ?? [] },
+      // leetcodeUrl and description belong in the update too: when a slot is
+      // repointed at a different problem (a duplicate swapped out, a dead link
+      // replaced) the title changes but the row keeps its id, so omitting them
+      // left the row titled one problem and linked to another.
+      update: { title: p.title, description: p.description, difficulty: p.difficulty, pattern: p.pattern, mustDo: p.mustDo, leetcodeUrl: p.leetcodeUrl, gfgUrl: gfgFor(p.leetcodeUrl), companies: COMPANY_MAP[p.title] ?? [] },
     });
     for (let i = 0; i < p.testCases.length; i++) {
       await prisma.testCase.upsert({
@@ -652,7 +660,11 @@ async function main() {
         sheetId: bankSheet.id,
         companies: COMPANY_MAP[p.title] ?? [],
       },
-      update: { title: p.title, difficulty: p.difficulty, pattern: p.pattern, mustDo: p.mustDo, gfgUrl: gfgFor(p.leetcodeUrl), companies: COMPANY_MAP[p.title] ?? [] },
+      // leetcodeUrl and description belong in the update too: when a slot is
+      // repointed at a different problem (a duplicate swapped out, a dead link
+      // replaced) the title changes but the row keeps its id, so omitting them
+      // left the row titled one problem and linked to another.
+      update: { title: p.title, description: p.description, difficulty: p.difficulty, pattern: p.pattern, mustDo: p.mustDo, leetcodeUrl: p.leetcodeUrl, gfgUrl: gfgFor(p.leetcodeUrl), companies: COMPANY_MAP[p.title] ?? [] },
     });
   }
 
