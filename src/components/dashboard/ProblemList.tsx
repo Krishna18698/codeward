@@ -573,7 +573,18 @@ export default function ProblemList({
                           {/* ── Mobile: 2-line ── */}
                           <div className="md:hidden space-y-1">
                             <div className="flex items-start justify-between gap-2">
-                              <span className="text-sm text-secondary leading-snug">{p.title}</span>
+                              {p.leetcodeUrl ? (
+                                <a
+                                  href={p.leetcodeUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-secondary leading-snug hover:text-primary hover:underline underline-offset-2 transition-colors"
+                                >
+                                  {p.title}
+                                </a>
+                              ) : (
+                                <span className="text-sm text-secondary leading-snug">{p.title}</span>
+                              )}
                               {p.mustDo && (
                                 <span className="shrink-0 text-[10px] text-amber-400/80 border border-amber-500/20 rounded px-1 py-0.5 mt-0.5">must do</span>
                               )}
@@ -622,7 +633,19 @@ export default function ProblemList({
                             className="hidden md:grid items-center gap-x-4"
                             style={{ gridTemplateColumns: "minmax(0,2fr) minmax(0,100px) 72px 72px minmax(0,1fr)" }}
                           >
-                            <span className="text-sm text-secondary leading-snug min-w-0 truncate">{p.title}</span>
+                            {p.leetcodeUrl ? (
+                              <a
+                                href={p.leetcodeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={`Solve "${p.title}" on LeetCode`}
+                                className="text-sm text-secondary leading-snug min-w-0 truncate hover:text-primary hover:underline underline-offset-2 transition-colors"
+                              >
+                                {p.title}
+                              </a>
+                            ) : (
+                              <span className="text-sm text-secondary leading-snug min-w-0 truncate">{p.title}</span>
+                            )}
 
                             {/* Companies */}
                             <div className="flex items-center justify-center gap-1.5">
