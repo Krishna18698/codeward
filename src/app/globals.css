@@ -27,6 +27,10 @@
   --color-accent-fill:   #10b981;   /* accent button background */
   --color-accent-dim:    rgba(52, 211, 153, 0.12);
   --color-accent-hover:  #6ee7b7;
+  /* Hover glow behind a problem title. An explicit rgba per theme rather than
+     color-mix(): Lightning CSS cannot resolve color-mix() around a var() and
+     silently drops the whole rule. */
+  --color-accent-glow:   rgba(52, 211, 153, 0.55);
 
   --color-spin:          #a78bfa;   /* challenge-spinner accent (violet-400) */
 
@@ -81,6 +85,8 @@
   --color-accent-fill:   #059669;   /* emerald-600 button background */
   --color-accent-dim:    rgba(5, 150, 105, 0.10);
   --color-accent-hover:  #065f46;
+  /* Deeper and softer — a bright emerald glow blows out on the light canvas. */
+  --color-accent-glow:   rgba(4, 120, 87, 0.40);
 
   --color-spin:          #7c3aed;   /* violet-600 — deeper for white */
 
@@ -220,14 +226,13 @@ body {
    is mixed from --color-accent, so it follows the theme instead of hardcoding
    a green that would blow out on the light canvas. */
 .problem-title {
-  transition:
-    color var(--duration-feedback) var(--ease-out-soft),
-    text-shadow var(--duration-feedback) var(--ease-out-soft);
+  transition: color var(--duration-feedback) var(--ease-out-soft),
+              text-shadow var(--duration-feedback) var(--ease-out-soft);
 }
 .problem-title:hover,
 .problem-title:focus-visible {
   color: var(--color-accent);
-  text-shadow: 0 0 10px color-mix(in srgb, var(--color-accent) 55%, transparent);
+  text-shadow: 0 0 10px var(--color-accent-glow);
 }
 
 /* Code panes that render fixed light-on-dark syntax colors (highlightTs) must
