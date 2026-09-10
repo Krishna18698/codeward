@@ -122,7 +122,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
         className={cn(
           "w-full inline-flex items-center justify-center gap-3",
           "rounded-2xl border border-border bg-surface hover:bg-border",
-          "text-primary text-sm font-medium px-5 py-3.5 transition-all duration-150",
+          "text-primary text-sm font-medium px-5 py-3.5 transition-[border-color,box-shadow,background-color] duration-[--duration-feedback]",
           "hover:border-border",
           "disabled:opacity-60 disabled:cursor-not-allowed",
         )}

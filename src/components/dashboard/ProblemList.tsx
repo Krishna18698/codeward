@@ -350,7 +350,7 @@ export default function ProblemList({
         {onAddProblems && (
           <button
             onClick={onAddProblems}
-            className="ml-auto flex items-center gap-1.5 rounded-xl border border-accent/25 bg-accent/5 px-3 py-1.5 text-xs text-accent/80 hover:text-accent-hover hover:border-accent/50 hover:bg-accent/10 transition-all"
+            className="ml-auto flex items-center gap-1.5 rounded-xl border border-accent/25 bg-accent/5 px-3 py-1.5 text-xs text-accent/80 hover:text-accent-hover hover:border-accent/50 hover:bg-accent/10 transition-colors duration-[--duration-feedback]"
           >
             <span className="text-sm leading-none">＋</span> Add Problems
           </button>
@@ -436,7 +436,7 @@ export default function ProblemList({
                   style={{ transform: `scaleX(${topicProblems.length ? topicDone / topicProblems.length : 0})` }}
                 />
               </div>
-              <span className="shrink-0 text-xs text-muted">{topicDone} / {topicProblems.length}</span>
+              <span className="shrink-0 text-xs tabular-nums text-muted">{topicDone} / {topicProblems.length}</span>
             </div>
 
             <p className="mt-2.5 text-sm text-secondary">{topic.blurb}</p>

@@ -35,7 +35,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
             <div
               key={i}
               className={cn(
-                "h-1.5 rounded-full transition-all duration-300",
+                "h-1.5 rounded-full transition-[width,background-color] duration-300",
                 i === step ? "w-6 bg-accent-hover" : i < step ? "w-3 bg-accent/60" : "w-3 bg-elevated",
               )}
             />
@@ -55,7 +55,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
                     key={l.value}
                     onClick={() => setExp(l.value)}
                     className={cn(
-                      "w-full text-left rounded-xl border px-4 py-3 transition-all duration-150 relative",
+                      "w-full text-left rounded-xl border px-4 py-3 transition-colors duration-[--duration-feedback] relative",
                       selected
                         ? "border-accent/60 bg-accent/10 text-primary"
                         : "border-border text-secondary hover:border-border hover:text-primary",
@@ -73,7 +73,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
             <button
               onClick={() => setStep(1)}
               disabled={!exp}
-              className="mt-5 w-full rounded-xl bg-accent-fill hover:bg-accent-hover disabled:opacity-40 text-black text-sm font-semibold py-3 transition-all duration-150"
+              className="mt-5 w-full rounded-xl bg-accent-fill hover:bg-accent-hover disabled:opacity-40 text-black text-sm font-semibold py-3 transition-[background-color,opacity] duration-[--duration-feedback] active:scale-[0.985]"
             >
               Continue →
             </button>
@@ -92,7 +92,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
                     key={c}
                     onClick={() => setCompany(c)}
                     className={cn(
-                      "rounded-xl border px-3 py-2.5 text-sm transition-all duration-150 relative",
+                      "rounded-xl border px-3 py-2.5 text-sm transition-colors duration-[--duration-feedback] relative",
                       selected
                         ? "border-accent/60 bg-accent/10 text-primary"
                         : "border-border text-secondary hover:border-border hover:text-primary",
@@ -116,7 +116,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
               <button
                 onClick={finish}
                 disabled={!company || saving}
-                className="flex-1 rounded-xl bg-accent-fill hover:bg-accent-hover disabled:opacity-40 text-black text-sm font-semibold py-2.5 transition-all duration-150"
+                className="flex-1 rounded-xl bg-accent-fill hover:bg-accent-hover disabled:opacity-40 text-black text-sm font-semibold py-2.5 transition-[background-color,opacity] duration-[--duration-feedback] active:scale-[0.985]"
               >
                 {saving ? "Saving…" : "Let's go →"}
               </button>

@@ -100,7 +100,7 @@ export default function FloatingMentor() {
         aria-label={open ? "Close AI Mentor" : "Open AI Mentor"}
         aria-expanded={open}
         className={cn(
-          "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200",
+          "w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-200 active:scale-[0.985]",
           "border",
           open
             ? "bg-border border-border text-secondary hover:text-primary"

@@ -17,7 +17,7 @@ const nav = NAV_ITEMS;
 /** Three-bar hamburger that morphs into an X — each bar animates its own
  *  transform/opacity, rather than swapping between two unrelated icons. */
 function HamburgerIcon({ open }: { open: boolean }) {
-  const bar = "absolute h-[1.5px] w-[18px] rounded-full bg-current transition-all duration-300 ease-in-out";
+  const bar = "absolute h-[1.5px] w-[18px] rounded-full bg-current transition-[transform,opacity] duration-300 ease-in-out";
   return (
     <span className="relative flex h-[18px] w-[18px] items-center justify-center">
       <span className={cn(bar, open ? "rotate-45" : "-translate-y-[5px]")} />

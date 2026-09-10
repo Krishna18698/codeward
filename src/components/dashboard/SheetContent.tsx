@@ -188,7 +188,7 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
           {/* Progress row */}
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-semibold text-primary truncate">{activeSheet.name}</span>
-            <span className="text-xs text-muted shrink-0">{pct}% done</span>
+            <span className="text-xs tabular-nums text-muted shrink-0">{pct}% done</span>
           </div>
           <div className="h-1.5 rounded-full bg-border overflow-hidden">
             <div

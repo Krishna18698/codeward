@@ -390,6 +390,11 @@ body {
   animation: divider-sweep 4s ease-in-out infinite;
 }
 
+/* Counts, scores and fractions must not change width as their digits change,
+   or a progress label jitters while it counts up. Geist Mono is already
+   fixed-width, so this mainly guards the fallback stack. */
+.font-mono { font-variant-numeric: tabular-nums; }
+
 /* ─── Scrollbar ───────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -436,6 +441,10 @@ textarea.chat-textarea:focus-visible {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    /* Covers the Collapse grid transition and the progress tweens too — they
+       set `transition` inline, and inline styles lose to !important. Content
+       lands in its final state immediately, which is the requirement: nothing
+       may be left invisible or mid-collapse. */
     transition-duration: 0.01ms !important;
     /* Without this, elements using style={{ animationDelay }} with fill-mode
        `both` stay at opacity 0 for the whole delay even though the animation

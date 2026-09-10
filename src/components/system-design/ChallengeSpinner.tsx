@@ -166,7 +166,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
             onClick={spin}
             disabled={spinning}
             className={cn(
-              "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all shrink-0",
+              "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors duration-[--duration-feedback] shrink-0",
               spinning
                 ? "bg-border text-muted cursor-not-allowed"
                 : "bg-spin/15 border border-spin/40 text-spin hover:bg-spin/25",
@@ -257,7 +257,7 @@ export default function ChallengeSpinner({ compact }: { compact?: boolean }) {
           onClick={spin}
           disabled={spinning}
           className={cn(
-            "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-150 whitespace-nowrap shrink-0",
+            "flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition-colors duration-[--duration-feedback] whitespace-nowrap shrink-0",
             spinning
               ? "bg-border text-muted cursor-not-allowed"
               : "bg-spin/15 border border-spin/40 text-spin hover:bg-spin/25 hover:border-spin/60",

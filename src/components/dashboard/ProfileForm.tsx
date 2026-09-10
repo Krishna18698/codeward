@@ -123,7 +123,7 @@ export default function ProfileForm({ user }: { user: User }) {
                 onClick={() => setAvatar(av.key)}
                 title={av.label}
                 className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 transition-all duration-150",
+                  "flex flex-col items-center gap-1.5 rounded-2xl border p-3 transition-colors duration-[--duration-feedback] active:scale-[0.985]",
                   avatar === av.key
                     ? "border-accent/60 bg-accent/10 ring-1 ring-accent/30"
                     : "border-border hover:border-border bg-surface",
@@ -149,7 +149,7 @@ export default function ProfileForm({ user }: { user: User }) {
               key={l.value}
               onClick={() => setExp(l.value)}
               className={cn(
-                "flex-1 rounded-xl border px-3 py-2 text-xs transition-all duration-150",
+                "flex-1 rounded-xl border px-3 py-2 text-xs transition-colors duration-[--duration-feedback] active:scale-[0.985]",
                 exp === l.value
                   ? "border-accent/60 bg-accent/10 text-accent-hover"
                   : "border-border text-muted hover:border-border hover:text-secondary",
@@ -169,7 +169,7 @@ export default function ProfileForm({ user }: { user: User }) {
               key={c}
               onClick={() => setCompany(c)}
               className={cn(
-                "rounded-xl border px-2 py-2 text-xs transition-all duration-150",
+                "rounded-xl border px-2 py-2 text-xs transition-colors duration-[--duration-feedback] active:scale-[0.985]",
                 company === c
                   ? "border-accent/60 bg-accent/10 text-accent-hover"
                   : "border-border text-muted hover:border-border hover:text-secondary",

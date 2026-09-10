@@ -154,11 +154,11 @@ export default async function DashboardPage() {
           <div className="relative shrink-0">
             <Ring pct={overallPct} size={72} stroke={6} />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-sm font-bold text-primary">{overallPct}%</span>
+              <span className="text-sm font-bold tabular-nums text-primary">{overallPct}%</span>
             </div>
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-primary">{trackedDone} / {totalTracked}</p>
+            <p className="text-sm font-semibold tabular-nums text-primary">{trackedDone} / {totalTracked}</p>
             <p className="text-xs text-muted">problems across the curated sheets</p>
           </div>
         </div>
@@ -263,7 +263,7 @@ export default async function DashboardPage() {
                   </p>
                   <p className="text-[11px] text-muted">{timeAgo(continueItem.updatedAt)}</p>
                 </div>
-                <ArrowRight size={14} className="text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all ml-auto shrink-0" />
+                <ArrowRight size={14} className="text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-[color,transform] duration-[--duration-feedback] ml-auto shrink-0" />
               </Link>
             )}
 
@@ -328,7 +328,7 @@ export default async function DashboardPage() {
 
           <div className="grid gap-3 sm:grid-cols-2">
             {/* AI build card */}
-            <div className="rounded-2xl border border-dashed border-accent/25 bg-accent/5 p-5 flex flex-col gap-2.5 hover:border-accent/50 hover:bg-accent/8 transition-all duration-200 group">
+            <div className="rounded-2xl border border-dashed border-accent/25 bg-accent/5 p-5 flex flex-col gap-2.5 hover:border-accent/50 hover:bg-accent/8 transition-colors duration-200 group">
               <div className="flex items-center gap-2">
                 <Sparkles size={16} className="text-accent" />
                 <p className="text-sm font-semibold text-primary">Build a custom sheet</p>
@@ -351,7 +351,7 @@ export default async function DashboardPage() {
                 <Link
                   key={sheet.id}
                   href={`/dashboard/dsa?sheet=${sheet.id}`}
-                  className="group rounded-2xl border border-border bg-surface p-5 hover:border-border hover:bg-surface transition-all duration-200 animate-fade-up"
+                  className="group rounded-2xl border border-border bg-surface p-5 hover:border-border hover:bg-surface transition-colors duration-200 animate-fade-up"
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
                   <div className="flex items-start justify-between mb-4">
@@ -366,7 +366,7 @@ export default async function DashboardPage() {
                     <div className="relative">
                       <Ring pct={pct} size={40} stroke={3.5} />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-[10px] font-bold text-primary">{pct}%</span>
+                        <span className="text-[10px] font-bold tabular-nums text-primary">{pct}%</span>
                       </div>
                     </div>
                   </div>
@@ -379,7 +379,7 @@ export default async function DashboardPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted">{done}/{total} solved</span>
-                    <ArrowRight size={12} className="text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight size={12} className="text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-[color,transform] duration-[--duration-feedback]" />
                   </div>
                 </Link>
               );

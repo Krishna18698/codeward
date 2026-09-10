@@ -63,10 +63,28 @@ export default function RotatingWord() {
   const target = WORDS[wordIndex];
   const visible = reducedMotion ? target : target.slice(0, charCount);
 
+  // The line is centred, so a growing word re-centres the whole headline on
+  // every keystroke and drags the copy below it around. Reserving the widest
+  // phrase's width up front means the typing happens inside a fixed box and
+  // nothing else on the page moves.
+  //
+  // The reservation is a zero-height, zero-opacity copy of the longest phrase
+  // rather than a hardcoded `min-width` in ch or px: it measures in the real
+  // rendered font, so it stays correct across breakpoints and if the font
+  // falls back.
+  const longest = WORDS.reduce((a, b) => (b.length > a.length ? b : a));
+
   return (
-    <span className="whitespace-nowrap">
-      <span aria-hidden>{visible}</span>
-      <span aria-hidden className="motion-safe:animate-pulse">_</span>
+    <span className="relative inline-grid whitespace-nowrap text-left align-bottom">
+      <span aria-hidden className="invisible col-start-1 row-start-1 h-0 overflow-hidden">
+        {longest}_
+      </span>
+      <span className="col-start-1 row-start-1">
+        <span aria-hidden>{visible}</span>
+        <span aria-hidden className="motion-safe:animate-pulse">_</span>
+      </span>
+      {/* Screen readers get the whole phrase, never the partial string — and
+          never a character-by-character announcement. */}
       <span className="sr-only">{WORDS[wordIndex]}</span>
     </span>
   );

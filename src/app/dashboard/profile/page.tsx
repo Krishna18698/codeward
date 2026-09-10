@@ -91,11 +91,11 @@ export default async function ProfilePage() {
           <div className="relative shrink-0">
             <Ring pct={overallPct} size={72} stroke={6} />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-sm font-bold text-primary">{overallPct}%</span>
+              <span className="text-sm font-bold tabular-nums text-primary">{overallPct}%</span>
             </div>
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-primary">{trackedDone} / {totalTracked}</p>
+            <p className="text-sm font-semibold tabular-nums text-primary">{trackedDone} / {totalTracked}</p>
             <p className="text-xs text-muted">problems across the curated sheets</p>
           </div>
         </div>
