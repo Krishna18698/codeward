@@ -31,8 +31,6 @@ type Props = {
   initialNotes: Record<string, string>;
   onStatusChange?: (prev: ProblemStatus, next: ProblemStatus, difficulty: Difficulty) => void;
   onAddProblems?: () => void;
-  /** Last-Minute view: only the must-do problems of this sheet. */
-  mustDoOnly?: boolean;
 };
 
 const difficultyColor: Record<Difficulty, string> = {
@@ -122,11 +120,11 @@ function InlineNote({
 }
 
 export default function ProblemList({
-  grouped, userId, sheetId, initialNotes, onStatusChange, onAddProblems, mustDoOnly = false,
+  grouped, userId, sheetId, initialNotes, onStatusChange, onAddProblems,
 }: Props) {
-  const [allProblems, setAllProblems] = useState<ProblemWithStatus[]>(() =>
-    Object.values(grouped).flat()
-  );
+  // Derived, not state: the sheet's rows come from the prop and nothing mutates
+  // the list itself any more (status/revise/hint live in their own maps).
+  const allProblems: ProblemWithStatus[] = Object.values(grouped).flat();
 
   const liveGrouped = allProblems.reduce<Record<string, ProblemWithStatus[]>>((acc, p) => {
     if (!acc[p.pattern]) acc[p.pattern] = [];
@@ -183,7 +181,6 @@ export default function ProblemList({
   const [diffFilter, setDiffFilter] = useState("ALL");
   const [compFilter, setCompFilter] = useState("ALL");
   const [availableCompanies, setAvailableCompanies] = useState<string[]>([]);
-  const isFirstFilterRender = useRef(true);
 
   // Fetch distinct companies for this sheet
   useEffect(() => {
@@ -196,39 +193,6 @@ export default function ProblemList({
       .catch(() => {});
   }, [sheetId]);
 
-  // Refetch when filters change (keep the current list visible until the new one arrives)
-  useEffect(() => {
-    if (isFirstFilterRender.current) { isFirstFilterRender.current = false; return; }
-    let cancelled = false;
-    const params = new URLSearchParams({ sheetId, skip: "0", take: "1000" });
-    if (diffFilter !== "ALL") params.set("difficulty", diffFilter);
-    if (compFilter !== "ALL") params.set("company", compFilter);
-    fetch(`/api/dsa/problems?${params}`)
-      .then(async (r) => {
-        if (!r.ok || cancelled) return;
-        const data = await r.json() as { problems: ProblemWithStatus[]; filteredTotal: number };
-        const fresh = data.problems ?? [];
-        if (cancelled) return;
-        setStatuses(() => {
-          const m: Record<string, ProblemStatus> = {};
-          for (const p of fresh) m[p.id] = p.statuses[0]?.status ?? "TODO";
-          return m;
-        });
-        setRevising(() => {
-          const m: Record<string, boolean> = {};
-          for (const p of fresh) m[p.id] = p.statuses[0]?.toRevise ?? false;
-          return m;
-        });
-        setUsedHint(() => {
-          const m: Record<string, boolean> = {};
-          for (const p of fresh) m[p.id] = p.statuses[0]?.usedHint ?? false;
-          return m;
-        });
-        setAllProblems(mustDoOnly ? fresh.filter((p) => p.mustDo) : fresh);
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [diffFilter, compFilter, sheetId, mustDoOnly]);
 
 
   const toggleDone = async (problemId: string) => {
@@ -312,10 +276,20 @@ export default function ProblemList({
   const hasFilters = query.trim() !== "" || diffFilter !== "ALL" || compFilter !== "ALL";
   const clearFilters = () => { setQuery(""); setDiffFilter("ALL"); setCompFilter("ALL"); };
 
-  const filteredGrouped: Record<string, ProblemWithStatus[]> = query.trim()
+  // All three filters run in memory. The difficulty and company dropdowns used
+  // to refetch the whole sheet (take=1000) on every change, even though the
+  // sheet is already loaded and search had always filtered locally. Filtering
+  // here makes the dropdowns instant and keeps local status/revise/hint state
+  // authoritative instead of being clobbered by a fresh server payload.
+  const matches = (p: ProblemWithStatus) =>
+    (!query.trim() || p.title.toLowerCase().includes(query.toLowerCase())) &&
+    (diffFilter === "ALL" || p.difficulty === diffFilter) &&
+    (compFilter === "ALL" || p.companies.includes(compFilter));
+
+  const filteredGrouped: Record<string, ProblemWithStatus[]> = hasFilters
     ? Object.fromEntries(
         (Object.entries(liveGrouped) as [string, ProblemWithStatus[]][])
-          .map(([k, v]): [string, ProblemWithStatus[]] => [k, v.filter((p: ProblemWithStatus) => p.title.toLowerCase().includes(query.toLowerCase()))])
+          .map(([k, v]): [string, ProblemWithStatus[]] => [k, v.filter(matches)])
           .filter(([, v]: [string, ProblemWithStatus[]]) => v.length > 0)
       )
     : liveGrouped;

@@ -241,13 +241,16 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
         <ProblemsSkeleton />
       ) : data && data.problems.length > 0 ? (
         <ProblemList
+          // Remount per sheet so the status/revise/hint maps rebuild from the
+          // new rows. A skeleton already unmounts this between sheets, but the
+          // filter refetch used to be the thing resyncing them, so pin it.
+          key={activeSheetId}
           grouped={grouped}
           userId={userId}
           sheetId={activeSheetId!}
           initialNotes={notes}
           onStatusChange={handleStatusChange}
           onAddProblems={activeSheet && !activeSheet.isPreset ? () => setShowAddProblems(true) : undefined}
-          mustDoOnly={lastMinute}
         />
       ) : activeSheet ? (
         <div className="rounded-2xl border border-dashed border-border px-5 py-16 text-center">

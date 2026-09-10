@@ -222,6 +222,11 @@ model Problem {
   testCases   TestCase[]
   statuses    UserProblemStatus[]
   notes       UserNote[]
+
+  // Postgres does not index foreign keys on its own, so every sheet view,
+  // filter and count was a Seq Scan over the whole table. Ordered by (sheetId,
+  // order) because the hot query filters on the first and sorts on the second.
+  @@index([sheetId, order])
 }
 
 model TestCase {
@@ -313,6 +318,10 @@ model UserNote {
   user       User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem    Problem?              @relation(fields: [problemId], references: [id], onDelete: SetNull)
   sdQuestion SystemDesignQuestion? @relation(fields: [sdQuestionId], references: [id], onDelete: SetNull)
+
+  // Notes are always loaded per user, and often per user + problem.
+  @@index([userId])
+  @@index([problemId])
 }
 
 // ─── RAG Knowledge Base ───────────────────────────────────────────────────

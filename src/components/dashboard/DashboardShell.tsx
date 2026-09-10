@@ -11,7 +11,7 @@ export type NavUser = { name: string | null; image: string | null; email: string
 /** Client shell for the dashboard. The user is fetched server-side in the
  *  layout and passed in, so the nav's avatar/name render in the SSR HTML
  *  instead of popping in after the client session resolves. */
-export default function DashboardShell({ user, children }: { user: NavUser; children: React.ReactNode }) {
+export default function DashboardShell({ user, onboarded, children }: { user: NavUser; onboarded: boolean; children: React.ReactNode }) {
   const mainRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
@@ -60,24 +60,16 @@ export default function DashboardShell({ user, children }: { user: NavUser; chil
       <FloatingMentor />
 
       {/* Onboarding — fetch lazily via API so this stays client-side */}
-      <OnboardingGate email={user.email} />
+      <OnboardingGate onboarded={onboarded} />
     </div>
   );
 }
 
-function OnboardingGate({ email }: { email: string | null }) {
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
-
-  useEffect(() => {
-    if (!email) return;
-    let cancelled = false;
-    fetch("/api/user/profile")
-      .then((r) => r.json())
-      .then((u) => { if (!cancelled) setNeedsOnboarding(!u.onboarded); })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [email]);
-
-  if (!needsOnboarding) return null;
-  return <OnboardingModal onDone={() => setNeedsOnboarding(false)} />;
+function OnboardingGate({ onboarded }: { onboarded: boolean }) {
+  // `onboarded` arrives from the server layout; this only tracks the user
+  // completing the modal in this session.
+  const [done, setDone] = useState(onboarded);
+  if (done) return null;
+  return <OnboardingModal onDone={() => setDone(true)} />;
 }
+
