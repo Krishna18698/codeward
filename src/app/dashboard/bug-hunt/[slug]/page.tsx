@@ -25,7 +25,7 @@ export default async function BugHuntExercisePage({ params }: Props) {
   });
 
   return (
-    <div className="space-y-5 animate-fade-up">
+    <div className="space-y-5 animate-page-in">
       <Link
         href="/dashboard/bug-hunt"
         className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-secondary transition-colors"

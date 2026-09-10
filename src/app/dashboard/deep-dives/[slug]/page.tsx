@@ -27,8 +27,10 @@ export default async function DeepDivePage({ params }: Props) {
   // so react-markdown never ships to the client; pass the nodes into the reader.
   const rendered = sections.map((s) => ({ title: s.title, body: <ArticleMarkdown body={s.content} /> }));
 
+  // No entrance animation on this root: it is a long read, and `fade-up` starts
+  // at opacity 0, so the entire article flashed blank before appearing.
   return (
-    <div className="flex gap-10 animate-fade-up">
+    <div className="flex gap-10">
       <MarkRead slug={slug} />
 
       {/* Article column */}
