@@ -66,7 +66,8 @@ export default function RotatingWord() {
   // The line is centred, so a growing word re-centres the whole headline on
   // every keystroke and drags the copy below it around. Reserving the widest
   // phrase's width up front means the typing happens inside a fixed box and
-  // nothing else on the page moves.
+  // nothing else on the page moves — the box itself is what stays centred
+  // under "Master", and the word centres inside it.
   //
   // The reservation is a zero-height, zero-opacity copy of the longest phrase
   // rather than a hardcoded `min-width` in ch or px: it measures in the real
@@ -75,7 +76,7 @@ export default function RotatingWord() {
   const longest = WORDS.reduce((a, b) => (b.length > a.length ? b : a));
 
   return (
-    <span className="relative inline-grid whitespace-nowrap text-left align-bottom">
+    <span className="relative inline-grid whitespace-nowrap text-center align-bottom">
       <span aria-hidden className="invisible col-start-1 row-start-1 h-0 overflow-hidden">
         {longest}_
       </span>
