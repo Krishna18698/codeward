@@ -8,6 +8,7 @@ import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
 import { PATTERNS, TOPICS, patternLabel, unmappedPatterns } from "@/content/patterns";
 import Collapse from "@/components/ui/Collapse";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 
 type ProblemWithStatus = {
   id: string;
@@ -32,25 +33,6 @@ type Props = {
   onAddProblems?: () => void;
   /** Last-Minute view: only the must-do problems of this sheet. */
   mustDoOnly?: boolean;
-};
-
-const COMPANY_DOMAINS: Record<string, string> = {
-  Google: "google.com",
-  Amazon: "amazon.com",
-  Meta: "meta.com",
-  Microsoft: "microsoft.com",
-  Apple: "apple.com",
-  "Goldman Sachs": "goldmansachs.com",
-  LinkedIn: "linkedin.com",
-  Netflix: "netflix.com",
-  Uber: "uber.com",
-  Airbnb: "airbnb.com",
-  Adobe: "adobe.com",
-  Twitter: "x.com",
-  Flipkart: "flipkart.com",
-  Swiggy: "swiggy.com",
-  "Morgan Stanley": "morganstanley.com",
-  Facebook: "facebook.com",
 };
 
 const difficultyColor: Record<Difficulty, string> = {
@@ -591,13 +573,11 @@ export default function ProblemList({
                             </div>
                             <div className="flex items-center">
                               <div className="flex items-center gap-1 mr-2">
-                                {p.companies.slice(0, 3).map((c) => {
-                                  const domain = COMPANY_DOMAINS[c];
-                                  return domain ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img key={c} loading="lazy" decoding="async" src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={15} height={15} className="rounded-sm opacity-70 hover:opacity-100 transition-opacity" />
-                                  ) : null;
-                                })}
+                                {p.companies.slice(0, 3).map((c) => (
+                                  <span key={c} title={c} className="inline-flex opacity-70 hover:opacity-100 transition-opacity">
+                                    <CompanyLogo name={c} size={15} />
+                                  </span>
+                                ))}
                               </div>
                               <span className={cn("text-xs font-medium shrink-0", difficultyColor[p.difficulty])}>
                                 {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
@@ -649,13 +629,11 @@ export default function ProblemList({
 
                             {/* Companies */}
                             <div className="flex items-center justify-center gap-1.5">
-                              {p.companies.slice(0, 3).map((c) => {
-                                const domain = COMPANY_DOMAINS[c];
-                                return domain ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img key={c} loading="lazy" decoding="async" src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={16} height={16} className="rounded-sm opacity-75 hover:opacity-100 transition-opacity" />
-                                ) : null;
-                              })}
+                              {p.companies.slice(0, 3).map((c) => (
+                                <span key={c} title={c} className="inline-flex opacity-75 hover:opacity-100 transition-opacity">
+                                  <CompanyLogo name={c} size={16} />
+                                </span>
+                              ))}
                             </div>
 
                             {/* Must do */}

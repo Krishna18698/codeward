@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
+import { CompanyLogo } from "@/components/ui/CompanyLogo";
 import { Search, Plus, Check, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
@@ -17,14 +18,6 @@ type Problem = {
 };
 
 type BankPattern = { pattern: string; total: number };
-
-const COMPANY_DOMAINS: Record<string, string> = {
-  Google: "google.com", Amazon: "amazon.com", Meta: "meta.com",
-  Microsoft: "microsoft.com", Apple: "apple.com", "Goldman Sachs": "goldmansachs.com",
-  LinkedIn: "linkedin.com", Netflix: "netflix.com", Uber: "uber.com",
-  Airbnb: "airbnb.com", Adobe: "adobe.com", Twitter: "x.com",
-  Flipkart: "flipkart.com", Swiggy: "swiggy.com", "Morgan Stanley": "morganstanley.com",
-};
 
 type UserSheet = { id: string; name: string };
 type Props = { userSheets: UserSheet[] };
@@ -313,13 +306,11 @@ export default function ProblemBank({ userSheets }: Props) {
                               </div>
                               <div className="flex items-center">
                                 <div className="flex-1 flex items-center gap-1">
-                                  {p.companies.slice(0, 4).map((c) => {
-                                    const domain = COMPANY_DOMAINS[c];
-                                    return domain ? (
-                                      // eslint-disable-next-line @next/next/no-img-element
-                                      <img key={c} loading="lazy" decoding="async" src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={15} height={15} className="rounded-sm opacity-75 hover:opacity-100 transition-opacity" />
-                                    ) : null;
-                                  })}
+                                  {p.companies.slice(0, 4).map((c) => (
+                                    <span key={c} title={c} className="inline-flex opacity-75 hover:opacity-100 transition-opacity">
+                                      <CompanyLogo name={c} size={15} />
+                                    </span>
+                                  ))}
                                 </div>
                                 <span className={`text-[11px] border rounded-full px-2 py-0.5 shrink-0 ${DIFF_COLOR[p.difficulty]}`}>
                                   {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
@@ -352,13 +343,11 @@ export default function ProblemBank({ userSheets }: Props) {
 
                               {/* Companies */}
                               <div className="flex items-center justify-center gap-1.5">
-                                {p.companies.slice(0, 4).map((c) => {
-                                  const domain = COMPANY_DOMAINS[c];
-                                  return domain ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img key={c} loading="lazy" decoding="async" src={`https://www.google.com/s2/favicons?domain=${domain}&sz=32`} alt={c} title={c} width={16} height={16} className="rounded-sm opacity-80 hover:opacity-100 transition-opacity" />
-                                  ) : null;
-                                })}
+                                {p.companies.slice(0, 4).map((c) => (
+                                  <span key={c} title={c} className="inline-flex opacity-80 hover:opacity-100 transition-opacity">
+                                    <CompanyLogo name={c} size={16} />
+                                  </span>
+                                ))}
                               </div>
 
                               {/* Must do */}

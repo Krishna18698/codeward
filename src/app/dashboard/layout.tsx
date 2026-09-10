@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import DashboardShell from "@/components/dashboard/DashboardShell";
+import { CompanyLogoSprite } from "@/components/ui/CompanyLogo";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Read the user server-side (from the JWT — no DB hit) so the nav's avatar and
@@ -16,5 +17,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     email: session.user.email ?? null,
   };
 
-  return <DashboardShell user={user}>{children}</DashboardShell>;
+  return (
+    <>
+      <CompanyLogoSprite />
+      <DashboardShell user={user}>{children}</DashboardShell>
+    </>
+  );
 }

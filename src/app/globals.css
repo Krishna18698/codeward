@@ -220,6 +220,12 @@ body {
   box-sizing: border-box;
 }
 
+/* Uber's mark is a black tile with white type — nothing to recolour, so it is
+   flipped wholesale on the dark canvas (which is the default here) and left
+   alone once the light theme opts out. */
+.company-mark-invert { filter: invert(1); }
+[data-theme="light"] .company-mark-invert { filter: none; }
+
 /* Problem titles link out to the problem. On hover they take the accent colour
    and a soft glow rather than an underline — an underline on every row fought
    the dense list rhythm and made the sheet look like a wall of links. The glow

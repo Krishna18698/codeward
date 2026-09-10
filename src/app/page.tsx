@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DsaMockup, MentorMockup, CodeReviewMockup, DeepDiveMockup, BugHuntMockup, BuildItMockup, SystemDesignMockup } from "@/components/landing/Mockups";
 import RotatingWord from "@/components/landing/RotatingWord";
+import { CompanyLogo, CompanyLogoSprite } from "@/components/ui/CompanyLogo";
 import SiteNav from "@/components/landing/SiteNav";
 import SiteFooter from "@/components/landing/SiteFooter";
 import HeroGlow from "@/components/landing/HeroGlow";
@@ -76,21 +77,22 @@ function Hero() {
 }
 
 /* ─── Logo strip (marquee) ──────────────────────────────────────────────── */
-// Logo marquee — real brand marks pulled from Google's favicon service (the same
-// source the DSA problem rows already use), so no logo assets ship in the bundle.
-const COMPANIES: { name: string; domain: string }[] = [
-  { name: "Google", domain: "google.com" },
-  { name: "Amazon", domain: "amazon.com" },
-  { name: "Meta", domain: "meta.com" },
-  { name: "Microsoft", domain: "microsoft.com" },
-  { name: "Netflix", domain: "netflix.com" },
-  { name: "Uber", domain: "uber.com" },
-  { name: "Airbnb", domain: "airbnb.com" },
-  { name: "Stripe", domain: "stripe.com" },
-  { name: "Atlassian", domain: "atlassian.com" },
-  { name: "LinkedIn", domain: "linkedin.com" },
-  { name: "Flipkart", domain: "flipkart.com" },
-  { name: "Swiggy", domain: "swiggy.com" },
+// Logo marquee — brand marks inlined from CompanyLogo (the same source the DSA
+// problem rows use). Previously these were hotlinked from Google's favicon
+// service, which cost 11 third-party requests on this page alone.
+const COMPANIES: { name: string }[] = [
+  { name: "Google" },
+  { name: "Amazon" },
+  { name: "Meta" },
+  { name: "Microsoft" },
+  { name: "Netflix" },
+  { name: "Uber" },
+  { name: "Airbnb" },
+  { name: "Stripe" },
+  { name: "Atlassian" },
+  { name: "LinkedIn" },
+  { name: "Flipkart" },
+  { name: "Swiggy" },
 ];
 
 function LogoStrip() {
@@ -111,17 +113,9 @@ function LogoStrip() {
             <div className="flex w-max animate-marquee items-center gap-9">
               {track.map((c, i) => (
                 <span key={i} className="flex shrink-0 items-center gap-2 whitespace-nowrap">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`https://www.google.com/s2/favicons?domain=${c.domain}&sz=64`}
-                    alt=""
-                    aria-hidden
-                    loading="lazy"
-                    decoding="async"
-                    width={18}
-                    height={18}
-                    className="h-[18px] w-[18px] rounded-sm opacity-80"
-                  />
+                  <span aria-hidden className="inline-flex opacity-80">
+                    <CompanyLogo name={c.name} size={18} />
+                  </span>
                   <span className="text-sm font-semibold text-secondary">{c.name}</span>
                 </span>
               ))}
@@ -359,6 +353,7 @@ function Method() {
 export default function Home() {
   return (
     <div className="min-h-dvh bg-canvas text-primary">
+      <CompanyLogoSprite />
       <SiteNav />
 
       {/* Permanent top glow + a smaller cursor-following glow — scoped to the

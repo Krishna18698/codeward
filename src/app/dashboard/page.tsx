@@ -228,7 +228,7 @@ export default async function DashboardPage() {
                 {/* Matches the PageHeader scale the seven modes use — the app's
                     own home page was the last thing still set like a widget. */}
                 <h1 className="text-[26px] font-semibold leading-[1.05] tracking-heading text-primary md:text-[38px]">
-                  {firstName} 👋
+                  {firstName}
                 </h1>
                 {user.targetCompany && (
                   <p className="text-xs text-muted mt-0.5">
