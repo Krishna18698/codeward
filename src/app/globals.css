@@ -116,6 +116,15 @@
   --color-teal-400:#0f766e;--color-teal-500:#0f766e;
 }
 
+/* These panes are dark in BOTH themes (they sit on bg-black), so any text that
+   doesn't set its own colour must NOT inherit the page's --color-primary — in
+   light mode that is near-black, which vanished on the black pane (the hero
+   code-review preview's un-highlighted lines were the visible casualty). Pin a
+   light base here; elements with their own text-* colour still win. */
+.keep-dark-colors {
+  color: var(--color-code-fg);
+}
+
 /* Pinned-dark surfaces reset the deepened accent palette back to Tailwind's
    defaults, so their light-on-dark syntax/badge colors stay readable even
    though the page is in light theme. */
