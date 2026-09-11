@@ -41,13 +41,13 @@ function StatsSkeleton() {
   return (
     <div className="rounded-2xl border border-border bg-surface px-5 py-3.5 space-y-2 animate-pulse">
       <div className="flex items-center justify-between gap-3">
-        <div className="h-4 w-36 rounded bg-elevated" />
-        <div className="h-3 w-12 rounded bg-border" />
+        <div className="h-4 w-36 rounded bg-skeleton" />
+        <div className="h-3 w-12 rounded bg-skeleton" />
       </div>
-      <div className="h-1.5 rounded-full bg-border w-full" />
+      <div className="h-1.5 rounded-full bg-skeleton w-full" />
       <div className="flex items-center gap-4 pt-0.5">
-        <div className="h-3 w-20 rounded bg-border" />
-        <div className="h-3 w-20 rounded bg-border" />
+        <div className="h-3 w-20 rounded bg-skeleton" />
+        <div className="h-3 w-20 rounded bg-skeleton" />
       </div>
     </div>
   );
@@ -60,17 +60,17 @@ function ProblemsSkeleton() {
         <div key={i} className="rounded-xl border border-border bg-surface overflow-hidden animate-pulse">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
-              <div className="h-3 w-20 rounded bg-elevated" />
-              <div className="h-2.5 w-8 rounded bg-border" />
+              <div className="h-3 w-20 rounded bg-skeleton" />
+              <div className="h-2.5 w-8 rounded bg-skeleton" />
             </div>
-            <div className="h-2 w-20 rounded-full bg-border" />
+            <div className="h-2 w-20 rounded-full bg-skeleton" />
           </div>
           <div className="border-t border-border divide-y divide-border">
             {[1, 2, 3, 4].map((j) => (
               <div key={j} className="flex items-center gap-3 px-4 py-2.5">
-                <div className="w-6 h-6 rounded-full bg-border shrink-0" />
-                <div className="flex-1 h-3 rounded bg-elevated" />
-                <div className="w-10 h-3 rounded bg-border shrink-0" />
+                <div className="w-6 h-6 rounded-full bg-skeleton shrink-0" />
+                <div className="flex-1 h-3 rounded bg-skeleton" />
+                <div className="w-10 h-3 rounded bg-skeleton shrink-0" />
               </div>
             ))}
           </div>

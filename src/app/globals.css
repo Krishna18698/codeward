@@ -47,6 +47,13 @@
   --color-hard-bg:       #341c25;
   --color-subtle:        #333333;   /* scrollbar thumb, hairlines */
 
+  /* Loading skeletons get their own pair rather than borrowing elevated/border.
+     Those track the surface ramp, and on light that put the placeholder at
+     #f7f8fa on a white card — 1.06:1, effectively invisible. The sheen must
+     stay LIGHTER than the base in both themes or the sweep reads as a dent. */
+  --color-skeleton:      #1a1c20;
+  --skeleton-sheen:      #2a2d33;
+
   /* Dropdown panels sit ON the elevated ramp rather than in it: black in dark
      so the panel reads as a layer above the page (the elevated grey made it
      look like just another card), white in light for the same reason. */
@@ -111,6 +118,8 @@
   --color-hard-bg:       #ffe6ed;
   --color-subtle:        #d4d4d4;
   --color-overlay:       #ffffff;
+  --color-skeleton:      #dce0e6;   /* 1.33:1 on a white card, was 1.06 */
+  --skeleton-sheen:      #ffffff;
 
   --dot-color:           rgba(0, 0, 0, 0.05);   /* dark dots on the light page */
 
@@ -186,6 +195,7 @@
   --color-muted:         var(--color-muted);
   --color-subtle:        var(--color-subtle);
   --color-overlay:       var(--color-overlay);
+  --color-skeleton:      var(--color-skeleton);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -338,9 +348,9 @@ body {
 }
 
 /* A loading-skeleton shimmer — a soft band sweeps left→right across the block.
-   The band uses --color-border so it reads on both themes (lighter than the
-   elevated base on dark, slightly darker than white on light). Auto-disabled by
-   the reduced-motion block below. */
+   The band is --skeleton-sheen, which is a step LIGHTER than --color-skeleton in
+   both themes, so the sweep reads as a highlight rather than a dent.
+   Auto-disabled by the reduced-motion block below. */
 @keyframes skeleton-sweep {
   to { transform: translateX(100%); }
 }
@@ -428,7 +438,7 @@ body {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: var(--color-elevated);
+  background: var(--color-skeleton);
   border-radius: 8px;
 }
 .skeleton::after {
@@ -436,7 +446,7 @@ body {
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent 0%, var(--color-border) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--skeleton-sheen) 50%, transparent 100%);
   opacity: 0.7;
   animation: skeleton-sweep 1.5s ease-in-out infinite;
 }

@@ -196,8 +196,8 @@ export default function ProblemBank({ userSheets }: Props) {
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="rounded-xl border border-border bg-surface px-4 py-3 animate-pulse">
               <div className="flex items-center justify-between">
-                <div className="h-3 w-28 rounded bg-elevated" />
-                <div className="h-3 w-8 rounded bg-border" />
+                <div className="h-3 w-28 rounded bg-skeleton" />
+                <div className="h-3 w-8 rounded bg-skeleton" />
               </div>
             </div>
           ))}
@@ -276,9 +276,9 @@ export default function ProblemBank({ userSheets }: Props) {
                     {isLoading ? (
                       Array.from({ length: 3 }).map((_, i) => (
                         <div key={i} className="flex items-center gap-3 px-4 py-3 animate-pulse">
-                          <div className="w-7 h-3 rounded bg-border shrink-0" />
-                          <div className="flex-1 h-3 rounded bg-elevated" />
-                          <div className="w-12 h-3 rounded bg-border shrink-0" />
+                          <div className="w-7 h-3 rounded bg-skeleton shrink-0" />
+                          <div className="flex-1 h-3 rounded bg-skeleton" />
+                          <div className="w-12 h-3 rounded bg-skeleton shrink-0" />
                         </div>
                       ))
                     ) : probs.length === 0 ? (
