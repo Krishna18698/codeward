@@ -47,6 +47,15 @@
   --color-hard-bg:       #341c25;
   --color-subtle:        #333333;   /* scrollbar thumb, hairlines */
 
+  /* Dropdown panels sit ON the elevated ramp rather than in it: black in dark
+     so the panel reads as a layer above the page (the elevated grey made it
+     look like just another card), white in light for the same reason. */
+  --color-overlay:       #0a0b0d;
+
+  /* Single source for the scrollbar width. The dropdown in TopNav has to add
+     this back as a right offset — see .topnav-menu. */
+  --scrollbar-width:     4px;
+
   /* Code surfaces stay dark in BOTH themes (GitHub-style) — deliberately NOT
      overridden in the light block, so a syntax-highlighted pane keeps its
      light-on-dark palette even on a light page. Applied via .code-surface. */
@@ -101,6 +110,7 @@
   --color-hard:          #a82343;
   --color-hard-bg:       #ffe6ed;
   --color-subtle:        #d4d4d4;
+  --color-overlay:       #ffffff;
 
   --dot-color:           rgba(0, 0, 0, 0.05);   /* dark dots on the light page */
 
@@ -175,6 +185,7 @@
   --color-danger:        var(--color-danger);
   --color-muted:         var(--color-muted);
   --color-subtle:        var(--color-subtle);
+  --color-overlay:       var(--color-overlay);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -465,7 +476,7 @@ body {
 .font-mono { font-variant-numeric: tabular-nums; }
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────────── */
-::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar       { width: var(--scrollbar-width); height: var(--scrollbar-width); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-subtle); border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
@@ -566,4 +577,19 @@ textarea.chat-textarea:focus-visible {
 
 .skip-link:focus {
   left: 0;
+}
+
+/* ── Mobile nav dropdown alignment ─────────────────────────────────────────
+   The header sits outside <main>, so it never gets main's reserved scrollbar
+   gutter — and its horizontal padding is smaller than the content column's.
+   Anchored to the hamburger, the panel therefore overhung the cards below by
+   4px on mobile and 20px at tablet width. These offsets pull its right edge
+   onto the content column's edge:
+
+     mobile  content px-4  + gutter  vs header px-4  -> gutter
+     >=768   content px-10 + gutter  vs header px-6  -> 1rem + gutter  */
+.topnav-menu { right: var(--scrollbar-width); }
+
+@media (min-width: 768px) {
+  .topnav-menu { right: calc(1rem + var(--scrollbar-width)); }
 }

@@ -4,6 +4,7 @@ import Logo from "@/components/ui/Logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { LogOut } from "lucide-react";
 import { cn } from "@/lib/cn";
 import UserAvatar from "@/components/ui/UserAvatar";
 import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -74,8 +75,14 @@ export default function TopNav({ user }: { user: NavUser }) {
                   onClick={() => setMenuOpen(false)}
                   className="fixed inset-0 z-40"
                 />
-                <nav className="absolute right-0 top-[calc(100%+8px)] z-40 w-56 overflow-hidden rounded-[8px] border border-border bg-elevated py-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
-                  {nav.map(({ label, href }) => {
+                {/* `topnav-menu` sets the right offset — the header's padding
+                    is narrower than the content column's and misses main's
+                    scrollbar gutter, so `right-0` overhung the cards below.
+                    Rows are inset from the panel edge rather than full-bleed:
+                    at this corner radius a full-width highlight collides with
+                    the curve. */}
+                <nav className="topnav-menu absolute top-[calc(100%+8px)] z-40 w-56 rounded-[20px] border border-border bg-overlay p-1.5 shadow-[0_16px_50px_rgba(0,0,0,0.5)]">
+                  {nav.map(({ label, href, icon: Icon }) => {
                     const active = pathname === href || pathname.startsWith(href);
                     return (
                       <Link
@@ -84,13 +91,14 @@ export default function TopNav({ user }: { user: NavUser }) {
                         onClick={() => setMenuOpen(false)}
                         aria-current={active ? "page" : undefined}
                         className={cn(
-                          "block px-4 py-3 text-sm transition-colors duration-150",
+                          "flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-sm transition-colors duration-150",
                           active
-                            ? "text-primary bg-primary/6"
-                            : "text-secondary hover:text-primary hover:bg-primary/5",
+                            ? "bg-accent/10 text-accent"
+                            : "text-secondary hover:bg-primary/5 hover:text-primary",
                         )}
                       >
-                        {label}
+                        <Icon size={16} className="shrink-0" />
+                        <span className="truncate">{label}</span>
                       </Link>
                     );
                   })}
@@ -101,13 +109,13 @@ export default function TopNav({ user }: { user: NavUser }) {
                     onClick={() => setMenuOpen(false)}
                     aria-current={pathname.startsWith("/dashboard/profile") ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-2.5 px-4 py-3 text-sm transition-colors duration-150",
+                      "flex items-center gap-3 rounded-[12px] px-3 py-2.5 text-sm transition-colors duration-150",
                       pathname.startsWith("/dashboard/profile")
-                        ? "text-primary bg-primary/6"
-                        : "text-secondary hover:text-primary hover:bg-primary/5",
+                        ? "bg-accent/10 text-accent"
+                        : "text-secondary hover:bg-primary/5 hover:text-primary",
                     )}
                   >
-                    <UserAvatar image={user.image} name={user.name} size={22} />
+                    <UserAvatar image={user.image} name={user.name} size={20} />
                     <span className="truncate">{user.name ?? "Profile"}</span>
                   </Link>
                   <button
@@ -115,9 +123,10 @@ export default function TopNav({ user }: { user: NavUser }) {
                       setMenuOpen(false);
                       signOut({ callbackUrl: "/" });
                     }}
-                    className="block w-full px-4 py-3 text-left text-sm text-secondary transition-colors duration-150 hover:bg-primary/5 hover:text-primary"
+                    className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left text-sm text-secondary transition-colors duration-150 hover:bg-primary/5 hover:text-primary"
                   >
-                    Sign out
+                    <LogOut size={16} className="shrink-0" />
+                    <span>Sign out</span>
                   </button>
                 </nav>
               </>
