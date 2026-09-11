@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, Check, Circle, PenLine, X, Flag, Search, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
@@ -8,6 +8,7 @@ import { GFGIcon } from "@/components/ui/GFGIcon";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
 import { PATTERNS, TOPICS, patternLabel, unmappedPatterns } from "@/content/patterns";
 import Collapse from "@/components/ui/Collapse";
+import NoteModal from "@/components/dashboard/NoteModal";
 import { CompanyLogo } from "@/components/ui/CompanyLogo";
 
 type ProblemWithStatus = {
@@ -54,71 +55,6 @@ function StatusIcon({ status }: { status: ProblemStatus }) {
   return <Circle size={12} strokeWidth={1.5} className="text-muted" />;
 }
 
-function InlineNote({
-  problemId,
-  userId,
-  initialContent,
-  onClose,
-}: {
-  problemId: string;
-  userId: string;
-  initialContent: string;
-  onClose: () => void;
-}) {
-  const [content, setContent] = useState(initialContent);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const save = useCallback(async (text: string) => {
-    setSaveState("saving");
-    await fetch("/api/notes/upsert", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ problemId, userId, content: text }),
-    });
-    setSaveState("saved");
-    setTimeout(() => setSaveState("idle"), 2000);
-  }, [problemId, userId]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const val = e.target.value;
-    setContent(val);
-    setSaveState("idle");
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => save(val), 800);
-  };
-
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
-
-  return (
-    <div className="px-4 pb-3 bg-surface">
-      <div className="rounded-lg border border-border bg-canvas overflow-hidden">
-        <div className="flex items-center justify-between px-3 py-1.5 border-b border-border">
-          <span className="text-[11px] text-muted flex items-center gap-1.5">
-            <PenLine size={11} />
-            Notes
-          </span>
-          <div className="flex items-center gap-3">
-            {saveState === "saving" && <span className="text-[10px] text-muted">saving…</span>}
-            {saveState === "saved"  && <span className="text-[10px] text-accent">saved ✓</span>}
-            <button onClick={onClose} className="text-muted hover:text-secondary transition-colors">
-              <X size={13} />
-            </button>
-          </div>
-        </div>
-        <textarea
-          value={content}
-          onChange={handleChange}
-          placeholder="Add your notes, key insights, approach…"
-          className="w-full bg-transparent text-secondary text-xs px-3 py-2.5 resize-none focus:outline-none placeholder:text-muted"
-          rows={4}
-          autoFocus
-        />
-      </div>
-    </div>
-  );
-}
-
 export default function ProblemList({
   grouped, userId, sheetId, initialNotes, onStatusChange, onAddProblems,
 }: Props) {
@@ -148,7 +84,9 @@ export default function ProblemList({
     return map;
   });
 
-  const notes = initialNotes;
+  // State, not a straight alias for the prop: saving a note has to light up the
+  // row's pencil immediately, and the prop only changes on a sheet reload.
+  const [notes, setNotes] = useState<Record<string, string>>(initialNotes);
   const [openNoteId, setOpenNoteId] = useState<string | null>(null);
   // Which problem's hint is revealed (one at a time). Hint text is plain and
   // cheap, so unlike the note editor it can stay mounted inside Collapse — no
@@ -167,11 +105,6 @@ export default function ProblemList({
   // the DOM at page load. Rows are now built the first time a group is opened
   // and kept from then on, so the close animation still has content to run on.
   const [everOpened, setEverOpened] = useState<Set<string>>(() => new Set());
-  // Two ids, not one. `openNoteId` drives the collapse; `mountedNoteId` lags it
-  // on close so the editor survives long enough to animate out. The editor
-  // autofocuses on mount, so it must NOT stay mounted for every row.
-  const [mountedNoteId, setMountedNoteId] = useState<string | null>(null);
-  const noteExitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Which problem is mid-celebration. The status button is the SAME DOM node
   // across re-renders, so a permanently-applied class would only ever animate
   // once — the class has to be absent for a frame before it can replay. Clearing
@@ -219,25 +152,10 @@ export default function ProblemList({
     }
   };
 
-  const toggleNote = (problemId: string) => {
-    if (noteExitTimer.current) clearTimeout(noteExitTimer.current);
-
-    if (openNoteId === problemId) {
-      setOpenNoteId(null);
-      noteExitTimer.current = setTimeout(() => setMountedNoteId(null), 220);
-      // Restore focus to whichever trigger is actually on screen (each row has a
-      // desktop and a mobile copy). Without this, closing unmounts the focused
-      // textarea and focus falls to <body>, losing a keyboard user's place.
-      requestAnimationFrame(() => {
-        const btns = document.querySelectorAll<HTMLElement>(`[data-note-trigger="${problemId}"]`);
-        for (const b of btns) if (b.offsetParent !== null) { b.focus(); break; }
-      });
-      return;
-    }
-
-    setMountedNoteId(problemId);
-    setOpenNoteId(problemId);
-  };
+  // The modal restores focus to whatever opened it, so there's no focus dance
+  // left to do here.
+  const toggleNote = (problemId: string) =>
+    setOpenNoteId((cur) => (cur === problemId ? null : problemId));
 
   const toggleRevise = async (problemId: string) => {
     const current = revising[problemId] ?? false;
@@ -499,7 +417,6 @@ export default function ProblemList({
                 {(everOpened.has(pattern) ? problems : []).map((p, idx) => {
                   const status = statuses[p.id] ?? "TODO";
                   const noteOpen = openNoteId === p.id;
-                  const notePresent = mountedNoteId === p.id;
                   const hasNote = !!(notes[p.id]?.trim());
                   const isRevising = revising[p.id] ?? false;
                   const hintOpen = openHintId === p.id;
@@ -617,20 +534,6 @@ export default function ProblemList({
                           </div>
                         </Collapse>
                       )}
-
-                      {/* Inline notes panel. Mounted only while open (the
-                          editor autofocuses), but held for the collapse
-                          duration so it can animate out. */}
-                      <Collapse open={noteOpen} id={`note-${p.id}`}>
-                        {notePresent && (
-                          <InlineNote
-                            problemId={p.id}
-                            userId={userId}
-                            initialContent={notes[p.id] ?? ""}
-                            onClose={() => toggleNote(p.id)}
-                          />
-                        )}
-                      </Collapse>
                     </div>
                   );
                 })}
@@ -644,6 +547,20 @@ export default function ProblemList({
         );
       })}
 
+      {/* One editor for the whole list, not one per row. It only mounts while a
+          note is open, so its autofocus can't fight the page. */}
+      {openNoteId && (
+        <NoteModal
+          problemId={openNoteId}
+          userId={userId}
+          title={allProblems.find((p) => p.id === openNoteId)?.title ?? "Notes"}
+          initialContent={notes[openNoteId] ?? ""}
+          onSaved={(content) =>
+            setNotes((prev) => ({ ...prev, [openNoteId]: content }))
+          }
+          onClose={() => setOpenNoteId(null)}
+        />
+      )}
     </div>
   );
 }
