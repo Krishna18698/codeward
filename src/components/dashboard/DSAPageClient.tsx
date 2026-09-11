@@ -3,6 +3,7 @@ import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useSheetProgress } from "./SheetProgressProvider";
 import CreateSheetModal from "./CreateSheetModal";
 
 type Sheet = { id: string; name: string; isPreset: boolean; problemCount: number; solvedCount: number };
@@ -14,6 +15,7 @@ type Props = {
 
 export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }: Props) {
   const searchParams = useSearchParams();
+  const { deltaBySheet } = useSheetProgress();
   // Resolve active sheet from URL first, fall back to server default
   const activeSheetId = searchParams.get("sheet") ?? defaultSheetId;
 
@@ -63,7 +65,14 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
           const isActive  = s.id === activeSheetId;
           const isCustom  = !s.isPreset;
           const isLoading = isPending && pendingSheetId === s.id;
-          const pct = s.problemCount > 0 ? (s.solvedCount / s.problemCount) * 100 : 0;
+          // solvedCount is the server's count at page load; the delta is what
+          // has been toggled since. Without it this card read 2/75 while the
+          // stats bar right below already said 3.
+          const solved = Math.min(
+            s.problemCount,
+            Math.max(0, s.solvedCount + (deltaBySheet[s.id] ?? 0)),
+          );
+          const pct = s.problemCount > 0 ? (solved / s.problemCount) * 100 : 0;
 
           return (
             <div key={s.id} className="relative group">
@@ -89,7 +98,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }:
                       {s.name}
                     </span>
                     <span className="block font-mono text-[11px] text-muted">
-                      {s.solvedCount} / {s.problemCount} solved
+                      {solved} / {s.problemCount} solved
                     </span>
                   </span>
                 </div>

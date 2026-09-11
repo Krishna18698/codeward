@@ -4,6 +4,7 @@ import Link from "next/link";
 import { CheckCircle2, Circle } from "lucide-react";
 import ProblemList from "./ProblemList";
 import AddProblemsModal from "./AddProblemsModal";
+import { useSheetProgress } from "./SheetProgressProvider";
 import type { Difficulty, ProblemPattern, ProblemStatus } from "@prisma/client";
 
 type Sheet = { id: string; name: string; isPreset: boolean; problemCount: number };
@@ -81,6 +82,7 @@ function ProblemsSkeleton() {
 
 export default function SheetContent({ sheets, defaultSheetId, userId, initialData, initialNotes, lastMinute = false }: Props) {
   const activeSheetId = defaultSheetId;
+  const { applyDelta } = useSheetProgress();
 
   // Track which sheetId was pre-fetched so we skip the first fetch for it
   const preloadedSheetId = useRef(initialData ? defaultSheetId : null);
@@ -131,6 +133,11 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
     if (difficulty && delta !== 0) {
       setDiffDelta((m) => ({ ...m, [difficulty]: (m[difficulty] ?? 0) + delta }));
     }
+    // Publish upward so the sheet selector moves with this bar instead of
+    // sitting on its server-rendered count until a reload. ProblemList calls
+    // back with the arguments reversed when a save fails, so a rollback lands
+    // here as the inverse delta and the selector reverts in step.
+    if (activeSheetId && delta !== 0) applyDelta(activeSheetId, delta);
   };
 
   const activeSheet = sheets.find((s) => s.id === activeSheetId);

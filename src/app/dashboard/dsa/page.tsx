@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import ProblemBank from "@/components/dashboard/ProblemBank";
 import DSAPageClient from "@/components/dashboard/DSAPageClient";
 import SheetContent from "@/components/dashboard/SheetContent";
+import SheetProgressProvider from "@/components/dashboard/SheetProgressProvider";
 import PageHeader from "@/components/ui/PageHeader";
 
 type Props = { searchParams: Promise<{ sheet?: string; view?: string }> };
@@ -184,6 +185,10 @@ export default async function DSAPage({ searchParams }: Props) {
               </div>
             )}
 
+            {/* Selector and stats bar share live progress through this
+                provider — they are siblings here, so without it a status toggle
+                moved one and left the other on its server-rendered count. */}
+            <SheetProgressProvider>
             {/* Sheet tabs — handles delete + new sheet + add problems button */}
             {/* Fallback mirrors the selector's card shape so the row doesn't
                 reflow when the client component hydrates. */}
@@ -236,6 +241,7 @@ export default async function DSAPage({ searchParams }: Props) {
                 lastMinute={lastMinute}
               />
             )}
+            </SheetProgressProvider>
           </>
         )}
       </div>
