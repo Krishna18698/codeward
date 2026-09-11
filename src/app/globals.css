@@ -664,3 +664,10 @@ textarea.chat-textarea:focus-visible {
 body:has([role="dialog"]) .floating-mentor {
   display: none;
 }
+
+/* ── Note sheet ────────────────────────────────────────────────────────────
+   Pure black rather than --color-surface: the sheet sits over a blurred page
+   and the surface grey read as another card floating on the blur instead of a
+   panel in front of it. White on light for the same reason. */
+.note-sheet { background: #000000; }
+[data-theme="light"] .note-sheet { background: #ffffff; }
