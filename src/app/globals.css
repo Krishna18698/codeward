@@ -671,3 +671,23 @@ body:has([role="dialog"]) .floating-mentor {
    panel in front of it. White on light for the same reason. */
 .note-sheet { background: #000000; }
 [data-theme="light"] .note-sheet { background: #ffffff; }
+
+/* ── Scroll lock while a dialog is open ────────────────────────────────────
+   The dashboard scrolls <main>, not <body> — it's a h-dvh shell with
+   `flex-1 overflow-y-auto` on the content. Locking body alone does nothing
+   here, which is how a wheel over an open note sheet scrolled the page from
+   300px to 6628px behind it. Both are pinned; body covers the pages that do
+   scroll the document (auth, marketing).
+
+   `overflow: hidden` keeps scrollTop, so the page is where you left it on
+   close. overscroll-behavior stops a flick inside the sheet chaining out to
+   whatever is behind it once the textarea hits its end. */
+body:has([role="dialog"]),
+body:has([role="dialog"]) main {
+  overflow: hidden;
+}
+
+[role="dialog"],
+[role="dialog"] textarea {
+  overscroll-behavior: contain;
+}

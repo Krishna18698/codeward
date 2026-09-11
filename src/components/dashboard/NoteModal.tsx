@@ -126,11 +126,19 @@ export default function NoteModal({
   const close = () => { flush(); onClose(); };
 
   // Focus the text, and hand focus back to the opener when we're done.
+  //
+  // preventScroll on both: a plain focus() asks the browser to bring the element
+  // into view, and it does that by scrolling the nearest scrollable ancestor —
+  // the dashboard's <main>. Opening a note jumped the page from 300px to the
+  // bottom of the sheet, and closing it jumped somewhere else again.
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
     const a = areaRef.current;
-    if (a) { a.focus(); a.setSelectionRange(a.value.length, a.value.length); }
-    return () => opener?.focus?.();
+    if (a) {
+      a.focus({ preventScroll: true });
+      a.setSelectionRange(a.value.length, a.value.length);
+    }
+    return () => opener?.focus?.({ preventScroll: true });
   }, []);
 
   useEffect(() => {
@@ -167,7 +175,7 @@ export default function NoteModal({
 
     setContent(next);
     queueSave(next);
-    requestAnimationFrame(() => { a.focus(); a.setSelectionRange(caret, caret); });
+    requestAnimationFrame(() => { a.focus({ preventScroll: true }); a.setSelectionRange(caret, caret); });
   };
 
   const words = content.trim() ? content.trim().split(/\s+/).length : 0;
