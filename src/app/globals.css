@@ -654,3 +654,13 @@ textarea.chat-textarea:focus-visible {
 @media (min-width: 768px) {
   .topnav-menu { right: calc(1rem + var(--scrollbar-width)); }
 }
+
+/* ── Floating mentor vs dialogs ────────────────────────────────────────────
+   The mentor button is fixed to the bottom-right, which is exactly where a
+   dialog puts its primary action. Raising the dialog above it fixed the
+   painting order but left the two visually colliding, so the button steps
+   aside entirely while any dialog is open. One rule covers every dialog
+   because they all carry role="dialog" — nothing to remember per modal. */
+body:has([role="dialog"]) .floating-mentor {
+  display: none;
+}

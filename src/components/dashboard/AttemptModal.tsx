@@ -115,7 +115,7 @@ export default function AttemptModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/70 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-canvas/70 backdrop-blur-sm p-4"
       onClick={onClose}
     >
       <div

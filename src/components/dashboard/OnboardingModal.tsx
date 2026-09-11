@@ -27,7 +27,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-canvas/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-canvas/70 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 shadow-2xl animate-scale-in">
         {/* Step dots */}
         <div className="flex items-center gap-1.5 mb-6">

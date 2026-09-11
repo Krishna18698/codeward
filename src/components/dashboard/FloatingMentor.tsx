@@ -45,7 +45,12 @@ export default function FloatingMentor() {
     : "dashboard";
 
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-3">
+    // z-50 puts the button above page content; dialogs sit at z-[60] above it.
+    // Stacking alone isn't enough though — the button still sat in the same
+    // corner as a dialog's footer controls, overlapping the note editor's Done
+    // button by 23px. The `floating-mentor` class lets one CSS rule take it out
+    // while any dialog is open (see globals.css).
+    <div className="floating-mentor fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-3">
 
       {/* Expanded panel. Kept mounted through its exit animation — unmounting
           on close made it disappear instantly however it was styled. */}
