@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/useScrollLock";
 import { X, Check, X as XIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -116,7 +117,13 @@ export default function AttemptModal({
     ? new Date(attempt.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : "";
 
-  return (
+  // Portalled into <body> for the same reason as the note sheet: an ancestor
+  // with a transform — `animate-fade-up` leaves an identity one behind —
+  // becomes the containing block for position:fixed and drags the overlay off
+  // the viewport entirely. See NoteModal.
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-[60] flex items-center justify-center bg-canvas/70 backdrop-blur-sm p-4"
       onClick={onClose}
@@ -248,7 +255,8 @@ export default function AttemptModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

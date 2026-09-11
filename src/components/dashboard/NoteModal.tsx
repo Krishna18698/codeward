@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useScrollLock } from "@/lib/useScrollLock";
 import { X, Bold, Italic, Strikethrough, Underline, List, ListOrdered, Quote, Code } from "lucide-react";
 
@@ -183,7 +184,17 @@ export default function NoteModal({
 
   const words = content.trim() ? content.trim().split(/\s+/).length : 0;
 
-  return (
+  // Rendered into <body>, not where it sits in the tree.
+  //
+  // The dashboard content carries `animate-fade-up`, whose fill-mode leaves an
+  // identity transform on the element. A transform — even matrix(1,0,0,1,0,0) —
+  // makes that element the containing block for position:fixed descendants, so
+  // `inset-0` sized this overlay to the 6413px scroll content instead of the
+  // viewport and put the sheet about 5000px below the screen. A portal puts it
+  // out of reach of any ancestor's transform, filter or containment.
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-[60] flex items-end justify-center bg-black/55 backdrop-blur-md sm:items-center sm:p-4"
       onClick={close}
@@ -261,5 +272,7 @@ export default function NoteModal({
         </div>
       </div>
     </div>
+    ,
+    document.body,
   );
 }
