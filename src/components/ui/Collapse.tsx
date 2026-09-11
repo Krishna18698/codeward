@@ -27,12 +27,18 @@ export default function Collapse({
   children,
   id,
   className = "",
+  instant = false,
 }: {
   open: boolean;
   children: ReactNode;
   /** Pass the id referenced by the trigger's `aria-controls`. */
   id?: string;
   className?: string;
+  /** Snap open/closed with no height animation. Used for the pattern groups,
+   *  where the list is long enough that a slide reads as waiting rather than
+   *  as polish. Everything else here still applies — the children stay mounted,
+   *  and collapsed content stays out of the tab order. */
+  instant?: boolean;
 }) {
   const autoId = useId();
   const regionId = id ?? autoId;
@@ -46,9 +52,11 @@ export default function Collapse({
       className={`grid ${className}`}
       style={{
         gridTemplateRows: open ? "1fr" : "0fr",
-        transition: `grid-template-rows ${open ? "var(--duration-expand, 260ms)" : "var(--duration-collapse, 200ms)"} ${
-          open ? "var(--ease-out-soft)" : "var(--ease-exit)"
-        }`,
+        transition: instant
+          ? "none"
+          : `grid-template-rows ${open ? "var(--duration-expand, 260ms)" : "var(--duration-collapse, 200ms)"} ${
+              open ? "var(--ease-out-soft)" : "var(--ease-exit)"
+            }`,
       }}
     >
       {/* min-height:0 is load-bearing — without it a grid item refuses to

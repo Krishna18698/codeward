@@ -464,10 +464,7 @@ export default function ProblemList({
               >
                 <ChevronRight
                   size={15}
-                  className={cn(
-                    "transition-transform duration-[--duration-content] ease-[--ease-out-soft]",
-                    !isCollapsed && "rotate-90",
-                  )}
+                  className={cn(!isCollapsed && "rotate-90")}
                 />
               </span>
 
@@ -497,7 +494,7 @@ export default function ProblemList({
               </span>
             </button>
 
-            <Collapse open={!isCollapsed} id={`pattern-${pattern}`}>
+            <Collapse open={!isCollapsed} id={`pattern-${pattern}`} instant>
               <div className="divide-y divide-border border-t border-border">
                 {(everOpened.has(pattern) ? problems : []).map((p, idx) => {
                   const status = statuses[p.id] ?? "TODO";

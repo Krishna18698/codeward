@@ -250,7 +250,7 @@ export default function ProblemBank({ userSheets }: Props) {
                   >
                     <ChevronRight
                       size={15}
-                      className={cn("transition-transform duration-[--duration-content] ease-[--ease-out-soft]", isExpanded && "rotate-90")}
+                      className={cn(isExpanded && "rotate-90")}
                     />
                   </span>
 
@@ -271,7 +271,7 @@ export default function ProblemBank({ userSheets }: Props) {
                 </button>
 
                 {/* Problems */}
-                <Collapse open={isExpanded} id={`bank-${bp.pattern}`}>
+                <Collapse open={isExpanded} id={`bank-${bp.pattern}`} instant>
                   <div className="divide-y divide-border border-t border-border">
                     {isLoading ? (
                       Array.from({ length: 3 }).map((_, i) => (
