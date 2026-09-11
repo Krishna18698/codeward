@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import Logo from "@/components/ui/Logo";
+import SkipLink from "@/components/ui/SkipLink";
 import { Sparkles, Target, Brain, TrendingUp } from "lucide-react";
 
 const features = [
-  { icon: Brain,      label: "150+ DSA patterns",             sub: "Curated sheets from NeetCode, Striver & more" },
+  { icon: Brain,      label: "500 DSA problems",               sub: "Curated sheets from NeetCode, Striver & more" },
   { icon: Target,     label: "System design mastery",         sub: "Junior to staff-level architecture problems" },
   { icon: Sparkles,   label: "AI-powered mentor",             sub: "Personalized guidance & custom study plans" },
   { icon: TrendingUp, label: "Progress tracking",             sub: "Visualise your journey across every topic" },
@@ -12,6 +14,7 @@ const features = [
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex bg-canvas text-primary">
+      <SkipLink />
 
       {/* ── Left panel ── */}
       <div className="relative hidden lg:flex lg:w-[52%] flex-col justify-between p-12 overflow-hidden bg-surface">
@@ -29,15 +32,16 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           />
         </div>
 
-        {/* Brand */}
-        <div className="relative flex items-center gap-2.5">
+        {/* Brand — a link, because login and signup otherwise had no way
+            back to the site at all. */}
+        <Link href="/" className="relative flex w-fit items-center gap-2.5 transition-opacity hover:opacity-80">
           <div className="w-9 h-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center">
             <Logo size={16} className="text-accent" />
           </div>
           <span className="text-base font-bold tracking-tight text-primary">
             Code<span className="text-accent">ward</span>
           </span>
-        </div>
+        </Link>
 
         {/* Headline */}
         <div className="relative space-y-6 -mt-8">
@@ -82,11 +86,11 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* ── Right panel (form) ── */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-canvas">
+      <main id="main" className="flex-1 flex items-center justify-center p-6 bg-canvas">
         <div className="w-full max-w-md">
           {children}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

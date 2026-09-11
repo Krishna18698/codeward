@@ -5,6 +5,7 @@ import TopNav from "@/components/dashboard/TopNav";
 import NavRail from "@/components/dashboard/NavRail";
 import OnboardingModal from "@/components/dashboard/OnboardingModal";
 import FloatingMentor from "@/components/dashboard/FloatingMentor";
+import SkipLink from "@/components/ui/SkipLink";
 
 export type NavUser = { name: string | null; image: string | null; email: string | null };
 
@@ -31,12 +32,14 @@ export default function DashboardShell({ user, onboarded, children }: { user: Na
   return (
     // Row at >=1120px (rail beside the content), column below (bar above it).
     <div className="flex h-dvh bg-canvas text-primary overflow-hidden">
+      <SkipLink />
       <NavRail user={user} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <TopNav user={user} />
 
         <main
+          id="main"
           ref={mainRef}
           className={fullBleed ? "min-h-0 flex-1 overflow-hidden" : "flex-1 overflow-y-auto"}
           style={fullBleed ? undefined : { scrollbarGutter: "stable" }}

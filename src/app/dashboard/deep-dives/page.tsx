@@ -43,7 +43,7 @@ export default async function DeepDivesPage({ searchParams }: Props) {
         <PageHeader
           eyebrow="Deep Dives"
           title="The topics every"
-          titleAccent="senior loop covers."
+          titleAccent="senior answer rests on."
           subtitle="Long-form deep dives — failure modes, trade-offs, and the interview traps that surface-level guides skip. Core CS here means the applied version: why a query got slower, not what a B-tree is."
         />
 

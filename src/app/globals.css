@@ -545,3 +545,25 @@ textarea.chat-textarea:focus-visible {
 .animate-marquee { will-change: transform; }
 .skeleton::after { will-change: transform; }
 
+
+/* ── Skip to content ───────────────────────────────────────────────────────
+   Clipped out of the layout rather than `display:none`, which would take it
+   out of the tab order and defeat the point. On focus it pins to the top-left
+   and picks up the same 2px emerald ring as every other focusable thing. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 0.5rem 0;
+  background-color: var(--color-surface);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.skip-link:focus {
+  left: 0;
+}

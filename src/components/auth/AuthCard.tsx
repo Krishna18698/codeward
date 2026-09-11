@@ -14,11 +14,14 @@ import Morph from "@/components/ui/Morph";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/cn";
+import { DEFAULT_CALLBACK, withCallback } from "@/lib/callbackUrl";
 
 type Props = {
   title: string;
   subtitle?: string;
   variant: "login" | "register";
+  /** Same-origin path to land on after auth. Already validated by the page. */
+  callbackUrl?: string;
 };
 
 const loginSchema = z.object({
@@ -37,7 +40,7 @@ const registerSchema = z.object({
 type LoginFields = z.infer<typeof loginSchema>;
 type RegisterFields = z.infer<typeof registerSchema>;
 
-export default function AuthCard({ title, subtitle, variant }: Props) {
+export default function AuthCard({ title, subtitle, variant, callbackUrl = DEFAULT_CALLBACK }: Props) {
   const isLogin = variant === "login";
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +59,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
   const handleGoogle = () => {
     setGoogleLoading(true);
     // signIn navigates away; the state resets if the user comes back
-    signIn("google", { callbackUrl: "/dashboard" });
+    signIn("google", { callbackUrl });
   };
 
   const onSubmit = async (data: LoginFields | RegisterFields) => {
@@ -71,7 +74,7 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
         setError("root", { message: "Invalid email or password" });
         return;
       }
-      router.push("/dashboard");
+      router.push(callbackUrl);
     } else {
       const res = await fetch("/api/auth/register", {
         method: "POST",
@@ -92,21 +95,22 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
         password: data.password,
         redirect: false,
       });
-      router.push("/dashboard");
+      router.push(callbackUrl);
     }
   };
 
   return (
     <div className="animate-scale-in">
-      {/* Mobile-only brand */}
-      <div className="flex items-center gap-2 mb-8 lg:hidden">
+      {/* Mobile-only brand. The desktop wordmark lives in the lg-only left
+          panel, so without this link there's no way home below lg. */}
+      <Link href="/" className="flex w-fit items-center gap-2 mb-8 lg:hidden transition-opacity hover:opacity-80">
         <div className="w-8 h-8 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center">
           <Logo size={14} className="text-accent" />
         </div>
         <span className="text-sm font-bold text-primary">
           Code<span className="text-accent">ward</span>
         </span>
-      </div>
+      </Link>
 
       {/* Heading */}
       <div className="mb-8">
@@ -214,20 +218,34 @@ export default function AuthCard({ title, subtitle, variant }: Props) {
         >
           {isLogin ? "Sign in" : "Create account"}
         </Button>
+
+        {/* Shown at the point of account creation, where it's relevant, rather
+            than on sign-in. Both routes already exist and are linked from the
+            site footer. */}
+        {!isLogin && (
+          <p className="text-center text-[11px] leading-relaxed text-muted">
+            By creating an account you agree to our{" "}
+            <Link href="/terms" className="text-secondary underline underline-offset-2 hover:text-primary">Terms</Link>
+            {" "}and{" "}
+            <Link href="/privacy" className="text-secondary underline underline-offset-2 hover:text-primary">Privacy Policy</Link>.
+          </p>
+        )}
       </form>
 
       <p className="mt-6 text-xs text-muted text-center">
         {isLogin ? (
           <>
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-accent hover:text-accent-hover transition-colors font-medium">
+            {/* Carries the destination across, so bouncing between login and
+                signup doesn't lose where the user was actually headed. */}
+            <Link href={withCallback("/register", callbackUrl)} className="text-accent hover:text-accent-hover transition-colors font-medium">
               Sign up free
             </Link>
           </>
         ) : (
           <>
             Already have an account?{" "}
-            <Link href="/login" className="text-accent hover:text-accent-hover transition-colors font-medium">
+            <Link href={withCallback("/login", callbackUrl)} className="text-accent hover:text-accent-hover transition-colors font-medium">
               Sign in
             </Link>
           </>

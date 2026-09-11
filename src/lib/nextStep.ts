@@ -60,7 +60,7 @@ export function pickNextStep(p: Progress): NextStep {
       stage: "PRACTISE",
       eyebrow: "Next up",
       title: "Now read code you didn't write.",
-      body: `You've got the base. Senior loops test review, not just solving — ${CODE_REVIEWS_META.length} PRs with planted bugs, graded against the real bug list.`,
+      body: `You've got the base. Senior interviews test review, not just solving — ${CODE_REVIEWS_META.length} PRs with planted bugs, graded against the real bug list.`,
       href: `/dashboard/code-review/${CODE_REVIEWS_META[0]?.slug ?? ""}`,
       cta: "Try your first review",
     };
@@ -102,7 +102,7 @@ export function pickNextStep(p: Progress): NextStep {
   return {
     stage: "RECOGNISE",
     eyebrow: "Go deeper",
-    title: "Read the theory behind the loops.",
+    title: "Read the theory behind the practice.",
     body: `${DEEP_DIVES.length} long-form deep dives on the distributed-systems topics senior interviews circle back to.`,
     href: `/dashboard/deep-dives/${DEEP_DIVES[0]?.slug ?? ""}`,
     cta: "Open deep dives",

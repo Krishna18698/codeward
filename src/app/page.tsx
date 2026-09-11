@@ -4,10 +4,26 @@ import RotatingWord from "@/components/landing/RotatingWord";
 import { CompanyLogo, CompanyLogoSprite } from "@/components/ui/CompanyLogo";
 import SiteNav from "@/components/landing/SiteNav";
 import SiteFooter from "@/components/landing/SiteFooter";
+import SkipLink from "@/components/ui/SkipLink";
 import HeroGlow from "@/components/landing/HeroGlow";
 import HeroShowcase from "@/components/landing/HeroShowcase";
 import { METHOD } from "@/content/method";
+import { DEEP_DIVES } from "@/content/deep-dives";
+import { BUILD_IT_META } from "@/content/build-it";
+import { CODE_REVIEWS_META } from "@/content/code-reviews";
+import { BUG_HUNTS_META } from "@/content/bug-hunts";
 import { RecogniseFragment, PractiseFragment, ReviseFragment } from "@/components/landing/MethodFragments";
+
+/* ─── Catalog sizes ─────────────────────────────────────────────────────────
+   Read off the content registries instead of being typed into the copy. The
+   hardcoded versions drifted badly — the Build It paragraph said 5 while the
+   FAQ on the same page said 11, and Deep Dives claimed 13 against 17 shipped. */
+const N_DEEP_DIVES   = DEEP_DIVES.length;
+const N_BUILD_IT     = BUILD_IT_META.length;
+const N_CODE_REVIEWS = CODE_REVIEWS_META.length;
+const N_BUG_HUNTS    = BUG_HUNTS_META.length;
+/* The problem bank is seeded from prisma/top500.ts. */
+const N_PROBLEMS     = 500;
 
 /* ─── Section marker ────────────────────────────────────────────────────── */
 function SectionMarker({ n, label, center }: { n: string; label: string; center?: boolean }) {
@@ -140,7 +156,7 @@ const modes = [
     n: "01",
     marker: "DSA Sheets",
     title: "Track every pattern, not just problem counts",
-    copy: "Blind 75, Striver's, NeetCode 150, and a 500-problem company-tagged bank — grouped by pattern, with status, revision flags, and notes. Or let the mentor generate a sheet weighted for your target company.",
+    copy: `Blind 75, Striver's, NeetCode 150, and a ${N_PROBLEMS}-problem company-tagged bank — grouped by pattern, with status, revision flags, and notes. Or let the mentor generate a sheet weighted for your target company.`,
     cta: "Browse the sheets →",
     href: "/register",
     Mockup: DsaMockup,
@@ -167,7 +183,7 @@ const modes = [
     n: "04",
     marker: "Code Review",
     title: "Review realistic PRs with planted bugs",
-    copy: "15 hand-authored diffs across payments, auth, caching, and infra — each with real bugs at graded severities. Leave inline comments; the AI scores what you caught against the ground-truth list, like a senior reviewer would.",
+    copy: `${N_CODE_REVIEWS} hand-authored diffs across payments, auth, caching, and infra — each with real bugs at graded severities. Leave inline comments; the AI scores what you caught against the ground-truth list, like a senior reviewer would.`,
     cta: "Try a review →",
     href: "/register",
     Mockup: CodeReviewMockup,
@@ -176,7 +192,7 @@ const modes = [
     n: "05",
     marker: "Bug Hunt",
     title: "Diagnose the failure, not the symptom",
-    copy: "9 broken codebases with failing tests and real logs — races, N+1s, leaks, deadlocks. Write your root-cause diagnosis; the AI grades it and reveals the canonical fix and the tempting wrong turns.",
+    copy: `${N_BUG_HUNTS} broken codebases with failing tests and real logs — races, N+1s, leaks, deadlocks. Write your root-cause diagnosis; the AI grades it and reveals the canonical fix and the tempting wrong turns.`,
     cta: "Start debugging →",
     href: "/register",
     Mockup: BugHuntMockup,
@@ -185,7 +201,7 @@ const modes = [
     n: "06",
     marker: "Build It",
     title: "Design it, then watch your own design break",
-    copy: "5 real low-level-design problems — a thread-safe wallet, an inventory reservation service, a durable job queue, an idempotent payment processor, a notification service — each evolving across 4 stages as new constraints break your last approach, in C#, Python, or Kotlin. Stage 3 always makes you prove a correctness invariant holds under concurrency.",
+    copy: `${N_BUILD_IT} real low-level-design problems — a thread-safe wallet, an inventory reservation service, a durable job queue, an idempotent payment processor, a notification service and more — each evolving across stages as new constraints break your last approach, in C#, Python, or Kotlin. Stage 3 always makes you prove a correctness invariant holds under concurrency.`,
     cta: "Start building →",
     href: "/register",
     Mockup: BuildItMockup,
@@ -194,7 +210,7 @@ const modes = [
     n: "07",
     marker: "Deep Dives",
     title: "Learn the trade-offs interviews actually probe",
-    copy: "13 long-form deep dives — idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas, and more. Failure modes, trade-offs, and the interview traps surface-level guides skip.",
+    copy: `${N_DEEP_DIVES} long-form deep dives — idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas, and more. Failure modes, trade-offs, and the interview traps surface-level guides skip.`,
     cta: "Read the deep dives →",
     href: "/register",
     Mockup: DeepDiveMockup,
@@ -249,7 +265,7 @@ const faqs = [
   },
   {
     q: "What's actually on the platform?",
-    a: "Seven modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a 500-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, 15 Code Review exercises with planted bugs and AI grading, 9 Bug Hunt debugging exercises, 11 staged Build It low-level-design problems in C#/Python/Kotlin, and 13 long-form Deep Dives on distributed systems. Everything is free.",
+    a: `Seven modes: DSA sheets (Blind 75, Striver's, NeetCode 150 + a ${N_PROBLEMS}-problem company-tagged bank), a RAG-powered AI mentor, System Design questions with a challenge spinner, ${N_CODE_REVIEWS} Code Review exercises with planted bugs and AI grading, ${N_BUG_HUNTS} Bug Hunt debugging exercises, ${N_BUILD_IT} staged Build It low-level-design problems in C#/Python/Kotlin, and ${N_DEEP_DIVES} long-form Deep Dives on distributed systems. Everything is free.`,
   },
   {
     q: "How is the AI mentor different from just using ChatGPT?",
@@ -360,25 +376,29 @@ function Method() {
 export default function Home() {
   return (
     <div className="min-h-dvh bg-canvas text-primary">
+      <SkipLink />
       <CompanyLogoSprite />
       <SiteNav />
 
-      {/* Permanent top glow + a smaller cursor-following glow — scoped to the
-          hero only, so it ends at the divider above the logo strip. */}
-      <HeroGlow topGlow>
-        <Hero />
-      </HeroGlow>
+      <main id="main">
+        {/* Permanent top glow + a smaller cursor-following glow — scoped to the
+            hero only, so it ends at the divider above the logo strip. */}
+        <HeroGlow topGlow>
+          <Hero />
+        </HeroGlow>
 
-      <HeroShowcase />
+        <HeroShowcase />
 
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="section-divider" />
-      </div>
-      <LogoStrip />
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="section-divider" />
+        </div>
+        <LogoStrip />
 
-      <PracticeModes />
-      <Method />
-      <FAQ />
+        <PracticeModes />
+        <Method />
+        <FAQ />
+      </main>
+
       <SiteFooter />
     </div>
   );

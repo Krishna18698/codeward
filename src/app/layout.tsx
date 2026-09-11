@@ -18,9 +18,30 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://codeward-7cz5.vercel.app";
+const TITLE = "Codeward — Interview Prep Platform";
+// The old copy named three modes the product has since outgrown; this is the
+// seven it actually ships, and it doubles as the social-preview blurb.
+const DESCRIPTION =
+  "Free interview prep across seven modes: DSA sheets, system design, code review, bug hunts, staged low-level-design builds, deep dives, and an AI mentor that knows what you've solved.";
+
 export const metadata: Metadata = {
-  title: "Codeward — Interview Prep Platform",
-  description: "Master DSA, System Design, and AI/ML interviews with an AI mentor built for you.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Codeward",
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
   manifest: "/site.webmanifest",
   icons: {
     icon: [

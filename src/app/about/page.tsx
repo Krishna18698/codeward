@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SiteNav from "@/components/landing/SiteNav";
+import SkipLink from "@/components/ui/SkipLink";
 import SiteFooter from "@/components/landing/SiteFooter";
 
 export const metadata: Metadata = {
@@ -34,6 +35,7 @@ const BAND = "bg-primary/[0.02]";
 export default function AboutPage() {
   return (
     <div className="relative min-h-dvh bg-canvas text-primary">
+      <SkipLink />
       <SiteNav />
 
       {/* Dotted matrix behind the hero — dimmed, radial-masked so it fades out. */}
@@ -48,6 +50,7 @@ export default function AboutPage() {
         }}
       />
 
+      <main id="main">
       {/* Hero — centered */}
       <section className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 pt-36 pb-24 text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-accent/5 px-3 py-1 font-mono text-[11px] uppercase tracking-wide text-accent">
@@ -139,7 +142,7 @@ export default function AboutPage() {
             <div className="mt-6 max-w-2xl space-y-4 text-[15px] leading-7 text-secondary">
               <p>
                 Engineers preparing for backend, full-stack, and platform roles at product companies — from your first
-                senior loop to leveling up. If you learn best by doing the real thing and getting told where your
+                senior role to leveling up. If you learn best by doing the real thing and getting told where your
                 reasoning breaks, this is built for you.
               </p>
             </div>
@@ -157,6 +160,7 @@ export default function AboutPage() {
           </div>
         </section>
       </div>
+      </main>
 
       <SiteFooter />
     </div>

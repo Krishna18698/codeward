@@ -1,4 +1,5 @@
 import SiteNav from "./SiteNav";
+import SkipLink from "@/components/ui/SkipLink";
 import SiteFooter from "./SiteFooter";
 
 /** Shared shell for the static Company pages (About / Contact / Privacy /
@@ -19,6 +20,7 @@ export default function MarketingPage({
 }) {
   return (
     <div className="relative min-h-dvh bg-canvas text-primary">
+      <SkipLink />
       <SiteNav />
 
       {/* Dotted matrix behind the page header — radial-masked so it fades out. */}
@@ -33,7 +35,7 @@ export default function MarketingPage({
         }}
       />
 
-      <main className="relative z-10 mx-auto max-w-3xl px-6 pt-36 pb-24">
+      <main id="main" className="relative z-10 mx-auto max-w-3xl px-6 pt-36 pb-24">
         {eyebrow && (
           <p className="mb-4 inline-flex items-center gap-2 font-mono text-[13px] uppercase tracking-wide text-accent">
             <span className="h-1.5 w-1.5 rounded-full bg-accent-hover" />
