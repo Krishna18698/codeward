@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
 import { WindowFrame } from "@/components/ui/WindowFrame";
 import { highlightTs } from "@/lib/highlightTs";
+import AttemptModal from "@/components/dashboard/AttemptModal";
 import type { GradeResult, GradedBug } from "@/app/api/review/grade/route";
 
 type FileT = { name: string; code: string };
@@ -62,6 +63,8 @@ function BugCard({ bug, caught }: { bug: GradedBug; caught: boolean }) {
 }
 
 export default function CodeReviewWorkspace({ slug, files, bugCount, previousAttempts }: Props) {
+  const [viewingAttempt, setViewingAttempt] = useState<string | null>(null);
+
   const [activeFile, setActiveFile] = useState(0);
   // Per-line comments keyed by "fileName:lineNumber"
   const [lineComments, setLineComments] = useState<Record<string, string>>({});
@@ -336,12 +339,20 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
             <p className="font-mono text-[11px] text-muted mb-3">Previous attempts</p>
             <div className="space-y-2">
               {previousAttempts.map((a) => (
-                <div key={a.id} className="flex items-center justify-between text-xs">
-                  <span className="text-secondary">
+                <div key={a.id} className="flex items-center justify-between gap-2 text-xs">
+                  <span className="text-secondary shrink-0">
                     {new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   </span>
-                  <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
-                    {a.score}/100
+                  <span className="flex items-center gap-3">
+                    <button
+                      onClick={() => setViewingAttempt(a.id)}
+                      className="rounded-md border border-border px-2 py-0.5 font-mono text-[10px] text-muted transition-colors hover:border-accent/50 hover:text-accent"
+                    >
+                      View attempt
+                    </button>
+                    <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
+                      {a.score}/100
+                    </span>
                   </span>
                 </div>
               ))}
@@ -349,6 +360,10 @@ export default function CodeReviewWorkspace({ slug, files, bugCount, previousAtt
           </div>
         )}
       </div>
+
+      {viewingAttempt && (
+        <AttemptModal kind="review" attemptId={viewingAttempt} onClose={() => setViewingAttempt(null)} />
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
 import { WindowFrame } from "@/components/ui/WindowFrame";
+import AttemptModal from "@/components/dashboard/AttemptModal";
 import type { BugHuntGradeResult } from "@/app/api/bug-hunt/grade/route";
 
 // CodeMirror is heavy + browser-only — lazy-load so it never hits the server bundle.
@@ -40,6 +41,8 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
   const [diagnosis, setDiagnosis] = useState("");
   const [grading, setGrading] = useState(false);
   const [result, setResult] = useState<BugHuntGradeResult | null>(null);
+  const [viewingAttempt, setViewingAttempt] = useState<string | null>(null);
+
 
   const file = files[activeFile];
   const currentCode = codeByFile[activeFile] ?? file.code;
@@ -253,15 +256,31 @@ export default function BugHuntWorkspace({ slug, files, testOutput, logs, previo
             <p className="font-mono text-[11px] text-muted mb-3">Previous attempts</p>
             <div className="space-y-2">
               {previousAttempts.map((a) => (
-                <div key={a.id} className="flex items-center justify-between text-xs">
-                  <span className="text-secondary">{new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-                  <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>{a.score}/100</span>
+                <div key={a.id} className="flex items-center justify-between gap-2 text-xs">
+                  <span className="text-secondary shrink-0">
+                    {new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </span>
+                  <span className="flex items-center gap-3">
+                    <button
+                      onClick={() => setViewingAttempt(a.id)}
+                      className="rounded-md border border-border px-2 py-0.5 font-mono text-[10px] text-muted transition-colors hover:border-accent/50 hover:text-accent"
+                    >
+                      View attempt
+                    </button>
+                    <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
+                      {a.score}/100
+                    </span>
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
+
+      {viewingAttempt && (
+        <AttemptModal kind="bug-hunt" attemptId={viewingAttempt} onClose={() => setViewingAttempt(null)} />
+      )}
     </div>
   );
 }

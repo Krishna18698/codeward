@@ -10,6 +10,7 @@ import { BUILD_IT_LANGUAGES } from "@/content/build-it/languages";
 import type { BuildItLanguage } from "@/content/build-it/languages";
 import type { BuildItProblemMeta } from "@/content/build-it/types";
 import type { BuildItGradeResult } from "@/app/api/build-it/grade/route";
+import AttemptModal from "@/components/dashboard/AttemptModal";
 import StageStepper from "./StageStepper";
 
 const CodeEditor = dynamic(() => import("@/components/ui/CodeEditor"), {
@@ -26,9 +27,11 @@ type Props = {
   problem: BuildItProblemMeta;
   previousAttempts: PrevAttempt[];
   highestUnlockedStage: number;
+  /** Whether the deployment has a code-execution backend configured. */
+  execEnabled: boolean;
 };
 
-export default function BuildItWorkspace({ slug, problem, previousAttempts, highestUnlockedStage }: Props) {
+export default function BuildItWorkspace({ slug, problem, previousAttempts, highestUnlockedStage, execEnabled }: Props) {
   const startingStage = Math.min(highestUnlockedStage, problem.stages.length);
   const [activeStageNum, setActiveStageNum] = useState(startingStage);
   const [unlocked, setUnlocked] = useState(highestUnlockedStage);
@@ -40,6 +43,8 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
   const [codeTab, setCodeTab] = useState<"code" | "tests">("code");
   const [running, setRunning] = useState(false);
   const [runByCombo, setRunByCombo] = useState<Record<string, RunResult | undefined>>({});
+  const [viewingAttempt, setViewingAttempt] = useState<string | null>(null);
+
 
   const activeStage = problem.stages.find((s) => s.stage === activeStageNum)!;
   const comboKey = `${activeStageNum}:${activeLanguage}`;
@@ -48,6 +53,21 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
   const result = resultByStage[activeStageNum];
   const harness = activeStage.tests?.[activeLanguage];
   const runResult = runByCombo[comboKey];
+
+  /** What the test runner has actually established for this stage+language.
+   *  Deliberately distinct from the grade: the score is an AI reading of the
+   *  design, and showing 100/100 with nothing beside it read as "tests passed"
+   *  even on stages where no code was ever executed. */
+  const execStatus: { label: string; tone: "pass" | "fail" | "idle" } =
+    !harness
+      ? { label: "design-only stage · no tests", tone: "idle" }
+      : !execEnabled
+        ? { label: "execution unavailable", tone: "idle" }
+        : runResult?.passed === true
+          ? { label: "tests passed", tone: "pass" }
+          : runResult?.passed === false
+            ? { label: "tests failed", tone: "fail" }
+            : { label: "tests not run", tone: "idle" };
 
   const runTests = async () => {
     if (running || !harness) return;
@@ -200,14 +220,18 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                   </button>
                 )}
               </div>
-              {harness && !result && (
+              {/* Stays available after grading: a grade is the AI's read of the
+                  design, a run is whether the code actually passes. They're
+                  separate results, so submitting must not take the runner away. */}
+              {harness && (
                 <button
                   onClick={runTests}
-                  disabled={running}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 font-mono text-[10px] text-secondary hover:border-accent/50 hover:text-accent transition-colors disabled:opacity-50"
+                  disabled={running || !execEnabled}
+                  title={execEnabled ? undefined : "Code execution isn't configured on this deployment."}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 font-mono text-[10px] text-secondary hover:border-accent/50 hover:text-accent transition-colors disabled:opacity-50 disabled:hover:border-border disabled:hover:text-secondary disabled:cursor-not-allowed"
                 >
                   {running ? <Loader2 size={11} className="animate-spin" /> : <Play size={11} />}
-                  {running ? "Running…" : "Run Tests"}
+                  {running ? "Running…" : execEnabled ? "Run Tests" : "Run Tests unavailable"}
                 </button>
               )}
             </div>
@@ -298,7 +322,15 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-primary">Stage {result.stage} graded</p>
-                  <p className="font-mono text-[11px] text-muted mt-0.5">weighted rubric · /100</p>
+                  <p className="font-mono text-[11px] text-muted mt-0.5">AI rubric · /100</p>
+                  <p
+                    className={cn(
+                      "font-mono text-[11px] mt-1",
+                      execStatus.tone === "pass" ? "text-accent" : execStatus.tone === "fail" ? "text-rose-400" : "text-muted",
+                    )}
+                  >
+                    {execStatus.label}
+                  </p>
                 </div>
               </div>
 
@@ -388,12 +420,20 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
                 {previousAttempts
                   .filter((a) => a.stage === activeStageNum)
                   .map((a) => (
-                    <div key={a.id} className="flex items-center justify-between text-xs">
-                      <span className="text-secondary">
+                <div key={a.id} className="flex items-center justify-between gap-2 text-xs">
+                      <span className="text-secondary shrink-0">
                         {new Date(a.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                       </span>
-                      <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
-                        {a.score}/100
+                      <span className="flex items-center gap-3">
+                        <button
+                          onClick={() => setViewingAttempt(a.id)}
+                          className="rounded-md border border-border px-2 py-0.5 font-mono text-[10px] text-muted transition-colors hover:border-accent/50 hover:text-accent"
+                        >
+                          View attempt
+                        </button>
+                        <span className={cn("font-mono font-semibold", a.score >= 70 ? "text-accent" : a.score >= 40 ? "text-amber-400" : "text-rose-400")}>
+                          {a.score}/100
+                        </span>
                       </span>
                     </div>
                   ))}
@@ -402,6 +442,10 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
           )}
         </div>
       </div>
+
+      {viewingAttempt && (
+        <AttemptModal kind="build-it" attemptId={viewingAttempt} onClose={() => setViewingAttempt(null)} />
+      )}
     </div>
   );
 }

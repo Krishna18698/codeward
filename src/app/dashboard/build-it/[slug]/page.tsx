@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getBuildItMeta } from "@/content/build-it";
+import { isExecConfigured } from "@/lib/jdoodle";
 import BuildItWorkspace from "@/components/build-it/BuildItWorkspace";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -57,6 +58,9 @@ export default async function BuildItProblemPage({ params }: Props) {
           createdAt: a.createdAt.toISOString(),
         }))}
         highestUnlockedStage={highestUnlockedStage}
+        // Resolved on the server so an unconfigured runner shows a disabled
+        // button with a reason, instead of a 503 after the user clicks.
+        execEnabled={isExecConfigured()}
       />
     </div>
   );
