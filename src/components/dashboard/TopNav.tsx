@@ -33,9 +33,12 @@ export default function TopNav({ user }: { user: NavUser }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    // Below 1120px only — NavRail is the navigation at and above that width.
-    // Same breakpoint the full nav already used, so nothing new is measured.
-    <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-canvas/85 backdrop-blur-[20px] min-[1120px]:hidden">
+    // Below 960px only — NavRail is the navigation at and above that width.
+    //
+    // 960, not 1120: Chrome on Android lays "Request desktop site" out at 980px
+    // CSS, so a 1120px cut-off meant asking for the desktop site handed you the
+    // phone layout again. 960 is under 980, so the toggle now does what it says.
+    <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-canvas/85 backdrop-blur-[20px] min-[960px]:hidden">
       <div className="flex h-14 w-full items-center gap-3 px-4 md:px-6">
         {/* Brand (also the Home link) — far left */}
         <Link

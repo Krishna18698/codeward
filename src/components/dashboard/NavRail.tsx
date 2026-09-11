@@ -17,7 +17,7 @@ import type { NavUser } from "@/components/dashboard/DashboardShell";
  *  carries the same items vertically, has room for an eighth mode, and hands the
  *  horizontal space back to the page content.
  *
- *  Shown only at >=1120px. Below that TopNav's bar and hamburger are untouched —
+ *  Shown only at >=960px. Below that TopNav's bar and hamburger are untouched —
  *  the same CSS breakpoint the nav already used, so the correct navigation is in
  *  the server-rendered HTML on the first frame with no hydration flash. */
 
@@ -35,7 +35,7 @@ export default function NavRail({ user }: { user: NavUser }) {
   const onProfile = pathname.startsWith("/dashboard/profile");
 
   return (
-    <aside className="sticky top-0 hidden h-dvh w-[76px] shrink-0 flex-col items-center gap-1 border-r border-border bg-surface py-4 min-[1120px]:flex">
+    <aside className="sticky top-0 hidden h-dvh w-[76px] shrink-0 flex-col items-center gap-1 border-r border-border bg-surface py-4 min-[960px]:flex">
       <Link
         href="/dashboard"
         aria-label="Codeward home"

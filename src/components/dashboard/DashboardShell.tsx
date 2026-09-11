@@ -30,7 +30,7 @@ export default function DashboardShell({ user, onboarded, children }: { user: Na
   }, [pathname]);
 
   return (
-    // Row at >=1120px (rail beside the content), column below (bar above it).
+    // Row at >=960px (rail beside the content), column below (bar above it).
     <div className="flex h-dvh bg-canvas text-primary overflow-hidden">
       <SkipLink />
       <NavRail user={user} />
