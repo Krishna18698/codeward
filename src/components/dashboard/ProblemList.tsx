@@ -536,7 +536,7 @@ export default function ProblemList({
                             These are the same five cells rearranged by
                             grid-template-areas at md (see .problem-row-grid). */}
                         <div className="problem-row-grid min-w-0 flex-1">
-                          <div style={{ gridArea: "title" }} className="flex min-w-0 items-center">
+                          <div style={{ gridArea: "title" }} className="problem-row-title flex min-w-0 items-center">
                             {p.leetcodeUrl ? (
                               <a
                                 href={p.leetcodeUrl}
@@ -556,7 +556,7 @@ export default function ProblemList({
                               in CSS so the mark is rendered once. */}
                           <div
                             style={{ gridArea: "comp" }}
-                            className="flex items-center gap-1 opacity-70 md:justify-center md:gap-1.5 md:opacity-75 [&_svg]:h-[15px] [&_svg]:w-[15px] md:[&_svg]:h-4 md:[&_svg]:w-4"
+                            className="problem-row-comp flex items-center gap-2 opacity-70 md:justify-center md:gap-1.5 md:opacity-75 [&_svg]:h-[15px] [&_svg]:w-[15px] md:[&_svg]:h-4 md:[&_svg]:w-4"
                           >
                             {p.companies.slice(0, 3).map((c) => (
                               <span key={c} title={c} className="inline-flex transition-opacity hover:opacity-100">
@@ -565,7 +565,7 @@ export default function ProblemList({
                             ))}
                           </div>
 
-                          <div style={{ gridArea: "must" }} className="flex items-center justify-end md:justify-center">
+                          <div style={{ gridArea: "must" }} className="problem-row-must flex items-center justify-end md:justify-center">
                             {p.mustDo && (
                               <span className="shrink-0 rounded border border-amber-500/20 px-1 py-0.5 text-[10px] text-amber-400/80 md:px-1.5">
                                 must do
@@ -573,32 +573,32 @@ export default function ProblemList({
                             )}
                           </div>
 
-                          <div style={{ gridArea: "diff" }} className="flex items-center md:justify-center">
+                          <div style={{ gridArea: "diff" }} className="problem-row-diff flex items-center justify-end md:justify-center">
                             <span className={cn("shrink-0 text-xs font-medium", difficultyColor[p.difficulty])}>
                               {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
                             </span>
                           </div>
 
-                          <div style={{ gridArea: "act" }} className="flex items-center justify-end gap-0.5 md:gap-1">
+                          <div style={{ gridArea: "act" }} className="problem-row-act flex items-center justify-end gap-1.5 md:gap-1">
                             {p.leetcodeUrl && (
-                              <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
+                              <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="row-action rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
                                 <LeetCodeIcon size={20} />
                               </a>
                             )}
                             {p.gfgUrl && (
-                              <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
+                              <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="row-action rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
                                 <GFGIcon size={20} />
                               </a>
                             )}
                             {p.hint && (
-                              <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("rounded p-1.5 transition-colors md:p-2", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-muted hover:text-secondary")}>
+                              <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("row-action rounded p-1.5 transition-colors md:p-2", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-primary md:text-muted hover:text-secondary")}>
                                 <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
                               </button>
                             )}
-                            <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("rounded p-1.5 transition-colors md:p-2", isRevising ? "text-rose-400 hover:text-rose-300" : "text-muted hover:text-secondary")}>
+                            <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("row-action rounded p-1.5 transition-colors md:p-2", isRevising ? "text-rose-400 hover:text-rose-300" : "text-primary md:text-muted hover:text-secondary")}>
                               <Flag size={15} className={isRevising ? "fill-current" : ""} />
                             </button>
-                            <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("rounded p-1.5 transition-colors md:p-2", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-muted hover:text-secondary")}>
+                            <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("row-action rounded p-1.5 transition-colors md:p-2", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-primary md:text-muted hover:text-secondary")}>
                               <PenLine size={15} />
                             </button>
                           </div>

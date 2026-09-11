@@ -28,6 +28,14 @@ const DIFF_COLOR: Record<string, string> = {
   HARD:   "text-red-400    bg-red-500/10    border-red-500/20",
 };
 
+/** Text-only difficulty for the phone row — the pill above is for the desktop
+ *  grid, where it sits in its own column and needs the edge to read as a cell. */
+const DIFF_TEXT: Record<string, string> = {
+  EASY:   "text-accent",
+  MEDIUM: "text-amber-400",
+  HARD:   "text-red-400",
+};
+
 
 export default function ProblemBank({ userSheets }: Props) {
   const [q, setQ]               = useState("");
@@ -292,37 +300,43 @@ export default function ProblemBank({ userSheets }: Props) {
                           {/* Content: 2-line mobile / 1-line desktop */}
                           <div className="flex-1 min-w-0">
 
-                            {/* Mobile 2-line */}
-                            <div className="md:hidden space-y-1">
-                              <div className="flex items-start justify-between gap-2">
+            {/* Mobile: two lines — title + difficulty, then marks + actions.
+                            Difficulty moves up beside the title so the second line
+                            is free; the must-do badge is dropped because the list
+                            is already ordered must-do first. Desktop below is
+                            untouched. */}
+                            <div className="md:hidden space-y-1.5">
+                              {/* Title gets the whole first line here, unlike the
+                                  sheet: this row also carries the order number and
+                                  the Add-to-sheet button, so there is ~70px less to
+                                  work with and difficulty on line 1 pushed most
+                                  titles onto a second line. */}
+                              <div className="flex items-start">
                                 {p.leetcodeUrl ? (
-                                  <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" className="problem-title text-sm text-primary leading-snug">{p.title}</a>
+                                  <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" className="problem-title min-w-0 text-sm text-primary leading-snug">{p.title}</a>
                                 ) : (
-                                  <span className="text-sm text-primary leading-snug">{p.title}</span>
-                                )}
-                                {p.mustDo && (
-                                  <span className="shrink-0 text-[10px] text-amber-400/70 border border-amber-500/20 rounded px-1 py-0.5 mt-0.5">must do</span>
+                                  <span className="min-w-0 text-sm text-primary leading-snug">{p.title}</span>
                                 )}
                               </div>
-                              <div className="flex items-center">
-                                <div className="flex-1 flex items-center gap-1">
+                              <div className="flex items-center gap-2">
+                                <span className={`shrink-0 text-xs font-medium ${DIFF_TEXT[p.difficulty]}`}>
+                                  {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
+                                </span>
+                                <div className="flex min-w-0 flex-1 items-center gap-2">
                                   {p.companies.slice(0, 4).map((c) => (
                                     <span key={c} title={c} className="inline-flex opacity-75 hover:opacity-100 transition-opacity">
                                       <CompanyLogo name={c} size={15} />
                                     </span>
                                   ))}
                                 </div>
-                                <span className={`text-[11px] border rounded-full px-2 py-0.5 shrink-0 ${DIFF_COLOR[p.difficulty]}`}>
-                                  {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
-                                </span>
-                                <div className="flex-1 flex items-center justify-end">
+                                <div className="flex shrink-0 items-center gap-1.5">
                                   {p.leetcodeUrl && (
-                                    <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded opacity-60 hover:opacity-100 transition-opacity" title="Solve on LeetCode">
+                                    <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" className="row-action rounded" title="Solve on LeetCode">
                                       <LeetCodeIcon size={20} />
                                     </a>
                                   )}
                                   {p.gfgUrl && (
-                                    <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded opacity-60 hover:opacity-100 transition-opacity" title="Solve on GeeksForGeeks">
+                                    <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" className="row-action rounded" title="Solve on GeeksForGeeks">
                                       <GFGIcon size={20} />
                                     </a>
                                   )}
