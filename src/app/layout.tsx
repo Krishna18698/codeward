@@ -55,6 +55,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#34d399",
+  // Shrink the layout viewport when the soft keyboard opens instead of just
+  // sliding the visual one over it (the default, `resizes-visual`). Without
+  // this a bottom-anchored sheet stays pinned to the bottom of the full-height
+  // layout — i.e. underneath the keyboard — and dvh units don't update either.
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({

@@ -77,6 +77,31 @@ export default function NoteModal({
 }) {
   useScrollLock();
 
+  // How much of the layout viewport the soft keyboard is covering, and how much
+  // height is actually left to draw in.
+  //
+  // `interactiveWidget: resizes-content` in the root viewport handles this on
+  // its own where it's supported — there the inset stays 0 and nothing below
+  // does anything. This is the fallback for browsers that keep the layout
+  // viewport at full height and just slide the visual one, which leaves a
+  // bottom-anchored sheet sitting underneath the keyboard.
+  const [kb, setKb] = useState({ inset: 0, avail: 0 });
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => {
+      const inset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      setKb({ inset, avail: vv.height });
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
+
   const [content, setContent] = useState(initialContent);
   const [state, setState] = useState<"idle" | "saving" | "saved">("idle");
   const areaRef = useRef<HTMLTextAreaElement>(null);
@@ -197,6 +222,7 @@ export default function NoteModal({
   return createPortal(
     <div
       className="fixed inset-0 z-[60] flex items-end justify-center bg-black/55 backdrop-blur-md sm:items-center sm:p-4"
+      style={kb.inset > 0 ? { paddingBottom: kb.inset } : undefined}
       onClick={close}
     >
       <div
@@ -205,6 +231,10 @@ export default function NoteModal({
         aria-label={`Notes for ${title}`}
         onClick={(e) => e.stopPropagation()}
         className="note-sheet flex max-h-[88dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[22px] border border-border sm:max-h-[85vh] sm:rounded-[22px]"
+        // With the keyboard up there is far less room than 88dvh, and the
+        // footer is the first thing to fall off the bottom — which is exactly
+        // the Done button.
+        style={kb.inset > 0 ? { maxHeight: Math.round(kb.avail * 0.94) } : undefined}
       >
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between gap-4 border-b border-border px-5 py-4">
@@ -251,7 +281,12 @@ export default function NoteModal({
               value={content}
               onChange={(e) => { setContent(e.target.value); queueSave(e.target.value); }}
               placeholder="Jot your approach, edge cases, complexity, and gotchas…"
-              className="min-h-[34dvh] flex-1 resize-none bg-transparent px-4 py-3.5 text-[15px] leading-relaxed text-primary placeholder:text-muted focus:outline-none"
+              // The min-height gives the editor presence when there's room, but
+              // it must not hold the sheet taller than the visible area once the
+              // keyboard is up.
+              className={kb.inset > 0
+                ? "min-h-0 flex-1 resize-none bg-transparent px-4 py-3.5 text-[15px] leading-relaxed text-primary placeholder:text-muted focus:outline-none"
+                : "min-h-[34dvh] flex-1 resize-none bg-transparent px-4 py-3.5 text-[15px] leading-relaxed text-primary placeholder:text-muted focus:outline-none"}
             />
           </div>
         </div>
