@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sheetVisibleTo } from "@/lib/sheetAccess";
 
 export async function GET(req: Request) {
   const userId = await getSessionUserId();
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
       ? { sheet: { isPreset: true }, NOT: { companies: { isEmpty: true } } }
       : {
           sheetId: sheetId!,
-          sheet: { OR: [{ isPreset: true }, { userId }] },
+          sheet: sheetVisibleTo(userId),
           NOT: { companies: { isEmpty: true } },
         },
     select: { companies: true },

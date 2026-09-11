@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { canReadSheet } from "@/lib/sheetAccess";
 
 export async function GET(req: Request) {
   const userId = await getSessionUserId();
@@ -22,7 +23,11 @@ export async function GET(req: Request) {
     ...(company    ? { companies: { has: company } } : {}),
   };
 
-  const [problems, filteredTotal, allStatuses, total] = await Promise.all([
+  // Runs alongside the data queries rather than before them: the check has to
+  // pass before anything is returned, but it's an indexed primary-key lookup
+  // and this is the sheet's main load path, so it shouldn't cost a round trip.
+  const [canRead, problems, filteredTotal, allStatuses, total] = await Promise.all([
+    canReadSheet(sheetId, userId),
     prisma.problem.findMany({
       where: filterWhere,
       select: {
@@ -47,6 +52,10 @@ export async function GET(req: Request) {
       ? prisma.problem.count({ where: { sheetId } })
       : Promise.resolve(undefined as number | undefined),
   ]);
+
+  // 404, not 403: a sheet the caller may not read is indistinguishable from
+  // one that doesn't exist.
+  if (!canRead) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const doneCount    = allStatuses ? allStatuses.filter((s) => s.status === "DONE").length    : null;
   const solvingCount = allStatuses ? allStatuses.filter((s) => s.status === "SOLVING").length : null;

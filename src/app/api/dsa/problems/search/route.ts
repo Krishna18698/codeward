@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sheetVisibleTo } from "@/lib/sheetAccess";
 import type { Difficulty, ProblemPattern } from "@prisma/client";
 
 export async function GET(req: Request) {
@@ -20,7 +21,9 @@ export async function GET(req: Request) {
   const excludeUrls   = new Set<string>();
   if (excludeSheetId) {
     const existing = await prisma.problem.findMany({
-      where: { sheetId: excludeSheetId },
+      // Scoped: an id the caller can't read yields no exclusions, so the
+      // result set can't be used to probe another user's sheet contents.
+      where: { sheetId: excludeSheetId, sheet: sheetVisibleTo(userId) },
       select: { title: true, leetcodeUrl: true },
     });
     for (const p of existing) {
