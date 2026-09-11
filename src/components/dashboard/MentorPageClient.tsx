@@ -41,11 +41,15 @@ function groupByDate(convs: ConversationSummary[]) {
 
 export default function MentorPageClient({ initialConversations }: Props) {
   const [conversations, setConversations] = useState(initialConversations);
-  const [activeId, setActiveId] = useState<string | null>(
-    initialConversations[0]?.id ?? null
-  );
+  // Starts null even though we know which conversation will open. MentorChat
+  // reads `initialMessages` only in its state initialiser, so seeding this with
+  // the first id mounted an empty chat for a frame before the loader replaced
+  // it — a blank conversation flashing up right where the real one belongs.
+  // Holding the id back until the messages land means the first thing painted
+  // is the loader, and MentorChat mounts once, with content.
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [activeMessages, setActiveMessages] = useState<Message[]>([]);
-  const [loadingConv, setLoadingConv] = useState(false);
+  const [loadingConv, setLoadingConv] = useState(initialConversations.length > 0);
   const [showList, setShowList] = useState(true); // mobile: toggle between list and chat
 
   // Load the first conversation's messages on mount
@@ -215,29 +219,31 @@ export default function MentorPageClient({ initialConversations }: Props) {
         </div>
       </div>
 
-      {activeId ? (
-        loadingConv ? (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="flex gap-1">
-              {[0, 150, 300].map((d) => (
-                <span
-                  key={d}
-                  className="w-1.5 h-1.5 rounded-full bg-accent/60 animate-bounce"
-                  style={{ animationDelay: `${d}ms`, animationDuration: "900ms" }}
-                />
-              ))}
-            </div>
+      {/* Loading is checked before activeId: on mount the id is still null while
+          the first conversation's messages are in flight, and falling through to
+          the empty state there would flash "Start a conversation" over a
+          conversation that exists. */}
+      {loadingConv ? (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="flex gap-1">
+            {[0, 150, 300].map((d) => (
+              <span
+                key={d}
+                className="w-1.5 h-1.5 rounded-full bg-accent/60 animate-bounce"
+                style={{ animationDelay: `${d}ms`, animationDuration: "900ms" }}
+              />
+            ))}
           </div>
-        ) : (
-          <MentorChat
-            key={activeId}
-            conversationId={activeId}
-            initialMessages={activeMessages}
-            context="dashboard"
-            hideHeader
-            className="flex-1 min-h-0 rounded-none border-0 bg-transparent md:bg-transparent"
-          />
-        )
+        </div>
+      ) : activeId ? (
+        <MentorChat
+          key={activeId}
+          conversationId={activeId}
+          initialMessages={activeMessages}
+          context="dashboard"
+          hideHeader
+          className="flex-1 min-h-0 rounded-none border-0 bg-transparent md:bg-transparent"
+        />
       ) : (
         <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-8">
           <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">

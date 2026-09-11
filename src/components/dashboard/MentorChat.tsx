@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Sparkles, Send, ArrowRight, Square, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
+import { CONTROL_DELIMITER, parseMentorStream } from "@/lib/mentorStream";
 
 // Lazy so the markdown pipeline stays out of the shared dashboard bundle;
 // plain text renders as the fallback for the frame it takes to load.
@@ -30,25 +31,11 @@ type Props = {
 const DEFAULT_WELCOME =
   "Hey! I'm your AI prep mentor. I can help you plan your DSA sheet, explain patterns, review your approach, or answer system design questions.\n\nTry: *\"Create a sheet for Meta focused on trees and DP\"*";
 
-const SHEET_TRIGGERS = [
-  "create a sheet", "make a sheet", "generate a sheet", "build a sheet",
-  "create sheet", "make sheet", "build sheet",
-  "create a plan", "make a study plan", "build a plan", "create study plan",
-];
-
-const ADD_TRIGGERS = [
-  "add more", "add problems", "more problems", "add to that sheet",
-  "add to the sheet", "expand the sheet", "add to sheet", "more to the sheet",
-  "add more problems", "add to my sheet",
-];
-
-function isSheetRequest(text: string) {
-  return SHEET_TRIGGERS.some((t) => text.toLowerCase().includes(t));
-}
-
-function isAddToSheetRequest(text: string) {
-  return ADD_TRIGGERS.some((t) => text.toLowerCase().includes(t));
-}
+// Sheet intent used to be decided here, by testing the message against two
+// lists of trigger substrings. That fired on "Do not create a sheet" (which
+// contains "create a sheet") and stayed silent on "Create a custom sheet named
+// QA Smoke" (which matched no trigger). The model now makes the call and says
+// so in a control frame at the end of the stream — see @/lib/mentorStream.
 
 function ThinkingDots() {
   return (
@@ -149,15 +136,100 @@ export default function MentorChat({
       }
       return { role: (m.role === "user" ? "USER" : "ASSISTANT") as "USER" | "ASSISTANT", content: m.content ?? "", messageType: "text" };
     });
+    // A swallowed failure here is how a broken save stayed invisible for so
+    // long: the reply rendered, nothing was stored, and the conversation came
+    // back empty on the next load with no error anywhere. Surface it instead.
     fetch(`/api/mentor/conversations/${conversationId}/messages`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: payload }),
-    }).catch(() => {});
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`save failed (${res.status})`);
+      })
+      .catch(() => toast.error("Couldn't save this message — it may not be here when you come back."));
   };
 
   // Find the most recent sheet in this conversation (for add-to-sheet)
   const lastSheet = [...messages].reverse().find((m): m is Extract<Message, { type: "sheet" }> => m.type === "sheet");
+
+  /** Swaps the last message (the streamed placeholder) for a status line, then
+   *  replaces that in turn with the result. Both sheet flows share the shape. */
+  const replaceLast = (msg: Message) => setMessages((prev) => [...prev.slice(0, -1), msg]);
+
+  const runSheetCreation = async (userMsg: Message, text: string) => {
+    replaceLast({ role: "assistant", type: "text", content: "Generating your personalized sheet…" });
+    setThinking(false);
+
+    const res = await fetch("/api/mentor/generate-sheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      // The loading line is replaced, not left hanging, and the failure names
+      // what actually went wrong rather than a generic apology.
+      replaceLast({
+        role: "assistant",
+        type: "text",
+        content: `Sorry, couldn't generate the sheet: ${data.error ?? "the request failed"}. Your request is still above — try again.`,
+      });
+      toast.error("Couldn't generate the sheet");
+      return;
+    }
+
+    const sheetMsg: Message = {
+      role: "assistant",
+      type: "sheet",
+      sheetId: data.sheetId,
+      sheetName: data.sheetName,
+      problemCount: data.problemCount,
+      rationale: data.rationale,
+    };
+    replaceLast(sheetMsg);
+    toast.success(`Sheet created — ${data.problemCount} problems added`);
+    persist([userMsg, sheetMsg]);
+  };
+
+  const runSheetAddition = async (
+    userMsg: Message,
+    text: string,
+    sheet: Extract<Message, { type: "sheet" }>,
+  ) => {
+    replaceLast({ role: "assistant", type: "text", content: `Adding more problems to "${sheet.sheetName}"…` });
+    setThinking(false);
+
+    const res = await fetch("/api/mentor/add-to-sheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text, sheetId: sheet.sheetId }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      replaceLast({
+        role: "assistant",
+        type: "text",
+        content: `Sorry, couldn't add problems: ${data.error ?? "the request failed"}. Your request is still above — try again.`,
+      });
+      toast.error("Couldn't add problems to sheet");
+      return;
+    }
+
+    const updateMsg: Message = {
+      role: "assistant",
+      type: "sheet-update",
+      sheetId: data.sheetId,
+      sheetName: data.sheetName,
+      addedCount: data.addedCount,
+      totalCount: data.totalCount,
+    };
+    replaceLast(updateMsg);
+    toast.success(`Added ${data.addedCount} problems to ${data.sheetName}`);
+    persist([userMsg, updateMsg]);
+  };
 
   const send = async () => {
     const text = input.trim();
@@ -170,87 +242,21 @@ export default function MentorChat({
     setThinking(true);
 
     try {
-      // ── Add to existing sheet ──────────────────────────────────────────────
-      if (isAddToSheetRequest(text) && lastSheet) {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", type: "text", content: `Adding more problems to "${lastSheet.sheetName}"…` },
-        ]);
-        setThinking(false);
-
-        const res = await fetch("/api/mentor/add-to-sheet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text, sheetId: lastSheet.sheetId }),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          setMessages((prev) => [
-            ...prev.slice(0, -1),
-            { role: "assistant", type: "text", content: `Sorry, couldn't add problems: ${data.error}` },
-          ]);
-          toast.error("Couldn't add problems to sheet");
-        } else {
-          const updateMsg: Message = {
-            role: "assistant",
-            type: "sheet-update",
-            sheetId: data.sheetId,
-            sheetName: data.sheetName,
-            addedCount: data.addedCount,
-            totalCount: data.totalCount,
-          };
-          setMessages((prev) => [...prev.slice(0, -1), updateMsg]);
-          toast.success(`Added ${data.addedCount} problems to ${data.sheetName}`);
-          persist([userMsg, updateMsg]);
-        }
-
-      // ── Create new sheet ───────────────────────────────────────────────────
-      } else if (isSheetRequest(text)) {
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", type: "text", content: "Generating your personalized sheet…" },
-        ]);
-        setThinking(false);
-
-        const res = await fetch("/api/mentor/generate-sheet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text }),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          setMessages((prev) => [
-            ...prev.slice(0, -1),
-            { role: "assistant", type: "text", content: `Sorry, couldn't generate the sheet: ${data.error}` },
-          ]);
-          toast.error("Couldn't generate the sheet");
-        } else {
-          const sheetMsg: Message = {
-            role: "assistant",
-            type: "sheet",
-            sheetId: data.sheetId,
-            sheetName: data.sheetName,
-            problemCount: data.problemCount,
-            rationale: data.rationale,
-          };
-          setMessages((prev) => [...prev.slice(0, -1), sheetMsg]);
-          toast.success(`Sheet created — ${data.problemCount} problems added`);
-          persist([userMsg, sheetMsg]);
-        }
-
-      // ── Normal RAG chat with streaming ────────────────────────────────────
-      } else {
+      // Every turn goes to the chat route first. It streams prose, and if the
+      // model judged this a build request it ends with a control frame naming
+      // the follow-up — so intent is decided by the model, not by matching
+      // substrings against the user's wording.
+      {
         abortRef.current = new AbortController();
         receivedRef.current = "";
 
         const res = await fetch("/api/mentor/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text, context }),
+          // Sending the conversation id both scopes the model's history to this
+          // thread and tells the route not to persist — `persist()` below writes
+          // the finished exchange against the same conversation.
+          body: JSON.stringify({ message: text, context, conversationId }),
           signal: abortRef.current.signal,
         });
 
@@ -280,11 +286,18 @@ export default function MentorChat({
           }
         }, 16);
 
+        // The control frame is split off the raw buffer on every read rather
+        // than tested per-chunk, because the delimiter can land across a chunk
+        // boundary. receivedRef only ever holds prose, so the typewriter never
+        // types a NUL or the JSON behind it.
+        let raw = "";
         try {
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            receivedRef.current += decoder.decode(value, { stream: true });
+            raw += decoder.decode(value, { stream: true });
+            const split = raw.indexOf(CONTROL_DELIMITER);
+            receivedRef.current = split === -1 ? raw : raw.slice(0, split);
           }
         } catch (e: unknown) {
           if (e instanceof Error && e.name === "AbortError") {
@@ -293,6 +306,8 @@ export default function MentorChat({
           }
           throw e;
         }
+
+        const { control } = parseMentorStream(raw);
 
         // Wait for typewriter to catch up
         await new Promise<void>((resolve) => {
@@ -315,6 +330,31 @@ export default function MentorChat({
         });
 
         setStreaming(false);
+
+        // The model asked to build something. The placeholder message (empty,
+        // since a tool call streams no prose) becomes the status line, and the
+        // heavy endpoint does the work.
+        if (control?.route === "create_sheet") {
+          await runSheetCreation(userMsg, text);
+          return;
+        }
+        if (control?.route === "add_problems") {
+          if (lastSheet) {
+            await runSheetAddition(userMsg, text, lastSheet);
+            return;
+          }
+          // Model wanted to extend a sheet that doesn't exist in this thread.
+          // Say so rather than silently falling through to an empty reply.
+          const noSheet: Message = {
+            role: "assistant",
+            type: "text",
+            content: "I don't have a sheet from this conversation to add to yet — ask me to create one first.",
+          };
+          replaceLast(noSheet);
+          persist([userMsg, noSheet]);
+          return;
+        }
+
         const assistantMsg: Message = { role: "assistant", type: "text", content: receivedRef.current };
         persist([userMsg, assistantMsg]);
       }

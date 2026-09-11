@@ -53,11 +53,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       mustDo: source.mustDo,
       order: count + 1,
       sheetId,
-      testCases: sourceCases.length > 0
-        ? { createMany: { data: sourceCases } }
-        : undefined,
     },
   });
+
+  // Copied one at a time for the same reason as the mentor message writes: a
+  // nested createMany makes Prisma open an implicit transaction, which the Neon
+  // HTTP adapter cannot do, so this route 500'd for any source problem that had
+  // test cases.
+  for (const c of sourceCases) {
+    await prisma.testCase.create({ data: { ...c, problemId: problem.id } });
+  }
 
   return NextResponse.json({ problem });
 }

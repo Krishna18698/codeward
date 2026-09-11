@@ -24,6 +24,19 @@ function gfgFor(leetcodeUrl: string | undefined): string | null {
 const VALID_PATTERNS = PATTERN_ORDER as ProblemPattern[];
 const VALID_DIFFICULTIES: Difficulty[] = ["EASY","MEDIUM","HARD"];
 
+/** LeetCode slug from a problem URL — "…/problems/rotate-array/" → "rotate-array". */
+function leetcodeSlug(url: string | undefined | null): string | null {
+  if (!url) return null;
+  const m = url.match(/leetcode\.com\/problems\/([^/?#]+)/i);
+  return m ? m[1].toLowerCase() : null;
+}
+
+/** Fallback key when the model gives no usable URL. Lowercased, punctuation
+ *  dropped, so "3Sum" and "3-sum" collapse onto the same catalog row. */
+function titleKey(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
 export async function POST(req: Request) {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -112,29 +125,73 @@ Always use the create_sheet tool to output the sheet. Do not just describe it �
     }>;
   };
 
+  // ── Reconcile against the curated catalog ──────────────────────────────
+  // The model supplies its own difficulty and pattern, and it gets them wrong:
+  // it labelled Rotate Array EASY where the catalog (and LeetCode) say MEDIUM.
+  // For any problem we already carry on a preset sheet, the catalog wins — so a
+  // generated sheet grades and groups identically to every other sheet. One
+  // query for the whole batch, since this already sits behind a slow AI call.
+  const catalog = await prisma.problem.findMany({
+    where: { sheet: { isPreset: true } },
+    select: {
+      title: true, description: true, difficulty: true,
+      pattern: true, leetcodeUrl: true, gfgUrl: true,
+    },
+  });
+
+  type CatalogRow = (typeof catalog)[number];
+  const bySlug = new Map<string, CatalogRow>();
+  const byTitle = new Map<string, CatalogRow>();
+  for (const row of catalog) {
+    const slug = leetcodeSlug(row.leetcodeUrl);
+    if (slug && !bySlug.has(slug)) bySlug.set(slug, row);
+    const key = titleKey(row.title);
+    if (!byTitle.has(key)) byTitle.set(key, row);
+  }
+
+  const resolved = args.problems.map((p) => {
+    const slug = leetcodeSlug(p.leetcodeUrl);
+    const match = (slug && bySlug.get(slug)) || byTitle.get(titleKey(p.title)) || null;
+
+    if (match) {
+      return {
+        // Catalog is authoritative for everything factual about the problem.
+        title: match.title,
+        description: match.description,
+        difficulty: match.difficulty,
+        pattern: match.pattern,
+        leetcodeUrl: match.leetcodeUrl,
+        gfgUrl: match.gfgUrl,
+        // …but which problems are must-do is this sheet's editorial call.
+        mustDo: p.mustDo,
+      };
+    }
+
+    // Not in the catalog — keep the model's values, validated as before.
+    return {
+      title: p.title,
+      description: p.description,
+      difficulty: VALID_DIFFICULTIES.includes(p.difficulty as Difficulty)
+        ? (p.difficulty as Difficulty)
+        : "MEDIUM",
+      pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern)
+        ? (p.pattern as ProblemPattern)
+        : "HASH_MAP",
+      leetcodeUrl: p.leetcodeUrl || null,
+      gfgUrl: gfgFor(p.leetcodeUrl),
+      mustDo: p.mustDo,
+    };
+  });
+
   // Persist to DB
   const sheet = await prisma.sheet.create({
     data: { name: args.sheetName, source: "CUSTOM", isPreset: false, userId },
   });
 
   const created = await Promise.all(
-    args.problems.map((p, i) =>
+    resolved.map((p, i) =>
       prisma.problem.create({
-        data: {
-          title: p.title,
-          description: p.description,
-          difficulty: VALID_DIFFICULTIES.includes(p.difficulty as Difficulty)
-            ? (p.difficulty as Difficulty)
-            : "MEDIUM",
-          pattern: VALID_PATTERNS.includes(p.pattern as ProblemPattern)
-            ? (p.pattern as ProblemPattern)
-            : "HASH_MAP",
-          mustDo: p.mustDo,
-          order: i + 1,
-          leetcodeUrl: p.leetcodeUrl || null,
-          gfgUrl: gfgFor(p.leetcodeUrl),
-          sheetId: sheet.id,
-        },
+        data: { ...p, order: i + 1, sheetId: sheet.id },
       })
     )
   );

@@ -29,20 +29,32 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "No messages provided" }, { status: 400 });
   }
 
-  // Save all messages
-  await prisma.chatMessage.createMany({
-    data: messages.map((m) => ({
-      userId,
-      conversationId: id,
-      role: m.role,
-      content: m.content,
-      messageType: m.messageType ?? "text",
-      sheetId: m.sheetId ?? null,
-      sheetName: m.sheetName ?? null,
-      problemCount: m.problemCount ?? null,
-      rationale: m.rationale ?? null,
-    })),
-  });
+  // Written one row at a time, NOT with createMany: Prisma runs a multi-row
+  // createMany inside an implicit transaction, and the Neon HTTP adapter this
+  // app uses cannot open one — it threw "Transactions are not supported in HTTP
+  // mode" and 500'd, which the client's fire-and-forget .catch() swallowed. The
+  // visible symptom was a mentor conversation that always reloaded empty.
+  //
+  // createdAt is set explicitly rather than left to now(): the read side orders
+  // by it, and two rows written in the same millisecond could otherwise come
+  // back with the answer above the question.
+  const startedAt = Date.now();
+  for (const [i, m] of messages.entries()) {
+    await prisma.chatMessage.create({
+      data: {
+        userId,
+        conversationId: id,
+        role: m.role,
+        content: m.content,
+        messageType: m.messageType ?? "text",
+        sheetId: m.sheetId ?? null,
+        sheetName: m.sheetName ?? null,
+        problemCount: m.problemCount ?? null,
+        rationale: m.rationale ?? null,
+        createdAt: new Date(startedAt + i),
+      },
+    });
+  }
 
   // Auto-title from first user message if still default
   const firstUserMsg = messages.find((m) => m.role === "USER");

@@ -9,6 +9,39 @@ import { retrieveContext } from "@/lib/rag";
 import Groq from "groq-sdk";
 import { GROQ_MODEL } from "@/lib/groq";
 import { chatLimiter } from "@/lib/ratelimit";
+import { CONTROL_DELIMITER, type MentorRoute } from "@/lib/mentorStream";
+
+/** Routing tools. These carry no payload — they only say which path the turn
+ *  takes. The descriptions do the real work, so they spell out the two cases
+ *  the old substring matcher got wrong: a declined sheet, and a question that
+ *  merely mentions one. */
+const SHEET_ROUTING_TOOLS = [
+  {
+    type: "function" as const,
+    function: {
+      name: "create_study_sheet",
+      description:
+        "Call this ONLY when the user is affirmatively asking you to build a new study sheet or " +
+        "practice plan for them — e.g. 'create a sheet for Meta', 'make me a custom sheet named X', " +
+        "'put together a two-week plan'. Do NOT call it if the user is declining or forbidding one " +
+        "('do not create a sheet', 'no sheet needed', 'without making a sheet'), if they are merely " +
+        "asking a question that mentions sheets ('what's on my sheet?', 'how do your sheets work?'), " +
+        "or if they are quoting an example. When in doubt, answer in prose instead of calling this.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  },
+  {
+    type: "function" as const,
+    function: {
+      name: "add_problems_to_sheet",
+      description:
+        "Call this ONLY when the user is affirmatively asking to add more problems to the sheet " +
+        "already created earlier in this conversation — e.g. 'add five more', 'expand that sheet'. " +
+        "Do not call it when no sheet has been created yet, or when the user is declining.",
+      parameters: { type: "object", properties: {}, required: [] },
+    },
+  },
+];
 
 export async function POST(req: Request) {
   const userId = await getSessionUserId();
@@ -22,7 +55,11 @@ export async function POST(req: Request) {
     if (!success) return new Response("Too many requests — slow down a bit.", { status: 429 });
   }
 
-  const { message, context } = await req.json() as { message?: string; context?: string };
+  const { message, context, conversationId } = await req.json() as {
+    message?: string;
+    context?: string;
+    conversationId?: string;
+  };
 
   if (!message || typeof message !== "string" || message.trim().length === 0) {
     return new Response("Message required", { status: 400 });
@@ -31,9 +68,18 @@ export async function POST(req: Request) {
     return new Response("Message too long (max 4000 chars)", { status: 400 });
   }
 
-  await prisma.chatMessage.create({
-    data: { userId, role: "USER", content: message, context },
-  });
+  // The full-page mentor owns persistence: it POSTs the finished exchange to
+  // /conversations/[id]/messages once the stream settles, so that it can attach
+  // sheet cards and the real final text. Writing here as well stored every
+  // exchange twice — once orphaned with a null conversationId — so this route
+  // only persists for the embedded mentor, which has no conversation of its own.
+  const ownsPersistence = !conversationId;
+
+  if (ownsPersistence) {
+    await prisma.chatMessage.create({
+      data: { userId, role: "USER", content: message, context },
+    });
+  }
 
   // ── Fetch the three independent inputs in parallel ─────────────────────
   // The RAG embedding round-trip is the slow one; running the context lookup
@@ -58,7 +104,10 @@ export async function POST(req: Request) {
   const [ragContext, history, contextRecord] = await Promise.all([
     retrieveContext(message).catch(() => ""),
     prisma.chatMessage.findMany({
-      where: { userId, context },
+      // Scoped to the conversation when there is one. Keying on `context` alone
+      // meant every full-page conversation shared the single "dashboard" bucket,
+      // so unrelated threads bled into each other's history.
+      where: conversationId ? { userId, conversationId } : { userId, context },
       orderBy: { createdAt: "desc" },
       take: 12,
       select: { role: true, content: true },
@@ -91,14 +140,18 @@ Help them think through the design — ask clarifying questions first, then guid
     systemPrompt += `\n\n--- Relevant knowledge ---\n${ragContext}\n--- End knowledge ---\nUse this to ground your answer when relevant.`;
   }
 
+  // `history` came back newest-first. Reversed it reads oldest-first, and when
+  // this route did the writing its last entry is the message we just stored —
+  // drop it so the current turn isn't sent twice. When the client owns
+  // persistence nothing has been written yet, so every row is a prior turn.
+  const ascending = history.reverse();
+  const priorTurns = ownsPersistence ? ascending.slice(0, -1) : ascending;
+
   const messages = [
-    ...history
-      .reverse()
-      .slice(0, -1)
-      .map((m) => ({
-        role: (m.role === "USER" ? "user" : "assistant") as "user" | "assistant",
-        content: m.content,
-      })),
+    ...priorTurns.map((m) => ({
+      role: (m.role === "USER" ? "user" : "assistant") as "user" | "assistant",
+      content: m.content,
+    })),
     { role: "user" as const, content: message },
   ];
 
@@ -106,9 +159,11 @@ Help them think through the design — ask clarifying questions first, then guid
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     const fallback = "The AI mentor isn't available right now. Please check back later.";
-    await prisma.chatMessage.create({
-      data: { userId, role: "ASSISTANT", content: fallback, context },
-    });
+    if (ownsPersistence) {
+      await prisma.chatMessage.create({
+        data: { userId, role: "ASSISTANT", content: fallback, context },
+      });
+    }
     return new Response(fallback);
   }
 
@@ -116,6 +171,7 @@ Help them think through the design — ask clarifying questions first, then guid
   const groq = new Groq({ apiKey });
   const encoder = new TextEncoder();
   let assistantContent = "";
+  let route: MentorRoute | null = null;
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -125,14 +181,43 @@ Help them think through the design — ask clarifying questions first, then guid
           max_tokens: 1500,
           messages: [{ role: "system", content: systemPrompt }, ...messages],
           stream: true,
+          // The model decides whether this turn is a conversation or a request
+          // to build something. This replaced a client-side substring match that
+          // fired on "Do not create a sheet" (it contains "create a sheet") and
+          // missed "Create a custom sheet named X" (it matched no trigger).
+          //
+          // MUST stay "auto" — the other AI routes use "required" because they
+          // exist only to call one tool. Copying that here would turn every
+          // question into a sheet.
+          tool_choice: "auto",
+          tools: SHEET_ROUTING_TOOLS,
         });
 
         for await (const chunk of groqStream) {
-          const text = chunk.choices[0]?.delta?.content ?? "";
+          const delta = chunk.choices[0]?.delta;
+
+          // A routing tool call ends the turn: the client takes over and calls
+          // the heavy sheet endpoint. Deliberately not generating the sheet in
+          // here — that's a forced tool call at max_tokens 4000, which has no
+          // business inside a streaming conversational reply.
+          const called = delta?.tool_calls?.[0]?.function?.name;
+          if (called && (called === "create_study_sheet" || called === "add_problems_to_sheet")) {
+            route = called === "create_study_sheet" ? "create_sheet" : "add_problems";
+            break;
+          }
+
+          const text = delta?.content ?? "";
           if (text) {
             assistantContent += text;
             controller.enqueue(encoder.encode(text));
           }
+        }
+
+        if (route) {
+          // Any prose streamed before the tool call is discarded on the client —
+          // the sheet flow replaces the message, as it always did.
+          assistantContent = "";
+          controller.enqueue(encoder.encode(CONTROL_DELIMITER + JSON.stringify({ route })));
         }
       } catch (e) {
         console.error("[mentor/chat] stream error:", e);
@@ -140,7 +225,7 @@ Help them think through the design — ask clarifying questions first, then guid
         controller.enqueue(encoder.encode(errMsg));
         assistantContent = errMsg;
       } finally {
-        if (assistantContent) {
+        if (ownsPersistence && assistantContent) {
           await prisma.chatMessage.create({
             data: { userId, role: "ASSISTANT", content: assistantContent, context },
           });
