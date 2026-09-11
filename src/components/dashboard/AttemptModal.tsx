@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import { X, Check, X as XIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
@@ -79,6 +80,8 @@ export default function AttemptModal({
   attemptId: string;
   onClose: () => void;
 }) {
+  useScrollLock();
+
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [error, setError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);

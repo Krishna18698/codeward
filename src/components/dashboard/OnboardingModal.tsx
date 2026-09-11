@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -11,6 +12,8 @@ const EXP_LEVELS = [
 ];
 
 export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
+  useScrollLock();
+
   const [step, setStep] = useState(0);
   const [exp, setExp] = useState("");
   const [company, setCompany] = useState("");

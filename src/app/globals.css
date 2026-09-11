@@ -687,6 +687,19 @@ body:has([role="dialog"]) main {
   overflow: hidden;
 }
 
+/* The same lock without the :has() dependency. Dialogs stamp
+   data-dialog-open on <html> (see lib/useScrollLock), so the page stays put
+   even where :has() isn't available or a dialog is missing its role.
+   overscroll-behavior stops a flick at the end of the sheet from handing the
+   gesture to the page underneath, which is how a touch drag leaks through on
+   Android even when the container itself can't scroll. */
+html[data-dialog-open],
+html[data-dialog-open] body,
+html[data-dialog-open] main {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 [role="dialog"],
 [role="dialog"] textarea {
   overscroll-behavior: contain;

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useScrollLock } from "@/lib/useScrollLock";
 import { X, Bold, Italic, Strikethrough, Underline, List, ListOrdered, Quote, Code } from "lucide-react";
 
 /** Bottom-sheet note editor for a problem.
@@ -73,6 +74,8 @@ export default function NoteModal({
   /** Lets the list update its "has a note" indicator without a refetch. */
   onSaved?: (content: string) => void;
 }) {
+  useScrollLock();
+
   const [content, setContent] = useState(initialContent);
   const [state, setState] = useState<"idle" | "saving" | "saved">("idle");
   const areaRef = useRef<HTMLTextAreaElement>(null);
