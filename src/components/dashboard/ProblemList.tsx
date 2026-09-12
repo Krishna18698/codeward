@@ -113,6 +113,7 @@ export default function ProblemList({
   const [query, setQuery] = useState("");
   const [diffFilter, setDiffFilter] = useState("ALL");
   const [compFilter, setCompFilter] = useState("ALL");
+  const [reviseOnly, setReviseOnly] = useState(false);
   const [availableCompanies, setAvailableCompanies] = useState<string[]>([]);
 
   // Fetch distinct companies for this sheet
@@ -191,8 +192,17 @@ export default function ProblemList({
     }
   };
 
-  const hasFilters = query.trim() !== "" || diffFilter !== "ALL" || compFilter !== "ALL";
-  const clearFilters = () => { setQuery(""); setDiffFilter("ALL"); setCompFilter("ALL"); };
+  const flaggedCount = allProblems.filter((p) => revising[p.id]).length;
+  // Derived rather than stored: unflagging the last problem while the filter is
+  // on would otherwise hide the chip and leave the list filtered to nothing,
+  // with no control left to switch it back off.
+  const showReviseOnly = reviseOnly && flaggedCount > 0;
+
+  const hasFilters =
+    query.trim() !== "" || diffFilter !== "ALL" || compFilter !== "ALL" || showReviseOnly;
+  const clearFilters = () => {
+    setQuery(""); setDiffFilter("ALL"); setCompFilter("ALL"); setReviseOnly(false);
+  };
 
   // All three filters run in memory. The difficulty and company dropdowns used
   // to refetch the whole sheet (take=1000) on every change, even though the
@@ -202,7 +212,8 @@ export default function ProblemList({
   const matches = (p: ProblemWithStatus) =>
     (!query.trim() || p.title.toLowerCase().includes(query.toLowerCase())) &&
     (diffFilter === "ALL" || p.difficulty === diffFilter) &&
-    (compFilter === "ALL" || p.companies.includes(compFilter));
+    (compFilter === "ALL" || p.companies.includes(compFilter)) &&
+    (!showReviseOnly || !!revising[p.id]);
 
   const filteredGrouped: Record<string, ProblemWithStatus[]> = hasFilters
     ? Object.fromEntries(
@@ -251,9 +262,28 @@ export default function ProblemList({
             ))}
           </select>
         )}
-        {(diffFilter !== "ALL" || compFilter !== "ALL") && (
+        {/* Only offered once something is actually flagged — an empty filter is
+            a control that can only disappoint. */}
+        {flaggedCount > 0 && (
           <button
-            onClick={() => { setDiffFilter("ALL"); setCompFilter("ALL"); }}
+            onClick={() => setReviseOnly((v) => !v)}
+            aria-pressed={showReviseOnly}
+            title={showReviseOnly ? "Show all problems" : "Show only problems flagged for revision"}
+            className={cn(
+              "flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs transition-colors",
+              showReviseOnly
+                ? "border-rose-400/50 bg-rose-500/10 text-rose-300"
+                : "border-border text-secondary hover:border-border-accent hover:text-primary",
+            )}
+          >
+            <Flag size={11} className={showReviseOnly ? "fill-current" : ""} />
+            For revision
+            <span className="font-mono text-[10px] opacity-70">{flaggedCount}</span>
+          </button>
+        )}
+        {(diffFilter !== "ALL" || compFilter !== "ALL" || showReviseOnly) && (
+          <button
+            onClick={() => { setDiffFilter("ALL"); setCompFilter("ALL"); setReviseOnly(false); }}
             className="flex items-center gap-1 text-xs text-muted hover:text-secondary border border-border rounded-xl px-2.5 py-1.5 transition-colors"
           >
             <X size={10} /> Clear
@@ -285,6 +315,7 @@ export default function ProblemList({
               query.trim() && `search "${query.trim()}"`,
               diffFilter !== "ALL" && diffFilter.toLowerCase(),
               compFilter !== "ALL" && compFilter,
+              showReviseOnly && "flagged for revision",
             ].filter(Boolean).join(" · ") || "Try widening your filters."}
           </p>
           {hasFilters && (
