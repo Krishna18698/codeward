@@ -459,7 +459,7 @@ export default function ProblemList({
                   return (
                     <div key={p.id} className="animate-fade-in" style={{ animationDelay: animDelay }}>
                       {/* Problem row */}
-                      <div className="flex items-start gap-3 px-4 py-2.5 hover:bg-border transition-colors">
+                      <div className="problem-row flex items-start gap-3 px-4 py-2.5 hover:bg-border transition-colors">
                         {/* Status circle — self-center so it stays centered across both lines */}
                         <button
                           onClick={() => toggleDone(p.id)}
@@ -491,12 +491,12 @@ export default function ProblemList({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 title={`Solve "${p.title}" on LeetCode`}
-                                className="problem-title min-w-0 text-sm leading-snug text-secondary md:truncate"
+                                className="problem-title min-w-0 text-sm leading-snug text-secondary"
                               >
                                 {p.title}
                               </a>
                             ) : (
-                              <span className="min-w-0 text-sm leading-snug text-secondary md:truncate">{p.title}</span>
+                              <span className="min-w-0 text-sm leading-snug text-secondary">{p.title}</span>
                             )}
                           </div>
 
@@ -504,7 +504,7 @@ export default function ProblemList({
                               in CSS so the mark is rendered once. */}
                           <div
                             style={{ gridArea: "comp" }}
-                            className="problem-row-comp flex items-center gap-2 opacity-70 md:justify-center md:gap-1.5 md:opacity-75 [&_svg]:h-[15px] [&_svg]:w-[15px] md:[&_svg]:h-4 md:[&_svg]:w-4"
+                            className="problem-row-comp flex items-center gap-2 opacity-70"
                           >
                             {p.companies.slice(0, 3).map((c) => (
                               <span key={c} title={c} className="inline-flex transition-opacity hover:opacity-100">
@@ -513,40 +513,40 @@ export default function ProblemList({
                             ))}
                           </div>
 
-                          <div style={{ gridArea: "must" }} className="problem-row-must flex items-center justify-end md:justify-center">
+                          <div style={{ gridArea: "must" }} className="problem-row-must flex items-center justify-end">
                             {p.mustDo && (
-                              <span className="shrink-0 rounded border border-amber-500/20 px-1 py-0.5 text-[10px] text-amber-400/80 md:px-1.5">
+                              <span className="shrink-0 rounded border border-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400/80">
                                 must do
                               </span>
                             )}
                           </div>
 
-                          <div style={{ gridArea: "diff" }} className="problem-row-diff flex items-center justify-end md:justify-center">
+                          <div style={{ gridArea: "diff" }} className="problem-row-diff flex items-center justify-end">
                             <span className={cn("shrink-0 text-xs font-medium", difficultyColor[p.difficulty])}>
                               {p.difficulty.charAt(0) + p.difficulty.slice(1).toLowerCase()}
                             </span>
                           </div>
 
-                          <div style={{ gridArea: "act" }} className="problem-row-act flex items-center justify-end gap-1.5 md:gap-1">
+                          <div style={{ gridArea: "act" }} className="problem-row-act flex items-center justify-end gap-1.5">
                             {p.leetcodeUrl && (
-                              <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="row-action rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
+                              <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="row-action row-action-link rounded transition-opacity">
                                 <LeetCodeIcon size={20} />
                               </a>
                             )}
                             {p.gfgUrl && (
-                              <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="row-action rounded p-1.5 opacity-70 transition-opacity hover:opacity-100 md:p-2">
+                              <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="row-action row-action-link rounded transition-opacity">
                                 <GFGIcon size={20} />
                               </a>
                             )}
                             {p.hint && (
-                              <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("row-action rounded p-1.5 transition-colors md:p-2", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "text-primary md:text-muted hover:text-secondary")}>
+                              <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("row-action rounded transition-colors", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "row-action-idle hover:text-secondary")}>
                                 <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
                               </button>
                             )}
-                            <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("row-action rounded p-1.5 transition-colors md:p-2", isRevising ? "text-rose-400 hover:text-rose-300" : "text-primary md:text-muted hover:text-secondary")}>
+                            <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("row-action rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "row-action-idle hover:text-secondary")}>
                               <Flag size={15} className={isRevising ? "fill-current" : ""} />
                             </button>
-                            <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("row-action rounded p-1.5 transition-colors md:p-2", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "text-primary md:text-muted hover:text-secondary")}>
+                            <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("row-action rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "row-action-idle hover:text-secondary")}>
                               <PenLine size={15} />
                             </button>
                           </div>

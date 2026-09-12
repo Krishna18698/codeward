@@ -293,19 +293,23 @@ export default function ProblemBank({ userSheets }: Props) {
                       <div className="px-4 py-4 text-center text-xs text-muted">No problems found.</div>
                     ) : (
                       probs.map((p) => (
-                        <div key={p.id} className="flex items-start gap-3 px-4 py-2.5 hover:bg-border transition-colors">
+                        <div key={p.id} className="problem-row flex items-start gap-3 px-4 py-2.5 hover:bg-border transition-colors">
                           {/* Order number */}
                           <span className="text-sm font-semibold text-muted font-mono w-7 shrink-0 text-center self-center">{p.order}</span>
 
                           {/* Content: 2-line mobile / 1-line desktop */}
                           <div className="flex-1 min-w-0">
 
-            {/* Mobile: two lines — title + difficulty, then marks + actions.
-                            Difficulty moves up beside the title so the second line
-                            is free; the must-do badge is dropped because the list
-                            is already ordered must-do first. Desktop below is
-                            untouched. */}
-                            <div className="md:hidden space-y-1.5">
+            {/* Two lines — title, then difficulty, marks and actions. The
+                            must-do badge is dropped because the list is already
+                            ordered must-do first.
+
+                            Which block renders is decided by the ROW's width, not
+                            the viewport's (see .problem-row in globals.css): this
+                            row spends ~130px on the order number and the Add
+                            button, so a viewport breakpoint switched the table on
+                            long before there was room for it. */}
+                            <div className="row-narrow-only space-y-1.5">
                               {/* Title gets the whole first line here, unlike the
                                   sheet: this row also carries the order number and
                                   the Add-to-sheet button, so there is ~70px less to
@@ -344,10 +348,14 @@ export default function ProblemBank({ userSheets }: Props) {
                               </div>
                             </div>
 
-                            {/* Desktop: 5-column — title | companies | must-do | difficulty | links */}
+                            {/* 5-column — title | companies | must-do | difficulty | links.
+                                Fixed tracks except the title: the 76px link track is
+                                the pair's own width (two 36px links and a 4px gap),
+                                so it cannot be squeezed over the difficulty pill the
+                                way minmax(0, 1fr) allowed. */}
                             <div
-                              className="hidden md:grid items-center gap-x-4"
-                              style={{ gridTemplateColumns: "minmax(0,2fr) minmax(0,100px) 72px 72px minmax(0,1fr)" }}
+                              className="row-wide-only items-center gap-x-4"
+                              style={{ gridTemplateColumns: "minmax(0,1fr) 100px 72px 72px 76px" }}
                             >
                               {p.leetcodeUrl ? (
                                 <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title={`Solve "${p.title}" on LeetCode`} className="problem-title text-sm text-primary leading-snug min-w-0 truncate">{p.title}</a>

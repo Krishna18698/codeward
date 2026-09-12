@@ -248,78 +248,129 @@ body {
 [data-theme="light"] .company-mark-invert { filter: none; }
 
 /* One problem row, two arrangements.
-   Mobile stacks into two lines (title + must-do, then meta and actions);
-   desktop is the five-column table. Both come from the SAME five children —
+   Narrow stacks into two lines (title + difficulty, then marks and actions);
+   wide is the five-column table. Both come from the SAME five children —
    previously each row shipped a mobile block and a desktop block and CSS hid
-   one, so every problem cost double the DOM at every viewport. */
+   one, so every problem cost double the DOM at every viewport.
+
+   Which arrangement runs is decided by the ROW's own width, not the viewport's.
+   With a viewport breakpoint the five columns switched on at 768px and then had
+   to survive whatever width was actually left after the page padding — around
+   770px of row for 244px of fixed columns, 64px of gaps and an action cluster
+   that does not shrink. It didn't fit, and grid does not wrap: the icons
+   overflowed their track and were painted straight over the difficulty label.
+   A container query asks the question that actually matters — is there room —
+   so the row falls back to two lines before anything can collide. */
+.problem-row {
+  container: problem-row / inline-size;
+}
+
+/* ── Two-line arrangement (the default) ─────────────────────────────────────
+   Flex, not grid. A two-column grid shares its tracks between both lines, so
+   the action cluster on line 2 was sizing column 2 and starving the title to
+   134px — every title over ~20 characters wrapped. Flex lets each line size
+   independently: line 1 gives the title everything the difficulty doesn't need.
+   The ::after is the line break.
+
+   The must-do badge is dropped rather than hidden — nothing is lost, since
+   problems are already sorted must-do first. */
 .problem-row-grid {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-areas:
-    "title diff"
-    "comp  act";
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   column-gap: 0.5rem;
   row-gap: 0.375rem;
 }
-@media (min-width: 768px) {
+.problem-row-title { order: 1; flex: 1 1 auto; min-width: 0; }
+.problem-row-diff  { order: 2; flex: 0 0 auto; }
+.problem-row-grid::after {
+  content: "";
+  order: 3;
+  flex: 0 0 100%;
+  height: 0;
+}
+.problem-row-comp  { order: 4; flex: 0 1 auto; min-width: 0; }
+.problem-row-comp svg { width: 15px; height: 15px; }
+.problem-row-act   { order: 5; flex: 0 0 auto; margin-left: auto; }
+
+.problem-row-must { display: none; }
+
+/* Each action in its own bordered box, the way every other control in the app
+   is drawn. --color-primary, not white: white vanishes on the light canvas. */
+.row-action {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  opacity: 1;
+}
+.row-action svg { width: 15px; height: 15px; }
+/* Idle actions read as white boxes here and as quiet grey glyphs in the table
+   below. :not(:hover) so this doesn't outrank the hover colour — these rules
+   are unlayered and would otherwise beat any Tailwind hover utility. */
+.row-action-idle:not(:hover) { color: var(--color-primary); }
+
+/* The two blocks the Problem Bank swaps between. It still ships a separate
+   markup block per arrangement (unlike the sheet, which rearranges five
+   children); these give it the same width-based switch. */
+.row-wide-only { display: none; }
+
+/* ── Five-column arrangement ────────────────────────────────────────────────
+   768px of ROW, which is roughly 960px of viewport on this page.
+
+   Every track but the title is fixed, and that is the point: the title is the
+   only thing that should absorb a resize, and identical tracks are what keeps
+   the company marks and the difficulty column aligned down the list. The 181px
+   action track is the cluster's own width — two 36px links plus three 31px
+   buttons plus four 4px gaps — so it can never be squeezed into its neighbour
+   the way minmax(0, 1fr) allowed. At this width the title still gets 243px. */
+@container problem-row (min-width: 768px) {
   .problem-row-grid {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 100px) 72px 72px minmax(0, 1fr);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 100px 72px 72px 181px;
     grid-template-areas: "title comp must diff act";
+    align-items: center;
     column-gap: 1rem;
     row-gap: 0;
   }
-}
+  .problem-row-grid::after { content: none; }
 
-/* ── Mobile row treatment ───────────────────────────────────────────────────
-   Phone only (max-width, so every desktop rule below 768px stays exactly as it
-   was). Difficulty moves up beside the title, which frees the second line for
-   the company marks and the actions to share — two lines instead of the three
-   the title used to force when it wrapped.
-
-   The must-do badge has no cell in the phone grid: an item with
-   `grid-area: must` and no such area would be auto-placed and break the layout,
-   so it is removed from flow rather than just hidden. Nothing is lost —
-   problems are already sorted must-do first. */
-@media (max-width: 767px) {
-  /* Flex, not grid, on the phone. A two-column grid shares its tracks between
-     both lines, so the 164px action cluster on line 2 was sizing column 2 and
-     starving the title to 134px — every title over ~20 characters wrapped. Flex
-     lets each line size independently: line 1 gives the title everything the
-     difficulty doesn't need. The ::after is the line break. */
-  .problem-row-grid {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    column-gap: 0.5rem;
-    row-gap: 0.375rem;
+  .problem-row-title > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .problem-row-title { order: 1; flex: 1 1 auto; min-width: 0; }
-  .problem-row-diff  { order: 2; flex: 0 0 auto; }
-  .problem-row-grid::after {
-    content: "";
-    order: 3;
-    flex: 0 0 100%;
-    height: 0;
+
+  .problem-row-comp {
+    justify-content: center;
+    gap: 0.375rem;
+    opacity: 0.75;
   }
-  .problem-row-comp  { order: 4; flex: 0 1 auto; min-width: 0; }
-  .problem-row-act   { order: 5; flex: 0 0 auto; margin-left: auto; }
+  .problem-row-comp svg { width: 1rem; height: 1rem; }
 
-  .problem-row-must { display: none; }
+  .problem-row-must { display: flex; justify-content: center; }
+  .problem-row-diff { justify-content: center; }
+  .problem-row-act  { gap: 0.25rem; margin-left: 0; }
 
-  /* Each action in its own bordered box, the way every other control in the app
-     is drawn. --color-primary, not white: white vanishes on the light canvas. */
+  /* Back to bare glyphs — the boxes are a phone affordance. */
   .row-action {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    opacity: 1;
+    display: inline-flex;
+    width: auto;
+    height: auto;
+    padding: 0.5rem;
+    border: 0;
+    border-radius: 0.25rem;
   }
-  .row-action svg { width: 15px; height: 15px; }
+  .row-action svg { width: auto; height: auto; }
+  .row-action-idle:not(:hover) { color: var(--color-muted); }
+  .row-action-link { opacity: 0.7; }
+  .row-action-link:hover { opacity: 1; }
+
+  .row-wide-only   { display: grid; }
+  .row-narrow-only { display: none; }
 }
 
 /* Problem titles link out to the problem. On hover they take the accent colour
