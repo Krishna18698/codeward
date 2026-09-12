@@ -11,16 +11,23 @@ import SheetContent from "@/components/dashboard/SheetContent";
 import SheetProgressProvider from "@/components/dashboard/SheetProgressProvider";
 import PageHeader from "@/components/ui/PageHeader";
 
-type Props = { searchParams: Promise<{ sheet?: string; view?: string }> };
+/** Params are read loosely because the URL is user-typed: ?view= is validated
+ *  below, and anything else on the query string is carried through untouched. */
+type Params = Record<string, string | string[] | undefined>;
+type Props = { searchParams: Promise<Params> };
+
+
 
 export default async function DSAPage({ searchParams }: Props) {
   const userId = await getSessionUserId();
   if (!userId) redirect("/login");
 
-  const { sheet: sheetId, view } = await searchParams;
-  // Anything else in ?view= falls back to My Sheets. A query value is page
-  // state, not a resource — unknown ones are ignored the way every tracking
-  // parameter is, rather than 404ing a page that exists.
+  const params = await searchParams;
+  const view = typeof params.view === "string" ? params.view : undefined;
+  const sheetId = typeof params.sheet === "string" ? params.sheet : undefined;
+
+  // An unknown ?view= never reaches here: src/proxy.ts strips it and redirects
+  // to the canonical URL first (see VIEWS there).
   const showBank = view === "bank";
 
   // Loads a sheet's problems + statuses + notes in one parallel batch.
