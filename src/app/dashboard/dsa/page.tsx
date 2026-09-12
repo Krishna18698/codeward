@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { getSessionUserId } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
@@ -18,9 +18,10 @@ export default async function DSAPage({ searchParams }: Props) {
   if (!userId) redirect("/login");
 
   const { sheet: sheetId, view } = await searchParams;
+  // Anything else in ?view= falls back to My Sheets. A query value is page
+  // state, not a resource — unknown ones are ignored the way every tracking
+  // parameter is, rather than 404ing a page that exists.
   const showBank = view === "bank";
-  // A condensed "night before the interview" cut — the must-do problems of the
-  // selected sheet. A VIEW, not a new sheet, so progress carries over.
 
   // Loads a sheet's problems + statuses + notes in one parallel batch.
   const loadSheet = (sid: string) =>
@@ -75,6 +76,12 @@ export default async function DSAPage({ searchParams }: Props) {
 
   // Exclude the bank preset from the sheet tabs (it lives in Problem Bank)
   const tabSheets = sheets.filter((s) => s.source !== "TOP300");
+
+  // ?sheet= IS a resource reference, so a dead one is a 404 rather than a
+  // fallback. Deleted, never-existed and someone else's sheet ids all used to
+  // render the header and the selector above an empty page, with the only clue
+  // a 404 from /api/dsa/problems in the console.
+  if (sheetId && !showBank && !tabSheets.some((s) => s.id === sheetId)) notFound();
 
   // Shape passed to the client component (safe to serialize — no dates/enums that break)
   const clientSheets = tabSheets.map((s) => ({

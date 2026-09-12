@@ -17,7 +17,7 @@ export default function DashboardNotFound() {
         We couldn&apos;t find that one.
       </h1>
       <p className="mt-2 max-w-md text-sm leading-relaxed text-secondary">
-        This exercise, article or question doesn&apos;t exist — it may have been renamed or the
+        This sheet, exercise, article or question doesn&apos;t exist — it may have been renamed or the
         link is out of date. Everything else is still here.
       </p>
 
