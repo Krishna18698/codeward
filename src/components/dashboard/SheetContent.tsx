@@ -33,8 +33,6 @@ type Props = {
   userId: string;
   initialData?: ApiResponse | null;
   initialNotes?: Record<string, string>;
-  /** Last-Minute view — the must-do cut of this sheet, for the night before. */
-  lastMinute?: boolean;
 };
 
 function StatsSkeleton() {
@@ -80,7 +78,7 @@ function ProblemsSkeleton() {
   );
 }
 
-export default function SheetContent({ sheets, defaultSheetId, userId, initialData, initialNotes, lastMinute = false }: Props) {
+export default function SheetContent({ sheets, defaultSheetId, userId, initialData, initialNotes }: Props) {
   const activeSheetId = defaultSheetId;
   const { applyDelta } = useSheetProgress();
 
@@ -144,19 +142,10 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
 
   if (!activeSheet && !loading) return null;
 
-  // Last Minute is a filtered VIEW of this sheet, not a separate sheet — the
-  // rows are the same Problem ids, so progress carries over for free.
-  const visible = lastMinute
-    ? (data?.problems ?? []).filter((p) => p.mustDo)
-    : (data?.problems ?? []);
+  const visible = data?.problems ?? [];
 
-  const liveDelta = Object.values(diffDelta).reduce((a, b) => a + b, 0);
-  const visibleDone = visible.filter((p) => p.statuses?.[0]?.status === "DONE").length;
-
-  const total     = lastMinute ? visible.length : (data?.total ?? 0);
-  const doneCount = lastMinute
-    ? Math.max(0, visibleDone + liveDelta)
-    : (liveDone ?? data?.doneCount ?? 0);
+  const total     = data?.total ?? 0;
+  const doneCount = liveDone ?? data?.doneCount ?? 0;
   const pct       = total > 0 ? Math.round((doneCount / total) * 100) : 0;
 
   // Easy/Medium/Hard split — a single bar hides that someone has done 60 easies

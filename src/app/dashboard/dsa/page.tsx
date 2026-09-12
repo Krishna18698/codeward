@@ -21,7 +21,6 @@ export default async function DSAPage({ searchParams }: Props) {
   const showBank = view === "bank";
   // A condensed "night before the interview" cut — the must-do problems of the
   // selected sheet. A VIEW, not a new sheet, so progress carries over.
-  const lastMinute = view === "lastminute";
 
   // Loads a sheet's problems + statuses + notes in one parallel batch.
   const loadSheet = (sid: string) =>
@@ -50,7 +49,7 @@ export default async function DSAPage({ searchParams }: Props) {
   // overlaps the sheet-list query instead of waiting for it (kills the waterfall).
   const knownSheetLoad = sheetId && !showBank ? loadSheet(sheetId) : null;
 
-  const [sheets, doneTotal, doneBySheet, mustDoBySheet, mustDoDoneBySheet] = await Promise.all([
+  const [sheets, doneTotal, doneBySheet] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -65,25 +64,9 @@ export default async function DSAPage({ searchParams }: Props) {
       where: { statuses: { some: { userId, status: "DONE" } } },
       _count: { _all: true },
     }),
-    // Last Minute is the must-do cut of a sheet, so the selector needs its own
-    // totals for that view. Without them the card kept showing the full sheet
-    // while the list and the stats bar showed the subset — three numbers on one
-    // page, one of them disagreeing.
-    prisma.problem.groupBy({
-      by: ["sheetId"],
-      where: { mustDo: true },
-      _count: { _all: true },
-    }),
-    prisma.problem.groupBy({
-      by: ["sheetId"],
-      where: { mustDo: true, statuses: { some: { userId, status: "DONE" } } },
-      _count: { _all: true },
-    }),
   ]);
 
   const solvedIn = new Map(doneBySheet.map((g) => [g.sheetId, g._count._all]));
-  const mustDoIn = new Map(mustDoBySheet.map((g) => [g.sheetId, g._count._all]));
-  const mustDoSolvedIn = new Map(mustDoDoneBySheet.map((g) => [g.sheetId, g._count._all]));
 
   // Custom sheets for the "add to sheet" dropdown in ProblemBank
   const userSheets = sheets
@@ -100,8 +83,6 @@ export default async function DSAPage({ searchParams }: Props) {
     isPreset: s.isPreset,
     problemCount: s._count.problems,
     solvedCount: solvedIn.get(s.id) ?? 0,
-    mustDoCount: mustDoIn.get(s.id) ?? 0,
-    mustDoSolvedCount: mustDoSolvedIn.get(s.id) ?? 0,
   }));
 
   const defaultSheetId = sheetId ?? tabSheets[0]?.id;
@@ -109,7 +90,7 @@ export default async function DSAPage({ searchParams }: Props) {
   // "Start here" card — only for users who haven't solved anything yet.
   // Self-dismisses on the first solve; silently absent if the sheet is renamed.
   const blind75 = tabSheets.find((s) => /blind\s*75/i.test(s.name));
-  const showStartHere = !showBank && !lastMinute && doneTotal === 0 && !!blind75;
+  const showStartHere = !showBank && doneTotal === 0 && !!blind75;
 
   // Pre-fetch initial sheet data server-side to avoid a client-side loading skeleton.
   // Reuse the already-in-flight load when the sheet came from the URL; otherwise
@@ -139,33 +120,23 @@ export default async function DSAPage({ searchParams }: Props) {
       <div className="flex-1 min-w-0 space-y-5 animate-fade-up">
         {/* Header + view toggle */}
         <PageHeader
-          eyebrow={showBank ? "Problem Bank" : lastMinute ? "Last Minute" : "DSA Sheets"}
-          title={showBank ? "500 problems." : lastMinute ? "Tomorrow's the day." : "Solve by pattern,"}
-          titleAccent={showBank ? "Pick your own." : lastMinute ? "Revise these." : "not by list."}
+          eyebrow={showBank ? "Problem Bank" : "DSA Sheets"}
+          title={showBank ? "500 problems." : "Solve by pattern,"}
+          titleAccent={showBank ? "Pick your own." : "not by list."}
           subtitle={
             showBank
               ? "500 curated problems from top product companies. Add any to your custom sheets."
-              : lastMinute
-                ? "The must-do cut of this sheet — what to revise when the interview is tomorrow."
-                : "Every problem is filed under the pattern that solves it, with the cue that identifies it."
+              : "Every problem is filed under the pattern that solves it, with the cue that identifies it."
           }
           trailing={
             <div className="flex items-center shrink-0 rounded-xl border border-border bg-surface p-1">
             <Link
               href={sheetId ? `/dashboard/dsa?sheet=${sheetId}` : "/dashboard/dsa"}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                !showBank && !lastMinute ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
+                !showBank ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
               }`}
             >
               My Sheets
-            </Link>
-            <Link
-              href={sheetId ? `/dashboard/dsa?sheet=${sheetId}&view=lastminute` : "/dashboard/dsa?view=lastminute"}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                lastMinute ? "bg-accent/15 text-accent" : "text-muted hover:text-secondary"
-              }`}
-            >
-              Last Minute
             </Link>
             <Link
               href="/dashboard/dsa?view=bank"
@@ -227,7 +198,7 @@ export default async function DSAPage({ searchParams }: Props) {
                           s.id === defaultSheetId ? "text-accent" : "text-primary"
                         }`}>{s.name}</span>
                         <span className="block font-mono text-[11px] text-muted">
-                          {lastMinute ? s.mustDoSolvedCount : s.solvedCount} / {lastMinute ? s.mustDoCount : s.problemCount} solved
+                          {s.solvedCount} / {s.problemCount} solved
                         </span>
                       </span>
                     </div>
@@ -239,7 +210,7 @@ export default async function DSAPage({ searchParams }: Props) {
                 </div>
               </div>
             }>
-              <DSAPageClient sheets={clientSheets} activeSheetId={defaultSheetId} lastMinute={lastMinute} />
+              <DSAPageClient sheets={clientSheets} activeSheetId={defaultSheetId} />
             </Suspense>
 
             {/* Stats bar + problem list — fully client-driven, reacts to tab clicks */}
@@ -250,13 +221,12 @@ export default async function DSAPage({ searchParams }: Props) {
               </div>
             ) : (
               <SheetContent
-                key={`${defaultSheetId}-${lastMinute ? "lm" : "all"}`}
+                key={defaultSheetId}
                 sheets={clientSheets}
                 defaultSheetId={defaultSheetId}
                 userId={userId}
                 initialData={initialSheetData}
                 initialNotes={initialNotesMap}
-                lastMinute={lastMinute}
               />
             )}
             </SheetProgressProvider>

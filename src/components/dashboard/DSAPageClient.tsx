@@ -6,21 +6,14 @@ import { toast } from "sonner";
 import { useSheetProgress } from "./SheetProgressProvider";
 import CreateSheetModal from "./CreateSheetModal";
 
-type Sheet = {
-  id: string; name: string; isPreset: boolean;
-  problemCount: number; solvedCount: number;
-  /** Last Minute shows the must-do cut, so the card needs that pair too. */
-  mustDoCount: number; mustDoSolvedCount: number;
-};
+type Sheet = { id: string; name: string; isPreset: boolean; problemCount: number; solvedCount: number };
 
 type Props = {
   sheets: Sheet[];
   activeSheetId: string | undefined; // server-provided default (first sheet)
-  /** Which view the page is in — the card counts follow it. */
-  lastMinute?: boolean;
 };
 
-export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId, lastMinute = false }: Props) {
+export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId }: Props) {
   const searchParams = useSearchParams();
   const { deltaBySheet } = useSheetProgress();
   // Resolve active sheet from URL first, fall back to server default
@@ -72,20 +65,14 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId, l
           const isActive  = s.id === activeSheetId;
           const isCustom  = !s.isPreset;
           const isLoading = isPending && pendingSheetId === s.id;
-          // Last Minute is a filtered view of the same sheet, so the card counts
-          // the must-do cut there — otherwise this card said 75 while the list
-          // and the stats bar both said 50.
-          const total = lastMinute ? s.mustDoCount : s.problemCount;
-          const base  = lastMinute ? s.mustDoSolvedCount : s.solvedCount;
-          // base is the server's count at page load; the delta is what has been
-          // toggled since. Without it this card read 2/75 while the stats bar
-          // right below already said 3.
-          //
-          // In Last Minute the delta can include a non-must-do problem solved
-          // before switching views, so it's clamped to the visible total rather
-          // than trusted outright.
-          const solved = Math.min(total, Math.max(0, base + (deltaBySheet[s.id] ?? 0)));
-          const pct = total > 0 ? (solved / total) * 100 : 0;
+          // solvedCount is the server's count at page load; the delta is what
+          // has been toggled since. Without it this card read 2/75 while the
+          // stats bar right below already said 3.
+          const solved = Math.min(
+            s.problemCount,
+            Math.max(0, s.solvedCount + (deltaBySheet[s.id] ?? 0)),
+          );
+          const pct = s.problemCount > 0 ? (solved / s.problemCount) * 100 : 0;
 
           return (
             <div key={s.id} className="relative group">
@@ -111,7 +98,7 @@ export default function DSAPageClient({ sheets, activeSheetId: defaultSheetId, l
                       {s.name}
                     </span>
                     <span className="block font-mono text-[11px] text-muted">
-                      {solved} / {total} solved
+                      {solved} / {s.problemCount} solved
                     </span>
                   </span>
                 </div>
