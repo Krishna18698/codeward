@@ -50,7 +50,7 @@ export default async function DSAPage({ searchParams }: Props) {
   // overlaps the sheet-list query instead of waiting for it (kills the waterfall).
   const knownSheetLoad = sheetId && !showBank ? loadSheet(sheetId) : null;
 
-  const [sheets, doneTotal, doneBySheet] = await Promise.all([
+  const [sheets, doneTotal, doneBySheet, mustDoBySheet, mustDoDoneBySheet] = await Promise.all([
     prisma.sheet.findMany({
       where: { OR: [{ isPreset: true }, { userId }] },
       include: { _count: { select: { problems: true } } },
@@ -65,9 +65,25 @@ export default async function DSAPage({ searchParams }: Props) {
       where: { statuses: { some: { userId, status: "DONE" } } },
       _count: { _all: true },
     }),
+    // Last Minute is the must-do cut of a sheet, so the selector needs its own
+    // totals for that view. Without them the card kept showing the full sheet
+    // while the list and the stats bar showed the subset — three numbers on one
+    // page, one of them disagreeing.
+    prisma.problem.groupBy({
+      by: ["sheetId"],
+      where: { mustDo: true },
+      _count: { _all: true },
+    }),
+    prisma.problem.groupBy({
+      by: ["sheetId"],
+      where: { mustDo: true, statuses: { some: { userId, status: "DONE" } } },
+      _count: { _all: true },
+    }),
   ]);
 
   const solvedIn = new Map(doneBySheet.map((g) => [g.sheetId, g._count._all]));
+  const mustDoIn = new Map(mustDoBySheet.map((g) => [g.sheetId, g._count._all]));
+  const mustDoSolvedIn = new Map(mustDoDoneBySheet.map((g) => [g.sheetId, g._count._all]));
 
   // Custom sheets for the "add to sheet" dropdown in ProblemBank
   const userSheets = sheets
@@ -84,6 +100,8 @@ export default async function DSAPage({ searchParams }: Props) {
     isPreset: s.isPreset,
     problemCount: s._count.problems,
     solvedCount: solvedIn.get(s.id) ?? 0,
+    mustDoCount: mustDoIn.get(s.id) ?? 0,
+    mustDoSolvedCount: mustDoSolvedIn.get(s.id) ?? 0,
   }));
 
   const defaultSheetId = sheetId ?? tabSheets[0]?.id;
@@ -209,7 +227,7 @@ export default async function DSAPage({ searchParams }: Props) {
                           s.id === defaultSheetId ? "text-accent" : "text-primary"
                         }`}>{s.name}</span>
                         <span className="block font-mono text-[11px] text-muted">
-                          {s.solvedCount} / {s.problemCount} solved
+                          {lastMinute ? s.mustDoSolvedCount : s.solvedCount} / {lastMinute ? s.mustDoCount : s.problemCount} solved
                         </span>
                       </span>
                     </div>
@@ -221,7 +239,7 @@ export default async function DSAPage({ searchParams }: Props) {
                 </div>
               </div>
             }>
-              <DSAPageClient sheets={clientSheets} activeSheetId={defaultSheetId} />
+              <DSAPageClient sheets={clientSheets} activeSheetId={defaultSheetId} lastMinute={lastMinute} />
             </Suspense>
 
             {/* Stats bar + problem list — fully client-driven, reacts to tab clicks */}
