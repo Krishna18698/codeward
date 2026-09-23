@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ProblemPicker, { type PickerProblem } from "./ProblemPicker";
@@ -70,7 +71,14 @@ export default function CreateSheetModal({ onClose }: Props) {
     }
   };
 
-  return (
+  // Rendered into <body>. This modal is mounted inside the DSA page's
+  // animate-fade-up wrapper, whose leftover identity transform makes it the
+  // containing block for position:fixed — so inset-0 sized this overlay to the
+  // whole page (6,276px on a phone) and autofocus jumped the list to reach the
+  // dialog. Same fix as NoteModal.
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-canvas/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-lg rounded-2xl border border-border bg-surface shadow-2xl flex flex-col max-h-[90vh]">
@@ -131,6 +139,7 @@ export default function CreateSheetModal({ onClose }: Props) {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
