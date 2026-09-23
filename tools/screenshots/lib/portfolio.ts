@@ -142,8 +142,8 @@ export async function renderCovers(browser: Browser) {
 /** The card image. Codeward is a website, so the card shows the website: the
  *  landing page in front, a product page behind it, both real desktop
  *  captures in browser frames — plus the tagline, set to read at ~300px wide
- *  (about 21px there). The back window is Code Review rather than the DSA page,
- *  whose own header would repeat the tagline. */
+ *  (about 18px there). The back window is Code Review rather than the DSA page,
+ *  whose "Solve by pattern" header would echo the tagline. */
 export async function renderFeatured(browser: Browser) {
   const dir = path.join(OUT, "featured");
   fs.rmSync(dir, { recursive: true, force: true });
@@ -151,7 +151,7 @@ export async function renderFeatured(browser: Browser) {
   const card = page(`<div class="canvas">
     <div style="position:absolute;left:92px;top:64px">
       <div class="mark" style="font-size:44px">Code<em>ward</em></div>
-      <div class="line" style="font-size:112px;margin-top:10px;white-space:nowrap">Solve by <em>pattern.</em></div>
+      <div class="line" style="font-size:96px;margin-top:12px;white-space:nowrap">Interview prep <em>by pattern.</em></div>
     </div>
     <img class="shot" src="${framed("desktop", "dark", "31")}" style="left:880px;top:214px;width:1060px">
     <!-- Its top edge lands in the gap under the Code Review header, so the
