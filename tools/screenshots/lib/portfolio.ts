@@ -140,20 +140,23 @@ export async function renderCovers(browser: Browser) {
 }
 
 /** The card image. Codeward is a website, so the card shows the website: the
- *  landing page in front, the product's DSA page behind it, both real desktop
- *  captures in browser frames. The wordmark reads at ~300px wide (about 14px
- *  there); the sentence under it is deliberately secondary. */
+ *  landing page in front, a product page behind it, both real desktop
+ *  captures in browser frames — plus the tagline, set to read at ~300px wide
+ *  (about 21px there). The back window is Code Review rather than the DSA page,
+ *  whose own header would repeat the tagline. */
 export async function renderFeatured(browser: Browser) {
   const dir = path.join(OUT, "featured");
   fs.rmSync(dir, { recursive: true, force: true });
 
   const card = page(`<div class="canvas">
-    <div style="position:absolute;left:92px;top:78px;width:450px">
-      <div class="mark" style="font-size:76px">Code<em>ward</em></div>
-      <p style="margin:18px 0 0;font-size:25px;line-height:1.4;color:#9aaba4;text-wrap:pretty">Interview prep, by pattern: DSA sheets, system design, code review, bug hunts and an AI mentor.</p>
+    <div style="position:absolute;left:92px;top:64px">
+      <div class="mark" style="font-size:44px">Code<em>ward</em></div>
+      <div class="line" style="font-size:112px;margin-top:10px;white-space:nowrap">Solve by <em>pattern.</em></div>
     </div>
-    <img class="shot" src="${framed("desktop", "dark", "17")}" style="left:560px;top:120px;width:1180px">
-    <img class="shot" src="${framed("desktop", "dark", "01")}" style="left:10px;top:318px;width:1280px">
+    <img class="shot" src="${framed("desktop", "dark", "31")}" style="left:880px;top:214px;width:1060px">
+    <!-- Its top edge lands in the gap under the Code Review header, so the
+         window behind is cut on empty space, not through a line of text. -->
+    <img class="shot" src="${framed("desktop", "dark", "01")}" style="left:10px;top:414px;width:1280px">
   </div>`);
 
   await render(browser, card, "featured-card", [
