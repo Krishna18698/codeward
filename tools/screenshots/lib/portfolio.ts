@@ -151,12 +151,12 @@ export async function renderFeatured(browser: Browser) {
   const card = page(`<div class="canvas">
     <div style="position:absolute;left:92px;top:64px">
       <div class="mark" style="font-size:44px">Code<em>ward</em></div>
-      <div class="line" style="font-size:96px;margin-top:12px;white-space:nowrap">Interview prep <em>by pattern.</em></div>
+      <div class="line" style="font-size:96px;margin-top:12px;white-space:nowrap">Interview prep<br><em>by pattern.</em></div>
     </div>
-    <img class="shot" src="${framed("desktop", "dark", "31")}" style="left:880px;top:214px;width:1060px">
+    <img class="shot" src="${framed("desktop", "dark", "31")}" style="left:880px;top:110px;width:1060px">
     <!-- Its top edge lands in the gap under the Code Review header, so the
          window behind is cut on empty space, not through a line of text. -->
-    <img class="shot" src="${framed("desktop", "dark", "01")}" style="left:10px;top:414px;width:1280px">
+    <img class="shot" src="${framed("desktop", "dark", "01")}" style="left:10px;top:318px;width:1280px">
   </div>`);
 
   await render(browser, card, "featured-card", [
