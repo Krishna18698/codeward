@@ -141,15 +141,18 @@ export async function renderCovers(browser: Browser) {
 
 /** The card image. Codeward is a website, so the card shows the website: the
  *  landing page in front, the product's DSA page behind it, both real desktop
- *  captures in browser frames. The one line of text is the wordmark, set large
- *  enough to read at ~300px wide (about 14px there). */
+ *  captures in browser frames. The wordmark reads at ~300px wide (about 14px
+ *  there); the sentence under it is deliberately secondary. */
 export async function renderFeatured(browser: Browser) {
   const dir = path.join(OUT, "featured");
   fs.rmSync(dir, { recursive: true, force: true });
 
   const card = page(`<div class="canvas">
-    <div class="mark" style="position:absolute;left:92px;top:78px;font-size:76px">Code<em>ward</em></div>
-    <img class="shot" src="${framed("desktop", "dark", "17")}" style="left:500px;top:120px;width:1180px">
+    <div style="position:absolute;left:92px;top:78px;width:450px">
+      <div class="mark" style="font-size:76px">Code<em>ward</em></div>
+      <p style="margin:18px 0 0;font-size:25px;line-height:1.4;color:#9aaba4;text-wrap:pretty">Interview prep, by pattern: DSA sheets, system design, code review, bug hunts and an AI mentor.</p>
+    </div>
+    <img class="shot" src="${framed("desktop", "dark", "17")}" style="left:560px;top:120px;width:1180px">
     <img class="shot" src="${framed("desktop", "dark", "01")}" style="left:10px;top:318px;width:1280px">
   </div>`);
 
