@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "prisma db seed",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "shots": "npm run build && rm -rf examples/raw examples/framed && playwright test -c tools/screenshots --project=compose",
+    "shots:compose": "playwright test -c tools/screenshots --project=compose --no-deps",
+    "shots:e2e": "npm run build && playwright test -c tools/screenshots --project=e2e"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.4",
@@ -52,6 +55,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",

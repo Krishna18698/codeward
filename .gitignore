@@ -56,3 +56,6 @@ next-env.d.ts
 # Local interview reference doc (not part of the app)
 Codeward-Interview-Prep.docx
 Codeward-Problem-Patterns.docx
+
+# Screenshot harness output (tools/screenshots)
+/examples/
