@@ -2,6 +2,18 @@
 
 A full-stack interview prep platform: curated DSA sheets with pattern tracking, system design practice, code review and debugging exercises, staged low-level-design builds with real code execution, long-form distributed-systems deep dives, and a RAG-powered AI mentor that adapts to your experience level and target company.
 
+<p align="center">
+<img src="docs/screenshots/codeward.jpg" alt="Codeward — interview prep by pattern" width="100%">
+</p>
+
+<p align="center">
+<img src="docs/screenshots/cover-1-by-pattern.jpg" alt="Problems filed by pattern, with a note being written" width="32%">
+<img src="docs/screenshots/cover-2-practice-modes.jpg" alt="Code review, bug hunt and the AI mentor on a phone" width="32%">
+<img src="docs/screenshots/cover-3-light.jpg" alt="The dashboard and revision list in light mode" width="32%">
+</p>
+
+<p align="center"><sub>Every screenshot below follows your GitHub theme — switch between light and dark to see both. They are captured from the production build by <a href="tools/screenshots/README.md"><code>tools/screenshots</code></a>.</sub></p>
+
 ---
 
 ## Features
@@ -15,6 +27,45 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - **Filters & flags**: difficulty and company filters, a "to revise" flag, and per-problem notes that persist
 - **Direct links**: LeetCode and GeeksforGeeks links on each problem
 
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-17-dsa-sheets.jpg"><img src="docs/screenshots/light/desktop-17-dsa-sheets.jpg" alt="DSA sheets" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-18-problems-by-pattern.jpg"><img src="docs/screenshots/light/desktop-18-problems-by-pattern.jpg" alt="Problems filed by pattern" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-19-hint-revealed.jpg"><img src="docs/screenshots/light/desktop-19-hint-revealed.jpg" alt="Hint revealed" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-21-flagged-for-revision.jpg"><img src="docs/screenshots/light/desktop-21-flagged-for-revision.jpg" alt="Flagged for revision" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-20-notes.jpg"><img src="docs/screenshots/light/desktop-20-notes.jpg" alt="Notes" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-25-new-sheet.jpg"><img src="docs/screenshots/light/desktop-25-new-sheet.jpg" alt="New sheet" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-27-problem-bank.jpg"><img src="docs/screenshots/light/desktop-27-problem-bank.jpg" alt="Problem Bank" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-28-add-to-a-sheet.jpg"><img src="docs/screenshots/light/desktop-28-add-to-a-sheet.jpg" alt="Add to a sheet" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-17-dsa-sheets.jpg"><img src="docs/screenshots/light/phone-17-dsa-sheets.jpg" alt="DSA sheets (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-18-problems-by-pattern.jpg"><img src="docs/screenshots/light/phone-18-problems-by-pattern.jpg" alt="Problems filed by pattern (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-19-hint-revealed.jpg"><img src="docs/screenshots/light/phone-19-hint-revealed.jpg" alt="Hint revealed (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-20-notes.jpg"><img src="docs/screenshots/light/phone-20-notes.jpg" alt="Notes (phone)" width="24%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-21-flagged-for-revision.jpg"><img src="docs/screenshots/light/phone-21-flagged-for-revision.jpg" alt="Flagged for revision (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-22-search-no-results.jpg"><img src="docs/screenshots/light/phone-22-search-no-results.jpg" alt="Search — no results (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-25-new-sheet.jpg"><img src="docs/screenshots/light/phone-25-new-sheet.jpg" alt="New sheet (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-26-delete-sheet-confirm.jpg"><img src="docs/screenshots/light/phone-26-delete-sheet-confirm.jpg" alt="Delete sheet — confirm (phone)" width="24%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-27-problem-bank.jpg"><img src="docs/screenshots/light/phone-27-problem-bank.jpg" alt="Problem Bank (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-28-add-to-a-sheet.jpg"><img src="docs/screenshots/light/phone-28-add-to-a-sheet.jpg" alt="Add to a sheet (phone)" width="24%"></picture>
+</p>
+
 ### AI Mentor
 - **RAG-powered chat** grounded in a curated knowledge base (DSA patterns, system design) — answers from retrieved context, not hallucination
 - **Semantic retrieval** via Voyage AI embeddings stored in pgvector
@@ -26,19 +77,70 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - Markdown rendering is lazy-loaded and sanitized (`rehype-sanitize`) before display
 - Rate-limited per user (Upstash Redis) on chat, eval, sheet generation, and add-to-sheet
 
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-42-ai-mentor-answer.jpg"><img src="docs/screenshots/light/desktop-42-ai-mentor-answer.jpg" alt="AI Mentor — an answer" width="100%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-41-ai-mentor.jpg"><img src="docs/screenshots/light/desktop-41-ai-mentor.jpg" alt="AI Mentor" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-15-ai-mentor-quick-panel.jpg"><img src="docs/screenshots/light/desktop-15-ai-mentor-quick-panel.jpg" alt="AI Mentor — quick panel" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-42-ai-mentor-answer.jpg"><img src="docs/screenshots/light/phone-42-ai-mentor-answer.jpg" alt="AI Mentor — an answer (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-15-ai-mentor-quick-panel.jpg"><img src="docs/screenshots/light/phone-15-ai-mentor-quick-panel.jpg" alt="AI Mentor — quick panel (phone)" width="24%"></picture>
+</p>
+
 ### System Design
 - **Curated questions** organized by difficulty (Easy / Medium / Hard) and experience level (Junior / Mid / Senior), with "must do" flags and one-line summaries
 - **Challenge Spinner**: generates a randomized design prompt — *problem × scale × traffic spike × special constraint* — with a copyable prompt to practice against
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-29-system-design.jpg"><img src="docs/screenshots/light/desktop-29-system-design.jpg" alt="System design" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-30-system-design-question.jpg"><img src="docs/screenshots/light/desktop-30-system-design-question.jpg" alt="System design question" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-30-system-design-question.jpg"><img src="docs/screenshots/light/phone-30-system-design-question.jpg" alt="System design question (phone)" width="24%"></picture>
+</p>
 
 ### Code Review
 - **15 hand-authored PRs** with planted bugs across payments, auth, caching, and infra — each at a graded severity
 - Syntax-highlighted code; click any line to leave an inline review comment, plus optional overall notes
 - The AI grades your review against the ground-truth bug list (severity-weighted score) and shows, per bug, whether you caught it — with the evidence phrase it matched from your comments
 
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-31-code-review.jpg"><img src="docs/screenshots/light/desktop-31-code-review.jpg" alt="Code review" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-32-code-review-pr.jpg"><img src="docs/screenshots/light/desktop-32-code-review-pr.jpg" alt="Code review — a PR" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-33-code-review-past-attempt.jpg"><img src="docs/screenshots/light/desktop-33-code-review-past-attempt.jpg" alt="Code review — past attempt" width="100%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-32-code-review-pr.jpg"><img src="docs/screenshots/light/phone-32-code-review-pr.jpg" alt="Code review — a PR (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-33-code-review-past-attempt.jpg"><img src="docs/screenshots/light/phone-33-code-review-past-attempt.jpg" alt="Code review — past attempt (phone)" width="24%"></picture>
+</p>
+
 ### Bug Hunt
 - **9 broken codebases** with failing tests and real log excerpts — races, N+1s, resource leaks, deadlocks, timezone bugs
 - **Editable code**: fix the bug directly in a syntax-highlighted editor (CodeMirror), then write your root-cause diagnosis
 - The AI grades it as a **structured, line-anchored diff review** — findings tagged root-cause / side-effect and fixed / partial / missed / introduced, with counts and senior-reviewer feedback — then reveals the canonical fix and the tempting wrong turns it ruled out
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-34-bug-hunt.jpg"><img src="docs/screenshots/light/desktop-34-bug-hunt.jpg" alt="Bug hunt" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-35-bug-hunt-incident.jpg"><img src="docs/screenshots/light/desktop-35-bug-hunt-incident.jpg" alt="Bug hunt — an incident" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-36-bug-hunt-past-attempt.jpg"><img src="docs/screenshots/light/desktop-36-bug-hunt-past-attempt.jpg" alt="Bug hunt — past attempt" width="100%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-35-bug-hunt-incident.jpg"><img src="docs/screenshots/light/phone-35-bug-hunt-incident.jpg" alt="Bug hunt — an incident (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-36-bug-hunt-past-attempt.jpg"><img src="docs/screenshots/light/phone-36-bug-hunt-past-attempt.jpg" alt="Bug hunt — past attempt (phone)" width="24%"></picture>
+</p>
 
 ### Build It (low-level design)
 - **11 staged LLD problems** spanning concurrency, distributed systems, payments, and API design: thread-safe wallet, inventory reservation service, durable background job queue, idempotent payment processor, notification delivery service, token-bucket rate limiter, thread-safe LRU cache with TTL, consistent hashing ring, circuit breaker, Splitwise expense settlement, and cursor-based pagination
@@ -48,10 +150,28 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - The AI grades the *mechanism* and the invariant argument against a weighted rubric; stages unlock sequentially on submission
 - All content is free (nothing locked)
 
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-37-build-it.jpg"><img src="docs/screenshots/light/desktop-37-build-it.jpg" alt="Build it" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-38-build-it-stage.jpg"><img src="docs/screenshots/light/desktop-38-build-it-stage.jpg" alt="Build it — a stage" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-38-build-it-stage.jpg"><img src="docs/screenshots/light/phone-38-build-it-stage.jpg" alt="Build it — a stage (phone)" width="24%"></picture>
+</p>
+
 ### Deep Dives
 - **13 long-form articles** on distributed systems (idempotency, caching, rate limiting, Kafka, Raft, consistent hashing, sagas & outbox/CDC, two-phase commit, distributed locks, and more)
 - **Sectioned reader**: each article is split into numbered, collapsible sections with a per-section "mark complete" toggle and a progress bar (persisted in localStorage)
 - Prerequisites / after-this / suggested-first-pass and canonical references header, experience-level chips, and prev/next navigation with a topic rail
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-39-deep-dives.jpg"><img src="docs/screenshots/light/desktop-39-deep-dives.jpg" alt="Deep dives" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-40-deep-dive-article.jpg"><img src="docs/screenshots/light/desktop-40-deep-dive-article.jpg" alt="Deep dive article" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-40-deep-dive-article.jpg"><img src="docs/screenshots/light/phone-40-deep-dive-article.jpg" alt="Deep dive article (phone)" width="24%"></picture>
+</p>
 
 ### Auth & Onboarding
 - Google OAuth (one-click) and email/password (bcrypt, 12 rounds)
@@ -60,11 +180,36 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - Onboarding flow capturing experience level and target company
 - Profile page laid out as a sticky identity/stats card (avatar, experience level, target company, attempt/sheet counts) alongside an editable profile form with a selectable avatar
 
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-05-sign-in.jpg"><img src="docs/screenshots/light/desktop-05-sign-in.jpg" alt="Sign in" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-07-create-account.jpg"><img src="docs/screenshots/light/desktop-07-create-account.jpg" alt="Create account" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-09-forgot-password.jpg"><img src="docs/screenshots/light/desktop-09-forgot-password.jpg" alt="Forgot password" width="100%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-05-sign-in.jpg"><img src="docs/screenshots/light/phone-05-sign-in.jpg" alt="Sign in (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-06-sign-in-wrong-password.jpg"><img src="docs/screenshots/light/phone-06-sign-in-wrong-password.jpg" alt="Sign in — wrong password (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-08-create-account-validation.jpg"><img src="docs/screenshots/light/phone-08-create-account-validation.jpg" alt="Create account — validation (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-10-reset-link-invalid.jpg"><img src="docs/screenshots/light/phone-10-reset-link-invalid.jpg" alt="Reset link — invalid (phone)" width="24%"></picture>
+</p>
+
 ### Dashboard Home
 - Hero banner with greeting, target company / experience level, an overall progress ring, and inline solved / sheets / custom stats
 - **Continue where you left off** plus a revision queue of problems you flagged
 - A **compact one-row Practice launcher** across all seven modes, each with its live count (problems, PRs, bugs, builds, topics)
 - Your sheets (including an "ask the mentor to build one" card), with **pattern breakdown and recent activity paired side-by-side**
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-13-dashboard.jpg"><img src="docs/screenshots/light/desktop-13-dashboard.jpg" alt="Dashboard" width="100%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-13-dashboard.jpg"><img src="docs/screenshots/light/phone-13-dashboard.jpg" alt="Dashboard (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-14-menu.jpg"><img src="docs/screenshots/light/phone-14-menu.jpg" alt="Menu (phone)" width="24%"></picture>
+</p>
 
 ### Landing Page
 - Hero with a **rotating topic headline** ("Master DSA / system design / code review / …") over an ambient emerald top glow — pure CSS, no pointer tracking, so it renders once and costs nothing at runtime
@@ -74,11 +219,26 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - The sign-up page carries the same ambient emerald glow behind the auth card
 - Multi-column footer with brand/tagline and Practice, Account, and Company link columns
 
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-01-landing.jpg"><img src="docs/screenshots/light/desktop-01-landing.jpg" alt="Landing" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-02-landing-features.jpg"><img src="docs/screenshots/light/desktop-02-landing-features.jpg" alt="Landing — the seven modes" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-01-landing.jpg"><img src="docs/screenshots/light/phone-01-landing.jpg" alt="Landing (phone)" width="24%"></picture>
+</p>
+
 ### Company Pages
 - **About** — the project's story in numbered sections (why it exists, what's inside, the principles, who it's for) over a dot-matrix hero, with alternating section bands
 - **Contact** — reachable at **codewardmentor@gmail.com** for questions, bug reports, feedback, and account-deletion requests
 - **Privacy Policy** and **Terms of Service** — a shared marketing shell with an emerald-dot "Legal" eyebrow, a greyed last-updated line, and the same dot-matrix header
 - Privacy documents exactly what's collected and every third-party processor (Google, Groq, Voyage AI, JDoodle, Neon, Upstash, Vercel); Terms covers acceptable use, the code-execution sandbox, and the no-warranty stance
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-03-about.jpg"><img src="docs/screenshots/light/desktop-03-about.jpg" alt="About" width="32%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-04-contact.jpg"><img src="docs/screenshots/light/desktop-04-contact.jpg" alt="Contact" width="32%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-11-privacy.jpg"><img src="docs/screenshots/light/desktop-11-privacy.jpg" alt="Privacy policy" width="32%"></picture>
+</p>
 
 ### Polish
 - **Light & dark mode**: a theme toggle in the nav (`next-themes`), defaulting to dark and persisted per browser with no flash on load. Colours flow through a CSS-variable token layer (`bg-canvas`, `text-primary`, `text-accent`, …) that flips on `data-theme`; the emerald brand deepens on white, code editors/panes stay dark in both themes, and the accent palette is deepened in light so badges/tags don't wash out
@@ -89,6 +249,24 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 - Accessible by default: keyboard-visible focus rings, `aria-current`/`aria-expanded`/`aria-label` on interactive controls, `prefers-reduced-motion` respected (including the landing page's logo marquee)
 - WCAG AA-compliant secondary text contrast
 - Installable as a PWA (favicon set + manifest)
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-23-loading.jpg"><img src="docs/screenshots/light/desktop-23-loading.jpg" alt="Loading skeleton" width="49%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-24-past-attempt-failed-to-load.jpg"><img src="docs/screenshots/light/desktop-24-past-attempt-failed-to-load.jpg" alt="Past attempt failed to load" width="49%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-22-search-no-results.jpg"><img src="docs/screenshots/light/desktop-22-search-no-results.jpg" alt="Search — no results" width="32%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-43-dashboard-not-found.jpg"><img src="docs/screenshots/light/desktop-43-dashboard-not-found.jpg" alt="Dashboard — not found" width="32%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/desktop-12-page-not-found.jpg"><img src="docs/screenshots/light/desktop-12-page-not-found.jpg" alt="Page not found" width="32%"></picture>
+</p>
+
+<p align="center">
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-23-loading.jpg"><img src="docs/screenshots/light/phone-23-loading.jpg" alt="Loading skeleton (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-24-past-attempt-failed-to-load.jpg"><img src="docs/screenshots/light/phone-24-past-attempt-failed-to-load.jpg" alt="Past attempt failed to load (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-43-dashboard-not-found.jpg"><img src="docs/screenshots/light/phone-43-dashboard-not-found.jpg" alt="Dashboard — not found (phone)" width="24%"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark/phone-12-page-not-found.jpg"><img src="docs/screenshots/light/phone-12-page-not-found.jpg" alt="Page not found (phone)" width="24%"></picture>
+</p>
 
 ---
 
@@ -290,6 +468,10 @@ prisma/
 ├── seed.ts                      # Seeds all preset sheets
 ├── problem-content.ts           # Problem descriptions
 └── top500.ts                    # Top 500 FAANG bank
+tools/
+└── screenshots/                 # Screenshot harness + e2e flow test (never writes to the DB)
+docs/
+└── screenshots/                 # README images, generated by `npm run shots:readme`
 ```
 
 ---
@@ -333,6 +515,9 @@ Deployed on Vercel. A few things that matter if you fork this:
 | `npx prisma migrate deploy` | Apply pending DB migrations |
 | `npx prisma generate` | Regenerate the Prisma client |
 | `npx tsc --noEmit` | TypeScript type check |
+| `npm run shots` | Build, then capture every screen on phone and desktop in both themes, frame them, and compose the contact sheet, covers and portfolio card into `examples/` (read-only against the database — see [tools/screenshots](tools/screenshots/README.md)) |
+| `npm run shots:readme` | Regenerate the README images in `docs/screenshots/` from the latest captures |
+| `npm run shots:e2e` | Build, then run the end-to-end journeys through the real UI |
 
 ---
 

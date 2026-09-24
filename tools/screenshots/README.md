@@ -13,6 +13,7 @@ Nothing it does writes to the database. See [Read-only by construction](#read-on
 npm run shots          # build, then capture → frames → contact sheet → covers → card
 npm run shots:compose  # redo frames/sheet/covers/card from the existing captures
 npm run shots:e2e      # build, then the end-to-end journeys (must pass)
+npm run shots:readme   # README-sized copies into docs/screenshots/ (committed)
 ```
 
 It signs in as a real account and photographs its data as it stands. Put that
@@ -39,6 +40,15 @@ clock.
 | `featured/codeward-card.png` (+ `@2x`, `.jpg`) | The portfolio card image, built to read at ~300px wide |
 | `featured/card-preview.png`, `card-preview-300px.png` | That image inside a portfolio card, at card width and at exactly 300px |
 | `.cache/` | Auth state, the DB-guard log, review sheets, test results |
+
+### The project README's images
+
+`examples/` is gitignored, so the project README can't point at it.
+`npm run shots:readme` writes JPEG copies of a chosen set (`README_SHOTS` in
+`readme.spec.ts`) to `docs/screenshots/<dark|light>/`, which is committed. Each
+framed capture is composited onto that GitHub theme's page colour, and the README
+serves them through `<picture>`, so readers see the capture that matches their
+GitHub theme. Profile is left out because it shows the account's email.
 
 ### The phone frame and safe areas
 

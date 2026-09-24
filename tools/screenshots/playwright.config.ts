@@ -51,5 +51,7 @@ export default defineConfig({
     { name: "compose", testMatch: /compose\.spec\.ts/, dependencies: ["capture"], fullyParallel: false },
     // Its own target: `npm run shots:e2e` runs the journeys without re-shooting.
     { name: "e2e", testMatch: /e2e\.spec\.ts/, dependencies: ["setup"] },
+    // README-sized copies into docs/screenshots (committed), from existing captures.
+    { name: "readme", testMatch: /readme\.spec\.ts/ },
   ],
 });

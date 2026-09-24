@@ -11,7 +11,8 @@
     "postinstall": "prisma generate",
     "shots": "npm run build && rm -rf examples/raw examples/framed && playwright test -c tools/screenshots --project=compose",
     "shots:compose": "playwright test -c tools/screenshots --project=compose --no-deps",
-    "shots:e2e": "npm run build && playwright test -c tools/screenshots --project=e2e"
+    "shots:e2e": "npm run build && playwright test -c tools/screenshots --project=e2e",
+    "shots:readme": "playwright test -c tools/screenshots --project=readme"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.4",
