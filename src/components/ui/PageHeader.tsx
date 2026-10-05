@@ -9,7 +9,7 @@ import type { ReactNode } from "react";
  *
  *  Extracted from ModeCatalog's own header block, which Code Review, Bug Hunt and
  *  Build It already shared — those three keep rendering through this component. */
-export type PageHeaderProps = {
+type PageHeaderProps = {
   /** Small mono kicker above the title. */
   eyebrow?: string;
   title: string;

@@ -6,7 +6,7 @@ export type BuildItSkeleton = { fileName: string; code: string };
 /** One gradable criterion for a stage. Mirrors the planted-bug shape used by
  *  Code Review (id + weight + description) so the grading route can score
  *  every stage the same way: weighted-average of criteria the model marks met. */
-export type BuildItRubricCriterion = {
+type BuildItRubricCriterion = {
   id: string;
   description: string;
   weight: number;

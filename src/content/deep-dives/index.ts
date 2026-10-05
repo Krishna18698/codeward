@@ -33,7 +33,7 @@ export const CATEGORY_LABEL: Record<DeepDiveCategory, string> = {
   CORE_CS: "Core CS",
 };
 
-export type DeepDive = {
+type DeepDive = {
   slug: string;
   title: string;
   hook: string;
@@ -84,5 +84,3 @@ export function getDeepDive(slug: string): DeepDive | undefined {
 
 /** Category with the default applied — use this, never `d.category` directly. */
 export const categoryOf = (d: DeepDive): DeepDiveCategory => d.category ?? "SYSTEMS";
-
-export const deepDivesByCategory = (c: DeepDiveCategory) => DEEP_DIVES.filter((d) => categoryOf(d) === c);

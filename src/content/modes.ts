@@ -4,7 +4,7 @@ import type { LucideIcon } from "lucide-react";
 /** The seven practice modes, in the order we recommend working through them.
  *  Extracted from an inline array in the dashboard so the next-step logic and
  *  the practice grid can't drift apart. `accent` alternates purely for looks. */
-export type PracticeMode = {
+type PracticeMode = {
   href: string;
   icon: LucideIcon;
   label: string;

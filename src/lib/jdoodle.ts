@@ -32,9 +32,8 @@ const LANGUAGE_MAP: Record<ExecLanguage, { language: string; versionIndex: strin
 };
 
 const EXECUTE_URL = "https://api.jdoodle.com/v1/execute";
-const CREDIT_SPENT_URL = "https://api.jdoodle.com/v1/credit-spent";
 
-export type JDoodleResult =
+type JDoodleResult =
   | {
       ok: true;
       /** Combined stdout+stderr as JDoodle returns it (no separate streams). */
@@ -109,25 +108,6 @@ export async function execute(
   }
 
   return { ok: true, output: b.output, cpuTime: b.cpuTime ?? null, memory: b.memory ?? null };
-}
-
-/** How many credits JDoodle says we've spent today (for observability / the
- *  spike). Separate endpoint; also costs nothing. Returns null if unavailable. */
-export async function creditsSpentToday(): Promise<number | null> {
-  const c = creds();
-  if (!c) return null;
-  try {
-    const res = await fetch(CREDIT_SPENT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clientId: c.clientId, clientSecret: c.clientSecret }),
-    });
-    if (!res.ok) return null;
-    const b = (await res.json()) as { used?: number };
-    return typeof b.used === "number" ? b.used : null;
-  } catch {
-    return null;
-  }
 }
 
 export function isExecConfigured(): boolean {

@@ -10,7 +10,7 @@ import { BUILD_IT_PASS_SENTINEL } from "@/content/build-it/languages";
 
 const LANGUAGES: ExecLanguage[] = ["nodejs", "python", "kotlin", "csharp", "go", "java"];
 
-export interface CodeRunResult {
+interface CodeRunResult {
   passed: boolean | null;
   output: string;
   cpuTime: string | null;

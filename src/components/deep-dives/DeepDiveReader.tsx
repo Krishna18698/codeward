@@ -7,7 +7,7 @@ import { cn } from "@/lib/cn";
 import Collapse from "@/components/ui/Collapse";
 import type { DeepDiveReference } from "@/content/deep-dives";
 
-export type RenderedSection = { title: string; body: ReactNode };
+type RenderedSection = { title: string; body: ReactNode };
 
 type Props = {
   slug: string;

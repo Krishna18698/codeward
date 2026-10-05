@@ -16,7 +16,7 @@ import { java } from "@codemirror/lang-java";
 import { go } from "@codemirror/lang-go";
 import { kotlin, csharp } from "@codemirror/legacy-modes/mode/clike";
 
-export type EditorLanguage =
+type EditorLanguage =
   | "typescript" | "javascript" | "nodejs" | "python" | "kotlin" | "csharp" | "go" | "java";
 
 function languageExtension(language: EditorLanguage): Extension {

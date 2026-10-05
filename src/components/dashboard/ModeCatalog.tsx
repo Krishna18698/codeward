@@ -30,7 +30,7 @@ const STATUS: Record<CatalogStatus, { label: string; stripe: string; chip: strin
   mastered:      { label: "Mastered",    stripe: "bg-accent",        chip: "border-accent/30 bg-accent/10 text-accent" },
 };
 
-export type CatalogBadge = { label: string; tone?: BadgeTone };
+type CatalogBadge = { label: string; tone?: BadgeTone };
 
 export type CatalogItem = {
   href: string;

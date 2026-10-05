@@ -1,9 +1,9 @@
-import { Check, Sparkles, GitPullRequest, X } from "lucide-react";
+import { Check, Sparkles, X } from "lucide-react";
 import { WindowFrame } from "@/components/ui/WindowFrame";
 
 /** Editor-window frame for the landing mockups — boxy (rounded-lg) black cards,
  *  matching the hero showcase. (twMerge overrides WindowFrame's rounded-xl/bg-surface.) */
-export function BrowserFrame({ url, children }: { url: string; children: React.ReactNode }) {
+function BrowserFrame({ url, children }: { url: string; children: React.ReactNode }) {
   return (
     <WindowFrame label={url} bodyClassName="p-4" className="keep-dark-colors rounded-sm border-neutral-800 bg-black">
       {children}
@@ -307,5 +307,3 @@ export function SystemDesignMockup() {
     </BrowserFrame>
   );
 }
-
-export const MODE_ICON = { GitPullRequest };

@@ -14,7 +14,7 @@ import { Ring } from "@/components/ui/Ring";
  *  submitting again. This fetches the full row on open.
  */
 
-export type AttemptKind = "review" | "bug-hunt" | "build-it";
+type AttemptKind = "review" | "bug-hunt" | "build-it";
 
 type GradedBug = { id: string; severity: number; category: string; description: string; evidence?: string };
 type BugFinding = { file: string; line: number | null; category: string; status: string; title: string; detail: string };

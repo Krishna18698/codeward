@@ -12,7 +12,7 @@
  *  - `cue`  — the recognition signal: what in the statement points here.
  *  - `description` — what the technique does once you've spotted it.
  */
-export type PatternMeta = { cue: string; description: string };
+type PatternMeta = { cue: string; description: string };
 
 export const PATTERNS: Record<string, PatternMeta> = {
   HASH_MAP: {
@@ -339,6 +339,3 @@ export const unmappedPatterns = (present: string[]) => {
   const mapped = new Set(TOPICS.flatMap((t) => t.patterns));
   return present.filter((p) => !mapped.has(p));
 };
-
-export const topicOf = (pattern: string): Topic | undefined =>
-  TOPICS.find((t) => t.patterns.includes(pattern));

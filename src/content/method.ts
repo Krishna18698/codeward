@@ -10,7 +10,7 @@
 
 export type MethodStage = "RECOGNISE" | "PRACTISE" | "REVISE";
 
-export type MethodStep = {
+type MethodStep = {
   id: MethodStage;
   label: string;
   /** One line, shown when this stage is the active one. */

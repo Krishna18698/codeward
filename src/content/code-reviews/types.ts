@@ -6,7 +6,7 @@ export type PlantedBug = {
   description: string;
 };
 
-export type ExerciseFile = {
+type ExerciseFile = {
   name: string;
   code: string;
 };

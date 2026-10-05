@@ -17,7 +17,7 @@ const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Codeward";
 const BREVO_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
 
 /** Both the key and a verified sender address are required to actually send. */
-export const emailConfigured = Boolean(apiKey && FROM_EMAIL);
+const emailConfigured = Boolean(apiKey && FROM_EMAIL);
 
 function resetEmailHtml(resetUrl: string) {
   return `<!doctype html>

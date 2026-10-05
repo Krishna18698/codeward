@@ -7,7 +7,7 @@ export const AVATARS: { key: AvatarKey; emoji: string; bg: string; label: string
   { key: "avatar:4", emoji: "🦊", bg: "bg-orange-500/25",    label: "Fox" },
 ];
 
-export const RANDOM_AVATAR_KEYS: AvatarKey[] = ["avatar:1", "avatar:2", "avatar:3", "avatar:4"];
+const RANDOM_AVATAR_KEYS: AvatarKey[] = ["avatar:1", "avatar:2", "avatar:3", "avatar:4"];
 
 export function isLocalAvatar(image: string | null | undefined): image is AvatarKey {
   return typeof image === "string" && image.startsWith("avatar:");

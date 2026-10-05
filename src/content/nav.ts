@@ -12,7 +12,7 @@ import {
  *  Deliberately separate from PRACTICE_MODES in @/content/modes: that one drives
  *  the dashboard's practice grid and carries accent colours and marketing
  *  labels, which navigation has no use for. */
-export type NavItem = { label: string; href: string; icon: LucideIcon };
+type NavItem = { label: string; href: string; icon: LucideIcon };
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "DSA Sheets",    href: "/dashboard/dsa",           icon: Code2 },

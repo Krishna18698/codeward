@@ -11,8 +11,8 @@ import { GROQ_MODEL } from "@/lib/groq";
 import { chatLimiter } from "@/lib/ratelimit";
 import { getBugHuntWithSolution } from "@/content/bug-hunts";
 
-export type FindingCategory = "root-cause" | "side-effect";
-export type FindingStatus = "fixed" | "partial" | "missed" | "introduced";
+type FindingCategory = "root-cause" | "side-effect";
+type FindingStatus = "fixed" | "partial" | "missed" | "introduced";
 
 export interface BugFinding {
   file: string;

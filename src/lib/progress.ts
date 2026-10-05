@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Difficulty } from "@prisma/client";
 
-export type TrackedProgress = {
+type TrackedProgress = {
   /** Distinct problems across every preset sheet. */
   total: number;
   /** Distinct problems where at least one sheet's copy is solved. */

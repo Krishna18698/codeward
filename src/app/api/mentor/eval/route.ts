@@ -10,16 +10,14 @@ import Groq from "groq-sdk";
 import { GROQ_MODEL } from "@/lib/groq";
 import { chatLimiter } from "@/lib/ratelimit";
 
-export type EvalType = "code" | "system-design";
-
-export interface RubricItem {
+interface RubricItem {
   category: string;
   score: number;
   max: 10;
   feedback: string;
 }
 
-export interface EvalResult {
+interface EvalResult {
   score: number;
   grade: "S" | "A" | "B" | "C" | "D";
   rubric: RubricItem[];

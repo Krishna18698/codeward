@@ -13,10 +13,3 @@ export const BUILD_IT_LANGUAGES: { value: BuildItLanguage; label: string }[] = [
  *  passes. The runner checks for it to decide pass/fail (a thrown exception or
  *  compile error prints a stack trace without the token → fail). */
 export const BUILD_IT_PASS_SENTINEL = "__BUILD_IT_PASS__";
-
-/** Maps a BuildItLanguage → the /api/code/run execution language id. */
-export const BUILD_IT_EXEC_LANG: Record<BuildItLanguage, "csharp" | "python" | "kotlin"> = {
-  csharp: "csharp",
-  python: "python",
-  kotlin: "kotlin",
-};

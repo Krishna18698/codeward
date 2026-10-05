@@ -39,7 +39,7 @@ export function FilterRowSkeleton({ count = 4 }: { count?: number }) {
 }
 
 /** A single catalog card placeholder (matches ModeCatalog's card). */
-export function CardSkeleton() {
+function CardSkeleton() {
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">

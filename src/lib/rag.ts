@@ -8,7 +8,7 @@ const EMBEDDING_DIM = 512;
  * Get an embedding vector for a piece of text using Voyage AI.
  * Falls back to a zero vector if API key is not configured.
  */
-export async function embed(text: string): Promise<number[]> {
+async function embed(text: string): Promise<number[]> {
   if (!VOYAGE_API_KEY) {
     console.error("[RAG] VOYAGE_API_KEY not set — returning zero vector");
     return new Array(EMBEDDING_DIM).fill(0);

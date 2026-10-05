@@ -1,4 +1,4 @@
-export type BugHuntFile = { name: string; code: string };
+type BugHuntFile = { name: string; code: string };
 
 export type BugHuntExercise = {
   slug: string;
