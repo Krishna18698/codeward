@@ -38,6 +38,9 @@ test("sign in: a wrong password is refused, the right one lands on the dashboard
   const { email, password } = credentials();
 
   await page.goto(`${ORIGIN}/login`);
+  // The Google mark is decorative — the button's text already names Google,
+  // so a screen reader should hear it once, not "Google, Continue with Google".
+  await expect(page.getByRole("button", { name: /google/i })).toHaveAccessibleName("Continue with Google");
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill("not-the-password");
   await page.getByRole("button", { name: /^sign in$/i }).click();

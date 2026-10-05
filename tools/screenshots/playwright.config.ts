@@ -50,7 +50,14 @@ export default defineConfig({
     { name: "capture", testMatch: /capture\.spec\.ts/, dependencies: ["setup"] },
     { name: "compose", testMatch: /compose\.spec\.ts/, dependencies: ["capture"], fullyParallel: false },
     // Its own target: `npm run shots:e2e` runs the journeys without re-shooting.
-    { name: "e2e", testMatch: /e2e\.spec\.ts/, dependencies: ["setup"] },
+    //
+    // One retry. Three journeys once failed on the first run after a build and
+    // passed on every run since, including after the database had sat idle —
+    // and the next run had already wiped the evidence. Now a journey that only
+    // passes on its second attempt is reported as FLAKY (not passed), and the
+    // first attempt's trace stays in examples/.cache/test-results to read. A
+    // real break fails both attempts and fails the run.
+    { name: "e2e", testMatch: /e2e\.spec\.ts/, dependencies: ["setup"], retries: 1 },
     // README-sized copies into docs/screenshots (committed), from existing captures.
     { name: "readme", testMatch: /readme\.spec\.ts/ },
   ],

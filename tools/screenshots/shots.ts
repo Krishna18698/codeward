@@ -256,7 +256,7 @@ export const SHOTS: Shot[] = [
     run: async (page, device) => {
       // A fresh conversation (its creation is stubbed), so the transcript is
       // just this question and its answer.
-      if (device === "phone") await page.locator("button:has(> svg.lucide-chevron-left)").first().click();
+      if (device === "phone") await page.getByRole("button", { name: "Back to conversations" }).click();
       // The chat is keyed by the conversation id, which arrives with the
       // create response: typing before it lands sends into a chat that is about
       // to be remounted, and the reply is lost with it.
