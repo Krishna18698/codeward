@@ -5,7 +5,7 @@ export default function AuthHero() {
     <div className="relative w-full h-full flex items-center justify-center">
       <Image
         src="/images/brain-hero.png"
-        alt="AI Brain"
+        alt=""
         fill
         priority
         className="object-cover opacity-80"

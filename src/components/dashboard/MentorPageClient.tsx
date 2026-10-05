@@ -207,6 +207,7 @@ export default function MentorPageClient({ initialConversations }: Props) {
         {/* Mobile back button */}
         <button
           onClick={() => setShowList(true)}
+          aria-label="Back to conversations"
           className="md:hidden flex items-center gap-1 text-secondary hover:text-primary transition-colors shrink-0"
         >
           <ChevronLeft size={16} />

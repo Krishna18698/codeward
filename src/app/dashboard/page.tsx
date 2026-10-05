@@ -203,22 +203,23 @@ export default async function DashboardPage() {
         <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              {/* Avatar */}
+              {/* Avatar — decorative: the name is the heading right beside it,
+                  so announcing it here would read the name twice. */}
               {isLocalAvatar(userImage) ? (
-                <div className={`w-13 h-13 rounded-full border-2 border-accent/30 flex items-center justify-center shrink-0 ${getAvatarMeta(userImage).bg}`}>
+                <div aria-hidden className={`w-13 h-13 rounded-full border-2 border-accent/30 flex items-center justify-center shrink-0 ${getAvatarMeta(userImage).bg}`}>
                   <span className="text-2xl">{getAvatarMeta(userImage).emoji}</span>
                 </div>
               ) : userImage ? (
                 <Image
                   src={userImage}
-                  alt={firstName}
+                  alt=""
                   width={52}
                   height={52}
                   referrerPolicy="no-referrer"
                   className="rounded-full border-2 border-accent/30 shrink-0"
                 />
               ) : (
-                <div className="w-13 h-13 rounded-full border-2 border-accent/30 bg-border flex items-center justify-center text-primary font-bold text-lg shrink-0">
+                <div aria-hidden className="w-13 h-13 rounded-full border-2 border-accent/30 bg-border flex items-center justify-center text-primary font-bold text-lg shrink-0">
                   {firstName[0]}
                 </div>
               )}

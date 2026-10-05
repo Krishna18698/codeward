@@ -131,7 +131,7 @@ export default function AuthCard({ title, subtitle, variant, callbackUrl = DEFAU
           "disabled:opacity-60 disabled:cursor-not-allowed",
         )}
       >
-        <Image src="/icons/google.svg" alt="Google" width={18} height={18} />
+        <Image src="/icons/google.svg" alt="" width={18} height={18} />
         {googleLoading
           ? "Redirecting to Google…"
           : isLogin ? "Continue with Google" : "Sign up with Google"}
