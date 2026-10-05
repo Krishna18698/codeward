@@ -38,10 +38,10 @@
     "lucide": "^1.43.0",
     "lucide-react": "^1.18.0",
     "morphicons": "^1.7.1",
-    "next": "16.2.10",
-    "next-auth": "^4.24.13",
+    "next": "16.3.8",
+    "next-auth": "^4.24.15",
     "next-themes": "^0.4.6",
-    "prisma": "^7.0.1",
+    "prisma": "7.0.1",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-hook-form": "^7.72.1",
@@ -50,7 +50,7 @@
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
-    "ws": "^8.18.3",
+    "ws": "^8.22.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -65,12 +65,19 @@
     "baseline-browser-mapping": "^2.10.38",
     "dotenv": "^17.4.1",
     "eslint": "^9",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
-    "tsx": "^4.21.0",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "overrides": {
-    "preact": "^10.29.7"
+    "preact": "^10.29.7",
+    "deepmerge-ts": "^8.0.2",
+    "mysql2": "^3.24.5",
+    "@hono/node-server": "^1.19.17",
+    "hono": "^4.13.13",
+    "effect": "^3.22.2",
+    "lodash": "^4.18.1",
+    "valibot": "^1.5.0"
   }
 }
