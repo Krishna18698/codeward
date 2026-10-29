@@ -41,7 +41,7 @@ clock.
 | `featured/codeward-card.png` (+ `@2x`, `.jpg`) | The portfolio card image, built to read at ~300px wide |
 | `featured/card-preview.png`, `card-preview-300px.png` | That image inside a portfolio card, at card width and at exactly 300px |
 | `featured/codeward-cover-16x9.png` / `.jpg` | The same card laid out for a 16:9 box, 1920×1080 |
-| `featured/codeward-hover.mp4` / `.webm` / `-poster.jpg` | The hover clip: a mentor answer streaming in. 1920×1080, 30fps, ~3s, no audio, loops seamlessly |
+| `featured/codeward-hover.mp4` / `.webm` / `-poster.jpg` | The hover clip: a code review being graded. 1920×1080, 30fps, ~3s, no audio, loops seamlessly |
 | `featured/hover-preview.html` | A 16:9 card that shows the cover and plays the clip on hover |
 | `.cache/` | Auth state, the DB-guard log, review sheets, test results |
 
@@ -56,16 +56,27 @@ GitHub theme. Profile is left out because it shows the account's email.
 
 ### The hover clip
 
-`video.spec.ts` records a mentor answer streaming into a fresh conversation, on
-the real page at 1024×576 (a 1280×720 window zoomed to 125%, since the clip is
-shown at about 560×315), drawn at 1.875× for a 1920×1080 file.
+`video.spec.ts` records Codeward's one idea in about 3 seconds: two review
+comments land on the buggy lines of a real PR, the review is submitted, and the
+score ring fills to 100 — "6/6 issues caught". A virtual camera zooms on the
+lines being flagged, then glides to the result. The page is 1024×576 (a
+1280×720 window at 125%, since the clip shows at about 560×315), drawn at
+1.875× for a 1920×1080 file.
 
-It is recorded frame by frame rather than in real time: the answer is typed by
-the app's own `setInterval`, and Playwright's fake clock owns that timer, so
-each frame advances exactly 1/30s before its screenshot. CSS animations are made
-instant because they run on a clock the fake one doesn't reach. The last half
-second crossfades into the first frame, so the loop has no seam. The question
-goes to the mentor stub — no model call, nothing saved.
+It is recorded frame by frame on a virtual clock rather than in real time:
+
+- JavaScript timers belong to Playwright's fake clock, advanced exactly 1/30s
+  per frame.
+- CSS transitions (the ring filling) run on the compositor's real clock, so
+  each is paused and its `currentTime` set from the same virtual clock.
+- The camera is a CSS transform on `<html>`, so the browser redraws the text at
+  the zoomed size and it stays sharp.
+
+The last half second crossfades into the first frame, so the loop has no seam.
+
+Read-only: the grade request is answered with the account's real stored attempt
+for that PR (what "View attempt" reads), so there is no model call and nothing
+is saved. The comments are the reviewer's own words from that attempt.
 
 ### The phone frame and safe areas
 

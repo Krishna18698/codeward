@@ -7,37 +7,57 @@ import { installGuard } from "./lib/guard";
 import { settle } from "./lib/session";
 
 /**
- * The portfolio's hover preview: a 16:9 clip of a mentor answer streaming in.
+ * The portfolio's hover preview: a code review being graded, in ~3.6s.
  * `npm run shots:video` → examples/featured/codeward-hover.{mp4,webm,jpg}.
  *
- * Recorded frame by frame, not in real time. The answer is typed out by the
- * app's own setInterval (5 characters every 16ms), and Playwright's fake clock
- * owns that timer: each frame advances the clock exactly 1/30s and takes a
- * screenshot. So the clip is a true 30fps however slow the machine is, and the
- * same every run. CSS animations are made instant for the same reason — they
- * run on the compositor's real clock, which the fake one doesn't reach.
+ * Codeward's own idea in one beat: comments land on the buggy lines of a real
+ * PR, the review is submitted, and the score ring fills to 100 — "6/6 issues
+ * caught". A virtual camera keeps it readable at the ~560×315 it is shown at:
+ * zoomed on the lines being flagged, then gliding to the result.
  *
- * Read-only like everything here: the question goes to the mentor stub in
- * lib/guard.ts, so there is no model call and nothing is saved.
+ * Recorded frame by frame on a virtual clock, not in real time:
+ * - JavaScript timers (React's effects, requestAnimationFrame) belong to
+ *   Playwright's fake clock, advanced exactly 1/30s per frame.
+ * - CSS transitions and animations (the ring filling) run on the compositor's
+ *   real clock, which the fake one doesn't reach — so each is paused and its
+ *   currentTime set from the same virtual clock before every frame.
+ * - The camera is a CSS transform on <html>, so the browser redraws the text at
+ *   the zoomed size and it stays sharp.
+ *
+ * Read-only: the grade request is answered with the account's real stored
+ * attempt for this PR (the same JSON "View attempt" reads), so there is no
+ * model call and nothing is saved. The comments are the reviewer's own words
+ * from that attempt, and its full overall note is filled in off-camera, so
+ * what gets submitted is the review that earned the score.
  */
 
 const FPS = 30;
-/** A 1280×720 window zoomed to about 125% — a 1024×576 page — because the clip
- *  is shown at roughly 560×315. Drawn at 1.875× so the file is 1920×1080 and
- *  stays sharp on high-density screens; the layout is the 1024 one either way. */
+/** A 1280×720 window zoomed to about 125% — a 1024×576 page — drawn at
+ *  1.875× so the file is 1920×1080 and stays sharp on high-density screens. */
 const ZOOM = Number(process.env.SHOTS_VIDEO_ZOOM ?? 1.25);
 const SIZE = { width: 1920, height: 1080 };
 const VIEWPORT = { width: Math.round(1280 / ZOOM), height: Math.round(720 / ZOOM) };
 const SCALE = SIZE.width / VIEWPORT.width;
-const QUESTION = "When do I reach for two pointers instead of a sliding window?";
 
-/** Before the first character, after the last one, and the crossfade home. */
-const LEAD_IN = 0.35;
-const HOLD = 0.9;
+const SLUG = "idempotency-middleware";
+/** The reviewer's words from the stored attempt, on the lines they're about. */
+const COMMENTS: [line: number, text: string][] = [
+  [12, "Require an idempotency key, scoped to the authenticated customer."],
+  [14, "Check-then-charge races under concurrent retries: needs an atomic, durable claim."],
+];
+
+/** Frame timeline: flag two lines, glide to the result rail, then submit —
+ *  so the ring fills in full view rather than mid-pan. */
+const AT = { comment1: 5, comment2: 15, panStart: 22, panEnd: 40, submit: 40, end: 96 };
 const FADE = 0.45;
+/** Camera zoom on the code, and closer on the result card. */
+const ZA = 1.9;
+const ZB = 2.8;
+
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 test("hover video", async ({ browser }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(240_000);
   const frames = path.join(CACHE, "video-frames");
   fs.rmSync(frames, { recursive: true, force: true });
   fs.mkdirSync(frames, { recursive: true });
@@ -55,48 +75,110 @@ test("hover video", async ({ browser }) => {
   const page = await context.newPage();
   await page.clock.install({ time: new Date(NOW) });
 
-  await page.goto(`${ORIGIN}/dashboard/mentor`);
+  await page.goto(`${ORIGIN}/dashboard/code-review/${SLUG}`);
   await settle(page);
 
-  // A fresh conversation, so the transcript is just this question and answer.
-  await Promise.all([
-    page.waitForResponse((r) => r.url().endsWith("/api/mentor/conversations") && r.request().method() === "POST"),
-    page.getByRole("button", { name: /new chat/i }).filter({ visible: true }).first().click(),
+  // The real stored attempt — read, exactly as "View attempt" reads it.
+  const [attemptRes] = await Promise.all([
+    page.waitForResponse((r) => r.url().includes("/api/attempts/review/")),
+    page.getByRole("button", { name: /view attempt/i }).first().click(),
   ]);
-  await page.getByText("Two pointers vs sliding window").filter({ visible: true }).first().waitFor();
+  const attempt = await attemptRes.json();
+  await page.keyboard.press("Escape");
+  await page.getByRole("dialog").waitFor({ state: "hidden" });
+  const overall = String(attempt.comments).replace(/^Overall:\s*/m, "");
+  await page.route("**/api/review/grade", (route) =>
+    route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ score: attempt.score, caught: attempt.caught, missed: attempt.missed, feedback: attempt.feedback }),
+    }),
+  );
+
+  // Off-camera: the attempt's full overall note, so the submission is the
+  // review that earned this grade.
+  await page.getByPlaceholder(/anything not tied to a single line/i).fill(overall);
+
+  // Frame the grid: the code pane and the results rail, top just in view.
   await page.addStyleTag({
-    content: `*, *::before, *::after {
-      animation-duration: 0s !important; animation-delay: 0s !important;
-      transition-duration: 0s !important; transition-delay: 0s !important;
-      caret-color: transparent !important; scroll-behavior: auto !important; }`,
+    content: `.floating-mentor { display: none !important; }
+      * { caret-color: transparent !important; scroll-behavior: auto !important; }`,
   });
-  await page.mouse.move(VIEWPORT.width - 2, VIEWPORT.height - 2);
+  const geo = await page.evaluate((lines) => {
+    const main = document.querySelector("main")!;
+    const surface = document.querySelector(".code-surface")!;
+    const grid = surface.closest("div.grid")!;
+    main.scrollTop += grid.getBoundingClientRect().top - main.getBoundingClientRect().top - 14;
+    const rows = [...surface.children] as HTMLElement[];
+    const row = (n: number) => rows[n - 1].getBoundingClientRect();
+    const code = surface.getBoundingClientRect();
+    const rail = (grid.children[1] as HTMLElement).getBoundingClientRect();
+    return { scrollTop: main.scrollTop, codeLeft: code.left, firstTop: row(lines[0] - 2).top, railTop: rail.top, railRight: rail.right };
+  }, COMMENTS.map(([l]) => l));
 
-  const input = page.getByPlaceholder(/ask me anything/i).last();
-  await input.fill(QUESTION);
+  // Pointer-free from here: no hover state can sneak into a frame.
+  await page.addStyleTag({ content: "html { pointer-events: none; }" });
 
-  // From here on, time moves only when a frame asks it to.
+  // Camera windows, in page pixels, both 16:9.
+  const win = (z: number) => ({ w: VIEWPORT.width / z, h: VIEWPORT.height / z });
+  const A = { x: geo.codeLeft - 10, y: geo.firstTop - 14 };
+  const B = { x: geo.railRight + 8 - win(ZB).w, y: geo.railTop - 8 };
+
+  // Virtual time for CSS animations, and the camera, applied before each frame.
+  await page.evaluate(() => {
+    const w = window as unknown as { __vt: number; __step: (dt: number) => void; __cam: (x: number, y: number, z: number) => void };
+    w.__vt = 0;
+    w.__step = (dt) => {
+      w.__vt += dt;
+      for (const a of document.getAnimations() as (Animation & { __t0?: number })[]) {
+        // First sight: keep whatever progress it already has. Restarting a
+        // finished fill-forwards animation (the page's fade-in) from zero
+        // blanked the opening frames.
+        if (a.__t0 === undefined) { a.__t0 = w.__vt - (Number(a.currentTime) || 0); a.pause(); }
+        a.currentTime = w.__vt - a.__t0;
+      }
+    };
+    w.__cam = (x, y, z) => {
+      const h = document.documentElement;
+      h.style.transformOrigin = "0 0";
+      h.style.transform = `scale(${z}) translate(${-x}px, ${-y}px)`;
+    };
+  });
+
   const now = await page.evaluate(() => Date.now());
   await page.clock.pauseAt(now + 1000);
-  await input.press("Enter");
-  await page.getByText(QUESTION).last().waitFor();
-  await input.blur();
 
-  const shoot = async (n: number) =>
-    page.screenshot({ path: path.join(frames, `${String(n).padStart(4, "0")}.png`) });
-  const typedOut = () =>
-    page.evaluate(() => (document.querySelector("main")?.innerText ?? "").includes("think pointers."));
+  const addComment = async (line: number, text: string) => {
+    await page.evaluate((n) => (document.querySelector(".code-surface")!.children[n - 1].firstElementChild as HTMLElement).click(), line);
+    const editor = page.getByPlaceholder(/what's wrong with this line/i);
+    await editor.fill(text);
+    await editor.press("Control+Enter");
+    await page.evaluate((top) => { document.querySelector("main")!.scrollTop = top; }, geo.scrollTop);
+  };
 
-  let n = 0;
-  for (let i = 0; i < Math.round(LEAD_IN * FPS); i++) await shoot(n++);
-  for (let guardFrames = 0; !(await typedOut()); guardFrames++) {
-    expect(guardFrames, "the answer never finished typing").toBeLessThan(10 * FPS);
-    await page.clock.runFor(1000 / FPS);
-    await shoot(n++);
-  }
-  for (let i = 0; i < Math.round(HOLD * FPS); i++) {
-    await page.clock.runFor(1000 / FPS);
-    await shoot(n++);
+  for (let f = 0; f < AT.end; f++) {
+    if (f === AT.comment1) await addComment(...COMMENTS[0]);
+    if (f === AT.comment2) await addComment(...COMMENTS[1]);
+    if (f === AT.submit) {
+      await page.evaluate(() => [...document.querySelectorAll("button")].find((b) => b.textContent?.includes("Submit review"))!.click());
+      await page.getByText(/issues caught/).waitFor();
+    }
+
+    const p = ease(Math.min(1, Math.max(0, (f - AT.panStart) / (AT.panEnd - AT.panStart))));
+    // Glide between the two windows, with a slow push-in over the whole clip.
+    const z = (ZA + (ZB - ZA) * p) * (1 + 0.04 * (f / AT.end));
+    const a = { cx: A.x + win(ZA).w / 2, cy: A.y + win(ZA).h / 2 };
+    const b = { cx: B.x + win(ZB).w / 2, cy: B.y + win(ZB).h / 2 };
+    const cx = a.cx + (b.cx - a.cx) * p, cy = a.cy + (b.cy - a.cy) * p;
+    const x = Math.min(Math.max(0, cx - win(z).w / 2), VIEWPORT.width - win(z).w);
+    const y = Math.min(Math.max(0, cy - win(z).h / 2), VIEWPORT.height - win(z).h);
+
+    if (f > 0) await page.clock.runFor(1000 / FPS);
+    await page.evaluate(([x, y, z, step]) => {
+      const w = window as unknown as { __step: (dt: number) => void; __cam: (x: number, y: number, z: number) => void };
+      w.__step(step);
+      w.__cam(x, y, z);
+    }, [x, y, z, f > 0 ? 1000 / FPS : 0]);
+    await page.screenshot({ path: path.join(frames, `${String(f).padStart(4, "0")}.png`) });
   }
 
   expect(guard.blocked, "unexpected write attempts").toEqual([]);
@@ -104,6 +186,7 @@ test("hover video", async ({ browser }) => {
 
   // Encode. The tail crossfades into the first frame, so the clip's last frame
   // is its first and the loop has no seam.
+  const n = AT.end;
   const dir = path.join(OUT, "featured");
   fs.mkdirSync(dir, { recursive: true });
   const seconds = n / FPS;
