@@ -146,7 +146,12 @@ export async function renderCovers(browser: Browser) {
  *  whose "Solve by pattern" header would echo the tagline. */
 export async function renderFeatured(browser: Browser) {
   const dir = path.join(OUT, "featured");
-  fs.rmSync(dir, { recursive: true, force: true });
+  // Only this step's own files: the hover clip and its preview page live in
+  // the same folder (video.spec.ts) and must survive a card re-render.
+  fs.mkdirSync(dir, { recursive: true });
+  for (const f of fs.readdirSync(dir)) {
+    if (/^(codeward-card|codeward-cover-16x9|card-preview)/.test(f)) fs.rmSync(path.join(dir, f));
+  }
 
   const card = page(`<div class="canvas">
     <div style="position:absolute;left:92px;top:64px">
@@ -164,6 +169,27 @@ export async function renderFeatured(browser: Browser) {
     { file: path.join(dir, "codeward-card@2x.png"), scale: 2, type: "png" },
     { file: path.join(dir, "codeward-card.jpg"), scale: 1, type: "jpeg" },
   ]);
+
+  // The same card for a 16:9 box — where the portfolio shows covers and plays
+  // the hover clip. The 4:3 card, cropped to 16:9, loses its wordmark and the
+  // top of the tagline, so this one is laid out for the wider frame instead.
+  const wide = page(
+    `<div class="canvas">
+    <div style="position:absolute;left:100px;top:80px">
+      <div class="mark" style="font-size:50px">Code<em>ward</em></div>
+      <div class="line" style="font-size:112px;margin-top:12px;white-space:nowrap">Interview prep<br><em>by pattern.</em></div>
+    </div>
+    <img class="shot" src="${framed("desktop", "dark", "31")}" style="left:1000px;top:96px;width:1240px">
+    <!-- As on the 4:3 card: its top edge lands in the gap under the Code
+         Review header, so the window behind is cut on empty space. -->
+    <img class="shot" src="${framed("desktop", "dark", "01")}" style="left:40px;top:372px;width:1500px">
+  </div>`,
+    { width: 1920, height: 1080 },
+  );
+  await render(browser, wide, "featured-card-16x9", [
+    { file: path.join(dir, "codeward-cover-16x9.png"), scale: 1, type: "png" },
+    { file: path.join(dir, "codeward-cover-16x9.jpg"), scale: 1, type: "jpeg" },
+  ], { width: 1920, height: 1080 });
 
   // The card as it would sit on the portfolio: modelled on the "Proof of Work"
   // grid (dark tile, inset rounded image, title with an arrow, grey one-liner,

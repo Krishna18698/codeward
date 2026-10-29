@@ -60,5 +60,7 @@ export default defineConfig({
     { name: "e2e", testMatch: /e2e\.spec\.ts/, dependencies: ["setup"], retries: 1 },
     // README-sized copies into docs/screenshots (committed), from existing captures.
     { name: "readme", testMatch: /readme\.spec\.ts/ },
+    // The portfolio's hover clip: examples/featured/codeward-hover.{mp4,webm}.
+    { name: "video", testMatch: /video\.spec\.ts/, dependencies: ["setup"] },
   ],
 });
