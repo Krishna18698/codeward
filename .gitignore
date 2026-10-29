@@ -59,3 +59,6 @@ Codeward-Problem-Patterns.docx
 
 # Screenshot harness output (tools/screenshots)
 /examples/
+
+# Portfolio hover clip and cover (tools/screenshots). Kept in the project, not in git.
+/docs/portfolio/

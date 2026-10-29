@@ -2,13 +2,15 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
-import { AUTH_STATE, CACHE, NOW, ORIGIN, OUT, TIMEZONE } from "./config";
+import { AUTH_STATE, CACHE, NOW, ORIGIN, OUT, ROOT, TIMEZONE } from "./config";
 import { installGuard } from "./lib/guard";
 import { settle } from "./lib/session";
 
 /**
  * The portfolio's hover preview: a code review being graded, in ~3.6s.
- * `npm run shots:video` → examples/featured/codeward-hover.{mp4,webm,jpg}.
+ * `npm run shots:video` → examples/featured/codeward-hover.{mp4,webm,jpg}, with a
+ * copy (plus the 16:9 cover and a hover preview) in docs/portfolio — kept in
+ * the project but gitignored.
  *
  * Codeward's own idea in one beat: comments land on the buggy lines of a real
  * PR, the review is submitted, and the score ring fills to 100 — "6/6 issues
@@ -208,6 +210,16 @@ test("hover video", async ({ browser }) => {
   // A card that behaves like the portfolio's: the 16:9 cover at rest, the clip
   // on hover. Open it in a browser to check the pair before shipping them.
   fs.writeFileSync(path.join(dir, "hover-preview.html"), PREVIEW);
+
+  // And a copy in docs/portfolio, a fixed place in the project to pick them up
+  // from. Gitignored, like examples/: the portfolio assets stay out of the repo.
+  const keep = path.join(ROOT, "docs", "portfolio");
+  fs.mkdirSync(keep, { recursive: true });
+  const files = ["codeward-hover.mp4", "codeward-hover.webm", "codeward-hover-poster.jpg", "codeward-cover-16x9.jpg", "hover-preview.html"];
+  for (const f of files) {
+    expect(fs.existsSync(path.join(dir, f)), `${f} — run \`npm run shots\` first for the cover`).toBe(true);
+    fs.copyFileSync(path.join(dir, f), path.join(keep, f));
+  }
 });
 
 const PREVIEW = `<!doctype html>

@@ -74,6 +74,10 @@ It is recorded frame by frame on a virtual clock rather than in real time:
 
 The last half second crossfades into the first frame, so the loop has no seam.
 
+The clip, its poster, the 16:9 cover and `hover-preview.html` are also copied to
+`docs/portfolio/`, a fixed place in the project to pick them up from. It is
+gitignored, like `examples/`, so they stay out of the repo.
+
 Read-only: the grade request is answered with the account's real stored attempt
 for that PR (what "View attempt" reads), so there is no model call and nothing
 is saved. The comments are the reviewer's own words from that attempt.
