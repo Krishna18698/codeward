@@ -315,7 +315,7 @@ export default function BuildItWorkspace({ slug, problem, previousAttempts, high
             <div className="rounded-2xl border border-border bg-surface p-5 space-y-4">
               <div className="flex items-center gap-4">
                 <div className="relative shrink-0">
-                  <Ring pct={result.score} size={64} stroke={5} color={result.score >= 70 ? "#34d399" : result.score >= 40 ? "#fbbf24" : "#fb7185"} />
+                  <Ring pct={result.score} size={64} stroke={5} fillOnMount color={result.score >= 70 ? "#34d399" : result.score >= 40 ? "#fbbf24" : "#fb7185"} />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="font-mono text-sm font-bold text-primary">{result.score}</span>
                   </div>
