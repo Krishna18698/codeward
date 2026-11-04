@@ -1,5 +1,22 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import type { Difficulty } from "@prisma/client";
+
+/** Every preset problem's id, title and difficulty — the denominator of
+ *  progress. It only changes when the database is reseeded, yet every
+ *  dashboard and profile load fetched all ~775 rows of it again. Cached for an
+ *  hour (tag "preset-catalog" to refresh it sooner, e.g. after a reseed).
+ *  Only the shared catalog is cached: the user's solved list below is read
+ *  fresh on every load, so progress is never stale. */
+const presetCatalog = unstable_cache(
+  () =>
+    prisma.problem.findMany({
+      where: { sheet: { isPreset: true } },
+      select: { id: true, title: true, difficulty: true },
+    }),
+  ["preset-catalog", "v1"],
+  { revalidate: 3600, tags: ["preset-catalog"] },
+);
 
 type TrackedProgress = {
   /** Distinct problems across every preset sheet. */
@@ -27,10 +44,7 @@ type TrackedProgress = {
  */
 export async function getTrackedProgress(userId: string): Promise<TrackedProgress> {
   const [problems, doneRows] = await Promise.all([
-    prisma.problem.findMany({
-      where: { sheet: { isPreset: true } },
-      select: { id: true, title: true, difficulty: true },
-    }),
+    presetCatalog(),
     prisma.userProblemStatus.findMany({
       where: { userId, status: "DONE" },
       select: { problemId: true },
