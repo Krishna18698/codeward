@@ -8,30 +8,9 @@ import { useTheme } from "next-themes";
 import { EditorState, Compartment, type Extension } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter } from "@codemirror/view";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { syntaxHighlighting, indentOnInput, bracketMatching, StreamLanguage, defaultHighlightStyle } from "@codemirror/language";
+import { syntaxHighlighting, indentOnInput, bracketMatching, defaultHighlightStyle } from "@codemirror/language";
 import { oneDarkHighlightStyle } from "@codemirror/theme-one-dark";
-import { javascript } from "@codemirror/lang-javascript";
-import { python } from "@codemirror/lang-python";
-import { java } from "@codemirror/lang-java";
-import { go } from "@codemirror/lang-go";
-import { kotlin, csharp } from "@codemirror/legacy-modes/mode/clike";
-
-type EditorLanguage =
-  | "typescript" | "javascript" | "nodejs" | "python" | "kotlin" | "csharp" | "go" | "java";
-
-function languageExtension(language: EditorLanguage): Extension {
-  switch (language) {
-    case "typescript": return javascript({ typescript: true });
-    case "javascript":
-    case "nodejs": return javascript();
-    case "python": return python();
-    case "java": return java();
-    case "go": return go();
-    case "kotlin": return StreamLanguage.define(kotlin);
-    case "csharp": return StreamLanguage.define(csharp);
-    default: return [];
-  }
-}
+import { loadLanguage, type EditorLanguage } from "@/components/ui/codeLanguages";
 
 /** Chrome for the editor. The background stays transparent in both themes so the
  *  surrounding WindowFrame's `bg-surface` shows through — which is exactly why
@@ -129,7 +108,9 @@ export default function CodeEditor({ value, onChange, language, readOnly = false
         themeComp.current.of(themeExtension(dark)),
         EditorView.lineWrapping,
         EditorView.theme({ "&": { minHeight } }),
-        langComp.current.of(languageExtension(language)),
+        // No grammar yet: the language effect below loads just this one and
+        // swaps it in, so the code shows at once and highlights a moment later.
+        langComp.current.of([]),
         roComp.current.of([EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly)]),
         EditorView.updateListener.of((u) => {
           if (u.docChanged) onChangeRef.current?.(u.state.doc.toString());
@@ -146,9 +127,17 @@ export default function CodeEditor({ value, onChange, language, readOnly = false
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Reconfigure language when it changes.
+  // Load the language (on mount too) and swap it in. Switching languages
+  // quickly can't leave an older grammar on screen: a load that finishes after
+  // the language has changed again is dropped.
   useEffect(() => {
-    viewRef.current?.dispatch({ effects: langComp.current.reconfigure(languageExtension(language)) });
+    let current = true;
+    loadLanguage(language)
+      .then((ext) => {
+        if (current) viewRef.current?.dispatch({ effects: langComp.current.reconfigure(ext) });
+      })
+      .catch(() => {}); // unhighlighted code is still editable code
+    return () => { current = false; };
   }, [language]);
 
   // Reconfigure the theme when it flips. Going through the compartment (rather

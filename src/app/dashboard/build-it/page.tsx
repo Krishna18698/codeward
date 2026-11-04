@@ -95,7 +95,7 @@ export default async function BuildItPage({ searchParams }: Props) {
 
   return (
     <>
-      <PreloadCodeEditor />
+      <PreloadCodeEditor language="csharp" />
       <ModeCatalog
         eyebrow="Build It"
         title="Design it. Break it."

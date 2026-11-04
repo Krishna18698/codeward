@@ -82,7 +82,7 @@ export default async function BugHuntPage({ searchParams }: Props) {
 
   return (
     <>
-      <PreloadCodeEditor />
+      <PreloadCodeEditor language="typescript" />
       <ModeCatalog
         eyebrow="Bug Hunt"
         title="Diagnose"
