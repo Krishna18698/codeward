@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { LOGIN_THROTTLED } from "@/lib/loginErrors";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -71,7 +72,11 @@ export default function AuthCard({ title, subtitle, variant, callbackUrl = DEFAU
       });
       if (res?.error) {
         // Form-level error — we can't know whether email or password was wrong
-        setError("root", { message: "Invalid email or password" });
+        setError("root", {
+          message: res.error === LOGIN_THROTTLED
+            ? "Too many sign-in attempts. Wait 15 minutes and try again."
+            : "Invalid email or password",
+        });
         return;
       }
       router.push(callbackUrl);
