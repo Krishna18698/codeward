@@ -351,6 +351,10 @@ model MentorConversation {
 
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages  ChatMessage[]
+
+  // The conversation list: one user's threads, newest first. Without it every
+  // list load scans every user's conversations.
+  @@index([userId, updatedAt])
 }
 
 model ChatMessage {
@@ -369,4 +373,9 @@ model ChatMessage {
 
   user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   conversation MentorConversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+
+  // A conversation's messages in order — opening a thread, the latest message
+  // on each list row, and the chat route's recent history all filter on the
+  // conversation and sort by time. Without it each one scans every message.
+  @@index([conversationId, createdAt])
 }
