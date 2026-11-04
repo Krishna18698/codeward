@@ -283,7 +283,7 @@ A full-stack interview prep platform: curated DSA sheets with pattern tracking, 
 | Vector search | pgvector + Voyage AI embeddings |
 | LLM | Groq (`openai/gpt-oss-120b`, set in one `GROQ_MODEL` constant) |
 | Code execution | JDoodle Compiler API (C#, Python, Kotlin, Node) |
-| Code editor | CodeMirror 6 (lazy-loaded) |
+| Code editor | CodeMirror 6 (lazy-loaded, one language per page) |
 | Transactional email | Brevo (password-reset links; verifies a single sender address, so no custom domain required) |
 | Rate limiting | Upstash Redis |
 | Analytics | Vercel Analytics |
@@ -484,7 +484,8 @@ docs/
 - AI-generated markdown is sanitized with `rehype-sanitize` (XSS protection)
 - **Ground truth never ships in the client bundle**: Code Review bug lists, Bug Hunt root causes/fixes, and Build It rubrics/canonical answers live in a server-only half of a meta/solution content split — only the grading routes import the solution accessor (verified by grepping the built client bundle). This is a *runtime* boundary that keeps answers out of the browser; the repo itself is public, so the content is readable in source
 - **Code execution is sandboxed and budgeted**: candidate code runs in JDoodle's network-disabled sandbox (never on our infra); `/api/code/run` is authenticated, per-user rate-limited, and gated by a shared server-side daily budget so it can't be drained or abused
-- Rate limiting (Upstash) on mentor chat, eval, sheet generation, add-to-sheet, code execution, and sign-up
+- Rate limiting (Upstash) on mentor chat, eval, sheet generation, add-to-sheet, code execution, and sign-up — each policy under its own Redis prefix, so two limits keyed on the same user or IP never share a counter
+- **Password sign-in is throttled**: 10 failed attempts per account and 30 per IP in 15 minutes. The check runs before the user lookup and bcrypt, so a blocked guess costs neither; only failures count, and it fails open if Redis is down
 - Security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, etc.) set in `next.config.ts`
 - Groq-calling routes set `maxDuration` so slow grading/streaming finishes instead of hitting the default function timeout
 - **Password reset is enumeration-safe**: `/api/auth/forgot-password` returns an identical response whether or not the account exists, so it can't be used to discover which emails are registered. Reset tokens are stored **hashed** (SHA-256, so a database leak can't be replayed as a reset), are single-use, expire in 1 hour, and the endpoint is IP rate-limited
