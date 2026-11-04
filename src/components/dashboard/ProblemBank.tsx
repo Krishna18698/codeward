@@ -333,7 +333,8 @@ export default function ProblemBank({ userSheets }: Props) {
                                     </span>
                                   ))}
                                 </div>
-                                <div className="flex shrink-0 items-center gap-1.5">
+                                {/* 12px apart, so the enlarged touch targets on .row-action don't overlap. */}
+                                <div className="flex shrink-0 items-center gap-3">
                                   {p.leetcodeUrl && (
                                     <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" className="row-action rounded" title="Solve on LeetCode">
                                       <LeetCodeIcon size={20} />

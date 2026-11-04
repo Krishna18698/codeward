@@ -464,9 +464,10 @@ export default function ProblemList({
                         <button
                           onClick={() => toggleDone(p.id)}
                           title={statusTitle[status]}
+                          aria-label={`${statusTitle[status]}: ${p.title}`}
                           onAnimationEnd={() => setPoppingId((id) => (id === p.id ? null : id))}
                           className={cn(
-                            "shrink-0 self-center w-6 h-6 rounded-full border flex items-center justify-center transition-colors duration-150",
+                            "row-status shrink-0 self-center w-6 h-6 rounded-full border flex items-center justify-center transition-colors duration-150",
                             status === "DONE"    && "border-accent/60 bg-accent/10",
                             status === "SOLVING" && "border-amber-500/60 bg-amber-500/10",
                             status === "TODO"    && "border-border hover:border-border",
@@ -529,24 +530,24 @@ export default function ProblemList({
 
                           <div style={{ gridArea: "act" }} className="problem-row-act flex items-center justify-end gap-1.5">
                             {p.leetcodeUrl && (
-                              <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" className="row-action row-action-link rounded transition-opacity">
+                              <a href={p.leetcodeUrl} target="_blank" rel="noopener noreferrer" title="Solve on LeetCode" aria-label={`Solve ${p.title} on LeetCode`} className="row-action row-action-link rounded transition-opacity">
                                 <LeetCodeIcon size={20} />
                               </a>
                             )}
                             {p.gfgUrl && (
-                              <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" className="row-action row-action-link rounded transition-opacity">
+                              <a href={p.gfgUrl} target="_blank" rel="noopener noreferrer" title="Solve on GeeksForGeeks" aria-label={`Solve ${p.title} on GeeksForGeeks`} className="row-action row-action-link rounded transition-opacity">
                                 <GFGIcon size={20} />
                               </a>
                             )}
                             {p.hint && (
-                              <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} className={cn("row-action rounded transition-colors", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "row-action-idle hover:text-secondary")}>
+                              <button onClick={() => toggleHint(p.id)} aria-expanded={hintOpen} aria-controls={`hint-${p.id}`} title={hintOpen ? "Hide hint" : wasHinted ? "Show hint (needed a hint)" : "Show hint"} aria-label={`${hintOpen ? "Hide" : "Show"} hint: ${p.title}`} className={cn("row-action rounded transition-colors", hintOpen || wasHinted ? "text-yellow-400 hover:text-yellow-300" : "row-action-idle hover:text-secondary")}>
                                 <Lightbulb size={15} className={wasHinted ? "fill-current" : ""} />
                               </button>
                             )}
-                            <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} className={cn("row-action rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "row-action-idle hover:text-secondary")}>
+                            <button onClick={() => toggleRevise(p.id)} title={isRevising ? "Remove from revision list" : "Mark for revision"} aria-label={`${isRevising ? "Remove from revision list" : "Mark for revision"}: ${p.title}`} className={cn("row-action rounded transition-colors", isRevising ? "text-rose-400 hover:text-rose-300" : "row-action-idle hover:text-secondary")}>
                               <Flag size={15} className={isRevising ? "fill-current" : ""} />
                             </button>
-                            <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} className={cn("row-action rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "row-action-idle hover:text-secondary")}>
+                            <button onClick={() => toggleNote(p.id)} data-note-trigger={p.id} aria-expanded={noteOpen} aria-controls={`note-${p.id}`} title={noteOpen ? "Close notes" : "Open notes"} aria-label={`${noteOpen ? "Close" : "Open"} notes: ${p.title}`} className={cn("row-action rounded transition-colors", noteOpen || hasNote ? "text-amber-400/80 hover:text-amber-400" : "row-action-idle hover:text-secondary")}>
                               <PenLine size={15} />
                             </button>
                           </div>

@@ -298,6 +298,7 @@ body {
 /* Each action in its own bordered box, the way every other control in the app
    is drawn. --color-primary, not white: white vanishes on the light canvas. */
 .row-action {
+  position: relative;
   display: grid;
   place-items: center;
   width: 28px;
@@ -308,6 +309,26 @@ body {
   opacity: 1;
 }
 .row-action svg { width: 15px; height: 15px; }
+
+/* Touch targets without taller rows. The boxes stay 28px — the compact row is
+   deliberate — but each one answers taps across 40×40: an invisible ::after
+   reaching 6px past the box. (The inset is 7px because it is measured from
+   inside the 1px border.) The actions sit 12px apart so neighbouring targets
+   meet without overlapping, and 6px is exactly the gap to the title line
+   above. The status circle, the control tapped most, gets a full 44×44. */
+.row-action::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+}
+.problem-row-act { gap: 0.75rem; }
+.row-status { position: relative; }
+.row-status::after {
+  content: "";
+  position: absolute;
+  inset: -11px;
+  border-radius: 9999px;
+}
 /* Idle actions read as white boxes here and as quiet grey glyphs in the table
    below. :not(:hover) so this doesn't outrank the hover colour — these rules
    are unlayered and would otherwise beat any Tailwind hover utility. */
@@ -365,6 +386,9 @@ body {
     border-radius: 0.25rem;
   }
   .row-action svg { width: auto; height: auto; }
+  /* A pointer doesn't need the enlarged targets, and in the table the 4px gaps
+     would make neighbouring ones overlap. */
+  .row-action::after, .row-status::after { content: none; }
   .row-action-idle:not(:hover) { color: var(--color-muted); }
   .row-action-link { opacity: 0.7; }
   .row-action-link:hover { opacity: 1; }
