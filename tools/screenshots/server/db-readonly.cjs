@@ -68,7 +68,7 @@ globalThis.fetch = function readOnlyFetch(input, init) {
 
   const refused = statements.find((sql) => !isRead(sql));
   if (refused !== undefined || statements.includes(undefined)) {
-    const sql = String(refused ?? "<unparseable body>").replace(/\s+/g, " ").slice(0, 160);
+    const sql = String(refused ?? "<unparseable body>").replace(/\s+/g, " ").slice(0, 400);
     record((stats) => stats.blocked.push(sql));
     console.error(`[screenshots] refused a database write: ${sql}`);
     return Promise.reject(new Error("screenshots harness: database is read-only"));

@@ -42,6 +42,12 @@ export default defineConfig({
       TZ: TIMEZONE,
       SHOTS_NOW: NOW,
       NODE_OPTIONS: [preload("clock.cjs"), preload("db-readonly.cjs")].join(" "),
+      // Rate limiting off, as in local dev without Upstash: failed sign-ins now
+      // write counters to Redis, and the harness fails sign-ins on purpose (the
+      // wrong-password shot and journey). Empty, not unset — Next won't
+      // overwrite a variable that is already defined with .env.local's value.
+      UPSTASH_REDIS_REST_URL: "",
+      UPSTASH_REDIS_REST_TOKEN: "",
     },
   },
 
@@ -62,5 +68,7 @@ export default defineConfig({
     { name: "readme", testMatch: /readme\.spec\.ts/ },
     // The portfolio's hover clip: examples/featured/codeward-hover.{mp4,webm}.
     { name: "video", testMatch: /video\.spec\.ts/, dependencies: ["setup"] },
+    // Before/after performance numbers: examples/.cache/perf-<label>.json.
+    { name: "perf", testMatch: /perf\.spec\.ts/, dependencies: ["setup"], fullyParallel: false },
   ],
 });

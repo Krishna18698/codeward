@@ -238,6 +238,184 @@ test("Theme and sign-out: the theme switches without a reload, and signing out l
   await context.close();
 });
 
+// ── Fixes from the November project review ─────────────────────────────────
+
+test("Notes: a failed save says so, keeps the draft, and Retry saves it", async ({ browser }) => {
+  const { page, context, guard } = await openSession(browser, "desktop", "dark", { signedIn: true });
+  await page.goto(`${ORIGIN}/dashboard/dsa`);
+  await settle(page);
+  await openTwoPointers(page);
+
+  const trigger = row(page, "Merge Two Sorted Lists").locator("button[data-note-trigger]");
+
+  let failing = true;
+  await page.route("**/api/notes/upsert", (route) =>
+    failing
+      ? route.fulfill({ status: 500, contentType: "application/json", body: '{"error":"boom"}' })
+      : route.fulfill({ contentType: "application/json", body: '{"success":true}' }),
+  );
+
+  await trigger.click();
+  const dialog = page.getByRole("dialog");
+  const text = "Edge case: both lists empty — return null before the loop.";
+  await dialog.locator("textarea").fill(text);
+  await dialog.getByRole("button", { name: "Done" }).click();
+
+  // Not closed, not "saved", and the draft is on the device.
+  await expect(dialog.getByText(/not saved/i)).toBeVisible();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText(/^saved$/)).toHaveCount(0);
+  expect(await page.evaluate(() => Object.keys(localStorage).some((k) => k.startsWith("codeward:note-draft:")))).toBe(true);
+
+  failing = false;
+  await dialog.getByRole("button", { name: "Retry" }).click();
+  await expect(dialog.getByText(/^saved$/)).toBeVisible();
+  expect(await page.evaluate(() => Object.keys(localStorage).some((k) => k.startsWith("codeward:note-draft:")))).toBe(false);
+  await dialog.getByRole("button", { name: "Done" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toHaveClass(/amber/);
+
+  expectOnlyStubbed(guard, /^\/api\/notes\/upsert$/);
+  await context.close();
+});
+
+test("Notes: closing anyway keeps the draft, and reopening restores it", async ({ browser }) => {
+  const { page, context, guard } = await openSession(browser, "desktop", "dark", { signedIn: true });
+  await page.goto(`${ORIGIN}/dashboard/dsa`);
+  await settle(page);
+  await openTwoPointers(page);
+  await page.route("**/api/notes/upsert", (route) =>
+    route.fulfill({ status: 500, contentType: "application/json", body: '{"error":"boom"}' }),
+  );
+
+  const trigger = row(page, "Container With Most Water").locator("button[data-note-trigger]");
+  // Amber on a closed trigger means "this problem has a note".
+  const hadNote = /amber/.test((await trigger.getAttribute("class")) ?? "");
+  await trigger.click();
+  const dialog = page.getByRole("dialog");
+  const text = "Move the shorter wall inward; the taller one can't help.";
+  await dialog.locator("textarea").fill(text);
+  await dialog.getByRole("button", { name: "Done" }).click();
+  await dialog.getByRole("button", { name: "Close anyway" }).click();
+  await expect(dialog).toBeHidden();
+  // The save failed, so the row must not claim a note it doesn't have.
+  if (!hadNote) await expect(trigger).not.toHaveClass(/amber/);
+
+  await trigger.click();
+  await expect(page.getByRole("dialog").locator("textarea")).toHaveValue(text);
+
+  expectOnlyStubbed(guard, /^\/api\/notes\/upsert$/);
+  await context.close();
+});
+
+test("Sign in: a throttled attempt says so instead of 'invalid password'", async ({ browser }) => {
+  const { page, context, guard } = await openSession(browser, "desktop", "dark", { signedIn: false });
+  // The answer NextAuth gives when authorize() throws the throttle error.
+  await page.route("**/api/auth/callback/credentials", (route) =>
+    route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ url: `${ORIGIN}/login?error=TooManyAttempts` }) }),
+  );
+  await page.goto(`${ORIGIN}/login`);
+  await page.locator('input[name="email"]').fill("asha.rao@example.com");
+  await page.locator('input[name="password"]').fill("whatever-it-is");
+  await page.getByRole("button", { name: /^sign in$/i }).click();
+  await expect(page.getByText(/too many sign-in attempts/i)).toBeVisible();
+  await expect(page.getByText(/invalid email or password/i)).toHaveCount(0);
+
+  expectOnlyStubbed(guard);
+  await context.close();
+});
+
+/** Every focus stop is inside the dialog. */
+async function tabStaysInside(page: Page, presses: number) {
+  for (let i = 0; i < presses; i++) {
+    await page.keyboard.press(i % 7 === 6 ? "Shift+Tab" : "Tab");
+    const inside = await page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'));
+    expect(inside, `focus left the dialog after ${i + 1} key presses`).toBe(true);
+  }
+}
+
+test("Dialogs: Create Sheet — Escape from anywhere, focus kept inside, focus returned", async ({ browser }) => {
+  const { page, context, guard } = await openSession(browser, "desktop", "dark", { signedIn: true });
+  await page.goto(`${ORIGIN}/dashboard/dsa`);
+  await settle(page);
+
+  const opener = page.getByRole("button", { name: "+ New sheet" });
+  await opener.click();
+  const dialog = page.getByRole("dialog", { name: "Create New Sheet" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel("Sheet name")).toBeFocused();
+
+  await tabStaysInside(page, 24);
+  // Escape used to work only from the name field.
+  await dialog.getByRole("button", { name: "Cancel" }).focus();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(opener).toBeFocused();
+
+  expectOnlyStubbed(guard);
+  await context.close();
+});
+
+test("Dialogs: Add Problems — Escape closes it, focus kept inside, focus returned", async ({ browser }) => {
+  const { page, context, guard } = await openSession(browser, "desktop", "dark", { signedIn: true });
+  await page.goto(`${ORIGIN}/dashboard/dsa`);
+  await settle(page);
+  await page.getByText("QA Smoke", { exact: true }).first().click();
+  await page.waitForURL(/sheet=/);
+
+  const opener = page.getByRole("button", { name: /add problems/i }).first();
+  await opener.click();
+  const dialog = page.getByRole("dialog", { name: "Add Problems" });
+  await expect(dialog).toBeVisible();
+  await tabStaysInside(page, 18);
+  await page.keyboard.press("Escape"); // it had no Escape at all
+  await expect(dialog).toBeHidden();
+  await expect(opener).toBeFocused();
+
+  expectOnlyStubbed(guard);
+  await context.close();
+});
+
+test("Phone: row controls answer taps across 40px+ targets without taller rows", async ({ browser }) => {
+  const { page, context, guard } = await openSession(browser, "phone", "dark", { signedIn: true });
+  await page.goto(`${ORIGIN}/dashboard/dsa`);
+  await settle(page);
+  await openTwoPointers(page);
+
+  const first = page.locator(".problem-row").first();
+  const hits = await first.evaluate((rowEl) => {
+    const owner = (x: number, y: number) => document.elementFromPoint(x, y)?.closest("a,button");
+    const actions = [...rowEl.querySelectorAll<HTMLElement>(".row-action")];
+    const out: string[] = [];
+    actions.forEach((el, i) => {
+      const r = el.getBoundingClientRect();
+      const cy = r.top + r.height / 2;
+      // 5px outside each edge still lands on this control (its target is
+      // 40×40, so that's 1px inside it)…
+      if (owner(r.left - 5, cy) !== el) out.push(`action ${i}: left edge`);
+      if (owner(r.right + 5, cy) !== el) out.push(`action ${i}: right edge`);
+      if (owner(r.left + r.width / 2, r.bottom + 5) !== el) out.push(`action ${i}: below`);
+      if (owner(r.left + r.width / 2, r.top - 5) !== el) out.push(`action ${i}: above`);
+      if (r.width > 30 || r.height > 30) out.push(`action ${i}: box grew to ${r.width}×${r.height}`);
+    });
+    const status = rowEl.querySelector<HTMLElement>(".row-status")!;
+    const s = status.getBoundingClientRect();
+    const sy = s.top + s.height / 2;
+    // …and the status circle answers 21px from its centre (it's 24px wide,
+    // with a 44px target).
+    if (owner(s.left + s.width / 2 + 21, sy) !== status) out.push("status: right");
+    if (owner(s.left + s.width / 2, sy - 21) !== status) out.push("status: above");
+    if (owner(s.left + s.width / 2 - 21, sy) !== status) out.push("status: left");
+    return { problems: out, rowHeight: Math.round(rowEl.getBoundingClientRect().height), actions: actions.length };
+  });
+  expect(hits.problems).toEqual([]);
+  expect(hits.actions).toBeGreaterThanOrEqual(3);
+  expect(hits.rowHeight).toBeLessThanOrEqual(80); // unchanged from before the targets grew
+
+  expectOnlyStubbed(guard);
+  await context.close();
+});
+
 test.afterAll(() => {
   // The server-side guard's view of the whole run: reads happened, and not a
   // single statement that would have written was even attempted.

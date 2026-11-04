@@ -13,7 +13,8 @@
     "shots:compose": "playwright test -c tools/screenshots --project=compose --no-deps",
     "shots:e2e": "npm run build && playwright test -c tools/screenshots --project=e2e",
     "shots:readme": "playwright test -c tools/screenshots --project=readme",
-    "shots:video": "playwright test -c tools/screenshots --project=video"
+    "shots:video": "playwright test -c tools/screenshots --project=video",
+    "shots:perf": "playwright test -c tools/screenshots --project=perf --workers=1"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.4",

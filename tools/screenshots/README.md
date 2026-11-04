@@ -15,6 +15,7 @@ npm run shots:compose  # redo frames/sheet/covers/card from the existing capture
 npm run shots:e2e      # build, then the end-to-end journeys (must pass)
 npm run shots:readme   # README-sized copies into docs/screenshots/ (committed)
 npm run shots:video    # the portfolio's hover clip (after `npm run shots`)
+npm run shots:perf     # before/after performance numbers (after a build)
 ```
 
 It signs in as a real account and photographs its data as it stands. Put that
@@ -90,6 +91,30 @@ status bar and the 34px home-indicator strip. The frame paints those two strips
 take their colour from the capture's own first and last rows, and the status bar
 text flips to black on light pages.
 
+## Performance numbers
+
+`npm run shots:perf` measures the production build it serves and writes
+`examples/.cache/perf-<label>.json` (`SHOTS_PERF_LABEL`, default `run`). Build
+first, then take one run before a change and one after:
+
+```sh
+npm run build && SHOTS_PERF_LABEL=before npm run shots:perf
+# …make the change…
+npm run build && SHOTS_PERF_LABEL=after npm run shots:perf
+```
+
+- **Server**: `/dashboard` and `/dashboard/profile` over 8 warm loads: time to
+  first byte, time until the streamed response finishes (both pages stream, so
+  the first byte is only the shell), and SQL statements per load, counted by
+  the database guard.
+- **Editor**: JavaScript downloaded and time until the editor shows highlighted
+  code, cold, with the CPU slowed 4×. Plus what the catalog pages download
+  while they preload the editor.
+
+Byte and query counts repeat exactly between runs. Times depend on the machine
+and the network to Neon and move by hundreds of milliseconds run to run, so
+take several runs before reading anything into a timing difference.
+
 ## The clock
 
 The server is started with `server/clock.cjs` preloaded, and every page gets
@@ -123,6 +148,10 @@ Two independent layers:
    the process. The counts land in `examples/.cache/db-guard.json`, and both
    the compose step and the e2e run fail unless reads happened and **zero**
    writes were attempted.
+
+The server also starts with the Upstash variables blank, so rate limiting is
+off: test sign-ins never spend the account's real allowance, and nothing the
+harness does touches Redis.
 
 To add a shot that triggers a new kind of write, add a stub for it in
 `WRITE_STUBS`. Until then the run fails, which is the point.
