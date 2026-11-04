@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sheetVisibleTo } from "@/lib/sheetAccess";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const userId = await getSessionUserId();
@@ -18,8 +19,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   });
   if (!targetSheet) return NextResponse.json({ error: "Sheet not found" }, { status: 404 });
 
-  // Fetch the source problem
-  const source = await prisma.problem.findUnique({ where: { id: problemId } });
+  // The source must be on a sheet the caller can read — a preset, or their own.
+  // Looking it up by id alone let anyone who knew the id of a problem on
+  // someone else's custom sheet copy it into theirs. Missing and not-visible
+  // answer the same, so a probe can't confirm the id exists.
+  const source = await prisma.problem.findFirst({
+    where: { id: problemId, sheet: sheetVisibleTo(userId) },
+  });
   if (!source) return NextResponse.json({ error: "Problem not found" }, { status: 404 });
 
   // Deduplicate by leetcodeUrl or title within the target sheet
@@ -50,6 +56,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       difficulty: source.difficulty,
       pattern: source.pattern,
       leetcodeUrl: source.leetcodeUrl,
+      // These three were dropped, so a copied problem lost its GfG link, its
+      // company tags and its hint.
+      gfgUrl: source.gfgUrl,
+      companies: source.companies,
+      hint: source.hint,
       mustDo: source.mustDo,
       order: count + 1,
       sheetId,

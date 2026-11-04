@@ -6,6 +6,7 @@ export const maxDuration = 60;
 import { NextResponse } from "next/server";
 import { getSessionUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sheetVisibleTo } from "@/lib/sheetAccess";
 import Groq from "groq-sdk";
 import { GROQ_MODEL } from "@/lib/groq";
 import { chatLimiter } from "@/lib/ratelimit";
@@ -85,8 +86,10 @@ export async function POST(req: Request) {
   // Build context block from the problem/question
   let contextBlock = "";
   if (type === "code" && problemId) {
-    const problem = await prisma.problem.findUnique({
-      where: { id: problemId },
+    // Scoped like every other problem read: a problem on someone else's custom
+    // sheet must not be fed to the model, or its text comes back in the answer.
+    const problem = await prisma.problem.findFirst({
+      where: { id: problemId, sheet: sheetVisibleTo(userId) },
       select: { title: true, description: true, difficulty: true, pattern: true },
     });
     if (problem) {

@@ -136,6 +136,7 @@ Always use the create_sheet tool to output the sheet. Do not just describe it â€
     select: {
       title: true, description: true, difficulty: true,
       pattern: true, leetcodeUrl: true, gfgUrl: true,
+      companies: true, hint: true,
     },
   });
 
@@ -162,6 +163,8 @@ Always use the create_sheet tool to output the sheet. Do not just describe it â€
         pattern: match.pattern,
         leetcodeUrl: match.leetcodeUrl,
         gfgUrl: match.gfgUrl,
+        companies: match.companies,
+        hint: match.hint,
         // â€¦but which problems are must-do is this sheet's editorial call.
         mustDo: p.mustDo,
       };
