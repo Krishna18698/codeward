@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ProblemPicker, { type PickerProblem } from "./ProblemPicker";
+import { useDialog } from "@/lib/useDialog";
 
 type Props = {
   sheetId: string;
@@ -16,6 +17,10 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState("");
   const router = useRouter();
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Escape (it had none), focus kept inside, focus back to "Add problems"
+  // afterwards, page scroll locked.
+  useDialog(panelRef, { onClose });
 
   const toggleProblem = (p: PickerProblem) => {
     setSelected((prev) =>
@@ -60,11 +65,18 @@ export default function AddProblemsModal({ sheetId, sheetName, onClose }: Props)
     <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16">
       <div className="absolute inset-0 bg-canvas/70 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-surface/95 shadow-2xl backdrop-blur-xl flex flex-col max-h-[82vh]">
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-problems-title"
+        className="relative w-full max-w-lg rounded-2xl border border-border bg-surface/95 shadow-2xl backdrop-blur-xl flex flex-col max-h-[82vh] outline-none"
+      >
 
         {/* Header */}
         <div className="px-5 pt-5 pb-4 border-b border-border shrink-0">
-          <h2 className="text-base font-semibold text-primary">Add Problems</h2>
+          <h2 id="add-problems-title" className="text-base font-semibold text-primary">Add Problems</h2>
           <p className="text-xs text-muted mt-1.5 leading-relaxed">
             Adding to{" "}
             <span className="text-secondary font-medium">{sheetName}</span>

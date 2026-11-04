@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ProblemPicker, { type PickerProblem } from "./ProblemPicker";
+import { useDialog } from "@/lib/useDialog";
 
 type Props = { onClose: () => void };
 
@@ -14,8 +15,12 @@ export default function CreateSheetModal({ onClose }: Props) {
   const [error, setError]         = useState("");
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => { inputRef.current?.focus({ preventScroll: true }); }, []);
+  // Escape from anywhere (it only worked from the name field), focus kept
+  // inside, focus back on "+ New sheet" afterwards, page scroll locked.
+  useDialog(panelRef, { onClose, autoFocus: false });
 
   const toggleProblem = (p: PickerProblem) => {
     setSelected((prev) =>
@@ -81,10 +86,17 @@ export default function CreateSheetModal({ onClose }: Props) {
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-canvas/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-surface shadow-2xl flex flex-col max-h-[90vh]">
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-sheet-title"
+        className="relative w-full max-w-lg rounded-2xl border border-border bg-surface shadow-2xl flex flex-col max-h-[90vh] outline-none"
+      >
         {/* Header */}
         <div className="px-6 pt-5 pb-4 border-b border-border shrink-0">
-          <h2 className="text-base font-semibold text-primary mb-0.5">Create New Sheet</h2>
+          <h2 id="create-sheet-title" className="text-base font-semibold text-primary mb-0.5">Create New Sheet</h2>
           <p className="text-xs text-muted">Name your sheet and optionally add problems to start.</p>
         </div>
 
@@ -92,13 +104,13 @@ export default function CreateSheetModal({ onClose }: Props) {
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5 min-h-0">
           {/* Sheet name */}
           <div>
-            <label className="text-xs text-secondary font-medium mb-1.5 block">Sheet name</label>
+            <label htmlFor="create-sheet-name" className="text-xs text-secondary font-medium mb-1.5 block">Sheet name</label>
             <input
+              id="create-sheet-name"
               ref={inputRef}
               type="text"
               value={name}
               onChange={(e) => { setName(e.target.value); setError(""); }}
-              onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
               placeholder="e.g. Google Prep, Amazon Grind…"
               className="w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm text-primary placeholder:text-muted focus:outline-none focus:border-accent/60 transition"
             />

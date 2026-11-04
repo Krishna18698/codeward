@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useScrollLock } from "@/lib/useScrollLock";
+import { useDialog } from "@/lib/useDialog";
 import { X, Check, X as XIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Ring } from "@/components/ui/Ring";
@@ -81,25 +81,16 @@ export default function AttemptModal({
   attemptId: string;
   onClose: () => void;
 }) {
-  useScrollLock();
-
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [error, setError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Focus moves into the dialog on open and returns to whatever opened it on
-  // close, so keyboard users aren't dropped back at the top of the document.
+  // Focus goes to the panel itself on open, so a screen reader announces the
+  // dialog before its contents; useDialog returns it to the opener on close.
   useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null;
-    panelRef.current?.focus();
-    return () => opener?.focus?.();
+    panelRef.current?.focus({ preventScroll: true });
   }, []);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  useDialog(panelRef, { onClose, autoFocus: false });
 
   useEffect(() => {
     let cancelled = false;

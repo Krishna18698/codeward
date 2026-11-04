@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
-import { useScrollLock } from "@/lib/useScrollLock";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useDialog } from "@/lib/useDialog";
 import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -12,7 +13,10 @@ const EXP_LEVELS = [
 ];
 
 export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
-  useScrollLock();
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Not dismissible — it's the step that sets up the account — but focus is
+  // kept inside it and the page behind doesn't scroll.
+  useDialog(panelRef, { dismissible: false });
 
   const [step, setStep] = useState(0);
   const [exp, setExp] = useState("");
@@ -29,9 +33,20 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
     onDone?.();
   };
 
-  return (
+  // Rendered into <body> like every other modal, so no ancestor's transform
+  // can make its fixed overlay the size of the page instead of the screen.
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-canvas/70 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 shadow-2xl animate-scale-in">
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Set up your profile"
+        className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 shadow-2xl animate-scale-in outline-none"
+      >
         {/* Step dots */}
         <div className="flex items-center gap-1.5 mb-6">
           {[0, 1].map((i) => (
@@ -127,6 +142,7 @@ export default function OnboardingModal({ onDone }: { onDone?: () => void }) {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
