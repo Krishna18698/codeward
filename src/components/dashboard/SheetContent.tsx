@@ -92,6 +92,10 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
   // Per-difficulty deltas layered over the base counts computed from `data`.
   const [diffDelta, setDiffDelta] = useState<Record<string, number>>({});
   const [showAddProblems, setShowAddProblems] = useState(false);
+  // A failed load is its own state: it used to crash the render (an error
+  // body read as problems) or pass for an empty sheet (a network failure).
+  const [loadError, setLoadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!activeSheetId) return;
@@ -104,24 +108,34 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
     // Data fetch on sheet change — effect-driven setState is intentional here.
     /* eslint-disable react-hooks/set-state-in-effect */
     setLoading(true);
+    setLoadError(false);
     setData(null);
     setLiveDone(null);
     setDiffDelta({});
     /* eslint-enable react-hooks/set-state-in-effect */
+    const getJson = async <T,>(url: string): Promise<T> => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`${url} → ${res.status}`);
+      return res.json() as Promise<T>;
+    };
     Promise.all([
-      fetch(`/api/dsa/problems?sheetId=${activeSheetId}&skip=0&take=1000`).then((r) => r.json() as Promise<ApiResponse>),
-      fetch(`/api/notes?sheetId=${activeSheetId}`).then((r) => r.json() as Promise<Record<string, string>>),
+      getJson<ApiResponse>(`/api/dsa/problems?sheetId=${activeSheetId}&skip=0&take=1000`),
+      getJson<Record<string, string>>(`/api/notes?sheetId=${activeSheetId}`),
     ])
       .then(([problems, notesMap]) => {
-        if (!cancelled) {
-          setData(problems);
-          setNotes(notesMap);
-          setLoading(false);
-        }
+        if (cancelled) return;
+        if (!Array.isArray(problems?.problems)) throw new Error("unexpected response");
+        setData(problems);
+        setNotes(notesMap ?? {});
+        setLoading(false);
       })
-      .catch(() => { if (!cancelled) setLoading(false); });
+      .catch(() => {
+        if (cancelled) return;
+        setLoadError(true);
+        setLoading(false);
+      });
     return () => { cancelled = true; };
-  }, [activeSheetId]);
+  }, [activeSheetId, attempt]);
 
   // Called by ProblemList whenever user toggles a status — keeps the bar in sync
   const handleStatusChange = (prev: ProblemStatus, next: ProblemStatus, difficulty?: Difficulty) => {
@@ -180,7 +194,7 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
       {/* Stats bar */}
       {loading ? (
         <StatsSkeleton />
-      ) : activeSheet ? (
+      ) : loadError ? null : activeSheet ? (
         <div className="rounded-2xl border border-border bg-surface px-5 py-3.5 space-y-2">
           {/* Progress row */}
           <div className="flex items-center justify-between gap-3">
@@ -235,6 +249,18 @@ export default function SheetContent({ sheets, defaultSheetId, userId, initialDa
       {/* Problem list */}
       {loading ? (
         <ProblemsSkeleton />
+      ) : loadError ? (
+        <div role="alert" className="rounded-2xl border border-rose-500/25 bg-rose-500/5 px-5 py-12 text-center">
+          <p className="text-sm text-primary">This sheet didn&apos;t load.</p>
+          <p className="mt-1 text-xs text-muted">Check your connection and try again — nothing on it has changed.</p>
+          <button
+            type="button"
+            onClick={() => setAttempt((n) => n + 1)}
+            className="mt-4 rounded-lg border border-border px-4 py-2 text-xs font-semibold text-primary transition-colors hover:border-accent/40 hover:text-accent"
+          >
+            Retry
+          </button>
+        </div>
       ) : data && data.problems.length > 0 ? (
         <ProblemList
           // Remount per sheet so the status/revise/hint maps rebuild from the
